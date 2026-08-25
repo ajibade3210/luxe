@@ -157,27 +157,27 @@ export function SignupPage() {
       </header>
 
       {/* Main Signup Form Container */}
-      <div className="w-full max-w-md mx-auto px-6 py-8 my-auto z-10">
-        <div className="bg-white border border-[#eae3d7] rounded-3xl p-7 sm:p-9 shadow-sm">
+      <div className="w-full max-w-lg mx-auto px-6 py-10 my-auto z-10">
+        <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-10 shadow-sm">
           {/* Claim Banner Pill */}
           {claimSlug ? (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-mono text-[#855e2e] mb-5 w-full justify-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-mono text-[#855e2e] mb-6 w-full justify-center">
               <Sparkles size={13} className="text-[#855e2e]" />
               <span>
                 Reserving Handle: <b>/{claimSlug}</b>
               </span>
             </div>
           ) : (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-6">
               <span>Create Your Atelier</span>
             </div>
           )}
 
           {/* Form Title */}
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-2">
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-3 tracking-tight">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] mb-6 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#5c5f60] mb-8 leading-relaxed">
             {claimSlug ? (
               <>
                 Create your director account to secure{" "}
@@ -196,24 +196,24 @@ export function SignupPage() {
             type="button"
             disabled={isSubmitting}
             onClick={handleGoogleSignup}
-            className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] text-xs font-medium text-[#191c1d] transition-all cursor-pointer shadow-2xs mb-5"
+            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs mb-6"
           >
             <GoogleIcon className="w-4 h-4" />
             <span>Continue with Google</span>
           </button>
 
           {/* Divider */}
-          <div className="relative flex items-center justify-center mb-5">
+          <div className="relative flex items-center justify-center my-7">
             <div className="border-t border-[#ede7dc] w-full" />
-            <span className="bg-white px-3 text-[10px] uppercase font-semibold text-[#8e9192] tracking-wider absolute">
+            <span className="bg-white px-3.5 text-[10px] uppercase font-semibold text-[#8e9192] tracking-wider absolute">
               or continue with email
             </span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Studio Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
                 Studio / Business Name
               </label>
               <input
@@ -222,13 +222,13 @@ export function SignupPage() {
                 value={studioName}
                 onChange={e => setStudioName(e.target.value)}
                 placeholder="e.g. Élan Events Atelier"
-                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
+                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
               />
             </div>
 
             {/* Studio Handle / Slug */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
                   Studio Handle / URL Slug
                 </label>
@@ -244,7 +244,7 @@ export function SignupPage() {
                   )}
                 </span>
               </div>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <span className="text-[#8e9192] font-mono select-none shrink-0 text-xs mr-1">
                   luxeadmin.com/
                 </span>
@@ -261,10 +261,10 @@ export function SignupPage() {
 
             {/* Director Full Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
                 Director Full Name
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
                 <User size={14} className="text-[#8e9192] shrink-0" />
                 <input
                   type="text"
@@ -279,10 +279,10 @@ export function SignupPage() {
 
             {/* Work Email */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
                 Work Email Address
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
                 <Mail size={14} className="text-[#8e9192] shrink-0" />
                 <input
                   type="email"
@@ -297,10 +297,10 @@ export function SignupPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
                 Password
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
                 <Lock size={14} className="text-[#8e9192] shrink-0" />
                 <input
                   type="password"
