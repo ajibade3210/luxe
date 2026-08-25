@@ -95,6 +95,8 @@ export interface PortfolioProject {
   location: string;
   description: string;
   image: string;
+  order?: number;
+  isCover?: boolean;
   gallery?: string[];
   stats?: string;
 }

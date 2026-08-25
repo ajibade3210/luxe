@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#f8f9fa]">
+    <html lang="en" className="bg-[#f8f9fa]" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -33,7 +33,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased font-sans bg-[#f8f9fa] text-[#191c1d]">
+      <body
+        className="antialiased font-sans bg-[#f8f9fa] text-[#191c1d]"
+        suppressHydrationWarning
+      >
         {children}
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

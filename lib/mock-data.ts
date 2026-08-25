@@ -132,6 +132,8 @@ export const elanPortfolio: PortfolioProject[] = [
       "A 3-day coastal celebration uniting contemporary architectural florals with timeless Nigerian heritage and bespoke candlelit pavilions.",
     image:
       "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    order: 0,
+    isCover: true,
     gallery: [
       "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80",
@@ -148,6 +150,8 @@ export const elanPortfolio: PortfolioProject[] = [
       "An immersive black-tie gala for 450 executives featuring kinetic lighting, custom tiered staging, and synchronized fine dining orchestration.",
     image:
       "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80",
+    order: 1,
+    isCover: false,
     gallery: [
       "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=80",
@@ -164,6 +168,8 @@ export const elanPortfolio: PortfolioProject[] = [
       "An intimate botanical salon celebrating a milestone anniversary with an open-air string ensemble, French tablescapes, and curated gastronomy.",
     image:
       "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=80",
+    order: 2,
+    isCover: false,
     gallery: [
       "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1470753937643-efeb931202a9?auto=format&fit=crop&w=1200&q=80",

@@ -133,6 +133,32 @@ export async function uploadBusinessLogo(
   };
 }
 
+export async function uploadPortfolioImage(
+  file?: File | Blob | string,
+): Promise<{ url: string; success: boolean }> {
+  await delay(350);
+  if (file && typeof window !== "undefined" && file instanceof File) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const dataUrl = e.target?.result as string;
+        resolve({ url: dataUrl, success: true });
+      };
+      reader.onerror = () => {
+        resolve({
+          url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+          success: true,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  return {
+    url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    success: true,
+  };
+}
+
 export async function submitReview(
   input: Omit<ReviewItem, "id" | "date">,
 ): Promise<ReviewItem> {

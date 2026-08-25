@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import {
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
   Check,
   Clock3,
   Copy,
   ExternalLink,
+  GripVertical,
   ImagePlus,
   Link2,
   Loader2,
@@ -27,6 +30,7 @@ import {
   publishChanges,
   updateBusinessProfile,
   uploadBusinessLogo,
+  uploadPortfolioImage,
 } from "@/lib/api";
 import type {
   ButtonRadiusType,
@@ -150,6 +154,7 @@ export function EnhancedSettingsPage({
       "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
   );
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [isUploadingProjectImage, setIsUploadingProjectImage] = useState(false);
 
   // Appearance
   const [colors, setColors] = useState<ColorScheme>(
@@ -163,6 +168,15 @@ export function EnhancedSettingsPage({
   const [radius, setRadius] = useState<ButtonRadiusType>(
     initialMockProfile.buttonRadius || "Subtle",
   );
+
+  // Gallery Management Modals & Reordering State
+  const [showManageGalleryModal, setShowManageGalleryModal] = useState(false);
+  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(
+    null,
+  );
+  const [dragOverProjectIndex, setDragOverProjectIndex] = useState<
+    number | null
+  >(null);
 
   // Validation & saving state
   const [slugStatus, setSlugStatus] = useState<
@@ -305,8 +319,69 @@ export function EnhancedSettingsPage({
     }
   };
 
+  const handleProjectImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingProjectImage(true);
+    try {
+      const res = await uploadPortfolioImage(file);
+      if (res.url) {
+        setNewProject(prev => ({ ...prev, image: res.url }));
+        onToast("Project image uploaded! URL generated.");
+      }
+    } catch {
+      onToast("Error uploading project photo");
+    } finally {
+      setIsUploadingProjectImage(false);
+    }
+  };
+
+  // Gallery Drag & Drop Reordering Handlers
+  const handleDragStart = (index: number) => {
+    setDraggedProjectIndex(index);
+  };
+
+  const handleDragEnter = (index: number) => {
+    setDragOverProjectIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    if (draggedProjectIndex === null || dragOverProjectIndex === null) {
+      setDraggedProjectIndex(null);
+      setDragOverProjectIndex(null);
+      return;
+    }
+    if (draggedProjectIndex !== dragOverProjectIndex) {
+      const updated = [...portfolio];
+      const [movedItem] = updated.splice(draggedProjectIndex, 1);
+      updated.splice(dragOverProjectIndex, 0, movedItem);
+      setPortfolio(updated);
+      onToast("Gallery arrangement updated");
+    }
+    setDraggedProjectIndex(null);
+    setDragOverProjectIndex(null);
+  };
+
+  const moveProject = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= portfolio.length) return;
+    const updated = [...portfolio];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+    setPortfolio(updated);
+    onToast(`Moved "${temp.title}" ${direction}`);
+  };
+
   const saveAll = async () => {
     setSaving(true);
+    const orderedPortfolio = portfolio.map((proj, idx) => ({
+      ...proj,
+      order: idx,
+      isCover: idx === 0,
+    }));
     await updateBusinessProfile({
       businessName: name,
       slug,
@@ -317,7 +392,7 @@ export function EnhancedSettingsPage({
       email,
       logoUrl,
       services,
-      portfolio,
+      portfolio: orderedPortfolio,
       socialChannels: channels,
       googleReviewsLink,
       operatingHours: hours,
@@ -641,9 +716,7 @@ export function EnhancedSettingsPage({
             </button>
             <button
               type="button"
-              onClick={() =>
-                onToast(`Managing ${portfolio.length} portfolio items`)
-              }
+              onClick={() => setShowManageGalleryModal(true)}
               className="outline-button"
             >
               <ImagePlus size={15} /> Manage gallery ({portfolio.length})
@@ -976,18 +1049,91 @@ export function EnhancedSettingsPage({
               </div>
 
               <div>
-                <label className="block text-[#1f2937] font-medium mb-1">
-                  Image URL
+                <label className="block text-[#1f2937] font-medium mb-1.5">
+                  Project Cover Photo
                 </label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={newProject.image}
-                  onChange={e =>
-                    setNewProject({ ...newProject, image: e.target.value })
-                  }
-                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                />
+                {newProject.image ? (
+                  <div className="space-y-2">
+                    <div className="relative rounded-lg overflow-hidden border border-[#e5e7eb] bg-[#f3f4f5] group aspect-[16/9] max-h-48 w-full flex items-center justify-center">
+                      <img
+                        src={newProject.image}
+                        alt="Project Cover Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <label className="cursor-pointer bg-white text-[#191c1d] hover:bg-[#f3f4f5] px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1.5 shadow-sm transition-colors">
+                          {isUploadingProjectImage ? (
+                            <>
+                              <Loader2 size={12} className="animate-spin" /> Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload size={12} /> Change Photo
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={isUploadingProjectImage}
+                            onChange={handleProjectImageUpload}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setNewProject({ ...newProject, image: "" })}
+                          className="bg-[#ba1a1a] text-white hover:bg-[#93000a] px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={12} /> Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* CDN URL Bar */}
+                    <div className="flex items-center gap-2 bg-[#f8f9fa] border border-[#e5e7eb] rounded p-1.5 text-[11px]">
+                      <span className="text-[#6b7280] font-medium shrink-0 pl-1">URL:</span>
+                      <span className="font-mono text-[#191c1d] truncate flex-1 select-all">
+                        {newProject.image}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (navigator.clipboard && newProject.image) {
+                            navigator.clipboard.writeText(newProject.image);
+                            onToast("Image URL copied to clipboard");
+                          }
+                        }}
+                        className="shrink-0 text-[#6b7280] hover:text-[#0058be] p-1 cursor-pointer transition-colors"
+                        title="Copy image URL"
+                      >
+                        <Copy size={13} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer block border-2 border-dashed border-[#e5e7eb] hover:border-[#0058be] bg-[#f8f9fa] hover:bg-[#f0f6ff]/30 rounded-lg p-6 text-center transition-all group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={isUploadingProjectImage}
+                      onChange={handleProjectImageUpload}
+                    />
+                    <div className="w-10 h-10 rounded-full bg-white border border-[#e5e7eb] group-hover:border-[#0058be] text-[#0058be] flex items-center justify-center mx-auto mb-2 shadow-2xs group-hover:scale-105 transition-all">
+                      {isUploadingProjectImage ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : (
+                        <Upload size={18} />
+                      )}
+                    </div>
+                    <span className="block text-xs font-semibold text-[#191c1d] group-hover:text-[#0058be] transition-colors">
+                      {isUploadingProjectImage ? "Uploading to CDN..." : "Click to upload project cover picture"}
+                    </span>
+                    <span className="block text-[11px] text-[#6b7280] mt-0.5">
+                      PNG, JPG, or WebP (max 10MB) · Hosted on CDN
+                    </span>
+                  </label>
+                )}
               </div>
 
               <div>
@@ -1004,19 +1150,182 @@ export function EnhancedSettingsPage({
                       description: e.target.value,
                     })
                   }
-                  className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+                  className="w-full bg-white border border-[#e5e7eb] rounded p-3 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddProjectModal(false)}
+                  className="outline-button flex-1 py-2.5 text-xs font-medium justify-center"
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="w-full bg-[#000000] hover:bg-[#262626] text-white text-xs font-medium py-3 rounded transition-all cursor-pointer"
+                  className="dark-button flex-1 py-2.5 text-xs font-medium justify-center"
                 >
-                  Add Project to Showcase
+                  <Plus size={14} /> Add Project
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Gallery Arrangement Modal */}
+      {showManageGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-[#191c1d]/40 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white border border-[#e5e7eb] rounded-lg max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-[#e5e7eb]">
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.18em] text-[#0058be] font-semibold">
+                  Gallery Showcase · {portfolio.length} Projects
+                </span>
+                <h3 className="font-sans text-2xl text-[#191c1d] font-bold mt-0.5">
+                  Manage Gallery Arrangement
+                </h3>
+                <p className="text-xs text-[#6b7280] mt-1">
+                  Drag items or use the arrows to reorder how projects appear in &quot;Our Best Work&quot; on your public site.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowManageGalleryModal(false)}
+                className="text-[#6b7280] hover:text-[#191c1d] p-1.5 rounded-md hover:bg-[#f3f4f5] cursor-pointer transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Reorderable Items List */}
+            <div className="flex-1 overflow-y-auto py-4 space-y-2.5 pr-1">
+              {portfolio.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-[#e5e7eb] rounded-lg">
+                  <ImagePlus size={32} className="mx-auto text-[#9ca3af] mb-2" />
+                  <p className="text-sm font-medium text-[#191c1d]">No gallery projects yet</p>
+                  <p className="text-xs text-[#6b7280] mt-1">Upload your first showcase project to get started.</p>
+                </div>
+              ) : (
+                portfolio.map((proj, idx) => {
+                  const isDragging = draggedProjectIndex === idx;
+                  const isDragOver =
+                    dragOverProjectIndex === idx && draggedProjectIndex !== idx;
+                  return (
+                    <div
+                      key={proj.id}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragEnter={() => handleDragEnter(idx)}
+                      onDragOver={e => e.preventDefault()}
+                      onDragEnd={handleDragEnd}
+                      className={`group flex items-center gap-3.5 p-3 rounded-lg border transition-all duration-150 cursor-grab active:cursor-grabbing ${
+                        isDragging
+                          ? "opacity-40 border-dashed border-[#0058be] bg-[#f0f6ff]"
+                          : isDragOver
+                          ? "border-[#0058be] ring-2 ring-[#0058be]/20 bg-[#f8faff]"
+                          : "border-[#e5e7eb] bg-white hover:border-[#cbd5e1] hover:shadow-xs"
+                      }`}
+                    >
+                      {/* Drag Handle */}
+                      <div className="text-[#9ca3af] group-hover:text-[#191c1d] p-1 cursor-grab">
+                        <GripVertical size={16} />
+                      </div>
+
+                      {/* Position Index Badge */}
+                      <div className="shrink-0 flex flex-col items-center">
+                        <span className="font-mono text-xs font-semibold text-[#191c1d] px-2 py-0.5 bg-[#f3f4f5] rounded border border-[#e5e7eb]">
+                          #{String(idx + 1).padStart(2, "0")}
+                        </span>
+                        {idx === 0 && (
+                          <span className="text-[9px] font-medium text-[#0058be] uppercase tracking-wider mt-1">
+                            Cover
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Picture Preview Thumbnail */}
+                      <div className="w-14 h-14 rounded border border-[#e5e7eb] overflow-hidden shrink-0 bg-[#f3f4f5]">
+                        <img
+                          src={proj.image}
+                          alt={proj.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Project Details */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-semibold text-[#191c1d] truncate">
+                          {proj.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#6b7280]">
+                          <span className="truncate">{proj.category}</span>
+                          <span>·</span>
+                          <span className="truncate">{proj.location}</span>
+                        </div>
+                      </div>
+
+                      {/* Quick Arrow Up / Down Actions */}
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => moveProject(idx, "up")}
+                          className="p-1.5 rounded hover:bg-[#f3f4f5] text-[#6b7280] hover:text-[#191c1d] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                          title="Move Up"
+                        >
+                          <ArrowUp size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === portfolio.length - 1}
+                          onClick={() => moveProject(idx, "down")}
+                          className="p-1.5 rounded hover:bg-[#f3f4f5] text-[#6b7280] hover:text-[#191c1d] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                          title="Move Down"
+                        >
+                          <ArrowDown size={14} />
+                        </button>
+                      </div>
+
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={() => removeProject(proj.id)}
+                        className="p-1.5 rounded text-[#9ca3af] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 cursor-pointer transition-colors shrink-0"
+                        title="Remove from gallery"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Footer Controls */}
+            <div className="pt-4 border-t border-[#e5e7eb] flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowManageGalleryModal(false);
+                  setShowAddProjectModal(true);
+                }}
+                className="outline-button text-xs"
+              >
+                <Upload size={13} /> Add Another Project
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowManageGalleryModal(false);
+                  await saveAll();
+                }}
+                className="dark-button text-xs"
+              >
+                <Check size={14} /> Save & Apply Arrangement
+              </button>
+            </div>
           </div>
         </div>
       )}
