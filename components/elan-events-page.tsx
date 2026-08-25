@@ -3,38 +3,25 @@
 import {
   ArrowRight,
   ArrowUpRight,
-  Calendar,
   Check,
-  ChevronRight,
   Clock3,
-  Globe,
-  Heart,
   Info,
   Mail,
   MapPin,
   Menu,
   MessageCircle,
   Phone,
-  QrCode,
   RotateCw,
   Send,
   Share2,
   Sparkles,
   Star,
-  UserCheck,
-  Video,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getBusinessBySlug, submitConsultationInquiry, submitReview } from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
-import type {
-  BusinessProfile,
-  ButtonRadiusType,
-  ColorScheme,
-  PortfolioProject,
-  ServiceItem,
-} from "@/lib/types";
+import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/lib/types";
 
 interface ElanEventsPageProps {
   initialProfile?: BusinessProfile;

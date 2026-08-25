@@ -10,13 +10,13 @@ import {
   Menu,
   Search,
   Settings,
-  Sparkles,
   Users,
   X,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ElanEventsPage } from "@/components/elan-events-page";
+import { HeroRotatingCard } from "@/components/hero-rotating-card";
 import { EnhancedSettingsPage } from "@/components/settings-page";
 import { SiteFooter } from "@/components/site-footer";
 import { TrustedBusinesses } from "@/components/trusted-businesses";
@@ -223,29 +223,10 @@ function Public() {
             <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">
               Enter your studio <ArrowRight size={15} />
             </a>
-            <a className="text-link text-[#0058be]" href={`/${slug}`}>
-              View Public Business Profile <ChevronRight size={15} />
-            </a>
           </div>
         </div>
 
-        <a
-          href={`/${slug}`}
-          className="profile-card group transition-transform hover:-translate-y-1 block text-decoration-none"
-        >
-          <div className="profile-image bg-[#f3f4f6] text-[#000000] font-mono">É</div>
-          <div className="profile-meta">
-            <span className="eyebrow">Luxury Event Studio · Lagos</span>
-            <h2 className="group-hover:text-[#0058be] transition-colors">Élan Events</h2>
-            <p>We design unforgettable weddings, corporate events, and private celebrations.</p>
-          </div>
-          <div className="profile-foot">
-            <span>Bespoke Experiences</span>
-            <span className="text-[#0058be] font-medium">
-              View live profile <ArrowRight size={14} />
-            </span>
-          </div>
-        </a>
+        <HeroRotatingCard />
       </section>
 
       <TrustedBusinesses />

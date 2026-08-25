@@ -3,6 +3,7 @@ import type {
   BusinessProfile,
   Customer,
   Lead,
+  OrganizationPreview,
   PortfolioProject,
   Project,
   ReviewItem,
@@ -214,7 +215,7 @@ export const elanReviews: ReviewItem[] = [
 
 export const businessProfile: BusinessProfile = {
   id: "bp-elan",
-  businessName: "Élan Eventsxin",
+  businessName: "Élan Events",
   slug: "elan-events",
   tagline: "We design unforgettable weddings, corporate events, and private celebrations.",
   description:
@@ -440,5 +441,65 @@ export const activities: Activity[] = [
     type: "contact",
     description: "Sent consultation update for tasting menu",
     timestamp: "2026-08-22T15:15:00Z",
+  },
+];
+
+export const featuredOrganizations: OrganizationPreview[] = [
+  {
+    id: "org-1",
+    name: "Élan Events",
+    slug: "elan-events",
+    eyebrow: "Luxury Event Studio · Lagos",
+    tagline: "We design unforgettable weddings, corporate events, and private celebrations.",
+    logoUrl:
+      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
+    badge: "Bespoke Experiences",
+  },
+  {
+    id: "org-2",
+    name: "Maison Bell Events",
+    slug: "maison-bell-events",
+    eyebrow: "Haute Couture & Bridal · Paris / London",
+    tagline: "Editorial wedding design and high-society galas across Europe's finest landmarks.",
+    logoUrl: "https://cdn.logosystem.co/logos/the-huntington.webp",
+    badge: "Haute Couture",
+  },
+  {
+    id: "org-3",
+    name: "Lumio Atelier",
+    slug: "lumio-atelier",
+    eyebrow: "Spatial Design & Light · Milan",
+    tagline: "Architectural lighting, experiential banquets, and modern spatial art for galas.",
+    logoUrl: "https://cdn.logosystem.co/logos/hatil.webp",
+    badge: "Architectural Design",
+  },
+  {
+    id: "org-4",
+    name: "Meridian Celebrations",
+    slug: "meridian-celebrations",
+    eyebrow: "Destination Galas · Lake Como / Amalfi",
+    tagline:
+      "Multi-day lakeside celebrations and private yacht receptions for discerning clientele.",
+    logoUrl: "https://cdn.logosystem.co/logos/mila.webp",
+    badge: "Destination Estate",
+  },
+  {
+    id: "org-5",
+    name: "Arcwell Bespoke",
+    slug: "arcwell-bespoke",
+    eyebrow: "Private Estate Soirées · New York",
+    tagline:
+      "Discreet milestone celebrations, black-tie dinners, and bespoke artistic productions.",
+    logoUrl: "https://cdn.logosystem.co/logos/fourthfloor.webp",
+    badge: "White-Glove Concierge",
+  },
+  {
+    id: "org-6",
+    name: "Solace Studios",
+    slug: "solace-studios",
+    eyebrow: "Ultra-Luxury Gala Productions · Dubai",
+    tagline: "Iconic corporate galas and royal wedding productions curated with quiet elegance.",
+    logoUrl: "https://cdn.logosystem.co/logos/renforce.webp",
+    badge: "Grand Productions",
   },
 ];

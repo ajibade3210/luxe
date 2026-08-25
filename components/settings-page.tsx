@@ -2,7 +2,6 @@
 
 import {
   ArrowDown,
-  ArrowRight,
   ArrowUp,
   Check,
   Clock3,
@@ -11,7 +10,6 @@ import {
   GripVertical,
   ImagePlus,
   Info,
-  Link2,
   Loader2,
   Mail,
   MapPin,
@@ -19,7 +17,6 @@ import {
   Plus,
   RefreshCw,
   Save,
-  Sparkles,
   Star,
   Trash2,
   Upload,
@@ -36,7 +33,6 @@ import {
 } from "@/lib/api";
 import { businessProfile as initialMockProfile } from "@/lib/mock-data";
 import type {
-  BusinessProfile,
   ButtonRadiusType,
   ColorScheme,
   PortfolioProject,

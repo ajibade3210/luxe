@@ -3,6 +3,7 @@ import {
   businessProfile,
   currentUser,
   customers,
+  featuredOrganizations,
   leads,
   socialChannels,
 } from "./mock-data";
@@ -103,14 +104,22 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessProfile |
   const current = loadPersistedProfile();
   const normalized = (slug || "").toLowerCase().trim();
 
-  // If slug matches the configured business slug or is a recognized default preview slug
-  if (
-    !normalized ||
-    normalized === current.slug ||
-    normalized === "elan-events" ||
-    normalized === "maison-bell-events"
-  ) {
+  // If matches active persisted business slug
+  if (!normalized || normalized === current.slug) {
     return current;
+  }
+
+  // Look up in featured organizations directory
+  const matchedOrg = featuredOrganizations.find(o => o.slug.toLowerCase() === normalized);
+  if (matchedOrg) {
+    return {
+      ...current,
+      id: `bp-${matchedOrg.slug}`,
+      businessName: matchedOrg.name,
+      slug: matchedOrg.slug,
+      tagline: matchedOrg.tagline,
+      logoUrl: matchedOrg.logoUrl,
+    };
   }
 
   // Return active business profile with requested preview slug

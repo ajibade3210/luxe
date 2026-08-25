@@ -154,3 +154,14 @@ export interface AuthSession {
   user: User;
   expiresAt: string;
 }
+
+// Organization preview definition for landing hero rotation
+export interface OrganizationPreview {
+  id: string;
+  name: string;
+  slug: string;
+  eyebrow: string;
+  tagline: string;
+  logoUrl: string;
+  badge: string;
+}
