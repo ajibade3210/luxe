@@ -26,6 +26,7 @@ import {
   getBusinessProfile,
   publishChanges,
   updateBusinessProfile,
+  uploadBusinessLogo,
 } from "@/lib/api";
 import type {
   ButtonRadiusType,
@@ -143,6 +144,13 @@ export function EnhancedSettingsPage({
     initialMockProfile.physicalAddress || "Victoria Island, Lagos, Nigeria",
   );
 
+  // Business Logo
+  const [logoUrl, setLogoUrl] = useState<string>(
+    initialMockProfile.logoUrl ||
+      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
+  );
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
   // Appearance
   const [colors, setColors] = useState<ColorScheme>(
     initialMockProfile.colors || {
@@ -175,6 +183,7 @@ export function EnhancedSettingsPage({
       setWebsite(p.website);
       setEmail(p.email);
       setAbout(p.description);
+      if (p.logoUrl) setLogoUrl(p.logoUrl);
       setServices(p.services || []);
       setPortfolio(p.portfolio || []);
       setChannels(p.socialChannels || []);
@@ -279,6 +288,23 @@ export function EnhancedSettingsPage({
     onToast("Project removed from portfolio");
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingLogo(true);
+    try {
+      const res = await uploadBusinessLogo(file);
+      if (res.url) {
+        setLogoUrl(res.url);
+        onToast("Business logo uploaded! CDN URL generated.");
+      }
+    } catch {
+      onToast("Error uploading logo");
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
+
   const saveAll = async () => {
     setSaving(true);
     await updateBusinessProfile({
@@ -289,6 +315,7 @@ export function EnhancedSettingsPage({
       description: about,
       website,
       email,
+      logoUrl,
       services,
       portfolio,
       socialChannels: channels,
@@ -318,13 +345,13 @@ export function EnhancedSettingsPage({
 
   return (
     <section className="content settings-content">
+      {/* Top Banner with Authentic LuxeAdmin Typography */}
       <div className="page-title">
         <div>
           <span className="eyebrow">Your studio</span>
           <h1>Settings</h1>
           <p>
-            Shape the presence your clients and customers see on your public
-            profile.
+            Shape the brand presence your clients and customers see on your live public profile.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -355,6 +382,104 @@ export function EnhancedSettingsPage({
         description="The foundation of your public customer-facing presence."
       >
         <div className="form-grid">
+          {/* Logo Upload Section - Structured, Balanced & Luxury Polished */}
+          <div className="full bg-[#faf8f5] border border-[#e8dfd3] rounded-2xl p-6 mb-5 shadow-2xs">
+            {/* Header */}
+            <div className="border-b border-[#ebd8ca]/60 pb-3.5 mb-5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8a3e20] block">
+                Business Brand Logo
+              </span>
+              <span className="text-xs text-[#78716c]">
+                Your official studio crest displayed on onboarding cards, concierge header, and footer
+              </span>
+            </div>
+
+            {/* Body */}
+            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-center">
+              {/* Logo Preview Column */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-[#ded3c7] bg-white p-2.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+                  {logoUrl ? (
+                    <img
+                      src={logoUrl}
+                      alt="Business Logo Preview"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
+                  ) : (
+                    <span className="font-serif text-3xl text-[#b84c24]">
+                      {name ? name.charAt(0) : "É"}
+                    </span>
+                  )}
+                  {isUploadingLogo && (
+                    <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
+                      <Loader2 size={22} className="animate-spin text-[#b84c24]" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-[10px] text-[#8c8278] font-medium tracking-wider uppercase">
+                  PNG · SVG · JPG
+                </span>
+              </div>
+
+              {/* Upload Actions & URL Column */}
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#1c1917]">
+                      Studio Brand Crest
+                    </h4>
+                    <p className="text-xs text-[#78716c] mt-0.5">
+                      Upload a new logo to automatically generate a CDN URL and update all live touchpoints.
+                    </p>
+                  </div>
+                  <label className="cursor-pointer inline-flex items-center gap-2 bg-[#1c1917] hover:bg-[#332f2b] text-white px-4 py-2.5 rounded-xl text-xs font-medium transition-all shadow-xs shrink-0 active:scale-98">
+                    <Upload size={14} />
+                    <span>{isUploadingLogo ? "Uploading to CDN..." : "Upload New Logo"}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      disabled={isUploadingLogo}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Integrated CDN URL Bar */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-medium text-[#78716c] block">
+                    Generated CDN Asset URL
+                  </span>
+                  <div className="relative flex items-center">
+                    <input
+                      type="text"
+                      value={logoUrl}
+                      onChange={(e) => setLogoUrl(e.target.value)}
+                      placeholder="https://cdn.accessa.ng/..."
+                      className="w-full text-xs font-mono bg-white border border-[#ded3c7] rounded-xl pl-3.5 pr-28 py-2.5 text-[#332e29] focus:border-[#b84c24] focus:outline-none shadow-2xs"
+                    />
+                    {logoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(logoUrl);
+                            onToast("CDN Logo URL copied to clipboard!");
+                          }
+                        }}
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#524b44] hover:text-[#1c1917] bg-[#f7f2ea] hover:bg-[#ebd8ca] px-3 py-1.5 rounded-lg inline-flex items-center gap-1 font-medium transition-colors cursor-pointer border border-[#ded3c7]/60"
+                      >
+                        <Copy size={12} />
+                        <span>Copy URL</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 1: Name & Slug */}
           <label>
             Business name
             <input value={name} onChange={e => setName(e.target.value)} />
@@ -390,16 +515,17 @@ export function EnhancedSettingsPage({
               </div>
             </div>
             <small className="field-hint">
-              This slug will route customers directly to your live light-mode
-              studio onboarding & showcase page.
+              Routes directly to your live onboarding and studio profile page.
             </small>
           </label>
 
+          {/* Row 2: Tagline (Full width) */}
           <label className="full">
             Hero Tagline / Headline
             <input value={tagline} onChange={e => setTagline(e.target.value)} />
           </label>
 
+          {/* Row 3: Location & Website */}
           <label>
             Location / Region
             <input
@@ -413,11 +539,22 @@ export function EnhancedSettingsPage({
             <input value={website} onChange={e => setWebsite(e.target.value)} />
           </label>
 
+          {/* Row 4: Studio Email & WhatsApp Concierge */}
           <label>
             Studio Email
             <input value={email} onChange={e => setEmail(e.target.value)} />
           </label>
 
+          <label>
+            WhatsApp Concierge Line
+            <input
+              value={whatsAppNumber}
+              onChange={e => setWhatsAppNumber(e.target.value)}
+              placeholder="+234 800 ELAN VIP"
+            />
+          </label>
+
+          {/* Row 5: Philosophy / Bio (Full width) */}
           <label className="full">
             Studio Philosophy / Description (The Élan Touch)
             <textarea value={about} onChange={e => setAbout(e.target.value)} />

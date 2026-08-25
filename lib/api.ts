@@ -121,6 +121,18 @@ export async function submitConsultationInquiry(
   return newLead;
 }
 
+export async function uploadBusinessLogo(
+  _file?: File | Blob | string,
+): Promise<{ url: string; success: boolean }> {
+  await delay(400);
+  const cdnUrl =
+    "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png";
+  return {
+    url: cdnUrl,
+    success: true,
+  };
+}
+
 export async function submitReview(
   input: Omit<ReviewItem, "id" | "date">,
 ): Promise<ReviewItem> {

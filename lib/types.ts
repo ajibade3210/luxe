@@ -118,6 +118,7 @@ export interface BusinessProfile {
   website: string;
   email: string;
   phone: string;
+  logoUrl?: string;
   googleReviewsLink?: string;
   services: string[];
   socialChannels: SocialChannel[];

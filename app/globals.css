@@ -703,15 +703,15 @@ td:last-child {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 25px;
-  max-width: 690px;
+  gap: 0 32px;
+  max-width: 100%;
   margin-bottom: 25px;
 }
 .form-grid .full {
   grid-column: 1/-1;
 }
 .social-list {
-  max-width: 690px;
+  max-width: 100%;
 }
 .social-row {
   display: flex;

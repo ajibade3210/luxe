@@ -218,6 +218,7 @@ export const businessProfile: BusinessProfile = {
   website: "elanevents.com",
   email: "hello@elanevents.com",
   phone: "+234 800 ELAN VIP",
+  logoUrl: "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
   googleReviewsLink: "https://business.google.com/elan-events",
   services: [
     "Luxury Weddings",

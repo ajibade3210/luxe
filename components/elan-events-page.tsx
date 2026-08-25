@@ -457,14 +457,22 @@ export function ElanEventsPage({
             className="group flex items-center gap-3 text-decoration-none"
           >
             <div
-              style={{
-                borderColor: primaryColor,
-                color: primaryColor,
-                backgroundColor: secondaryColor,
-              }}
-              className="w-9 h-9 rounded-full border flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105"
+              className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105 overflow-hidden shadow-2xs shrink-0"
             >
-              {monogram}
+              {profile.logoUrl ? (
+                <img
+                  src={profile.logoUrl}
+                  alt={profile.businessName}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <div
+                  style={{ backgroundColor: secondaryColor, color: primaryColor }}
+                  className="w-full h-full rounded-full border flex items-center justify-center font-serif"
+                >
+                  {monogram}
+                </div>
+              )}
             </div>
             <div className="flex flex-col">
               <span
@@ -647,23 +655,24 @@ export function ElanEventsPage({
 
                   {/* Middle Area: Arched Crest + Company Logo / Name + Tagline */}
                   <div className="my-auto py-2 z-10 flex flex-col items-center max-w-md w-full">
-                    {/* Arched Architectural Brand Crest (Enlarged) */}
-                    <div className="relative mb-3.5 flex flex-col items-center">
-                      <div
-                        style={{ borderColor: primaryColor, backgroundColor: secondaryColor }}
-                        className="w-22 h-22 sm:w-26 sm:h-26 rounded-full border-2 p-1.5 flex items-center justify-center shadow-xs transition-transform duration-300 hover:scale-105"
-                      >
-                        <div
-                          style={{ borderColor: `${primaryColor}40` }}
-                          className="w-full h-full rounded-full border border-dashed flex items-center justify-center font-serif text-4xl sm:text-5xl font-normal"
-                        >
-                          <span style={{ color: primaryColor }}>{monogram}</span>
-                        </div>
+                    {/* Brand Logo Emblem (Clean without primary color border) */}
+                    <div className="relative mb-4 flex flex-col items-center">
+                      <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full flex items-center justify-center overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105">
+                        {profile.logoUrl ? (
+                          <img
+                            src={profile.logoUrl}
+                            alt={profile.businessName}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            style={{ backgroundColor: secondaryColor, color: primaryColor }}
+                            className="w-full h-full rounded-full flex items-center justify-center font-serif text-6xl font-normal select-none"
+                          >
+                            {monogram}
+                          </div>
+                        )}
                       </div>
-                      <div
-                        style={{ backgroundColor: primaryColor }}
-                        className="w-10 h-[2px] rounded-full mt-2.5 opacity-60"
-                      />
                     </div>
 
                     {/* Company Name */}
@@ -696,7 +705,7 @@ export function ElanEventsPage({
                         />
                       </div>
                     </div>
-                    <span className="text-[10px] text-[#8c8276] tracking-wide mt-2 font-medium">
+                    <span className="text-[10px] text-[#8c8278] tracking-wide mt-2 font-medium">
                       Scan with camera to connect
                     </span>
 
@@ -728,9 +737,17 @@ export function ElanEventsPage({
                     <div className="flex items-center gap-3">
                       <div
                         style={{ backgroundColor: secondaryColor, borderColor: '#ebd8ca', color: primaryColor }}
-                        className="w-11 h-11 rounded-2xl border flex items-center justify-center font-serif text-xl font-normal shrink-0 shadow-2xs"
+                        className="w-11 h-11 rounded-2xl border flex items-center justify-center font-serif text-xl font-normal shrink-0 shadow-2xs overflow-hidden"
                       >
-                        {monogram}
+                        {profile.logoUrl ? (
+                          <img
+                            src={profile.logoUrl}
+                            alt={profile.businessName}
+                            className="w-full h-full rounded-2xl object-cover"
+                          />
+                        ) : (
+                          monogram
+                        )}
                       </div>
                       <div>
                         <div className="text-base font-serif font-semibold text-[#1c1917] leading-tight">
@@ -898,9 +915,17 @@ export function ElanEventsPage({
                     borderColor: "#ebd8ca",
                     color: primaryColor,
                   }}
-                  className="w-12 h-12 rounded-2xl border flex items-center justify-center font-serif text-2xl"
+                  className="w-12 h-12 rounded-2xl border flex items-center justify-center font-serif text-2xl overflow-hidden shadow-2xs"
                 >
-                  {monogram}
+                  {profile.logoUrl ? (
+                    <img
+                      src={profile.logoUrl}
+                      alt={profile.businessName}
+                      className="w-full h-full rounded-2xl object-cover"
+                    />
+                  ) : (
+                    monogram
+                  )}
                 </div>
               </div>
 
@@ -1443,9 +1468,17 @@ export function ElanEventsPage({
                 color: primaryColor,
                 backgroundColor: secondaryColor,
               }}
-              className="w-8 h-8 rounded-full border flex items-center justify-center font-serif text-base"
+              className="w-8 h-8 rounded-full border flex items-center justify-center font-serif text-base overflow-hidden shadow-2xs"
             >
-              {monogram}
+              {profile.logoUrl ? (
+                <img
+                  src={profile.logoUrl}
+                  alt={profile.businessName}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                monogram
+              )}
             </div>
             <div>
               <div className="font-serif text-base text-[#1c1917] font-medium">
