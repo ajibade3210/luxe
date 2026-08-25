@@ -2,15 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { AdminLayout, Toast } from "@/components/admin-layout";
-import { CustomersPage } from "@/components/customers-page";
-import { ElanEventsPage } from "@/components/elan-events-page";
-import { LeadsPage } from "@/components/leads-page";
-import { LoginPage } from "@/components/login-page";
-import { ProfileSettingsPage } from "@/components/profile-settings-page";
-import { PublicLandingPage } from "@/components/public-landing-page";
-import { EnhancedSettingsPage } from "@/components/settings-page";
-import { SignupPage } from "@/components/signup-page";
+import { AdminLayout, Toast } from "@/components/admin/admin-layout";
+import { CustomersPage } from "@/components/admin/customers-page";
+import { LeadsPage } from "@/components/admin/leads-page";
+import { ProfileSettingsPage } from "@/components/admin/profile-settings-page";
+import { EnhancedSettingsPage } from "@/components/admin/settings-page";
+import { LoginPage } from "@/components/auth/login-page";
+import { SignupPage } from "@/components/auth/signup-page";
+import { PublicLandingPage } from "@/components/landing/public-landing-page";
+import { ElanEventsPage } from "@/components/studio/elan-events-page";
 
 export default function Page() {
   const [toast, setToast] = useState("");

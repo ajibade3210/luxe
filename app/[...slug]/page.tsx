@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, usePathname } from "next/navigation";
-import { ElanEventsPage } from "@/components/elan-events-page";
+import { ElanEventsPage } from "@/components/studio/elan-events-page";
 import Page from "../page";
 
 export default function SlugPage() {

@@ -4,7 +4,7 @@ import { ArrowRight, Check, Lock, Mail, Shield, Sparkles, User } from "lucide-re
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GoogleIcon } from "@/components/icons";
+import { GoogleIcon } from "@/components/shared/icons";
 import { checkSlugAvailability, createSession, updateBusinessProfile } from "@/lib/api";
 
 export function SignupPage() {

@@ -2,10 +2,10 @@
 
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { HeroRotatingCard } from "@/components/hero-rotating-card";
-import { SiteFooter } from "@/components/site-footer";
-import { TrustedBusinesses } from "@/components/trusted-businesses";
-import { WorkflowSection } from "@/components/workflow-section";
+import { HeroRotatingCard } from "@/components/landing/hero-rotating-card";
+import { SiteFooter } from "@/components/landing/site-footer";
+import { TrustedBusinesses } from "@/components/landing/trusted-businesses";
+import { WorkflowSection } from "@/components/landing/workflow-section";
 import { businessProfile } from "@/lib/mock-data";
 
 export function PublicLandingPage() {

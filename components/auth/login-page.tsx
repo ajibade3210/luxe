@@ -3,7 +3,7 @@
 import { ArrowRight, Lock, Mail, Shield } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { GoogleIcon } from "@/components/icons";
+import { GoogleIcon } from "@/components/shared/icons";
 import { createSession } from "@/lib/api";
 
 export function LoginPage() {
