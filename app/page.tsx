@@ -205,7 +205,7 @@ function Public() {
           <span>LuxeAdmin</span>
         </a>
         <div className="nav-ctas">
-          <a href="/login">Log in</a>
+          <a href="/signup">Sign up</a>
           <a className="dark-button bg-[#000000] border-[#000000]" href="/login">
             Enter Studio <ArrowRight size={15} />
           </a>

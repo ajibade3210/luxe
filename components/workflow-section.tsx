@@ -298,7 +298,7 @@ function ConvertPreviewCard() {
             <span className="flex items-center gap-1">
               <FileCheck size={11} className="text-[#2e7d32]" /> Order Made
             </span>
-            <span className="font-semibold text-[#2e7d32]">Paid & Approved</span>
+            <span className="font-semibold text-[#2e7d32]">Paid & Delivered</span>
           </div>
           <div className="w-full bg-[#ded5c6] h-1.5 rounded-full overflow-hidden">
             <div className="bg-[#2e7d32] h-full w-full rounded-full" />
