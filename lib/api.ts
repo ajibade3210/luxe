@@ -278,4 +278,51 @@ export async function disconnectSocialChannel(id: string) {
   return channel;
 }
 
+export interface UserSession {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  studioName?: string;
+  studioSlug?: string;
+}
+
+export function getCurrentSession(): UserSession | null {
+  if (typeof window === "undefined") return null;
+  const stored = localStorage.getItem("luxe_auth_session");
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
+
+export function isAuthenticated(): boolean {
+  return getCurrentSession() !== null;
+}
+
+export function createSession(user: Partial<UserSession>): UserSession {
+  const session: UserSession = {
+    id: user.id || `usr-${Date.now()}`,
+    name: user.name || "Amelia Bell",
+    email: user.email || "hello@elanevents.com",
+    role: user.role || "Studio Director",
+    studioName: user.studioName || "Élan Events",
+    studioSlug: user.studioSlug || "elan-events",
+  };
+  if (typeof window !== "undefined") {
+    localStorage.setItem("luxe_auth_session", JSON.stringify(session));
+    window.dispatchEvent(new CustomEvent("luxe_auth_changed", { detail: session }));
+  }
+  return session;
+}
+
+export function clearSession(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("luxe_auth_session");
+    window.dispatchEvent(new CustomEvent("luxe_auth_changed", { detail: null }));
+  }
+}
+
 export { socialChannels };

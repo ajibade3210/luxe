@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import {
   checkSlugAvailability,
   getBusinessProfile,
+  isAuthenticated,
   publishChanges,
   updateBusinessProfile,
   uploadBusinessLogo,
@@ -195,6 +196,15 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
 
   // Load freshest profile on mount
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const claim = params.get("claim");
+      if (claim && !isAuthenticated()) {
+        window.location.href = `/signup?claim=${encodeURIComponent(claim)}`;
+        return;
+      }
+    }
+
     getBusinessProfile().then(p => {
       setName(p.businessName);
       setSlug(p.slug);

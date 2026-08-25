@@ -9,7 +9,7 @@ export default function SlugPage() {
   const pathname = usePathname();
 
   // If the pathname matches an admin dashboard sub-route, let the main Page component handle it
-  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login"];
+  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login", "/signup"];
   if (adminRoutes.includes(pathname)) {
     return <Page />;
   }

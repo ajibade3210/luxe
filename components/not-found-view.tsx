@@ -13,7 +13,8 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { isAuthenticated } from "@/lib/api";
 import { featuredOrganizations } from "@/lib/mock-data";
 import type { OrganizationPreview } from "@/lib/types";
 
@@ -55,8 +56,21 @@ function findClosestMatch(query: string, list: OrganizationPreview[]): Organizat
 export function NotFoundView({ slug }: NotFoundViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
 
   const cleanSlug = (slug || "").trim();
+
+  // Track authentication state
+  useEffect(() => {
+    setSignedIn(isAuthenticated());
+    const handleAuthChange = () => setSignedIn(isAuthenticated());
+    window.addEventListener("luxe_auth_changed", handleAuthChange);
+    return () => window.removeEventListener("luxe_auth_changed", handleAuthChange);
+  }, []);
+
+  const claimHref = signedIn
+    ? `/settings?claim=${encodeURIComponent(cleanSlug)}`
+    : `/signup?claim=${encodeURIComponent(cleanSlug)}`;
 
   // Smart suggestion for typos
   const suggestedOrg = useMemo(() => {
@@ -218,7 +232,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
               <span>Return to Homepage</span>
             </Link>
             <Link
-              href={`/settings?claim=${encodeURIComponent(cleanSlug)}`}
+              href={claimHref}
               className="inline-flex items-center gap-2 bg-white text-[#191c1d] border border-[#dcd6cb] text-sm font-medium px-5 py-2.5 rounded-full hover:border-[#b8ad9b] hover:bg-[#fcfaf7] transition-all shadow-xs text-decoration-none"
             >
               <PlusCircle size={15} className="text-[#855e2e]" />

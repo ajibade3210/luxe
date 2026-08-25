@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ElanEventsPage } from "@/components/elan-events-page";
 import { HeroRotatingCard } from "@/components/hero-rotating-card";
 import { EnhancedSettingsPage } from "@/components/settings-page";
+import { SignupPage } from "@/components/signup-page";
 import { SiteFooter } from "@/components/site-footer";
 import { TrustedBusinesses } from "@/components/trusted-businesses";
 import { WorkflowSection } from "@/components/workflow-section";
@@ -652,11 +653,12 @@ export default function Page() {
   const pathname = usePathname();
   const currentPath = pathname || "/";
 
+  if (currentPath === "/signup") return <SignupPage />;
   if (currentPath === "/login") return <Login />;
   if (currentPath === "/") return <Public />;
 
   // If path is a public business profile slug (e.g. /elan-events, /maison-bell-events, etc.)
-  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login", "/"];
+  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login", "/signup", "/"];
   if (!adminRoutes.includes(currentPath)) {
     const slug = currentPath.replace(/^\//, "").split("/")[0] || "elan-events";
     return <ElanEventsPage slug={slug} />;

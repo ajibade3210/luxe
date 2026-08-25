@@ -2629,3 +2629,16 @@ blockquote {
     padding: 25px 20px 70px;
   }
 }
+
+.signup-field input {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  width: 100%;
+}
+.signup-field input:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
