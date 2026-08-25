@@ -161,10 +161,10 @@ export function SignupPage() {
         <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-10 shadow-sm">
           {/* Claim Banner Pill */}
           {claimSlug ? (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-mono text-[#855e2e] mb-6 w-full justify-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-6 w-full justify-center">
               <Sparkles size={13} className="text-[#855e2e]" />
               <span>
-                Reserving Handle: <b>/{claimSlug}</b>
+                Reserving Handle: <span className="font-semibold text-[#6f4c22]">/{claimSlug}</span>
               </span>
             </div>
           ) : (
@@ -181,9 +181,7 @@ export function SignupPage() {
             {claimSlug ? (
               <>
                 Create your director account to secure{" "}
-                <code className="font-mono font-semibold text-[#191c1d]">
-                  luxeadmin.com/{claimSlug}
-                </code>{" "}
+                <span className="font-semibold text-[#855e2e]">luxeadmin.com/{claimSlug}</span>{" "}
                 before anyone else.
               </>
             ) : (
@@ -232,7 +230,7 @@ export function SignupPage() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
                   Studio Handle / URL Slug
                 </label>
-                <span className="text-[10px] text-[#8e9192] font-mono">
+                <span className="text-[10px] text-[#8e9192]">
                   {isCheckingSlug ? (
                     "Checking…"
                   ) : slugAvailable ? (
@@ -245,7 +243,7 @@ export function SignupPage() {
                 </span>
               </div>
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                <span className="text-[#8e9192] font-mono select-none shrink-0 text-xs mr-1">
+                <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1">
                   luxeadmin.com/
                 </span>
                 <input
@@ -254,7 +252,7 @@ export function SignupPage() {
                   value={slug}
                   onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
                   placeholder="your-studio"
-                  className="w-full font-mono text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
                 />
               </div>
             </div>
