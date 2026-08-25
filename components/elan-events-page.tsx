@@ -73,11 +73,32 @@ export function ElanEventsPage({
   }, [slug]);
 
   // UI state
+  const [isFromSettings, setIsFromSettings] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Check if visitor is studio admin previewing from settings
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const fromParam = params.get("from");
+      const previewParam = params.get("preview");
+      const referrer = document.referrer || "";
+      if (
+        fromParam === "settings" ||
+        fromParam === "admin" ||
+        previewParam === "true" ||
+        referrer.includes("/settings") ||
+        referrer.includes("/leads") ||
+        referrer.includes("/customers")
+      ) {
+        setIsFromSettings(true);
+      }
+    }
+  }, []);
 
   // Modals
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -413,34 +434,36 @@ export function ElanEventsPage({
       style={{ color: textColor }}
       className="elan-root bg-[#f8f9fa] min-h-screen font-sans selection:bg-[#d8e2ff] selection:text-[#0058be] antialiased"
     >
-      {/* Top Banner / Breadcrumb */}
-      <div className="bg-[#edeeef] border-b border-[#e1e3e4] px-4 py-2 text-xs text-[#6b7280] flex items-center justify-between">
-        <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
-          <span
-            style={{ color: primaryColor }}
-            className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
-          >
-            <Sparkles size={13} className="text-[#0058be]" /> Official Public Profile
-          </span>
-          <span className="text-[#c4c7c7]">·</span>
-          <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
-          <div className="ml-auto flex items-center gap-3">
-            <button
-              onClick={handleCopyLink}
-              style={{ color: textColor }}
-              className="inline-flex items-center gap-1 hover:text-[#0058be] font-medium transition-colors cursor-pointer"
+      {/* Top Banner / Breadcrumb - Only visible when coming from Studio Settings / Admin */}
+      {isFromSettings && (
+        <div className="bg-[#edeeef] border-b border-[#e1e3e4] px-4 py-2 text-xs text-[#6b7280] flex items-center justify-between">
+          <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
+            <span
+              style={{ color: primaryColor }}
+              className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
             >
-              <Share2 size={12} /> Share profile
-            </button>
-            <a
-              href="/settings"
-              className="text-[#6b7280] hover:text-[#191c1d] font-medium transition-colors hidden sm:inline"
-            >
-              Return to Studio Settings →
-            </a>
+              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
+            </span>
+            <span className="text-[#c4c7c7]">·</span>
+            <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
+            <div className="ml-auto flex items-center gap-3">
+              <button
+                onClick={handleCopyLink}
+                style={{ color: textColor }}
+                className="inline-flex items-center gap-1 hover:text-[#0058be] font-medium transition-colors cursor-pointer"
+              >
+                <Share2 size={12} /> Share profile
+              </button>
+              <a
+                href="/settings"
+                className="text-[#6b7280] hover:text-[#191c1d] font-medium transition-colors hidden sm:inline"
+              >
+                Return to Studio Settings →
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Navigation Header */}
       <header
@@ -474,17 +497,12 @@ export function ElanEventsPage({
                 </div>
               )}
             </div>
-            <div className="flex flex-col">
-              <span
-                className="font-serif text-xl sm:text-2xl tracking-tight font-normal"
-                style={{ color: textColor }}
-              >
-                {profile.businessName}
-              </span>
-              <span className="text-[9px] uppercase tracking-[0.18em] text-[#8c8278] font-medium -mt-1 truncate max-w-[200px]">
-                {profile.location || "Lagos · Worldwide"}
-              </span>
-            </div>
+            <span
+              className="font-serif text-xl sm:text-2xl tracking-tight font-normal"
+              style={{ color: textColor }}
+            >
+              {profile.businessName}
+            </span>
           </a>
 
           {/* Desktop Navigation */}

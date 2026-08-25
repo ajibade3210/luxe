@@ -365,7 +365,7 @@ export function EnhancedSettingsPage({
           </button>
           <a
             className="dark-button"
-            href={`/${slug || "elan-events"}`}
+            href={`/${slug || "elan-events"}?from=settings`}
             target="_blank"
             rel="noreferrer"
           >

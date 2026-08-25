@@ -8,6 +8,7 @@ import {
   Check,
   ChevronRight,
   ExternalLink,
+  Eye,
   Menu,
   Search,
   Settings,
@@ -104,11 +105,11 @@ function Sidebar({
         </a>
         <a
           className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
-          href={`/${slug}`}
+          href={`/${slug}?from=settings`}
           target="_blank"
           rel="noreferrer"
         >
-          <Sparkles size={15} /> Profile View{" "}
+          <Eye size={15} /> Profile View{" "}
           <ExternalLink size={13} className="ml-auto opacity-70" />
         </a>
         <a className={path === "/settings" ? "active" : ""} href="/settings">
@@ -147,13 +148,13 @@ function Header({
       </div>
       <div className="header-actions">
         <a
-          href={`/${slug}`}
+          href={`/${slug}?from=settings`}
           target="_blank"
           rel="noreferrer"
           className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#0058be] text-[#191c1d]"
           style={{ fontSize: "11px", padding: "9px 14px" }}
         >
-          <Sparkles size={14} className="text-[#0058be]" /> Profile View
+          <Eye size={14} className="text-[#0058be]" /> Profile View
         </a>
         <button className="icon-button" aria-label="Notifications">
           <Bell size={17} />
