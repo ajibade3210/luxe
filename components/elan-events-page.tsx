@@ -148,23 +148,23 @@ export function ElanEventsPage({
       case "Square":
         return "rounded-none";
       case "Subtle":
-        return "rounded-md";
+        return "rounded";
       case "Rounded":
-        return "rounded-2xl";
+        return "rounded-lg";
       case "Pill":
         return "rounded-full";
       default:
-        return "rounded-2xl";
+        return "rounded";
     }
   };
 
   const radiusClass = getRadiusClass(profile.buttonRadius);
 
   // Helper for colors
-  const primaryColor = profile.colors?.primary || "#B84C24";
-  const buttonColor = profile.colors?.button || "#B84C24";
-  const secondaryColor = profile.colors?.secondary || "#FAEEE4";
-  const textColor = profile.colors?.text || "#1C1917";
+  const primaryColor = profile.colors?.primary || "#000000";
+  const buttonColor = profile.colors?.button || "#000000";
+  const secondaryColor = profile.colors?.secondary || "#0058BE";
+  const textColor = profile.colors?.text || "#191C1D";
 
   // Computed review stats
   const averageRating = useMemo(() => {
@@ -411,30 +411,30 @@ export function ElanEventsPage({
   return (
     <div
       style={{ color: textColor }}
-      className="elan-root bg-[#faf8f5] min-h-screen font-sans selection:bg-[#f6dfd5] selection:text-[#b84c24] antialiased"
+      className="elan-root bg-[#f8f9fa] min-h-screen font-sans selection:bg-[#d8e2ff] selection:text-[#0058be] antialiased"
     >
       {/* Top Banner / Breadcrumb */}
-      <div className="bg-[#f2ece2] border-b border-[#e5ded2] px-4 py-2 text-xs text-[#78716c] flex items-center justify-between">
+      <div className="bg-[#edeeef] border-b border-[#e1e3e4] px-4 py-2 text-xs text-[#6b7280] flex items-center justify-between">
         <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
           <span
             style={{ color: primaryColor }}
-            className="inline-flex items-center gap-1 font-medium"
+            className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
           >
-            <Sparkles size={13} /> Official Public Profile
+            <Sparkles size={13} className="text-[#0058be]" /> Official Public Profile
           </span>
-          <span className="text-[#c5bdb1]">·</span>
-          <span>luxeadmin.com/{profile.slug || slug}</span>
+          <span className="text-[#c4c7c7]">·</span>
+          <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
           <div className="ml-auto flex items-center gap-3">
             <button
               onClick={handleCopyLink}
               style={{ color: textColor }}
-              className="inline-flex items-center gap-1 hover:opacity-75 font-medium transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 hover:text-[#0058be] font-medium transition-colors cursor-pointer"
             >
               <Share2 size={12} /> Share profile
             </button>
             <a
               href="/settings"
-              className="text-[#78716c] hover:text-[#1c1917] font-medium transition-colors hidden sm:inline"
+              className="text-[#6b7280] hover:text-[#191c1d] font-medium transition-colors hidden sm:inline"
             >
               Return to Studio Settings →
             </a>
@@ -643,7 +643,7 @@ export function ElanEventsPage({
                         e.stopPropagation();
                         setIsFlipped(true);
                       }}
-                      className="inline-flex items-center gap-1.5 text-xs text-[#8a3e20] hover:text-[#b84c24] bg-white/80 hover:bg-white px-3 py-1.5 rounded-full border border-[#ebd6c5] transition-all cursor-pointer shadow-2xs z-10"
+                      className="inline-flex items-center gap-1.5 text-xs text-[#191c1d] hover:text-[#0058be] bg-white hover:bg-[#f3f4f5] px-3 py-1.5 rounded-full border border-[#e5e7eb] transition-all cursor-pointer shadow-2xs z-10 font-medium"
                       title="Click to flip and view full studio contact details"
                     >
                       <RotateCw size={12} />
@@ -773,8 +773,8 @@ export function ElanEventsPage({
                   </div>
 
                   {/* Editorial Philosophy Quote with Left Accent Bar */}
-                  <div className="my-3 pl-4 border-l-[3px] border-[#b84c24] py-0.5">
-                    <p className="text-xs sm:text-[14px] text-[#2c2621] font-serif italic leading-relaxed">
+                  <div className="my-3 pl-4 border-l-[3px] border-[#0058be] py-0.5">
+                    <p className="text-xs sm:text-[14px] text-[#191c1d] font-sans italic leading-relaxed">
                       &ldquo;{profile.description}&rdquo;
                     </p>
                   </div>
@@ -1022,11 +1022,11 @@ export function ElanEventsPage({
                     placeholder="Enter your email address"
                     value={newsletterEmail}
                     onChange={e => setNewsletterEmail(e.target.value)}
-                    className="flex-1 bg-[#faf8f5] border border-[#e2dad0] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] placeholder:text-[#9e958b] focus:outline-none focus:border-[#b84c24]"
+                    className="flex-1 bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] placeholder:text-[#9ca3af] focus:outline-none focus:border-[#0058be]"
                   />
                   <button
                     type="submit"
-                    className={`bg-[#1c1917] hover:bg-[#38332f] text-white text-xs font-medium px-4 py-2.5 transition-colors cursor-pointer shrink-0 ${radiusClass}`}
+                    className={`bg-[#000000] hover:bg-[#262626] text-white text-xs font-medium px-4 py-2.5 transition-colors cursor-pointer shrink-0 ${radiusClass}`}
                   >
                     Subscribe
                   </button>
@@ -1086,7 +1086,7 @@ export function ElanEventsPage({
                   >
                     {meta.icon}
                   </div>
-                  <span className="text-xs sm:text-[13px] font-medium text-[#1c1917] group-hover:text-[#b84c24] transition-colors block tracking-tight">
+                  <span className="text-xs sm:text-[13px] font-medium text-[#191c1d] group-hover:text-[#0058be] transition-colors block tracking-tight">
                     {channel.label}
                   </span>
                 </a>
@@ -1574,13 +1574,13 @@ export function ElanEventsPage({
                   onChange={e =>
                     setQuoteForm({ ...quoteForm, name: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Email Address *
                   </label>
                   <input
@@ -1591,12 +1591,12 @@ export function ElanEventsPage({
                     onChange={e =>
                       setQuoteForm({ ...quoteForm, email: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Phone / WhatsApp
                   </label>
                   <input
@@ -1606,14 +1606,14 @@ export function ElanEventsPage({
                     onChange={e =>
                       setQuoteForm({ ...quoteForm, phone: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Service Required
                   </label>
                   <select
@@ -1621,7 +1621,7 @@ export function ElanEventsPage({
                     onChange={e =>
                       setQuoteForm({ ...quoteForm, service: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   >
                     {(profile.services || []).map(s => (
                       <option key={s} value={s}>
@@ -1632,7 +1632,7 @@ export function ElanEventsPage({
                 </div>
 
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Estimated Date
                   </label>
                   <input
@@ -1641,13 +1641,13 @@ export function ElanEventsPage({
                     onChange={e =>
                       setQuoteForm({ ...quoteForm, eventDate: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Event Vision / Details
                 </label>
                 <textarea
@@ -1657,7 +1657,7 @@ export function ElanEventsPage({
                   onChange={e =>
                     setQuoteForm({ ...quoteForm, message: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl p-3.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24] resize-none"
+                  className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
 
@@ -1720,30 +1720,30 @@ export function ElanEventsPage({
                   onChange={e =>
                     setReviewForm({ ...reviewForm, author: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Event Type
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Destination Wedding · Victoria Island"
+                  placeholder="e.g. Wedding, Milestone Gala, Corporate"
                   value={reviewForm.eventType}
                   onChange={e =>
                     setReviewForm({ ...reviewForm, eventType: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1.5">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Rating
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2 items-center py-1">
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
                       type="button"
@@ -1751,13 +1751,11 @@ export function ElanEventsPage({
                       onClick={() =>
                         setReviewForm({ ...reviewForm, rating: star })
                       }
-                      style={{ color: primaryColor }}
-                      className="p-1 cursor-pointer"
+                      className="p-1 text-[#f59e0b] hover:scale-110 transition-transform cursor-pointer"
                     >
                       <Star
-                        size={22}
-                        fill={star <= reviewForm.rating ? primaryColor : "none"}
-                        stroke={primaryColor}
+                        size={20}
+                        fill={star <= reviewForm.rating ? "#f59e0b" : "none"}
                       />
                     </button>
                   ))}
@@ -1765,18 +1763,18 @@ export function ElanEventsPage({
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
-                  Your Experience
+                <label className="block text-[#1f2937] font-medium mb-1">
+                  Your Review / Experience
                 </label>
                 <textarea
                   rows={3}
                   required
-                  placeholder={`How was your experience working with the ${profile.businessName} team?`}
+                  placeholder="Tell us about the artistry, communication, and execution..."
                   value={reviewForm.comment}
                   onChange={e =>
                     setReviewForm({ ...reviewForm, comment: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl p-3.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24] resize-none"
+                  className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
 

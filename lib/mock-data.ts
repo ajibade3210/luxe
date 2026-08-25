@@ -239,12 +239,12 @@ export const businessProfile: BusinessProfile = {
   emailAddress: "hello@elanevents.com",
   physicalAddress: "Victoria Island, Lagos, Nigeria",
   colors: {
-    primary: "#B84C24",
-    secondary: "#FAEEE4",
-    button: "#B84C24",
-    text: "#1C1917",
+    primary: "#000000",
+    secondary: "#0058BE",
+    button: "#000000",
+    text: "#191C1D",
   },
-  buttonRadius: "Rounded",
+  buttonRadius: "Subtle",
   updatedAt: "2026-08-25T12:00:00Z",
 };
 

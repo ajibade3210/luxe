@@ -103,7 +103,7 @@ function Sidebar({
           <Users size={16} /> Customers
         </a>
         <a
-          className="text-[#b84c24] hover:bg-[#faeee4]/60 font-medium"
+          className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
           href={`/${slug}`}
           target="_blank"
           rel="noreferrer"
@@ -116,7 +116,7 @@ function Sidebar({
         </a>
       </nav>
       <a className="account" href="/profile" aria-label="Open profile settings">
-        <div className="avatar bg-[#b84c24]">AB</div>
+        <div className="avatar bg-[#000000] text-white">AB</div>
         <div>
           <b>Amelia Bell</b>
           <span>Studio Director</span>
@@ -150,16 +150,16 @@ function Header({
           href={`/${slug}`}
           target="_blank"
           rel="noreferrer"
-          className="outline-button hidden sm:inline-flex border-[#ebd8ca] hover:border-[#b84c24] text-[#1c1917]"
+          className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#0058be] text-[#191c1d]"
           style={{ fontSize: "11px", padding: "9px 14px" }}
         >
-          <Sparkles size={14} className="text-[#b84c24]" /> Profile View
+          <Sparkles size={14} className="text-[#0058be]" /> Profile View
         </a>
         <button className="icon-button" aria-label="Notifications">
           <Bell size={17} />
         </button>
         <button
-          className="publish bg-[#b84c24] hover:bg-[#a1401c]"
+          className="publish bg-[#000000] hover:bg-[#262626]"
           disabled={busy}
           onClick={async () => {
             setBusy(true);
@@ -219,13 +219,13 @@ function Public() {
           </nav>
         </div>
         <a href="/" className="public-logo" aria-label="LuxeAdmin home">
-          <span className="brand-mark text-[#b84c24] border-[#b84c24]">É</span>
+          <span className="brand-mark bg-[#000000] text-white">É</span>
           <span>LuxeAdmin</span>
         </a>
         <div className="nav-ctas">
           <a href="/login">Log in</a>
           <a
-            className="dark-button bg-[#b84c24] border-[#b84c24]"
+            className="dark-button bg-[#000000] border-[#000000]"
             href="/login"
           >
             Enter Studio <ArrowRight size={15} />
@@ -247,12 +247,12 @@ function Public() {
           </p>
           <div className="hero-ctas">
             <a
-              className="dark-button bg-[#b84c24] border-[#b84c24]"
+              className="dark-button bg-[#000000] border-[#000000]"
               href="/settings"
             >
               Enter your studio <ArrowRight size={15} />
             </a>
-            <a className="text-link text-[#b84c24]" href={`/${slug}`}>
+            <a className="text-link text-[#0058be]" href={`/${slug}`}>
               View Public Business Profile <ChevronRight size={15} />
             </a>
           </div>
@@ -262,12 +262,12 @@ function Public() {
           href={`/${slug}`}
           className="profile-card group transition-transform hover:-translate-y-1 block text-decoration-none"
         >
-          <div className="profile-image bg-[#faeee4] text-[#b84c24] font-serif">
+          <div className="profile-image bg-[#f3f4f6] text-[#000000] font-mono">
             É
           </div>
           <div className="profile-meta">
             <span className="eyebrow">Luxury Event Studio · Lagos</span>
-            <h2 className="group-hover:text-[#b84c24] transition-colors">
+            <h2 className="group-hover:text-[#0058be] transition-colors">
               Élan Events
             </h2>
             <p>
@@ -277,7 +277,7 @@ function Public() {
           </div>
           <div className="profile-foot">
             <span>Bespoke Experiences</span>
-            <span className="text-[#b84c24] font-medium">
+            <span className="text-[#0058be] font-medium">
               View live profile <ArrowRight size={14} />
             </span>
           </div>
@@ -347,7 +347,7 @@ function Login() {
           <input type="password" defaultValue="password" />
         </label>
         <a
-          className="dark-button login-button bg-[#b84c24] border-[#b84c24]"
+          className="dark-button login-button bg-[#000000] border-[#000000]"
           href="/settings"
         >
           Sign in <ArrowRight size={15} />
@@ -500,7 +500,7 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
             <blockquote>{selectedLead.message}</blockquote>
             <div className="drawer-actions">
               <button
-                className="dark-button bg-[#b84c24] border-[#b84c24]"
+                className="dark-button bg-[#000000] border-[#000000]"
                 onClick={async () => {
                   await updateLeadStatus(selectedLead.id, "contacted");
                   setItems(
@@ -649,7 +649,7 @@ function Customers() {
             </div>
             <div className="drawer-actions">
               <a
-                className="dark-button bg-[#b84c24] border-[#b84c24]"
+                className="dark-button bg-[#000000] border-[#000000]"
                 href={`mailto:${selectedCustomer.email}`}
               >
                 Email customer <ArrowRight size={15} />
@@ -689,7 +689,7 @@ function ProfileSettings({ onToast }: { onToast: (s: string) => void }) {
             <span className="eyebrow">Profile picture</span>
             <h2>Make it personal.</h2>
           </div>
-          <div className="profile-avatar-large bg-[#b84c24]">
+          <div className="profile-avatar-large bg-[#000000] text-white">
             {photo ? <img src={photo} alt="Profile preview" /> : "AB"}
           </div>
         </div>
@@ -763,7 +763,7 @@ function ProfileSettings({ onToast }: { onToast: (s: string) => void }) {
         </div>
       </div>
       <button
-        className="dark-button bg-[#b84c24] border-[#b84c24]"
+        className="dark-button bg-[#000000] border-[#000000]"
         disabled={saving}
         onClick={save}
       >

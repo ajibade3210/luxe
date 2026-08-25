@@ -154,14 +154,14 @@ export function EnhancedSettingsPage({
   // Appearance
   const [colors, setColors] = useState<ColorScheme>(
     initialMockProfile.colors || {
-      primary: "#B84C24",
-      secondary: "#FAEEE4",
-      button: "#B84C24",
-      text: "#1C1917",
+      primary: "#000000",
+      secondary: "#0058BE",
+      button: "#000000",
+      text: "#191C1D",
     },
   );
   const [radius, setRadius] = useState<ButtonRadiusType>(
-    initialMockProfile.buttonRadius || "Rounded",
+    initialMockProfile.buttonRadius || "Subtle",
   );
 
   // Validation & saving state
@@ -364,7 +364,7 @@ export function EnhancedSettingsPage({
             <Copy size={14} /> Copy Link
           </button>
           <a
-            className="dark-button bg-[#b84c24] border-[#b84c24] hover:bg-[#a1401c]"
+            className="dark-button"
             href={`/${slug || "elan-events"}`}
             target="_blank"
             rel="noreferrer"
@@ -383,13 +383,13 @@ export function EnhancedSettingsPage({
       >
         <div className="form-grid">
           {/* Logo Upload Section - Structured, Balanced & Luxury Polished */}
-          <div className="full bg-[#faf8f5] border border-[#e8dfd3] rounded-2xl p-6 mb-5 shadow-2xs">
+          <div className="full bg-white border border-[#e5e7eb] rounded-lg p-6 mb-5 shadow-2xs">
             {/* Header */}
-            <div className="border-b border-[#ebd8ca]/60 pb-3.5 mb-5">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8a3e20] block">
+            <div className="border-b border-[#e5e7eb] pb-3.5 mb-5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
                 Business Brand Logo
               </span>
-              <span className="text-xs text-[#78716c]">
+              <span className="text-xs text-[#6b7280]">
                 Your official studio crest displayed on onboarding cards, concierge header, and footer
               </span>
             </div>
@@ -398,25 +398,25 @@ export function EnhancedSettingsPage({
             <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-center">
               {/* Logo Preview Column */}
               <div className="flex flex-col items-center gap-2">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border border-[#ded3c7] bg-white p-2.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
                   {logoUrl ? (
                     <img
                       src={logoUrl}
                       alt="Business Logo Preview"
-                      className="w-full h-full object-contain rounded-xl"
+                      className="w-full h-full object-contain rounded-md"
                     />
                   ) : (
-                    <span className="font-serif text-3xl text-[#b84c24]">
+                    <span className="font-sans font-bold text-3xl text-[#191c1d]">
                       {name ? name.charAt(0) : "É"}
                     </span>
                   )}
                   {isUploadingLogo && (
                     <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                      <Loader2 size={22} className="animate-spin text-[#b84c24]" />
+                      <Loader2 size={22} className="animate-spin text-[#0058be]" />
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] text-[#8c8278] font-medium tracking-wider uppercase">
+                <span className="text-[10px] text-[#6b7280] font-medium tracking-wider uppercase">
                   PNG · SVG · JPG
                 </span>
               </div>
@@ -425,14 +425,14 @@ export function EnhancedSettingsPage({
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-sm font-semibold text-[#1c1917]">
+                    <h4 className="text-sm font-semibold text-[#191c1d]">
                       Studio Brand Crest
                     </h4>
-                    <p className="text-xs text-[#78716c] mt-0.5">
+                    <p className="text-xs text-[#6b7280] mt-0.5">
                       Upload a new logo to automatically generate a CDN URL and update all live touchpoints.
                     </p>
                   </div>
-                  <label className="cursor-pointer inline-flex items-center gap-2 bg-[#1c1917] hover:bg-[#332f2b] text-white px-4 py-2.5 rounded-xl text-xs font-medium transition-all shadow-xs shrink-0 active:scale-98">
+                  <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-xs shrink-0">
                     <Upload size={14} />
                     <span>{isUploadingLogo ? "Uploading to CDN..." : "Upload New Logo"}</span>
                     <input
@@ -447,7 +447,7 @@ export function EnhancedSettingsPage({
 
                 {/* Integrated CDN URL Bar */}
                 <div className="space-y-1.5">
-                  <span className="text-[11px] font-medium text-[#78716c] block">
+                  <span className="text-[11px] font-medium text-[#6b7280] block">
                     Generated CDN Asset URL
                   </span>
                   <div className="relative flex items-center">
@@ -456,7 +456,7 @@ export function EnhancedSettingsPage({
                       value={logoUrl}
                       onChange={(e) => setLogoUrl(e.target.value)}
                       placeholder="https://cdn.accessa.ng/..."
-                      className="w-full text-xs font-mono bg-white border border-[#ded3c7] rounded-xl pl-3.5 pr-28 py-2.5 text-[#332e29] focus:border-[#b84c24] focus:outline-none shadow-2xs"
+                      className="w-full text-xs font-mono bg-[#f8f9fa] border border-[#e5e7eb] rounded-md pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
                     />
                     {logoUrl && (
                       <button
@@ -467,7 +467,7 @@ export function EnhancedSettingsPage({
                             onToast("CDN Logo URL copied to clipboard!");
                           }
                         }}
-                        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#524b44] hover:text-[#1c1917] bg-[#f7f2ea] hover:bg-[#ebd8ca] px-3 py-1.5 rounded-lg inline-flex items-center gap-1 font-medium transition-colors cursor-pointer border border-[#ded3c7]/60"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e7e8e9] bg-[#f3f4f5] px-3 py-1.5 rounded inline-flex items-center gap-1 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
                       >
                         <Copy size={12} />
                         <span>Copy URL</span>
@@ -576,7 +576,7 @@ export function EnhancedSettingsPage({
                 type="button"
                 onClick={() => removeService(service)}
                 aria-label={`Remove service ${service}`}
-                className="hover:text-[#b84c24] cursor-pointer"
+                className="hover:text-[#ba1a1a] cursor-pointer"
               >
                 ×
               </button>
@@ -584,7 +584,7 @@ export function EnhancedSettingsPage({
           ))}
 
           {showAddService ? (
-            <div className="inline-flex items-center gap-2 border border-[#b84c24] rounded-md px-2 py-1 bg-white">
+            <div className="inline-flex items-center gap-2 border border-[#0058be] rounded px-2 py-1 bg-white">
               <input
                 type="text"
                 autoFocus
@@ -600,14 +600,14 @@ export function EnhancedSettingsPage({
               <button
                 type="button"
                 onClick={addService}
-                className="text-xs bg-[#b84c24] text-white px-2 py-1 rounded font-medium"
+                className="text-xs bg-[#000000] hover:bg-[#262626] text-white px-2.5 py-1 rounded font-medium"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddService(false)}
-                className="text-xs text-[#78716c]"
+                className="text-xs text-[#6b7280]"
               >
                 Cancel
               </button>
@@ -635,7 +635,7 @@ export function EnhancedSettingsPage({
             <button
               type="button"
               onClick={() => setShowAddProjectModal(true)}
-              className="dark-button bg-[#b84c24] border-[#b84c24] hover:bg-[#a1401c]"
+              className="dark-button"
             >
               <Upload size={15} /> Upload new project
             </button>
@@ -836,14 +836,14 @@ export function EnhancedSettingsPage({
 
       {/* Card 07: Appearance & Branding */}
       <Card number="07" title="Appearance & Branding">
-        <span className="eyebrow">Colors (Light Luxury Palette)</span>
+        <span className="eyebrow">Colors (VibeCoder Lumina Palette)</span>
         <div className="color-row">
           {(
             [
-              ["Primary (Terracotta)", "primary"],
-              ["Secondary (Peach/Champagne)", "secondary"],
-              ["Button Color", "button"],
-              ["Text Color (Charcoal)", "text"],
+              ["Primary (Core Brand)", "primary"],
+              ["Secondary (Electric Blue)", "secondary"],
+              ["Button Action Color", "button"],
+              ["Text Color (Main)", "text"],
             ] as const
           ).map(([label, key]) => (
             <label className="color-control" key={key}>
@@ -857,7 +857,7 @@ export function EnhancedSettingsPage({
                     setColors({ ...colors, [key]: e.target.value })
                   }
                 />
-                <code>{colors[key].toUpperCase()}</code>
+                <code className="font-mono">{colors[key].toUpperCase()}</code>
               </div>
             </label>
           ))}
@@ -909,27 +909,27 @@ export function EnhancedSettingsPage({
 
       {/* Add Project Modal */}
       {showAddProjectModal && (
-        <div className="fixed inset-0 z-50 bg-[#171716]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e5dcd1] rounded-3xl max-w-lg w-full p-8 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-[#191c1d]/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-[#e5e7eb] rounded-lg max-w-lg w-full p-8 shadow-2xl relative">
             <button
               onClick={() => setShowAddProjectModal(false)}
-              className="absolute top-6 right-6 text-[#78716c] hover:text-[#1c1917] p-1 cursor-pointer"
+              className="absolute top-6 right-6 text-[#6b7280] hover:text-[#191c1d] p-1 cursor-pointer"
             >
               <X size={20} />
             </button>
 
             <div className="mb-6">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-[#b84c24] font-semibold">
+              <span className="text-[10px] uppercase tracking-[0.18em] text-[#0058be] font-semibold">
                 Portfolio Showcase
               </span>
-              <h3 className="font-serif text-2xl text-[#1c1917] font-normal mt-1">
+              <h3 className="font-sans text-2xl text-[#191c1d] font-bold mt-1">
                 Upload New Project
               </h3>
             </div>
 
             <form onSubmit={handleAddProject} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Project Title *
                 </label>
                 <input
@@ -940,13 +940,13 @@ export function EnhancedSettingsPage({
                   onChange={e =>
                     setNewProject({ ...newProject, title: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Category
                   </label>
                   <input
@@ -956,11 +956,11 @@ export function EnhancedSettingsPage({
                     onChange={e =>
                       setNewProject({ ...newProject, category: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#4a443e] font-medium mb-1">
+                  <label className="block text-[#1f2937] font-medium mb-1">
                     Location
                   </label>
                   <input
@@ -970,13 +970,13 @@ export function EnhancedSettingsPage({
                     onChange={e =>
                       setNewProject({ ...newProject, location: e.target.value })
                     }
-                    className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Image URL
                 </label>
                 <input
@@ -986,12 +986,12 @@ export function EnhancedSettingsPage({
                   onChange={e =>
                     setNewProject({ ...newProject, image: e.target.value })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl px-3.5 py-2.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
+                <label className="block text-[#1f2937] font-medium mb-1">
                   Project Narrative / Scope
                 </label>
                 <textarea
@@ -1004,14 +1004,14 @@ export function EnhancedSettingsPage({
                       description: e.target.value,
                     })
                   }
-                  className="w-full bg-[#faf8f5] border border-[#ded5cb] rounded-xl p-3.5 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24] resize-none"
+                  className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-[#b84c24] hover:bg-[#a1401c] text-white text-xs font-medium py-3 rounded-xl transition-all cursor-pointer"
+                  className="w-full bg-[#000000] hover:bg-[#262626] text-white text-xs font-medium py-3 rounded transition-all cursor-pointer"
                 >
                   Add Project to Showcase
                 </button>

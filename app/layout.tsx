@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#faf8f5",
+  themeColor: "#f8f9fa",
   userScalable: false,
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-[#faf8f5]">
+    <html lang="en" className="bg-[#f8f9fa]">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -29,11 +29,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased font-sans bg-[#faf8f5] text-[#1c1917]">
+      <body className="antialiased font-sans bg-[#f8f9fa] text-[#191c1d]">
         {children}
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
