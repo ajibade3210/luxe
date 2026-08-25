@@ -207,14 +207,17 @@ export function createWhatsAppConsultationUrl(params: {
   budget?: number | string;
   message?: string;
 }): string {
-  const rawPhone = (params.studioPhone || "+2348055966944").replace(/[^0-9]/g, "");
+  const defaultPhone = process.env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE || "+2348055966944";
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Shopwus";
+
+  const rawPhone = (params.studioPhone || defaultPhone).replace(/[^0-9]/g, "");
   const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
 
   const budgetDisplay = params.budget
     ? `$${Number(params.budget).toLocaleString()}`
     : "Custom / To be discussed";
 
-  const brief = `✨ *New Consultation Inquiry — Shopwus*
+  const brief = `✨ *New Consultation Inquiry — ${appName}*
 ━━━━━━━━━━━━━━━━━━━━━
 👤 *Client Name:* ${params.clientName}
 📱 *Phone:* ${params.clientPhone || "Not provided"}
@@ -224,9 +227,9 @@ export function createWhatsAppConsultationUrl(params: {
 💰 *Target Budget:* ${budgetDisplay}
 
 💬 *Event Vision & Details:*
-${params.message || "Consultation requested via Shopwus studio profile."}
+${params.message || `Consultation requested via ${appName} studio profile.`}
 ━━━━━━━━━━━━━━━━━━━━━
-_Sent via ${params.studioName} on Shopwus_`;
+_Sent via ${params.studioName} on ${appName}_`;
 
   return `https://wa.me/${targetPhone}?text=${encodeURIComponent(brief)}`;
 }
