@@ -593,13 +593,13 @@ export function ElanEventsPage({
         {/* ========================================================================= */}
         <section
           id="home"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch justify-center"
         >
           {/* LEFT CARD: 3D Flip Luxury Business Card */}
-          <div className="lg:col-span-7 flex flex-col">
-            <div className="perspective-1000 w-full flex-1">
+          <div className="lg:col-span-6 flex flex-col items-center lg:items-end">
+            <div className="perspective-1000 w-full max-w-[460px] flex-1">
               <div
-                className={`relative w-full h-full min-h-[460px] sm:min-h-[500px] transition-transform duration-700 transform-style-3d ${
+                className={`relative w-full h-full min-h-[480px] sm:min-h-[520px] transition-transform duration-700 transform-style-3d ${
                   isFlipped ? "rotate-y-180" : ""
                 }`}
               >
@@ -876,7 +876,7 @@ export function ElanEventsPage({
           </div>
 
           {/* RIGHT CARD: Company Studio Card & Newsletter */}
-          <div className="lg:col-span-5 bg-white border border-[#eae3d8] rounded-3xl p-8 sm:p-10 shadow-[0_12px_36px_rgba(40,30,20,0.04)] flex flex-col justify-between">
+          <div className="lg:col-span-6 bg-white border border-[#eae3d8] rounded-3xl p-8 sm:p-10 shadow-[0_12px_36px_rgba(40,30,20,0.04)] flex flex-col justify-between max-w-[480px] w-full mx-auto lg:mx-0">
             <div>
               <div className="flex items-center justify-between border-b border-[#f0e8dc] pb-5 mb-6">
                 <div>
