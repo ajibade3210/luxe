@@ -398,7 +398,6 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
             </svg>
           ),
         };
-      case "website":
       default:
         return {
           bg: "#FAF2EB",
