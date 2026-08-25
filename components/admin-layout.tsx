@@ -18,21 +18,7 @@ import { getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type { Lead } from "@/lib/types";
 
-export const formatMoney = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
-
-export const formatDate = (s: string) =>
-  new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(s));
-
-export const formatStatusLabel = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+export { formatDate, formatMoney, formatStatusLabel } from "@/lib/utils";
 
 export function Brand() {
   return (
