@@ -174,7 +174,7 @@ export function SignupPage() {
           )}
 
           {/* Form Title */}
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-7 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
 
@@ -183,7 +183,7 @@ export function SignupPage() {
             type="button"
             disabled={isSubmitting}
             onClick={handleGoogleSignup}
-            style={{ marginBottom: "24px" }}
+            style={{ marginTop: "28px", marginBottom: "24px" }}
             className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs"
           >
             <GoogleIcon className="w-4 h-4" />
