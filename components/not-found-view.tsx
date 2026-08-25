@@ -137,32 +137,32 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
       </header>
 
       {/* Main Content Area */}
-      <div className="w-full max-w-5xl mx-auto px-6 py-8 md:py-12 my-auto z-10">
+      <div className="w-full max-w-5xl mx-auto px-6 py-10 md:py-16 my-auto z-10">
         {/* Centered Hero Header */}
-        <div className="relative text-center max-w-2xl mx-auto mb-10">
+        <div className="relative text-center max-w-2xl mx-auto mb-14">
           {/* Architectural Watermark 404 */}
-          <div className="absolute -top-10 left-1/2 -translate-x-1/2 font-serif text-[130px] sm:text-[180px] md:text-[210px] font-bold text-[#855e2e]/[0.05] select-none pointer-events-none -z-10 leading-none tracking-tight">
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 font-serif text-[140px] sm:text-[190px] md:text-[230px] font-bold text-[#b91c1c]/[0.04] select-none pointer-events-none -z-10 leading-none tracking-tight">
             404
           </div>
 
           {/* Status Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1]/90 backdrop-blur-sm border border-[#e4dacf] text-xs font-mono text-[#855e2e] mb-5 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-[#855e2e] animate-pulse" />
-            <span className="tracking-wide">404 · Unregistered Atelier</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fef2f2]/90 backdrop-blur-sm border border-[#fecaca] text-xs text-[#991b1b] mb-7 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-[#dc2626] animate-pulse" />
+            <span className="font-semibold tracking-wide">404 · Unregistered Atelier</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight text-[#191c1d] mb-4 leading-[1.15]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-tight text-[#191c1d] mb-5 leading-[1.18]">
             This studio has not yet <br />
             <em className="italic font-normal text-[#855e2e]">opened its doors.</em>
           </h1>
 
           {/* Explanatory Message */}
-          <p className="text-sm sm:text-base text-[#5c5f60] max-w-lg mx-auto leading-relaxed mb-6">
+          <p className="text-sm sm:text-base text-[#5c5f60] max-w-lg mx-auto leading-relaxed mb-9">
             {cleanSlug ? (
               <>
                 The requested URL{" "}
-                <span className="inline-block bg-[#ede7dd] text-[#191c1d] px-2 py-0.5 rounded font-mono text-xs border border-[#dfd6c8] font-semibold">
+                <span className="inline-block bg-[#f4ede4] text-[#855e2e] px-2 py-0.5 rounded font-semibold text-xs border border-[#e4dacf]">
                   /{cleanSlug}
                 </span>{" "}
                 is currently unregistered, private, or has been archived.
@@ -174,9 +174,9 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
 
           {/* Smart AI Concierge Match (Did you mean?) */}
           {suggestedOrg && (
-            <div className="mb-7 p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-[#f7f2ea] to-[#f2ecdf] border border-[#e2d6c5] shadow-xs text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-500">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#dcd0bf] bg-white p-0.5">
+            <div className="mb-9 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#f7f2ea] to-[#f2ecdf] border border-[#e2d6c5] shadow-xs text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#dcd0bf] bg-white p-0.5">
                   <img
                     src={suggestedOrg.logoUrl}
                     alt={suggestedOrg.name}
@@ -184,7 +184,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
                   />
                 </div>
                 <div>
-                  <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#855e2e] uppercase tracking-wider">
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#855e2e] uppercase tracking-wider mb-0.5">
                     <Sparkles size={12} className="text-[#855e2e]" />
                     <span>Did you mean to visit?</span>
                   </div>
@@ -197,7 +197,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
               <Link
                 href={`/${suggestedOrg.slug}`}
                 style={{ color: "#ffffff" }}
-                className="inline-flex items-center justify-center gap-1.5 bg-[#855e2e] !text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#6f4c22] transition-colors shrink-0 text-decoration-none shadow-2xs"
+                className="inline-flex items-center justify-center gap-1.5 bg-[#855e2e] !text-white text-xs font-semibold px-4 py-2.5 rounded-full hover:bg-[#6f4c22] transition-colors shrink-0 text-decoration-none shadow-2xs"
               >
                 <span>Visit {suggestedOrg.name}</span>
                 <ArrowRight size={13} />
@@ -206,7 +206,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           )}
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
             <Link
               href="/"
               style={{ color: "#ffffff" }}
@@ -225,7 +225,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 text-xs text-[#5c5f60] hover:text-[#191c1d] px-3 py-2 rounded-full hover:bg-black/5 transition-colors border border-transparent hover:border-[#eae3d7]"
+              className="inline-flex items-center gap-1.5 text-xs text-[#5c5f60] hover:text-[#191c1d] px-3.5 py-2 rounded-full hover:bg-black/5 transition-colors border border-transparent hover:border-[#eae3d7]"
             >
               {copiedLink ? (
                 <Check size={13} className="text-[#10b981]" />
@@ -238,7 +238,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
         </div>
 
         {/* Directory Explorer Header */}
-        <div className="mt-12 pt-8 border-t border-[#eae3d7]">
+        <div className="mt-14 pt-10 border-t border-[#eae3d7]">
           <div className="mb-6">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#5c5f60]">
               <Compass size={15} className="text-[#855e2e]" />
