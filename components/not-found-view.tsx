@@ -158,7 +158,10 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           </h1>
 
           {/* Explanatory Message */}
-          <p className="text-sm sm:text-base text-[#5c5f60] max-w-2xl mx-auto leading-relaxed mb-9 sm:whitespace-nowrap">
+          <p
+            className="text-sm sm:text-base text-[#5c5f60] max-w-2xl mx-auto leading-relaxed sm:whitespace-nowrap block"
+            style={{ marginBottom: "42px" }}
+          >
             {cleanSlug ? (
               <>
                 The requested URL{" "}
