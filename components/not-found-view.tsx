@@ -8,9 +8,7 @@ import {
   Home,
   MapPin,
   PlusCircle,
-  Search,
   Sparkles,
-  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -54,7 +52,6 @@ function findClosestMatch(query: string, list: OrganizationPreview[]): Organizat
 }
 
 export function NotFoundView({ slug }: NotFoundViewProps) {
-  const [searchQuery, setSearchQuery] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
 
@@ -76,19 +73,6 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
   const suggestedOrg = useMemo(() => {
     return findClosestMatch(cleanSlug, featuredOrganizations);
   }, [cleanSlug]);
-
-  // Filtered directory based on search query
-  const filteredOrgs = useMemo(() => {
-    if (!searchQuery.trim()) return featuredOrganizations;
-    const q = searchQuery.toLowerCase().trim();
-    return featuredOrganizations.filter(
-      org =>
-        org.name.toLowerCase().includes(q) ||
-        org.slug.toLowerCase().includes(q) ||
-        org.eyebrow.toLowerCase().includes(q) ||
-        org.badge.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -253,103 +237,62 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           </div>
         </div>
 
-        {/* Directory Explorer Header & Search */}
+        {/* Directory Explorer Header */}
         <div className="mt-12 pt-8 border-t border-[#eae3d7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#5c5f60]">
-                <Compass size={15} className="text-[#855e2e]" />
-                <span>Verified Studio Directory</span>
-              </div>
-              <p className="text-xs text-[#8e9192] mt-0.5">
-                Explore luxury ateliers currently active on LuxeAdmin
-              </p>
+          <div className="mb-6">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#5c5f60]">
+              <Compass size={15} className="text-[#855e2e]" />
+              <span>Verified Studio Directory</span>
             </div>
-
-            {/* Quick Filter Search Bar */}
-            <div className="relative w-full sm:w-72">
-              <Search
-                size={14}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8e9192]"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search by studio or city..."
-                className="w-full bg-white border border-[#ded7cb] rounded-full pl-9 pr-8 py-1.5 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e9192] hover:text-[#191c1d]"
-                >
-                  <X size={12} />
-                </button>
-              )}
-            </div>
+            <p className="text-xs text-[#8e9192] mt-0.5">
+              Explore luxury ateliers currently active on LuxeAdmin
+            </p>
           </div>
 
           {/* Directory Cards Grid */}
-          {filteredOrgs.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-              {filteredOrgs.map(org => (
-                <Link
-                  key={org.id}
-                  href={`/${org.slug}`}
-                  className="p-4 bg-white/80 backdrop-blur-xs border border-[#eae3d7] rounded-2xl hover:border-[#c8bb9d] hover:shadow-md transition-all text-decoration-none group flex items-start gap-3.5 relative overflow-hidden"
-                >
-                  {/* Studio Logo */}
-                  <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-[#f4eee6] border border-[#e2d7c9] flex items-center justify-center">
-                    <img
-                      src={org.logoUrl}
-                      alt={org.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {featuredOrganizations.map(org => (
+              <Link
+                key={org.id}
+                href={`/${org.slug}`}
+                className="p-4 bg-white/80 backdrop-blur-xs border border-[#eae3d7] rounded-2xl hover:border-[#c8bb9d] hover:shadow-md transition-all text-decoration-none group flex items-start gap-3.5 relative overflow-hidden"
+              >
+                {/* Studio Logo */}
+                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-[#f4eee6] border border-[#e2d7c9] flex items-center justify-center">
+                  <img
+                    src={org.logoUrl}
+                    alt={org.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                {/* Studio Meta */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <h2 className="text-xs font-bold text-[#191c1d] group-hover:text-[#0058be] transition-colors truncate">
+                      {org.name}
+                    </h2>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold text-[#855e2e] bg-[#f7f2ea] px-1.5 py-0.5 rounded shrink-0">
+                      {org.badge}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-[#5c5f60] line-clamp-1 mb-1.5 flex items-center gap-1">
+                    <MapPin size={11} className="text-[#a09e99] shrink-0" />
+                    <span>{org.eyebrow.split("·")[1]?.trim() || org.eyebrow}</span>
+                  </p>
+
+                  <div className="flex items-center gap-1 text-[11px] text-[#0058be] font-medium">
+                    <span>View live studio</span>
+                    <ArrowRight
+                      size={11}
+                      className="group-hover:translate-x-0.5 transition-transform"
                     />
                   </div>
-
-                  {/* Studio Meta */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <h2 className="text-xs font-bold text-[#191c1d] group-hover:text-[#0058be] transition-colors truncate">
-                        {org.name}
-                      </h2>
-                      <span className="text-[9px] uppercase tracking-wider font-semibold text-[#855e2e] bg-[#f7f2ea] px-1.5 py-0.5 rounded shrink-0">
-                        {org.badge}
-                      </span>
-                    </div>
-
-                    <p className="text-[11px] text-[#5c5f60] line-clamp-1 mb-1.5 flex items-center gap-1">
-                      <MapPin size={11} className="text-[#a09e99] shrink-0" />
-                      <span>{org.eyebrow.split("·")[1]?.trim() || org.eyebrow}</span>
-                    </p>
-
-                    <div className="flex items-center gap-1 text-[11px] text-[#0058be] font-medium">
-                      <span>View live studio</span>
-                      <ArrowRight
-                        size={11}
-                        className="group-hover:translate-x-0.5 transition-transform"
-                      />
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="py-10 text-center bg-white/50 border border-dashed border-[#dfd6c7] rounded-2xl">
-              <p className="text-xs text-[#5c5f60] mb-2">
-                No studios found matching "{searchQuery}"
-              </p>
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="text-xs font-semibold text-[#855e2e] hover:underline"
-              >
-                Clear search filter
-              </button>
-            </div>
-          )}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 

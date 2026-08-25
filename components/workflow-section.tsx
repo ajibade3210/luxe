@@ -296,9 +296,9 @@ function ConvertPreviewCard() {
         <div className="mt-3 bg-[#f8f6f2] p-2 rounded-lg border border-[#eae3d7]">
           <div className="flex items-center justify-between text-[10px] text-[#5c5f60] mb-1">
             <span className="flex items-center gap-1">
-              <FileCheck size={11} className="text-[#2e7d32]" /> Digital Contract
+              <FileCheck size={11} className="text-[#2e7d32]" /> Order Made
             </span>
-            <span className="font-semibold text-[#2e7d32]">Signed & Approved</span>
+            <span className="font-semibold text-[#2e7d32]">Paid & Approved</span>
           </div>
           <div className="w-full bg-[#ded5c6] h-1.5 rounded-full overflow-hidden">
             <div className="bg-[#2e7d32] h-full w-full rounded-full" />
