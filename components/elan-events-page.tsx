@@ -587,145 +587,118 @@ export function ElanEventsPage({
                   isFlipped ? "rotate-y-180" : ""
                 }`}
               >
-                {/* CARD FRONT */}
-                <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-[#fcf7f2] via-[#faeee4] to-[#f8e7d8] border border-[#ebd6c5] rounded-3xl p-8 sm:p-10 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-hidden">
-                  {/* Decorative subtle background watermark monogram */}
+                {/* ========================================================= */}
+                {/* CARD FRONT: BRAND LOGO + NAME + QR CODE (PER REFERENCE)  */}
+                {/* ========================================================= */}
+                <div className="absolute inset-0 backface-hidden bg-gradient-to-b from-[#ffffff] via-[#fcfaf7] to-[#faf4ec] border border-[#e8dfd3] rounded-3xl p-8 sm:p-10 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between items-center text-center overflow-hidden">
+                  {/* Subtle background luxury pattern/watermark */}
                   <div
-                    style={{ color: `${primaryColor}0d` }}
-                    className="absolute -right-8 -bottom-14 font-serif text-[180px] font-normal select-none pointer-events-none"
+                    style={{ color: `${primaryColor}08` }}
+                    className="absolute -right-6 -bottom-10 font-serif text-[190px] font-normal select-none pointer-events-none"
                   >
                     {monogram}
                   </div>
 
-                  {/* Card Top Row */}
-                  <div>
-                    <div className="flex items-center justify-between gap-4 mb-6">
-                      <div className="inline-flex items-center gap-2 bg-[#ffffff]/80 backdrop-blur-sm border border-[#e6d0bf] px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#8a3e20] tracking-wide">
-                        <span
-                          style={{ backgroundColor: primaryColor }}
-                          className="w-2 h-2 rounded-full animate-pulse"
-                        />
-                        Bespoke Luxury Studio · {profile.location}
-                      </div>
+                  {/* Top Bar: Studio Tag & Flip Action */}
+                  <div className="w-full flex items-center justify-between gap-2 z-10">
+                    <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs border border-[#ebd8ca] px-3 py-1 rounded-full text-[10px] font-medium text-[#8a3e20] uppercase tracking-wider">
+                      <span style={{ backgroundColor: primaryColor }} className="w-1.5 h-1.5 rounded-full animate-pulse" />
+                      Official Studio Card
+                    </span>
 
-                      <button
-                        onClick={() => setIsFlipped(true)}
-                        className="inline-flex items-center gap-1.5 text-xs text-[#8a3e20] hover:text-[#b84c24] bg-white/70 hover:bg-white px-3 py-1.5 rounded-full border border-[#ebd6c5] transition-all cursor-pointer shadow-2xs"
-                        title="Click to view QR & direct VIP contact card"
+                    <button
+                      onClick={() => setIsFlipped(true)}
+                      className="inline-flex items-center gap-1.5 text-xs text-[#8a3e20] hover:text-[#b84c24] bg-white/80 hover:bg-white px-3 py-1.5 rounded-full border border-[#ebd6c5] transition-all cursor-pointer shadow-2xs z-10"
+                      title="Click to flip and view full studio contact details"
+                    >
+                      <RotateCw size={12} />
+                      <span className="font-medium text-[11px]">View Details</span>
+                    </button>
+                  </div>
+
+                  {/* Middle Area: Arched Crest + Company Logo / Name + Tagline */}
+                  <div className="my-auto py-2 z-10 flex flex-col items-center max-w-md w-full">
+                    {/* Arched Architectural Brand Crest */}
+                    <div className="relative mb-3 flex flex-col items-center">
+                      <div
+                        style={{ borderColor: primaryColor, backgroundColor: secondaryColor }}
+                        className="w-16 h-16 sm:w-18 sm:h-18 rounded-full border flex items-center justify-center font-serif text-3xl font-normal shadow-xs transition-transform duration-300 hover:scale-105"
                       >
-                        <RotateCw size={13} />
-                        <span className="hidden sm:inline font-medium">
-                          Flip Card
-                        </span>
-                      </button>
+                        <span style={{ color: primaryColor }}>{monogram}</span>
+                      </div>
+                      <div
+                        style={{ backgroundColor: primaryColor }}
+                        className="w-8 h-[2px] rounded-full mt-2 opacity-60"
+                      />
                     </div>
 
+                    {/* Company Name */}
                     <h1
                       style={{ color: textColor }}
-                      className="font-serif text-3xl sm:text-5xl tracking-tight font-normal leading-[1.08] mb-4"
+                      className="font-serif text-3xl sm:text-4xl lg:text-[40px] tracking-tight font-normal leading-tight text-center"
                     >
                       {profile.businessName}
                     </h1>
 
-                    <p className="text-base sm:text-lg text-[#554e48] leading-relaxed max-w-lg font-normal">
-                      {profile.tagline || profile.description}
-                    </p>
-                  </div>
-
-                  {/* Middle Metadata Pills */}
-                  <div className="my-6 pt-4 border-t border-[#ebd8ca]/80 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#5f5750]">
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        style={{ color: primaryColor }}
-                        className="w-6 h-6 rounded-full bg-white/80 border border-[#e4d0c1] flex items-center justify-center"
-                      >
-                        <MapPin size={13} />
-                      </div>
-                      <span>{profile.physicalAddress || profile.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        style={{ color: primaryColor }}
-                        className="w-6 h-6 rounded-full bg-white/80 border border-[#e4d0c1] flex items-center justify-center"
-                      >
-                        <Clock3 size={13} />
-                      </div>
-                      <span>
-                        {profile.operatingHours}: {profile.timeFrom} –{" "}
-                        {profile.timeTo}
-                        {profile.byAppointmentOnly ? " (By Appt)" : ""}
+                    {/* Tagline / Subtitle */}
+                    <div className="mt-2 flex items-center justify-center gap-2">
+                      <span className="h-[1px] w-6 bg-[#d8ccbe]" />
+                      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#8a7f73] font-medium text-center">
+                        {profile.tagline || `Bespoke Event Studio · ${profile.location}`}
                       </span>
+                      <span className="h-[1px] w-6 bg-[#d8ccbe]" />
                     </div>
                   </div>
 
-                  {/* Card Bottom CTA Row */}
-                  <div className="space-y-4 pt-2">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <button
-                        onClick={() => setQuoteModalOpen(true)}
-                        style={{ backgroundColor: buttonColor }}
-                        className={`flex-1 sm:flex-initial text-white text-sm font-medium px-7 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 ${radiusClass}`}
-                      >
-                        <span>Get a Quote</span>
-                        <ArrowRight size={15} />
-                      </button>
-
-                      <a
-                        href={whatsAppLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`flex-1 sm:flex-initial bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-6 py-3.5 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-2xs ${radiusClass}`}
-                      >
-                        <MessageCircle size={16} className="text-[#25D366]" />
-                        <span>WhatsApp Us</span>
-                      </a>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-[#8c8278] pt-2">
-                      <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1 text-[#6b645e]">
-                          <Phone size={12} />{" "}
-                          {profile.whatsAppNumber || profile.phone}
-                        </span>
-                        <span className="hidden sm:inline">·</span>
-                        <span className="hidden sm:flex items-center gap-1 text-[#6b645e]">
-                          <Mail size={12} />{" "}
-                          {profile.emailAddress || profile.email}
-                        </span>
+                  {/* Bottom Area: Framed QR Code + Scan Instruction */}
+                  <div className="w-full flex flex-col items-center z-10 pt-2">
+                    <div className="bg-white p-2.5 sm:p-3 border-2 border-[#e5dcd1] rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 relative flex items-center justify-center overflow-hidden rounded-lg">
+                        <img
+                          src="https://cdn.accessa.ng/test/accessa/joe-fitness/qrcodes/images/7343ffeb0bfd056e77e8e8d52edf0722.png"
+                          alt={`${profile.businessName} QR Code`}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
-                      <button
-                        onClick={() => setIsFlipped(true)}
-                        style={{ color: primaryColor }}
-                        className="font-medium hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <QrCode size={13} /> VIP QR Back
-                      </button>
                     </div>
+                    <span className="text-[10px] text-[#8c8276] tracking-wide mt-2 font-medium">
+                      Scan with camera to connect
+                    </span>
+
+                    <button
+                      onClick={() => setIsFlipped(true)}
+                      style={{ color: primaryColor }}
+                      className="mt-2 text-xs font-medium inline-flex items-center gap-1 hover:underline cursor-pointer"
+                    >
+                      <span>Flip for direct studio details</span>
+                      <ArrowRight size={13} />
+                    </button>
                   </div>
                 </div>
 
-                {/* CARD BACK: QR & Direct VIP Contact */}
-                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-8 sm:p-10 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between">
-                  <div className="flex items-center justify-between border-b border-[#f0e8dc] pb-4">
-                    <div className="flex items-center gap-2">
+                {/* ========================================================= */}
+                {/* CARD BACK: FULL COMPANY DETAILS + DIRECT CONTACT & CTAS   */}
+                {/* ========================================================= */}
+                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-7 sm:p-9 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-y-auto">
+                  {/* Top Bar */}
+                  <div className="flex items-center justify-between border-b border-[#f0e8dc] pb-3.5">
+                    <div className="flex items-center gap-2.5">
                       <span
-                        style={{
-                          backgroundColor: secondaryColor,
-                          color: primaryColor,
-                        }}
-                        className="w-8 h-8 rounded-full flex items-center justify-center font-serif text-sm font-bold"
+                        style={{ backgroundColor: secondaryColor, color: primaryColor, borderColor: '#ebd8ca' }}
+                        className="w-8 h-8 rounded-full border flex items-center justify-center font-serif text-sm font-bold"
                       >
                         {monogram}
                       </span>
                       <div>
-                        <div className="text-sm font-serif font-medium text-[#1c1917]">
-                          {profile.businessName} VIP
+                        <div className="text-sm font-serif font-medium text-[#1c1917] leading-none">
+                          {profile.businessName}
                         </div>
-                        <div className="text-[10px] text-[#8a8075] uppercase tracking-wider">
-                          Direct Studio Concierge
+                        <div className="text-[10px] text-[#8a8075] uppercase tracking-wider mt-0.5">
+                          Studio Details & Concierge
                         </div>
                       </div>
                     </div>
+
                     <button
                       onClick={() => setIsFlipped(false)}
                       className="inline-flex items-center gap-1 text-xs text-[#8a3e20] hover:text-[#b84c24] bg-[#faf6f0] px-3 py-1.5 rounded-full border border-[#ebd6c5] transition-colors cursor-pointer"
@@ -734,70 +707,98 @@ export function ElanEventsPage({
                     </button>
                   </div>
 
-                  {/* QR Code and Direct Details */}
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center my-auto py-2">
-                    <div className="sm:col-span-5 flex flex-col items-center justify-center bg-[#faf6f0] border border-[#ede2d4] p-4 rounded-2xl">
-                      <div className="w-32 h-32 bg-white p-2 border border-[#e2d5c5] rounded-xl shadow-2xs relative flex items-center justify-center overflow-hidden">
-                        <img
-                          src="https://cdn.accessa.ng/test/accessa/joe-fitness/qrcodes/images/7343ffeb0bfd056e77e8e8d52edf0722.png"
-                          alt="VIP QR Code"
-                          className="w-full h-full object-contain"
-                        />
+                  {/* Company Description Quote */}
+                  <p className="text-xs sm:text-[13px] text-[#554e48] font-serif italic leading-relaxed my-2.5 px-1 border-l-2 border-[#b84c24]/30 pl-3">
+                    &ldquo;{profile.description}&rdquo;
+                  </p>
+
+                  {/* Company Details Grid */}
+                  <div className="space-y-2 text-xs text-[#4a443e] my-1">
+                    <div className="bg-[#faf8f5] border border-[#eee6dc] p-2.5 rounded-xl space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#8a8075] flex items-center gap-1.5">
+                          <Clock3 size={13} style={{ color: primaryColor }} /> Operating Hours:
+                        </span>
+                        <span className="font-medium text-[#1c1917]">
+                          {profile.operatingHours}: {profile.timeFrom} – {profile.timeTo}
+                        </span>
                       </div>
-                      <span className="text-[10px] text-[#8a8075] tracking-wide mt-2">
-                        Scan for instant contact
-                      </span>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#8a8075] flex items-center gap-1.5">
+                          <MapPin size={13} style={{ color: primaryColor }} /> Studio Flagship:
+                        </span>
+                        <span className="font-medium text-[#1c1917] truncate max-w-[200px] text-right">
+                          {profile.physicalAddress || profile.location}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#8a8075] flex items-center gap-1.5">
+                          <Phone size={13} style={{ color: primaryColor }} /> WhatsApp Line:
+                        </span>
+                        <span className="font-mono font-medium text-[#1c1917]">
+                          {profile.whatsAppNumber || profile.phone}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#8a8075] flex items-center gap-1.5">
+                          <Mail size={13} style={{ color: primaryColor }} /> Studio Email:
+                        </span>
+                        <span className="font-medium text-[#1c1917] truncate max-w-[180px]">
+                          {profile.emailAddress || profile.email}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="sm:col-span-7 space-y-3 text-xs text-[#4a443e]">
-                      <div className="bg-[#fcfaf7] border border-[#f0e8dc] p-3 rounded-xl">
-                        <div className="text-[10px] uppercase tracking-wider text-[#8a8075]">
-                          Creative Director
-                        </div>
-                        <div className="text-sm font-serif text-[#1c1917] mt-0.5">
-                          Amelia Bell & Partners
-                        </div>
-                      </div>
-
-                      <div className="bg-[#fcfaf7] border border-[#f0e8dc] p-3 rounded-xl space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[#8a8075]">VIP WhatsApp:</span>
-                          <span className="font-mono text-[#1c1917] font-medium">
-                            {profile.whatsAppNumber || profile.phone}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[#8a8075]">Studio Email:</span>
-                          <span className="text-[#1c1917] truncate max-w-[150px]">
-                            {profile.emailAddress || profile.email}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[#8a8075]">Website:</span>
-                          <span className="text-[#1c1917]">
-                            {profile.website || "elanevents.com"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-[11px] text-[#2c6e49] bg-[#eef8f1] border border-[#cbe6d2] px-3 py-1.5 rounded-lg">
-                        <UserCheck size={14} />
+                    <div className="flex items-center justify-between text-[11px] px-1 text-[#6e665e]">
+                      <div className="flex items-center gap-1 text-[#2c6e49] bg-[#eef8f1] border border-[#cbe6d2] px-2.5 py-1 rounded-md">
+                        <UserCheck size={13} />
                         <span>Verified LuxeAdmin Studio</span>
                       </div>
+                      <span>ID: {profile.slug?.toUpperCase() || 'STUDIO-2026'}</span>
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-[#f0e8dc] flex items-center justify-between text-xs">
-                    <button
-                      onClick={handleCopyLink}
-                      style={{ color: primaryColor }}
-                      className="font-medium hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <Share2 size={13} /> Copy Profile Link
-                    </button>
-                    <span className="text-[#9e9488]">
-                      ID: {profile.slug?.toUpperCase() || "STUDIO-2026"}
-                    </span>
+                  {/* Back Action Buttons */}
+                  <div className="pt-2 border-t border-[#f0e8dc] space-y-2">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setQuoteModalOpen(true)}
+                        style={{ backgroundColor: buttonColor }}
+                        className={`flex-1 text-white text-xs font-medium py-2.5 shadow-sm hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
+                      >
+                        <span>Get a Quote</span>
+                        <ArrowRight size={13} />
+                      </button>
+
+                      <a
+                        href={whatsAppLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`flex-1 bg-[#faf8f5] hover:bg-[#f5eee6] text-[#1c1917] border border-[#ded3c7] text-xs font-medium py-2.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
+                      >
+                        <MessageCircle size={14} className="text-[#25D366]" />
+                        <span>WhatsApp Us</span>
+                      </a>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-[#8c8278] pt-1">
+                      <button
+                        onClick={handleCopyLink}
+                        style={{ color: primaryColor }}
+                        className="font-medium hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Share2 size={12} /> Copy Profile Link
+                      </button>
+                      <button
+                        onClick={() => setIsFlipped(false)}
+                        className="text-[#78716c] hover:text-[#1c1917] flex items-center gap-1 cursor-pointer"
+                      >
+                        <RotateCw size={11} /> Flip back
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
