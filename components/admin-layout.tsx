@@ -1,0 +1,223 @@
+"use client";
+
+import {
+  ArrowRight,
+  Bell,
+  Check,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  Menu,
+  Search,
+  Settings,
+  Users,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { getLeads, publishChanges } from "@/lib/api";
+import { businessProfile } from "@/lib/mock-data";
+import type { Lead } from "@/lib/types";
+
+export const formatMoney = (n: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
+
+export const formatDate = (s: string) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(s));
+
+export const formatStatusLabel = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export function Brand() {
+  return (
+    <a href="/" className="brand">
+      <span className="brand-mark">É</span>
+      <span>Shopwus</span>
+    </a>
+  );
+}
+
+export function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+  return (
+    <div className="toast">
+      <Check size={15} /> {message}
+      <button onClick={onClose} aria-label="Close notification">
+        <X size={14} />
+      </button>
+    </div>
+  );
+}
+
+export function Metric({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail?: string;
+}) {
+  return (
+    <div className="metric">
+      <span className="eyebrow">{label}</span>
+      <strong>{value}</strong>
+      {detail && <small>{detail}</small>}
+    </div>
+  );
+}
+
+export function PageTitle({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="page-title">
+      <div>
+        <span className="eyebrow">{eyebrow}</span>
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+export function Sidebar({
+  path,
+  open,
+  onClose,
+}: {
+  path: string;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const slug = businessProfile.slug || "elan-events";
+  const [leadCount, setLeadCount] = useState(6);
+
+  useEffect(() => {
+    getLeads().then(res => setLeadCount(res.length));
+    const handleLeadsUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Lead[]>;
+      if (customEvent.detail) {
+        setLeadCount(customEvent.detail.length);
+      }
+    };
+    window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
+    return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+  }, []);
+
+  return (
+    <aside className={`sidebar ${open ? "is-open" : ""}`}>
+      <div className="sidebar-top">
+        <Brand />
+        <button className="mobile-close" onClick={onClose}>
+          <X />
+        </button>
+      </div>
+      <nav>
+        <a className={path === "/leads" ? "active" : ""} href="/leads">
+          <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
+        </a>
+        <a className={path === "/customers" ? "active" : ""} href="/customers">
+          <Users size={16} /> Customers
+        </a>
+        <a
+          className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
+          href={`/${slug}?from=settings`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
+        </a>
+        <a className={path === "/settings" ? "active" : ""} href="/settings">
+          <Settings size={16} /> Settings
+        </a>
+      </nav>
+      <a className="account" href="/profile" aria-label="Open profile settings">
+        <div className="avatar bg-[#000000] text-white">AB</div>
+        <div>
+          <b>Amelia Bell</b>
+          <span>Studio Director</span>
+        </div>
+        <ChevronRight size={15} />
+      </a>
+    </aside>
+  );
+}
+
+export function Header({ onMenu, onToast }: { onMenu: () => void; onToast: (s: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const slug = businessProfile.slug || "elan-events";
+  return (
+    <header className="admin-header">
+      <button className="mobile-menu" onClick={onMenu}>
+        <Menu />
+      </button>
+      <div className="search">
+        <Search size={16} />
+        <input aria-label="Search" placeholder="Search anything..." />
+      </div>
+      <div className="header-actions">
+        <a
+          href={`/${slug}?from=settings`}
+          target="_blank"
+          rel="noreferrer"
+          className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#0058be] text-[#191c1d]"
+          style={{ fontSize: "11px", padding: "9px 14px" }}
+        >
+          <Eye size={14} className="text-[#0058be]" /> Profile View
+        </a>
+        <button className="icon-button" aria-label="Notifications">
+          <Bell size={17} />
+        </button>
+        <button
+          className="publish bg-[#000000] hover:bg-[#262626]"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            await publishChanges();
+            setBusy(false);
+            onToast("Changes published successfully");
+          }}
+        >
+          {busy ? "Publishing…" : "Publish changes"}
+          <ArrowRight size={15} />
+        </button>
+      </div>
+    </header>
+  );
+}
+
+export function AdminLayout({
+  children,
+  path,
+  onToast,
+}: {
+  children: React.ReactNode;
+  path: string;
+  onToast: (s: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="admin">
+      <Sidebar path={path} open={open} onClose={() => setOpen(false)} />
+      <div className="admin-main">
+        <Header onMenu={() => setOpen(true)} onToast={onToast} />
+        {children}
+      </div>
+    </div>
+  );
+}
