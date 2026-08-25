@@ -214,7 +214,7 @@ export function createWhatsAppConsultationUrl(params: {
     ? `$${Number(params.budget).toLocaleString()}`
     : "Custom / To be discussed";
 
-  const brief = `✨ *New Consultation Inquiry — LuxeAdmin*
+  const brief = `✨ *New Consultation Inquiry — Shopwus*
 ━━━━━━━━━━━━━━━━━━━━━
 👤 *Client Name:* ${params.clientName}
 📱 *Phone:* ${params.clientPhone || "Not provided"}
@@ -224,9 +224,9 @@ export function createWhatsAppConsultationUrl(params: {
 💰 *Target Budget:* ${budgetDisplay}
 
 💬 *Event Vision & Details:*
-${params.message || "Consultation requested via LuxeAdmin studio profile."}
+${params.message || "Consultation requested via Shopwus studio profile."}
 ━━━━━━━━━━━━━━━━━━━━━
-_Sent via ${params.studioName} on LuxeAdmin_`;
+_Sent via ${params.studioName} on Shopwus_`;
 
   return `https://wa.me/${targetPhone}?text=${encodeURIComponent(brief)}`;
 }

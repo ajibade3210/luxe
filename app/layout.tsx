@@ -3,8 +3,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Élan Events — Luxury Event Studio & Admin",
-  description: "We design unforgettable weddings, corporate events, and private celebrations.",
+  title: "Shopwus — Luxury Event Studio & Atelier Suite",
+  description:
+    "Shopwus brings your luxury event studio, clientele, and creative storytelling into one considered place.",
 };
 
 export const viewport: Viewport = {
