@@ -18,7 +18,7 @@ import { getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type { Lead } from "@/lib/types";
 
-export { formatDate, formatMoney, formatStatusLabel } from "@/lib/utils";
+export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
 export function Brand() {
   return (
