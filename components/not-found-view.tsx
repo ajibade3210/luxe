@@ -112,7 +112,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           <div className="flex flex-col">
             <span className="font-bold text-sm tracking-tight text-[#191c1d]">Shopwus</span>
             <span className="text-[10px] text-[#8e9192] uppercase tracking-wider font-mono">
-              Atelier Registry
+              Atelier Studio
             </span>
           </div>
         </Link>

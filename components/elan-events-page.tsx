@@ -19,7 +19,12 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getBusinessBySlug, submitConsultationInquiry, submitReview } from "@/lib/api";
+import {
+  createWhatsAppConsultationUrl,
+  getBusinessBySlug,
+  submitConsultationInquiry,
+  submitReview,
+} from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
 import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/lib/types";
 
@@ -206,21 +211,40 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     e.preventDefault();
     setQuoteSubmitting(true);
     try {
+      const selectedService =
+        quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings";
+
+      // 1. Submit lead to database / CRM (with mock/swappable API)
       await submitConsultationInquiry({
         name: quoteForm.name,
         email: quoteForm.email,
         phone: quoteForm.phone,
-        service:
-          quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
+        service: selectedService,
         eventDate: quoteForm.eventDate || new Date().toISOString().slice(0, 10),
         budget: Number(quoteForm.budget) || 50000,
         message: quoteForm.message || "Consultation request submitted via public profile.",
       });
+
+      // 2. Build pre-formatted WhatsApp brief and launch
+      const whatsappUrl = createWhatsAppConsultationUrl({
+        studioPhone: profile.whatsAppNumber || profile.phone,
+        studioName: profile.businessName || "Élan Events",
+        clientName: quoteForm.name,
+        clientPhone: quoteForm.phone,
+        clientEmail: quoteForm.email,
+        service: selectedService,
+        eventDate: quoteForm.eventDate,
+        budget: quoteForm.budget,
+        message: quoteForm.message,
+      });
+
+      if (typeof window !== "undefined") {
+        window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      }
+
       setQuoteSubmitting(false);
       setQuoteModalOpen(false);
-      showToast(
-        "Consultation inquiry sent! Our studio directors will contact you within 24 hours."
-      );
+      showToast("Consultation inquiry saved! Opening WhatsApp to start direct chat...");
       setQuoteForm({
         name: "",
         email: "",
@@ -232,7 +256,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
       });
     } catch {
       setQuoteSubmitting(false);
-      showToast("Failed to submit. Please try again or reach out on WhatsApp.");
+      showToast("Failed to submit. Please try again or reach out directly on WhatsApp.");
     }
   };
 

@@ -156,6 +156,45 @@ export async function submitConsultationInquiry(
   return newLead;
 }
 
+/**
+ * Generates a pre-formatted WhatsApp chat URL with the client's consultation inquiry brief.
+ * Mock-ready: easily swappable with server-side WhatsApp Business API / webhooks in production.
+ */
+export function createWhatsAppConsultationUrl(params: {
+  studioPhone?: string;
+  studioName: string;
+  clientName: string;
+  clientPhone: string;
+  clientEmail: string;
+  service: string;
+  eventDate?: string;
+  budget?: number | string;
+  message?: string;
+}): string {
+  const rawPhone = (params.studioPhone || "+2348003526847").replace(/[^0-9]/g, "");
+  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348003526847";
+
+  const budgetDisplay = params.budget
+    ? `$${Number(params.budget).toLocaleString()}`
+    : "Custom / To be discussed";
+
+  const brief = `✨ *New Consultation Inquiry — LuxeAdmin*
+━━━━━━━━━━━━━━━━━━━━━
+👤 *Client Name:* ${params.clientName}
+📱 *Phone:* ${params.clientPhone || "Not provided"}
+✉️ *Email:* ${params.clientEmail}
+🛎️ *Service Requested:* ${params.service}
+📅 *Estimated Date:* ${params.eventDate || "Flexible"}
+💰 *Target Budget:* ${budgetDisplay}
+
+💬 *Event Vision & Details:*
+${params.message || "Consultation requested via LuxeAdmin studio profile."}
+━━━━━━━━━━━━━━━━━━━━━
+_Sent via ${params.studioName} on LuxeAdmin_`;
+
+  return `https://wa.me/${targetPhone}?text=${encodeURIComponent(brief)}`;
+}
+
 export async function uploadBusinessLogo(
   _file?: File | Blob | string
 ): Promise<{ url: string; success: boolean }> {
