@@ -146,7 +146,7 @@ export function SignupPage() {
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold">
             É
           </div>
-          <span className="font-bold text-base tracking-tight text-[#191c1d]">LuxeAdmin</span>
+          <span className="font-bold text-base tracking-tight text-[#191c1d]">Shopwus</span>
         </Link>
         <Link
           href={`/login${claimSlug ? `?claim=${encodeURIComponent(claimSlug)}` : ""}`}
@@ -234,7 +234,7 @@ export function SignupPage() {
               </div>
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1">
-                  luxeadmin.com/
+                  Shopwus.com/
                 </span>
                 <input
                   type="text"
@@ -323,7 +323,7 @@ export function SignupPage() {
 
       {/* Bottom Footer */}
       <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-[#8e9192] z-10">
-        © 2026 LuxeAdmin Atelier Suite. All rights reserved.
+        © 2026 Shopwus Atelier Suite. All rights reserved.
       </footer>
     </main>
   );

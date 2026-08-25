@@ -48,7 +48,7 @@ function Brand() {
   return (
     <a href="/" className="brand">
       <span className="brand-mark">É</span>
-      <span>LuxeAdmin</span>
+      <span>Shopwus</span>
     </a>
   );
 }
@@ -200,9 +200,9 @@ function Public() {
             <a href={`/${slug}`}>Studio Demo</a>
           </nav>
         </div>
-        <a href="/" className="public-logo" aria-label="LuxeAdmin home">
+        <a href="/" className="public-logo" aria-label="Shopwus home">
           <span className="brand-mark bg-[#000000] text-white">É</span>
-          <span>LuxeAdmin</span>
+          <span>Shopwus</span>
         </a>
         <div className="nav-ctas">
           <a href="/signup">Sign up</a>
@@ -221,7 +221,7 @@ function Public() {
             <em>the remarkable.</em>
           </h1>
           <p>
-            LuxeAdmin brings your luxury event studio, clientele, and creative storytelling into one
+            Shopwus brings your luxury event studio, clientele, and creative storytelling into one
             considered place.
           </p>
           <div className="hero-ctas">
@@ -321,7 +321,7 @@ function Login() {
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold">
             É
           </div>
-          <span className="font-bold text-base tracking-tight text-[#191c1d]">LuxeAdmin</span>
+          <span className="font-bold text-base tracking-tight text-[#191c1d]">Shopwus</span>
         </Link>
         <Link
           href={`/signup${claimParam ? `?claim=${encodeURIComponent(claimParam)}` : ""}`}
@@ -427,7 +427,7 @@ function Login() {
 
       {/* Bottom Footer */}
       <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-[#8e9192] z-10">
-        © 2026 LuxeAdmin Atelier Suite. All rights reserved.
+        © 2026 Shopwus Atelier Suite. All rights reserved.
       </footer>
     </main>
   );
@@ -734,7 +734,7 @@ function ProfileSettings({ onToast }: { onToast: (s: string) => void }) {
       <PageTitle
         eyebrow="Account settings"
         title="Your profile"
-        description="Manage the details and preferences connected to your LuxeAdmin account."
+        description="Manage the details and preferences connected to your Shopwus account."
       />
       <div className="profile-panel">
         <div className="profile-panel-heading">

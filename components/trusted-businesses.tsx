@@ -33,7 +33,7 @@ function LogoRow({ businesses, reverse = false }: { businesses: string[]; revers
         {items.map((business, index) => (
           <div className="business-logo" key={`${business}-${index}`}>
             <img
-              src={reverse ? "/luxeadmin-logo-set-b.png" : "/luxeadmin-logo-set-a.png"}
+              src={reverse ? "/Shopwus-logo-set-b.png" : "/Shopwus-logo-set-a.png"}
               alt=""
               aria-hidden="true"
             />

@@ -104,13 +104,13 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
         <Link
           href="/"
           className="flex items-center gap-3 text-decoration-none group"
-          aria-label="LuxeAdmin Homepage"
+          aria-label="Shopwus Homepage"
         >
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold shadow-xs group-hover:bg-[#2d3032] transition-colors">
             É
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-sm tracking-tight text-[#191c1d]">LuxeAdmin</span>
+            <span className="font-bold text-sm tracking-tight text-[#191c1d]">Shopwus</span>
             <span className="text-[10px] text-[#8e9192] uppercase tracking-wider font-mono">
               Atelier Registry
             </span>
@@ -160,7 +160,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           {/* Explanatory Message */}
           <p
             className="text-sm sm:text-base text-[#5c5f60] max-w-2xl mx-auto leading-relaxed sm:whitespace-nowrap block"
-            style={{ marginBottom: "42px" }}
+            style={{ marginTop: "28px", marginBottom: "42px" }}
           >
             {cleanSlug ? (
               <>
@@ -248,7 +248,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
               <span>Verified Studio Directory</span>
             </div>
             <p className="text-xs text-[#8e9192] mt-0.5">
-              Explore luxury ateliers currently active on LuxeAdmin
+              Explore luxury ateliers currently active on Shopwus
             </p>
           </div>
 
@@ -303,7 +303,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
       <footer className="w-full max-w-6xl mx-auto px-6 py-6 border-t border-[#eae3d7] flex flex-wrap items-center justify-between gap-4 text-xs text-[#8e9192] z-10">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#10b981]" />
-          <span>LuxeAdmin Global Registry Active</span>
+          <span>Shopwus Global Registry Active</span>
         </div>
         <div className="flex items-center gap-4 text-xs">
           <Link
@@ -320,7 +320,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
             Studio Settings
           </Link>
           <span className="text-[#dcd6cb]">·</span>
-          <span>© 2026 LuxeAdmin</span>
+          <span>© 2026 Shopwus</span>
         </div>
       </footer>
     </main>

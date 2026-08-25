@@ -187,7 +187,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     const url =
       typeof window !== "undefined"
         ? window.location.href
-        : `https://luxeadmin.com/${profile.slug || slug}`;
+        : `https://Shopwus.com/${profile.slug || slug}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
@@ -429,7 +429,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
               <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
             </span>
             <span className="text-[#c4c7c7]">·</span>
-            <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
+            <span className="font-mono">Shopwus.com/{profile.slug || slug}</span>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={handleCopyLink}
@@ -834,7 +834,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
                       >
                         <Check size={11} strokeWidth={3} />
                       </div>
-                      <span>Verified LuxeAdmin Studio</span>
+                      <span>Verified Shopwus Studio</span>
                     </div>
                     <span className="font-mono text-[11px] text-[#78716c] uppercase">
                       ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
@@ -1508,7 +1508,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
             <div>
               © {new Date().getFullYear()} {profile.businessName}. All rights reserved.
             </div>
-            <div className="text-[10px] text-[#a89e92] mt-0.5">Powered by LuxeAdmin Platform</div>
+            <div className="text-[10px] text-[#a89e92] mt-0.5">Powered by Shopwus Platform</div>
           </div>
         </div>
       </footer>

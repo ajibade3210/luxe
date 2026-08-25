@@ -444,7 +444,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
   };
 
   const copyProfileLink = () => {
-    const url = `${typeof window !== "undefined" ? window.location.origin : "https://luxeadmin.com"}/${slug || "elan-events"}`;
+    const url = `${typeof window !== "undefined" ? window.location.origin : "https://Shopwus.com"}/${slug || "elan-events"}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
@@ -453,7 +453,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
 
   return (
     <section className="content settings-content">
-      {/* Top Banner with Authentic LuxeAdmin Typography */}
+      {/* Top Banner with Authentic Shopwus Typography */}
       <div className="page-title">
         <div>
           <span className="eyebrow">Your studio</span>
@@ -596,7 +596,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
           <label>
             Public profile slug & URL
             <div className="slug-input relative">
-              <span>luxeadmin.com/</span>
+              <span>Shopwus.com/</span>
               <input
                 aria-label="Public profile slug"
                 value={slug}
@@ -696,7 +696,11 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
                       </span>
                       <input
                         value={service.category}
-                        onChange={e => updateService(service.id, { category: e.target.value })}
+                        onChange={e =>
+                          updateService(service.id, {
+                            category: e.target.value,
+                          })
+                        }
                         list="category-options"
                         className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                       />

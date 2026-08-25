@@ -25,9 +25,9 @@ const AI_PROMPTS: AiPrompt[] = [
   {
     label: "Proposal Engine",
     icon: "✦",
-    question: "How does LuxeAdmin calculate multi-day production margins?",
+    question: "How does Shopwus calculate multi-day production margins?",
     answer:
-      "LuxeAdmin auto-calculates vendor cost baselines, staffing tiers, contingency buffers, and custom markup formulas in real-time. Proposals dynamic-link to live budgets so your studio never absorbs unexpected vendor price surges.",
+      "Shopwus auto-calculates vendor cost baselines, staffing tiers, contingency buffers, and custom markup formulas in real-time. Proposals dynamic-link to live budgets so your studio never absorbs unexpected vendor price surges.",
   },
   {
     label: "VIP Client Portal",
@@ -41,7 +41,7 @@ const AI_PROMPTS: AiPrompt[] = [
     icon: "◇",
     question: "Can I sync 10+ social accounts and live event galleries?",
     answer:
-      "Yes. LuxeAdmin connects directly to Instagram, TikTok, Pinterest, YouTube, and Vimeo. Published events automatically update your public portfolio with high-resolution imagery and vendor credits.",
+      "Yes. Shopwus connects directly to Instagram, TikTok, Pinterest, YouTube, and Vimeo. Published events automatically update your public portfolio with high-resolution imagery and vendor credits.",
   },
   {
     label: "Live Run of Show",
@@ -100,7 +100,7 @@ const navigationSections = [
       {
         title: "Company",
         links: [
-          { label: "About LuxeAdmin", href: "#workflow" },
+          { label: "About Shopwus", href: "#workflow" },
           { label: "The Atelier Journal", href: "#features" },
           { label: "Press & Accolades", href: "#features" },
           { label: "Careers", href: "#contact", badge: "Hiring" },
@@ -135,7 +135,7 @@ export function SiteFooter() {
     setTimeout(() => {
       setIsAiThinking(false);
       setCustomAnswer(
-        `LuxeAdmin seamlessly coordinates ${customQuestion.toLowerCase().includes("budget") ? "production budgets, currency conversions, and automated vendor milestone payouts" : customQuestion.toLowerCase().includes("client") ? "private client confidentiality, bespoke deck styling, and encrypted proposal approvals" : "luxury event workflows, multi-channel portfolio distribution, and high-touch VIP client experiences"} with dedicated atelier-grade tooling.`
+        `Shopwus seamlessly coordinates ${customQuestion.toLowerCase().includes("budget") ? "production budgets, currency conversions, and automated vendor milestone payouts" : customQuestion.toLowerCase().includes("client") ? "private client confidentiality, bespoke deck styling, and encrypted proposal approvals" : "luxury event workflows, multi-channel portfolio distribution, and high-touch VIP client experiences"} with dedicated atelier-grade tooling.`
       );
     }, 600);
   };
@@ -200,9 +200,9 @@ export function SiteFooter() {
       <div className="footer-main-grid">
         {/* Left Column: Brand & AI Concierge */}
         <div className="footer-brand-column">
-          <a href="/" className="footer-logo-brand" aria-label="LuxeAdmin Homepage">
+          <a href="/" className="footer-logo-brand" aria-label="Shopwus Homepage">
             <span className="footer-logo-monogram">É</span>
-            <span className="footer-logo-text">LuxeAdmin</span>
+            <span className="footer-logo-text">Shopwus</span>
           </a>
 
           <p className="footer-mission-text">
@@ -215,7 +215,7 @@ export function SiteFooter() {
             <div className="footer-app-qr">
               <img
                 src="https://cdn.accessa.ng/test/accessa/joe-fitness/qrcodes/images/7343ffeb0bfd056e77e8e8d52edf0722.png"
-                alt="LuxeAdmin companion iOS app QR code"
+                alt="Shopwus companion iOS app QR code"
                 className="w-full h-full object-contain rounded"
               />
             </div>
@@ -225,7 +225,7 @@ export function SiteFooter() {
                 <span>iOS & iPadOS Companion</span>
               </div>
               <strong className="text-sm font-semibold text-[#191c1d] block mt-0.5">
-                Download LuxeAdmin Studio
+                Download Shopwus Studio
               </strong>
               <span className="text-xs text-[#747878] block mt-0.5">
                 Live show-calls, team cueing & instant approvals
@@ -241,7 +241,7 @@ export function SiteFooter() {
                   <Sparkles size={12} className="text-[#a87d46]" />
                   <span>AI Concierge</span>
                 </span>
-                <span className="text-xs text-[#747878]">Ask about LuxeAdmin</span>
+                <span className="text-xs text-[#747878]">Ask about Shopwus</span>
               </div>
               {activePrompt && (
                 <button
@@ -415,7 +415,7 @@ export function SiteFooter() {
       {/* Bottom Bar: Copyright, Legal & Back to Top */}
       <div className="footer-bottom-bar">
         <div className="footer-bottom-left">
-          <span>© {new Date().getFullYear()} LuxeAdmin Technologies Inc. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Shopwus Technologies Inc. All rights reserved.</span>
           <span className="hidden sm:inline">·</span>
           <span className="text-[#855e2e] font-medium">Bespoke Event Operating System</span>
         </div>

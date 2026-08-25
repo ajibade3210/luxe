@@ -1,4 +1,4 @@
-# LuxeAdmin & Élan Events
+# Shopwus & Élan Events
 
 A luxury studio management platform and client-facing digital showcase application built with Next.js 16, React 19, and Tailwind CSS.
 
@@ -16,6 +16,7 @@ A luxury studio management platform and client-facing digital showcase applicati
 ### Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/ajibade3210/luxe.git
    cd "luxe-admin (1)"
@@ -41,6 +42,7 @@ npm run dev
 ```
 
 Once started, the application will be running at:
+
 - **Studio Admin & Settings**: [http://localhost:3000/settings](http://localhost:3000/settings) (or [http://localhost:3000/](http://localhost:3000/))
 - **Live Client Showcase Profile**: [http://localhost:3000/elan-events](http://localhost:3000/elan-events)
 
@@ -55,6 +57,7 @@ Press `Ctrl + C` (or `Cmd + C` on macOS) in your terminal where the dev server i
 ### Building for Production
 
 1. **Build the production bundle**:
+
    ```bash
    pnpm build
    ```
@@ -68,12 +71,12 @@ Press `Ctrl + C` (or `Cmd + C` on macOS) in your terminal where the dev server i
 
 ## 📂 Project Routes & Structure
 
-| Route | Description |
-| :--- | :--- |
-| `/` | Admin Dashboard (Leads, Metrics, & Recent Inquiries) |
-| `/settings` | Studio Settings & Live Profile (Brand Logo, Slug, Operating Hours, Channels) |
-| `/[slug]` (e.g. `/elan-events`) | Public Light-Mode Luxury Client Showcase & 3D Interactive Studio Card |
-| `/login` | Studio Portal Authentication |
+| Route                           | Description                                                                  |
+| :------------------------------ | :--------------------------------------------------------------------------- |
+| `/`                             | Admin Dashboard (Leads, Metrics, & Recent Inquiries)                         |
+| `/settings`                     | Studio Settings & Live Profile (Brand Logo, Slug, Operating Hours, Channels) |
+| `/[slug]` (e.g. `/elan-events`) | Public Light-Mode Luxury Client Showcase & 3D Interactive Studio Card        |
+| `/login`                        | Studio Portal Authentication                                                 |
 
 ---
 
