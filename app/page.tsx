@@ -7,12 +7,16 @@ import {
   ChevronRight,
   ExternalLink,
   Eye,
+  Lock,
+  Mail,
   Menu,
   Search,
   Settings,
+  Shield,
   Users,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ElanEventsPage } from "@/components/elan-events-page";
@@ -22,7 +26,7 @@ import { SignupPage } from "@/components/signup-page";
 import { SiteFooter } from "@/components/site-footer";
 import { TrustedBusinesses } from "@/components/trusted-businesses";
 import { WorkflowSection } from "@/components/workflow-section";
-import { publishChanges, updateLeadStatus } from "@/lib/api";
+import { createSession, publishChanges, updateLeadStatus } from "@/lib/api";
 import { businessProfile, customers, leads } from "@/lib/mock-data";
 import type { LeadStatus } from "@/lib/types";
 
@@ -237,31 +241,190 @@ function Public() {
   );
 }
 
-function Login() {
+function GoogleAuthIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <main className="login-page">
-      <div className="login-box">
-        <Brand />
-        <span className="eyebrow">Welcome back</span>
-        <h1>Return to your studio.</h1>
-        <p>Sign in to manage your business with intention.</p>
-        <button className="google">Continue with Google</button>
-        <div className="or">
-          <span>or continue with email</span>
+    <svg className={className} viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+      />
+    </svg>
+  );
+}
+
+function Login() {
+  const [email, setEmail] = useState("hello@elanevents.com");
+  const [password, setPassword] = useState("password");
+  const [claimParam, setClaimParam] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const claim = params.get("claim");
+      if (claim) setClaimParam(claim);
+    }
+  }, []);
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    createSession({
+      name: "Amelia Bell",
+      email: email || "hello@elanevents.com",
+      role: "Studio Director",
+      studioName: "Élan Events",
+      studioSlug: "elan-events",
+    });
+    window.location.href = claimParam
+      ? `/settings?claim=${encodeURIComponent(claimParam)}`
+      : "/settings";
+  };
+
+  const handleGoogleSignIn = () => {
+    createSession({
+      name: "Amelia Bell",
+      email: "hello@elanevents.com",
+      role: "Studio Director",
+      studioName: "Élan Events",
+      studioSlug: "elan-events",
+    });
+    window.location.href = claimParam
+      ? `/settings?claim=${encodeURIComponent(claimParam)}`
+      : "/settings";
+  };
+
+  return (
+    <main className="min-h-screen bg-[#faf8f5] text-[#191c1d] flex flex-col justify-between selection:bg-[#d8e2ff] selection:text-[#0058be] font-sans antialiased relative overflow-hidden">
+      {/* Ambient Glows */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] pointer-events-none opacity-40 blur-3xl -z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(214, 180, 138, 0.3) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Top Header */}
+      <header className="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between z-10">
+        <Link href="/" className="flex items-center gap-2.5 text-decoration-none group">
+          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold">
+            É
+          </div>
+          <span className="font-bold text-base tracking-tight text-[#191c1d]">LuxeAdmin</span>
+        </Link>
+        <Link
+          href={`/signup${claimParam ? `?claim=${encodeURIComponent(claimParam)}` : ""}`}
+          className="text-xs text-[#5c5f60] hover:text-[#191c1d] font-medium transition-colors"
+        >
+          Don&apos;t have a studio? <b className="text-[#191c1d] underline">Sign up</b>
+        </Link>
+      </header>
+
+      {/* Main Login Form Container */}
+      <div className="w-full max-w-md mx-auto px-6 py-8 my-auto z-10">
+        <div className="bg-white border border-[#eae3d7] rounded-3xl p-7 sm:p-9 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-5">
+            <span>Studio Director Portal</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-2">
+            Return to your studio.
+          </h1>
+          <p className="text-xs sm:text-sm text-[#5c5f60] mb-6 leading-relaxed">
+            Sign in to curate inquiries, review private client briefs, and publish atelier updates.
+          </p>
+
+          {/* Google Sign In Option */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] text-xs font-medium text-[#191c1d] transition-all cursor-pointer shadow-2xs mb-5"
+          >
+            <GoogleAuthIcon className="w-4 h-4" />
+            <span>Continue with Google</span>
+          </button>
+
+          {/* Divider */}
+          <div className="relative flex items-center justify-center mb-5">
+            <div className="border-t border-[#ede7dc] w-full" />
+            <span className="bg-white px-3 text-[10px] uppercase font-semibold text-[#8e9192] tracking-wider absolute">
+              or continue with email
+            </span>
+          </div>
+
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+                Work Email Address
+              </label>
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
+                <Mail size={14} className="text-[#8e9192] shrink-0" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="hello@elanevents.com"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
+                  Password
+                </label>
+                <span className="text-[10px] text-[#855e2e] hover:underline cursor-pointer">
+                  Forgot password?
+                </span>
+              </div>
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
+                <Lock size={14} className="text-[#8e9192] shrink-0" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              style={{ color: "#ffffff" }}
+              className="w-full mt-2 bg-[#191c1d] !text-white font-medium text-xs py-3 rounded-xl hover:bg-[#2d3032] transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+            >
+              <span>Sign in & Open Studio</span>
+              <ArrowRight size={14} />
+            </button>
+          </form>
+
+          {/* Privacy Note */}
+          <div className="flex items-center gap-2 mt-5 text-[11px] text-[#8e9192] justify-center">
+            <Shield size={12} />
+            <span>Encrypted with bank-grade 256-bit security.</span>
+          </div>
         </div>
-        <label>
-          Email address
-          <input type="email" defaultValue="hello@elanevents.com" />
-        </label>
-        <label>
-          Password
-          <input type="password" defaultValue="password" />
-        </label>
-        <a className="dark-button login-button bg-[#000000] border-[#000000]" href="/settings">
-          Sign in <ArrowRight size={15} />
-        </a>
-        <small>By continuing, you agree to LuxeAdmin&apos;s terms and privacy policy.</small>
       </div>
+
+      {/* Bottom Footer */}
+      <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-[#8e9192] z-10">
+        © 2026 LuxeAdmin Atelier Suite. All rights reserved.
+      </footer>
     </main>
   );
 }
