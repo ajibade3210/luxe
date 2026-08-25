@@ -714,31 +714,27 @@ export function ElanEventsPage({
                 </div>
 
                 {/* ========================================================= */}
-                {/* CARD BACK: FULL COMPANY DETAILS + DIRECT CONTACT & CTAS   */}
+                {/* CARD BACK: EXACT REFERENCE REPLICATION (LIGHT MODE)      */}
                 {/* ========================================================= */}
                 <div
-                  className={`absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-7 sm:p-9 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-y-auto transition-opacity duration-300 ${
+                  className={`absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-7 sm:p-8 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-y-auto transition-opacity duration-300 ${
                     isFlipped ? 'pointer-events-auto z-10' : 'pointer-events-none z-0'
                   }`}
                 >
-                  {/* Top Bar */}
-                  <div className="flex items-center justify-between border-b border-[#f0e8dc] pb-3.5 z-10">
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        style={{
-                          backgroundColor: secondaryColor,
-                          color: primaryColor,
-                          borderColor: "#ebd8ca",
-                        }}
-                        className="w-8 h-8 rounded-full border flex items-center justify-center font-serif text-sm font-bold"
+                  {/* Top Header Row */}
+                  <div className="flex items-center justify-between z-10">
+                    <div className="flex items-center gap-3">
+                      <div
+                        style={{ backgroundColor: secondaryColor, borderColor: '#ebd8ca', color: primaryColor }}
+                        className="w-11 h-11 rounded-2xl border flex items-center justify-center font-serif text-xl font-normal shrink-0 shadow-2xs"
                       >
                         {monogram}
-                      </span>
+                      </div>
                       <div>
-                        <div className="text-sm font-serif font-medium text-[#1c1917] leading-none">
+                        <div className="text-base font-serif font-semibold text-[#1c1917] leading-tight">
                           {profile.businessName}
                         </div>
-                        <div className="text-[10px] text-[#8a8075] uppercase tracking-wider mt-0.5">
+                        <div className="text-[10px] text-[#8c8278] uppercase tracking-[0.14em] font-medium mt-0.5">
                           Studio Details & Concierge
                         </div>
                       </div>
@@ -747,87 +743,89 @@ export function ElanEventsPage({
                     <button
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        setIsFlipped(false);
+                        e.stopPropagation()
+                        setIsFlipped(false)
                       }}
-                      className="inline-flex items-center gap-1 text-xs text-[#8a3e20] hover:text-[#b84c24] bg-[#faf6f0] hover:bg-[#faede4] px-3 py-1.5 rounded-full border border-[#ebd6c5] transition-all cursor-pointer shadow-2xs active:scale-95 z-20"
+                      className="inline-flex items-center gap-1.5 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#faf6f0] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs active:scale-95 z-20"
                     >
-                      <RotateCw size={12} /> Return to Front
+                      <RotateCw size={12} />
+                      <span className="font-medium text-[11px]">Return to Front</span>
                     </button>
                   </div>
 
-                  {/* Company Description Quote */}
-                  <p className="text-xs sm:text-[13px] text-[#554e48] font-serif italic leading-relaxed my-2.5 px-1 border-l-2 border-[#b84c24]/30 pl-3">
-                    &ldquo;{profile.description}&rdquo;
-                  </p>
+                  {/* Editorial Philosophy Quote with Left Accent Bar */}
+                  <div className="my-3 pl-4 border-l-[3px] border-[#b84c24] py-0.5">
+                    <p className="text-xs sm:text-[14px] text-[#2c2621] font-serif italic leading-relaxed">
+                      &ldquo;{profile.description}&rdquo;
+                    </p>
+                  </div>
 
-                  {/* Company Details Grid */}
-                  <div className="space-y-2 text-xs text-[#4a443e] my-1">
-                    <div className="bg-[#faf8f5] border border-[#eee6dc] p-2.5 rounded-xl space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#8a8075] flex items-center gap-1.5">
-                          <Clock3 size={13} style={{ color: primaryColor }} />{" "}
-                          Operating Hours:
-                        </span>
-                        <span className="font-medium text-[#1c1917]">
-                          {profile.operatingHours}: {profile.timeFrom} –{" "}
-                          {profile.timeTo}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#8a8075] flex items-center gap-1.5">
-                          <MapPin size={13} style={{ color: primaryColor }} />{" "}
-                          Studio Flagship:
-                        </span>
-                        <span className="font-medium text-[#1c1917] truncate max-w-[200px] text-right">
-                          {profile.physicalAddress || profile.location}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#8a8075] flex items-center gap-1.5">
-                          <Phone size={13} style={{ color: primaryColor }} />{" "}
-                          WhatsApp Line:
-                        </span>
-                        <span className="font-mono font-medium text-[#1c1917]">
-                          {profile.whatsAppNumber || profile.phone}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-[#8a8075] flex items-center gap-1.5">
-                          <Mail size={13} style={{ color: primaryColor }} />{" "}
-                          Studio Email:
-                        </span>
-                        <span className="font-medium text-[#1c1917] truncate max-w-[180px]">
-                          {profile.emailAddress || profile.email}
-                        </span>
-                      </div>
+                  {/* Clean Horizontal Contact Details Stack with Full Dividers */}
+                  <div className="border-t border-[#ebd8ca]/80 divide-y divide-[#ebd8ca]/70 text-xs my-1">
+                    <div className="py-2.5 flex items-center justify-between gap-3">
+                      <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
+                        <Clock3 size={15} style={{ color: primaryColor }} /> Operating Hours:
+                      </span>
+                      <span className="font-semibold text-[#1c1917] text-right">
+                        {profile.operatingHours}: {profile.timeFrom} – {profile.timeTo}
+                      </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] px-1 text-[#6e665e]">
-                      <div className="flex items-center gap-1 text-[#2c6e49] bg-[#eef8f1] border border-[#cbe6d2] px-2.5 py-1 rounded-md">
-                        <UserCheck size={13} />
-                        <span>Verified LuxeAdmin Studio</span>
-                      </div>
-                      <span>
-                        ID: {profile.slug?.toUpperCase() || "STUDIO-2026"}
+                    <div className="py-2.5 flex items-center justify-between gap-3">
+                      <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
+                        <MapPin size={15} style={{ color: primaryColor }} /> Studio Flagship:
+                      </span>
+                      <span className="font-semibold text-[#1c1917] truncate max-w-[220px] text-right">
+                        {profile.physicalAddress || profile.location}
+                      </span>
+                    </div>
+
+                    <div className="py-2.5 flex items-center justify-between gap-3">
+                      <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
+                        <Phone size={15} style={{ color: primaryColor }} /> WhatsApp Line:
+                      </span>
+                      <span className="font-mono font-semibold text-[#1c1917] text-right">
+                        {profile.whatsAppNumber || profile.phone}
+                      </span>
+                    </div>
+
+                    <div className="py-2.5 flex items-center justify-between gap-3">
+                      <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
+                        <Mail size={15} style={{ color: primaryColor }} /> Studio Email:
+                      </span>
+                      <span className="font-semibold text-[#1c1917] truncate max-w-[200px] text-right">
+                        {profile.emailAddress || profile.email}
                       </span>
                     </div>
                   </div>
 
-                  {/* Back Action Buttons */}
-                  <div className="pt-2 border-t border-[#f0e8dc] space-y-2 z-10">
-                    <div className="flex items-center gap-2">
+                  {/* Verification Banner */}
+                  <div className="bg-[#faf6f0] border border-[#ebd8ca] rounded-xl px-4 py-2.5 flex items-center justify-between text-xs my-1.5">
+                    <div className="flex items-center gap-1.5 font-semibold text-[#1c1917]">
+                      <div
+                        style={{ backgroundColor: primaryColor }}
+                        className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[10px]"
+                      >
+                        <Check size={11} strokeWidth={3} />
+                      </div>
+                      <span>Verified LuxeAdmin Studio</span>
+                    </div>
+                    <span className="font-mono text-[11px] text-[#78716c] uppercase">
+                      ID: {profile.slug?.toUpperCase() || 'ELAN-EVENTS'}
+                    </span>
+                  </div>
+
+                  {/* Action Buttons: Solid Left + Outline Right */}
+                  <div className="pt-2 space-y-2.5 z-10">
+                    <div className="grid grid-cols-2 gap-3">
                       <button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation();
-                          setQuoteModalOpen(true);
+                          e.stopPropagation()
+                          setQuoteModalOpen(true)
                         }}
                         style={{ backgroundColor: buttonColor }}
-                        className={`flex-1 text-white text-xs font-medium py-2.5 shadow-sm hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
+                        className={`text-white text-xs font-bold uppercase tracking-wider py-3 shadow-xs hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
                       >
                         <span>Get a Quote</span>
                         <ArrowRight size={13} />
@@ -837,34 +835,38 @@ export function ElanEventsPage({
                         href={whatsAppLink}
                         target="_blank"
                         rel="noreferrer"
-                        className={`flex-1 bg-[#faf8f5] hover:bg-[#f5eee6] text-[#1c1917] border border-[#ded3c7] text-xs font-medium py-2.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
+                        className={`bg-white hover:bg-[#faf6f0] text-[#1c1917] border border-[#d6c7b7] text-xs font-bold uppercase tracking-wider py-3 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
                       >
                         <MessageCircle size={14} className="text-[#25D366]" />
                         <span>WhatsApp Us</span>
                       </a>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-[#8c8278] pt-1">
+                    {/* Bottom Links */}
+                    <div className="flex items-center justify-between text-xs text-[#78716c] pt-1">
                       <button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation();
-                          handleCopyLink();
+                          e.stopPropagation()
+                          handleCopyLink()
                         }}
                         style={{ color: primaryColor }}
-                        className="font-medium hover:underline flex items-center gap-1 cursor-pointer"
+                        className="font-medium hover:underline flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Share2 size={12} /> Copy Profile Link
+                        <Share2 size={13} />
+                        <span>Copy Profile Link</span>
                       </button>
+
                       <button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation();
-                          setIsFlipped(false);
+                          e.stopPropagation()
+                          setIsFlipped(false)
                         }}
-                        className="text-[#78716c] hover:text-[#1c1917] flex items-center gap-1 cursor-pointer"
+                        className="text-[#78716c] hover:text-[#1c1917] flex items-center gap-1 cursor-pointer font-medium"
                       >
-                        <RotateCw size={11} /> Flip back
+                        <RotateCw size={12} />
+                        <span>Flip back</span>
                       </button>
                     </div>
                   </div>
