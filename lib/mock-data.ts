@@ -47,8 +47,7 @@ export const elanSocialChannels: SocialChannel[] = [
     connected: true,
     handle: "linkedin.com/company/elan-events",
     url: "https://linkedin.com/company/elan-events",
-    description:
-      "Corporate summit productions, galas & luxury hospitality insights",
+    description: "Corporate summit productions, galas & luxury hospitality insights",
     lastSynced: "2026-08-23T14:30:00Z",
   },
   {
@@ -217,52 +216,58 @@ export const businessProfile: BusinessProfile = {
   id: "bp-elan",
   businessName: "Élan Eventsxin",
   slug: "elan-events",
-  tagline:
-    "We design unforgettable weddings, corporate events, and private celebrations.",
+  tagline: "We design unforgettable weddings, corporate events, and private celebrations.",
   description:
     "Curating bespoke, high-end experiences for the discerning few. From intimate soirees in Victoria Island to grand galas, we bring flawless execution and quiet luxury to every detail.",
   location: "Victoria Island, Lagos, Nigeria",
   website: "elanevents.com",
   email: "hello@elanevents.com",
   phone: "+234 800 ELAN VIP",
-  logoUrl: "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
+  logoUrl:
+    "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
   googleReviewsLink: "https://business.google.com/elan-events",
   services: [
     {
       id: "svc-1",
       name: "Luxury Weddings",
       category: "Bespoke",
-      description: "End-to-end wedding production for discerning couples, from intimate garden ceremonies to grand ballroom affairs.",
+      description:
+        "End-to-end wedding production for discerning couples, from intimate garden ceremonies to grand ballroom affairs.",
     },
     {
       id: "svc-2",
       name: "Destination Events",
       category: "Bespoke",
-      description: "Seamless multi-day celebrations executed across international and domestic landmark destinations.",
+      description:
+        "Seamless multi-day celebrations executed across international and domestic landmark destinations.",
     },
     {
       id: "svc-3",
       name: "Corporate Galas",
       category: "Corporate",
-      description: "Executive-grade gala productions with precision logistics, branded staging, and VIP guest handling.",
+      description:
+        "Executive-grade gala productions with precision logistics, branded staging, and VIP guest handling.",
     },
     {
       id: "svc-4",
       name: "Private Celebrations",
       category: "Bespoke",
-      description: "Milestone birthdays, anniversaries, and intimate celebrations curated with discreet white-glove concierge.",
+      description:
+        "Milestone birthdays, anniversaries, and intimate celebrations curated with discreet white-glove concierge.",
     },
     {
       id: "svc-5",
       name: "Spatial & Floral Styling",
       category: "Creative",
-      description: "Architectural floral installations, mood lighting design, and full spatial transformation for any venue.",
+      description:
+        "Architectural floral installations, mood lighting design, and full spatial transformation for any venue.",
     },
     {
       id: "svc-6",
       name: "VIP Concierge Production",
       category: "Concierge",
-      description: "Discreet high-net-worth guest handling, synchronized dining, and premium vendor coordination.",
+      description:
+        "Discreet high-net-worth guest handling, synchronized dining, and premium vendor coordination.",
     },
   ] as ServiceItem[],
   socialChannels: elanSocialChannels,
@@ -332,8 +337,7 @@ export const leads: Lead[] = [
     service: "Spatial & Floral Styling",
     eventDate: "2026-11-12",
     budget: 54000,
-    message:
-      "We need floral, tablescape, and production design for a private gala.",
+    message: "We need floral, tablescape, and production design for a private gala.",
     status: "converted",
     createdAt: "2026-08-19T08:20:00Z",
   },
@@ -344,8 +348,7 @@ export const leads: Lead[] = [
     service: "Corporate Galas",
     eventDate: "2026-12-03",
     budget: 68000,
-    message:
-      "Annual benefit dinner for 200 executive guests at Eko Convention Centre.",
+    message: "Annual benefit dinner for 200 executive guests at Eko Convention Centre.",
     status: "closed",
     createdAt: "2026-08-16T16:10:00Z",
   },
@@ -391,8 +394,7 @@ export const customers: Customer[] = [
     company: "Adeleke Holdings",
     projects: [projects[0]],
     totalRevenue: 96000,
-    notes:
-      "Prefers understated architectural florals, soft candlelight and French linen.",
+    notes: "Prefers understated architectural florals, soft candlelight and French linen.",
     createdAt: "2026-06-01",
   },
   {
@@ -402,8 +404,7 @@ export const customers: Customer[] = [
     phone: "+234 809 794 6095",
     projects: [projects[1]],
     totalRevenue: 28000,
-    notes:
-      "Ikoyi resident. Loves seasonal botanical menus and string quartets.",
+    notes: "Ikoyi resident. Loves seasonal botanical menus and string quartets.",
     createdAt: "2026-05-10",
   },
   {
@@ -413,8 +414,7 @@ export const customers: Customer[] = [
     company: "MTN Group",
     projects: [projects[2]],
     totalRevenue: 74000,
-    notes:
-      "Annual gala partner. Requires strict security and VIP concierge protocols.",
+    notes: "Annual gala partner. Requires strict security and VIP concierge protocols.",
     createdAt: "2026-08-01",
   },
 ];

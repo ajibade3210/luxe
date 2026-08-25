@@ -1,8 +1,8 @@
 import {
   activities,
   businessProfile,
-  customers,
   currentUser,
+  customers,
   leads,
   socialChannels,
 } from "./mock-data";
@@ -13,7 +13,6 @@ import type {
   LeadStatus,
   ReviewItem,
   ServiceItem,
-  SocialChannel,
   User,
 } from "./types";
 
@@ -32,9 +31,7 @@ const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
  * When switching to a real API, call this on the raw API response before storing
  * it in state. The function is intentionally format-agnostic.
  */
-export function normalizeServices(
-  raw: (string | ServiceItem)[] | undefined,
-): ServiceItem[] {
+export function normalizeServices(raw: (string | ServiceItem)[] | undefined): ServiceItem[] {
   if (!Array.isArray(raw)) return [];
   return raw.map((s, i) => {
     if (typeof s === "string") {
@@ -74,7 +71,7 @@ function loadPersistedProfile(): BusinessProfile {
   }
   // Always normalize in-memory profile (handles fresh mock data path)
   businessProfile.services = normalizeServices(
-    businessProfile.services as (string | ServiceItem)[],
+    businessProfile.services as (string | ServiceItem)[]
   );
   return businessProfile;
 }
@@ -84,9 +81,7 @@ function savePersistedProfile(profile: BusinessProfile) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
       localStorage.setItem(VERSION_KEY, String(PROFILE_VERSION));
-      window.dispatchEvent(
-        new CustomEvent("luxe_profile_updated", { detail: profile }),
-      );
+      window.dispatchEvent(new CustomEvent("luxe_profile_updated", { detail: profile }));
     } catch {
       // Ignore storage quota errors
     }
@@ -103,9 +98,7 @@ export async function getBusinessProfile(): Promise<BusinessProfile> {
   return loadPersistedProfile();
 }
 
-export async function getBusinessBySlug(
-  slug: string,
-): Promise<BusinessProfile | null> {
+export async function getBusinessBySlug(slug: string): Promise<BusinessProfile | null> {
   await delay(100);
   const current = loadPersistedProfile();
   const normalized = (slug || "").toLowerCase().trim();
@@ -128,23 +121,14 @@ export async function getBusinessBySlug(
 }
 
 export async function checkSlugAvailability(
-  slug: string,
+  slug: string
 ): Promise<{ available: boolean; slug: string }> {
   await delay(200);
   const normalized = slug
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, "-")
     .replace(/-+/g, "-");
-  const reserved = [
-    "admin",
-    "login",
-    "signup",
-    "leads",
-    "customers",
-    "settings",
-    "api",
-    "profile",
-  ];
+  const reserved = ["admin", "login", "signup", "leads", "customers", "settings", "api", "profile"];
   const isAvailable = !reserved.includes(normalized) && normalized.length >= 3;
   return {
     available: isAvailable,
@@ -153,7 +137,7 @@ export async function checkSlugAvailability(
 }
 
 export async function submitConsultationInquiry(
-  input: Omit<Lead, "id" | "createdAt" | "status">,
+  input: Omit<Lead, "id" | "createdAt" | "status">
 ): Promise<Lead> {
   await delay(300);
   const newLead: Lead = {
@@ -167,7 +151,7 @@ export async function submitConsultationInquiry(
 }
 
 export async function uploadBusinessLogo(
-  _file?: File | Blob | string,
+  _file?: File | Blob | string
 ): Promise<{ url: string; success: boolean }> {
   await delay(400);
   const cdnUrl =
@@ -179,7 +163,7 @@ export async function uploadBusinessLogo(
 }
 
 export async function uploadPortfolioImage(
-  file?: File | Blob | string,
+  file?: File | Blob | string
 ): Promise<{ url: string; success: boolean }> {
   await delay(350);
   if (file && typeof window !== "undefined" && file instanceof File) {
@@ -204,9 +188,7 @@ export async function uploadPortfolioImage(
   };
 }
 
-export async function submitReview(
-  input: Omit<ReviewItem, "id" | "date">,
-): Promise<ReviewItem> {
+export async function submitReview(input: Omit<ReviewItem, "id" | "date">): Promise<ReviewItem> {
   await delay(300);
   const newReview: ReviewItem = {
     id: `rev-${Date.now()}`,
@@ -244,7 +226,7 @@ export async function getCustomerActivity(id: string) {
 }
 
 export async function updateBusinessProfile(
-  input: Partial<BusinessProfile>,
+  input: Partial<BusinessProfile>
 ): Promise<BusinessProfile> {
   await delay(300);
   const current = loadPersistedProfile();

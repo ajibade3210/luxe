@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
   ArrowDown,
   ArrowRight,
@@ -26,7 +25,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { businessProfile as initialMockProfile } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
 import {
   checkSlugAvailability,
   getBusinessProfile,
@@ -35,6 +34,7 @@ import {
   uploadBusinessLogo,
   uploadPortfolioImage,
 } from "@/lib/api";
+import { businessProfile as initialMockProfile } from "@/lib/mock-data";
 import type {
   BusinessProfile,
   ButtonRadiusType,
@@ -99,17 +99,13 @@ function Card({
   );
 }
 
-export function EnhancedSettingsPage({
-  onToast,
-}: {
-  onToast: (s: string) => void;
-}) {
+export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void }) {
   // Main settings state
   const [name, setName] = useState(initialMockProfile.businessName);
   const [slug, setSlug] = useState(initialMockProfile.slug);
   const [tagline, setTagline] = useState(
     initialMockProfile.tagline ||
-      "We design unforgettable weddings, corporate events, and private celebrations.",
+      "We design unforgettable weddings, corporate events, and private celebrations."
   );
   const [location, setLocation] = useState(initialMockProfile.location);
   const [website, setWebsite] = useState(initialMockProfile.website);
@@ -118,7 +114,7 @@ export function EnhancedSettingsPage({
 
   // Services
   const [services, setServices] = useState<ServiceItem[]>(
-    (initialMockProfile.services as ServiceItem[]) || [],
+    (initialMockProfile.services as ServiceItem[]) || []
   );
   const [showAddService, setShowAddService] = useState(false);
   const [newServiceInput, setNewServiceInput] = useState("");
@@ -128,7 +124,7 @@ export function EnhancedSettingsPage({
 
   // Portfolio
   const [portfolio, setPortfolio] = useState<PortfolioProject[]>(
-    initialMockProfile.portfolio || [],
+    initialMockProfile.portfolio || []
   );
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [newProject, setNewProject] = useState<Partial<PortfolioProject>>({
@@ -143,41 +139,36 @@ export function EnhancedSettingsPage({
 
   // Google Reviews & Reputation
   const [googleReviewsLink, setGoogleReviewsLink] = useState(
-    initialMockProfile.googleReviewsLink ||
-      "https://business.google.com/elan-events",
+    initialMockProfile.googleReviewsLink || "https://business.google.com/elan-events"
   );
   const [isSyncingReviews, setIsSyncingReviews] = useState(false);
 
   // Social Channels
   const [channels, setChannels] = useState<SocialChannel[]>(
-    initialMockProfile.socialChannels || [],
+    initialMockProfile.socialChannels || []
   );
 
   // Operating details
-  const [hours, setHours] = useState(
-    initialMockProfile.operatingHours || "Mon–Fri",
-  );
-  const [timeFrom, setTimeFrom] = useState(
-    initialMockProfile.timeFrom || "09:00 AM",
-  );
+  const [hours, setHours] = useState(initialMockProfile.operatingHours || "Mon–Fri");
+  const [timeFrom, setTimeFrom] = useState(initialMockProfile.timeFrom || "09:00 AM");
   const [timeTo, setTimeTo] = useState(initialMockProfile.timeTo || "06:00 PM");
   const [byAppointmentOnly, setByAppointmentOnly] = useState(
-    initialMockProfile.byAppointmentOnly ?? true,
+    initialMockProfile.byAppointmentOnly ?? true
   );
   const [whatsAppNumber, setWhatsAppNumber] = useState(
-    initialMockProfile.whatsAppNumber || "+234 800 ELAN VIP",
+    initialMockProfile.whatsAppNumber || "+234 800 ELAN VIP"
   );
   const [emailAddress, setEmailAddress] = useState(
-    initialMockProfile.emailAddress || "hello@elanevents.com",
+    initialMockProfile.emailAddress || "hello@elanevents.com"
   );
   const [physicalAddress, setPhysicalAddress] = useState(
-    initialMockProfile.physicalAddress || "Victoria Island, Lagos, Nigeria",
+    initialMockProfile.physicalAddress || "Victoria Island, Lagos, Nigeria"
   );
 
   // Business Logo
   const [logoUrl, setLogoUrl] = useState<string>(
     initialMockProfile.logoUrl ||
-      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
+      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png"
   );
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingProjectImage, setIsUploadingProjectImage] = useState(false);
@@ -189,25 +180,21 @@ export function EnhancedSettingsPage({
       secondary: "#0058BE",
       button: "#000000",
       text: "#191C1D",
-    },
+    }
   );
   const [radius, setRadius] = useState<ButtonRadiusType>(
-    initialMockProfile.buttonRadius || "Subtle",
+    initialMockProfile.buttonRadius || "Subtle"
   );
 
   // Gallery Management Modals & Reordering State
   const [showManageGalleryModal, setShowManageGalleryModal] = useState(false);
-  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(
-    null,
-  );
-  const [dragOverProjectIndex, setDragOverProjectIndex] = useState<
-    number | null
-  >(null);
+  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
+  const [dragOverProjectIndex, setDragOverProjectIndex] = useState<number | null>(null);
 
   // Validation & saving state
-  const [slugStatus, setSlugStatus] = useState<
-    "checking" | "available" | "taken" | "idle"
-  >("available");
+  const [slugStatus, setSlugStatus] = useState<"checking" | "available" | "taken" | "idle">(
+    "available"
+  );
   const [saving, setSaving] = useState(false);
 
   // Load freshest profile on mount
@@ -216,8 +203,7 @@ export function EnhancedSettingsPage({
       setName(p.businessName);
       setSlug(p.slug);
       setTagline(
-        p.tagline ||
-          "We design unforgettable weddings, corporate events, and private celebrations.",
+        p.tagline || "We design unforgettable weddings, corporate events, and private celebrations."
       );
       setLocation(p.location);
       setWebsite(p.website);
@@ -234,9 +220,7 @@ export function EnhancedSettingsPage({
       setByAppointmentOnly(p.byAppointmentOnly ?? true);
       setWhatsAppNumber(p.whatsAppNumber || "+234 800 ELAN VIP");
       setEmailAddress(p.emailAddress || "hello@elanevents.com");
-      setPhysicalAddress(
-        p.physicalAddress || "Victoria Island, Lagos, Nigeria",
-      );
+      setPhysicalAddress(p.physicalAddress || "Victoria Island, Lagos, Nigeria");
       if (p.colors) setColors(p.colors);
       if (p.buttonRadius) setRadius(p.buttonRadius);
     });
@@ -261,9 +245,7 @@ export function EnhancedSettingsPage({
   }, [slug]);
 
   const toggleChannel = (id: string) => {
-    setChannels(prev =>
-      prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)),
-    );
+    setChannels(prev => prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)));
   };
 
   const updateChannelHandle = (id: string, val: string) => {
@@ -275,17 +257,15 @@ export function EnhancedSettingsPage({
               handle: val,
               url: val.startsWith("http") ? val : `https://${val}`,
             }
-          : c,
-      ),
+          : c
+      )
     );
   };
 
   const addService = () => {
     const trimmed = newServiceInput.trim();
     if (!trimmed) return;
-    const exists = services.some(
-      s => s.name.toLowerCase() === trimmed.toLowerCase(),
-    );
+    const exists = services.some(s => s.name.toLowerCase() === trimmed.toLowerCase());
     if (!exists) {
       const item: ServiceItem = {
         id: `svc-${Date.now()}`,
@@ -318,8 +298,7 @@ export function EnhancedSettingsPage({
       title: newProject.title || "New Showcase Project",
       category: newProject.category || "Luxury Celebration",
       location: newProject.location || "Lagos, Nigeria",
-      description:
-        newProject.description || "Bespoke event planning and execution.",
+      description: newProject.description || "Bespoke event planning and execution.",
       image:
         newProject.image ||
         "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
@@ -361,9 +340,7 @@ export function EnhancedSettingsPage({
     }
   };
 
-  const handleProjectImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploadingProjectImage(true);
@@ -515,7 +492,8 @@ export function EnhancedSettingsPage({
                 Business Brand Logo
               </span>
               <span className="text-xs text-[#6b7280]">
-                Your official studio crest displayed on onboarding cards, concierge header, and footer
+                Your official studio crest displayed on onboarding cards, concierge header, and
+                footer
               </span>
             </div>
 
@@ -550,11 +528,10 @@ export function EnhancedSettingsPage({
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-sm font-semibold text-[#191c1d]">
-                      Studio Brand Crest
-                    </h4>
+                    <h4 className="text-sm font-semibold text-[#191c1d]">Studio Brand Crest</h4>
                     <p className="text-xs text-[#6b7280] mt-0.5">
-                      Upload a new logo to automatically generate a CDN URL and update all live touchpoints.
+                      Upload a new logo to automatically generate a CDN URL and update all live
+                      touchpoints.
                     </p>
                   </div>
                   <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-xs shrink-0">
@@ -579,7 +556,7 @@ export function EnhancedSettingsPage({
                     <input
                       type="text"
                       value={logoUrl}
-                      onChange={(e) => setLogoUrl(e.target.value)}
+                      onChange={e => setLogoUrl(e.target.value)}
                       placeholder="https://cdn.accessa.ng/..."
                       className="w-full text-xs font-mono bg-[#f8f9fa] border border-[#e5e7eb] rounded-md pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
                     />
@@ -617,11 +594,7 @@ export function EnhancedSettingsPage({
               <input
                 aria-label="Public profile slug"
                 value={slug}
-                onChange={e =>
-                  setSlug(
-                    e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
-                  )
-                }
+                onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs">
                 {slugStatus === "checking" && (
@@ -653,10 +626,7 @@ export function EnhancedSettingsPage({
           {/* Row 3: Location & Website */}
           <label>
             Location / Region
-            <input
-              value={location}
-              onChange={e => setLocation(e.target.value)}
-            />
+            <input value={location} onChange={e => setLocation(e.target.value)} />
           </label>
 
           <label>
@@ -710,9 +680,7 @@ export function EnhancedSettingsPage({
                       </span>
                       <input
                         value={service.name}
-                        onChange={e =>
-                          updateService(service.id, { name: e.target.value })
-                        }
+                        onChange={e => updateService(service.id, { name: e.target.value })}
                         className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                       />
                     </label>
@@ -722,16 +690,14 @@ export function EnhancedSettingsPage({
                       </span>
                       <input
                         value={service.category}
-                        onChange={e =>
-                          updateService(service.id, { category: e.target.value })
-                        }
+                        onChange={e => updateService(service.id, { category: e.target.value })}
                         list="category-options"
                         className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                       />
                       <datalist id="category-options">
-                        {["Bespoke", "Corporate", "Creative", "Concierge"].map(
-                          c => <option key={c} value={c} />,
-                        )}
+                        {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
+                          <option key={c} value={c} />
+                        ))}
                       </datalist>
                     </label>
                   </div>
@@ -835,9 +801,9 @@ export function EnhancedSettingsPage({
                     className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                   <datalist id="new-category-options">
-                    {["Bespoke", "Corporate", "Creative", "Concierge"].map(
-                      c => <option key={c} value={c} />,
-                    )}
+                    {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
+                      <option key={c} value={c} />
+                    ))}
                   </datalist>
                 </label>
               </div>
@@ -920,12 +886,8 @@ export function EnhancedSettingsPage({
                     className="w-10 h-10 rounded-lg object-cover shrink-0"
                   />
                   <div className="truncate">
-                    <strong className="text-xs block text-[#1c1917] truncate">
-                      {proj.title}
-                    </strong>
-                    <span className="text-[10px] text-[#78716c]">
-                      {proj.category}
-                    </span>
+                    <strong className="text-xs block text-[#1c1917] truncate">{proj.title}</strong>
+                    <span className="text-[10px] text-[#78716c]">{proj.category}</span>
                   </div>
                 </div>
                 <button
@@ -1030,7 +992,6 @@ export function EnhancedSettingsPage({
                   Save Link
                 </button>
               </div>
-
             </div>
           </div>
         </div>
@@ -1049,16 +1010,11 @@ export function EnhancedSettingsPage({
                 <b>{channel.label}</b>
                 <input
                   value={channel.handle}
-                  onChange={e =>
-                    updateChannelHandle(channel.id, e.target.value)
-                  }
+                  onChange={e => updateChannelHandle(channel.id, e.target.value)}
                   placeholder={`Enter ${channel.label} link or handle`}
                 />
               </div>
-              <Toggle
-                on={channel.connected}
-                onClick={() => toggleChannel(channel.id)}
-              />
+              <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
             </div>
           ))}
         </div>
@@ -1121,9 +1077,7 @@ export function EnhancedSettingsPage({
             <div>
               <MessageSquare />
               <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">
-                  WhatsApp number
-                </span>
+                <span className="text-[10px] text-[#78716c]">WhatsApp number</span>
                 <input
                   value={whatsAppNumber}
                   onChange={e => setWhatsAppNumber(e.target.value)}
@@ -1134,9 +1088,7 @@ export function EnhancedSettingsPage({
             <div>
               <Mail />
               <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">
-                  Email address
-                </span>
+                <span className="text-[10px] text-[#78716c]">Email address</span>
                 <input
                   value={emailAddress}
                   onChange={e => setEmailAddress(e.target.value)}
@@ -1147,9 +1099,7 @@ export function EnhancedSettingsPage({
             <div>
               <MapPin />
               <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">
-                  Physical address
-                </span>
+                <span className="text-[10px] text-[#78716c]">Physical address</span>
                 <input
                   value={physicalAddress}
                   onChange={e => setPhysicalAddress(e.target.value)}
@@ -1184,9 +1134,7 @@ export function EnhancedSettingsPage({
                   aria-label={`${label} color`}
                   type="color"
                   value={colors[key]}
-                  onChange={e =>
-                    setColors({ ...colors, [key]: e.target.value })
-                  }
+                  onChange={e => setColors({ ...colors, [key]: e.target.value })}
                 />
                 <code className="font-mono">{colors[key].toUpperCase()}</code>
               </div>
@@ -1196,14 +1144,8 @@ export function EnhancedSettingsPage({
 
         <div className="radius-choice">
           <span className="eyebrow">Button corner radius</span>
-          <div
-            className="radius-options"
-            role="radiogroup"
-            aria-label="Button corner radius"
-          >
-            {(
-              ["Square", "Subtle", "Rounded", "Pill"] as ButtonRadiusType[]
-            ).map(item => (
+          <div className="radius-options" role="radiogroup" aria-label="Button corner radius">
+            {(["Square", "Subtle", "Rounded", "Pill"] as ButtonRadiusType[]).map(item => (
               <label className="radius-option" key={item}>
                 <input
                   type="radio"
@@ -1260,47 +1202,35 @@ export function EnhancedSettingsPage({
 
             <form onSubmit={handleAddProject} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#1f2937] font-medium mb-1">
-                  Project Title *
-                </label>
+                <label className="block text-[#1f2937] font-medium mb-1">Project Title *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Zara & Kene's Coastal Nuptials"
                   value={newProject.title}
-                  onChange={e =>
-                    setNewProject({ ...newProject, title: e.target.value })
-                  }
+                  onChange={e => setNewProject({ ...newProject, title: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Category
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Category</label>
                   <input
                     type="text"
                     placeholder="e.g. Luxury Wedding"
                     value={newProject.category}
-                    onChange={e =>
-                      setNewProject({ ...newProject, category: e.target.value })
-                    }
+                    onChange={e => setNewProject({ ...newProject, category: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Location
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Location</label>
                   <input
                     type="text"
                     placeholder="e.g. Victoria Island, Lagos"
                     value={newProject.location}
-                    onChange={e =>
-                      setNewProject({ ...newProject, location: e.target.value })
-                    }
+                    onChange={e => setNewProject({ ...newProject, location: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
@@ -1385,7 +1315,9 @@ export function EnhancedSettingsPage({
                       )}
                     </div>
                     <span className="block text-xs font-semibold text-[#191c1d] group-hover:text-[#0058be] transition-colors">
-                      {isUploadingProjectImage ? "Uploading to CDN..." : "Click to upload project cover picture"}
+                      {isUploadingProjectImage
+                        ? "Uploading to CDN..."
+                        : "Click to upload project cover picture"}
                     </span>
                     <span className="block text-[11px] text-[#6b7280] mt-0.5">
                       PNG, JPG, or WebP (max 10MB) · Hosted on CDN
@@ -1446,7 +1378,8 @@ export function EnhancedSettingsPage({
                   Manage Gallery Arrangement
                 </h3>
                 <p className="text-xs text-[#6b7280] mt-1">
-                  Drag items or use the arrows to reorder how projects appear in &quot;Our Best Work&quot; on your public site.
+                  Drag items or use the arrows to reorder how projects appear in &quot;Our Best
+                  Work&quot; on your public site.
                 </p>
               </div>
               <button
@@ -1463,13 +1396,14 @@ export function EnhancedSettingsPage({
                 <div className="text-center py-12 border-2 border-dashed border-[#e5e7eb] rounded-lg">
                   <ImagePlus size={32} className="mx-auto text-[#9ca3af] mb-2" />
                   <p className="text-sm font-medium text-[#191c1d]">No gallery projects yet</p>
-                  <p className="text-xs text-[#6b7280] mt-1">Upload your first showcase project to get started.</p>
+                  <p className="text-xs text-[#6b7280] mt-1">
+                    Upload your first showcase project to get started.
+                  </p>
                 </div>
               ) : (
                 portfolio.map((proj, idx) => {
                   const isDragging = draggedProjectIndex === idx;
-                  const isDragOver =
-                    dragOverProjectIndex === idx && draggedProjectIndex !== idx;
+                  const isDragOver = dragOverProjectIndex === idx && draggedProjectIndex !== idx;
                   return (
                     <div
                       key={proj.id}
@@ -1482,8 +1416,8 @@ export function EnhancedSettingsPage({
                         isDragging
                           ? "opacity-40 border-dashed border-[#0058be] bg-[#f0f6ff]"
                           : isDragOver
-                          ? "border-[#0058be] ring-2 ring-[#0058be]/20 bg-[#f8faff]"
-                          : "border-[#e5e7eb] bg-white hover:border-[#cbd5e1] hover:shadow-xs"
+                            ? "border-[#0058be] ring-2 ring-[#0058be]/20 bg-[#f8faff]"
+                            : "border-[#e5e7eb] bg-white hover:border-[#cbd5e1] hover:shadow-xs"
                       }`}
                     >
                       {/* Drag Handle */}

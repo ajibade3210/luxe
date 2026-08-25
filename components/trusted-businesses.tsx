@@ -25,13 +25,7 @@ const rowTwoBusinesses = [
   "Nimbus",
 ];
 
-function LogoRow({
-  businesses,
-  reverse = false,
-}: {
-  businesses: string[];
-  reverse?: boolean;
-}) {
+function LogoRow({ businesses, reverse = false }: { businesses: string[]; reverse?: boolean }) {
   const items = [...businesses, ...businesses];
   return (
     <div className={`logo-marquee ${reverse ? "logo-marquee-reverse" : ""}`}>
@@ -39,11 +33,7 @@ function LogoRow({
         {items.map((business, index) => (
           <div className="business-logo" key={`${business}-${index}`}>
             <img
-              src={
-                reverse
-                  ? "/luxeadmin-logo-set-b.png"
-                  : "/luxeadmin-logo-set-a.png"
-              }
+              src={reverse ? "/luxeadmin-logo-set-b.png" : "/luxeadmin-logo-set-a.png"}
               alt=""
               aria-hidden="true"
             />
@@ -57,10 +47,7 @@ function LogoRow({
 
 export function TrustedBusinesses() {
   return (
-    <section
-      className="trusted-businesses"
-      aria-labelledby="trusted-businesses-title"
-    >
+    <section className="trusted-businesses" aria-labelledby="trusted-businesses-title">
       <div className="trusted-heading">
         <span className="eyebrow">A growing community</span>
         <h2 id="trusted-businesses-title">Trusted by businesses like yours.</h2>

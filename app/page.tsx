@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
 import {
   ArrowRight,
   Bell,
@@ -16,13 +14,16 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { ElanEventsPage } from "@/components/elan-events-page";
+import { EnhancedSettingsPage } from "@/components/settings-page";
+import { SiteFooter } from "@/components/site-footer";
+import { TrustedBusinesses } from "@/components/trusted-businesses";
+import { WorkflowSection } from "@/components/workflow-section";
 import { publishChanges, updateLeadStatus } from "@/lib/api";
 import { businessProfile, customers, leads } from "@/lib/mock-data";
 import type { LeadStatus } from "@/lib/types";
-import { EnhancedSettingsPage } from "@/components/settings-page";
-import { TrustedBusinesses } from "@/components/trusted-businesses";
-import { SiteFooter } from "@/components/site-footer";
-import { ElanEventsPage } from "@/components/elan-events-page";
 
 const money = (n: number) =>
   new Intl.NumberFormat("en-US", {
@@ -58,15 +59,7 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   );
 }
 
-function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail?: string;
-}) {
+function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div className="metric">
       <span className="eyebrow">{label}</span>
@@ -76,15 +69,7 @@ function Metric({
   );
 }
 
-function Sidebar({
-  path,
-  open,
-  onClose,
-}: {
-  path: string;
-  open: boolean;
-  onClose: () => void;
-}) {
+function Sidebar({ path, open, onClose }: { path: string; open: boolean; onClose: () => void }) {
   const slug = businessProfile.slug || "elan-events";
   return (
     <aside className={`sidebar ${open ? "is-open" : ""}`}>
@@ -93,12 +78,10 @@ function Sidebar({
         <button className="mobile-close" onClick={onClose}>
           <X />
         </button>
-        
       </div>
       <nav>
         <a className={path === "/leads" ? "active" : ""} href="/leads">
-          <Users size={16} /> Leads{" "}
-          <span className="nav-count">{leads.length}</span>
+          <Users size={16} /> Leads <span className="nav-count">{leads.length}</span>
         </a>
         <a className={path === "/customers" ? "active" : ""} href="/customers">
           <Users size={16} /> Customers
@@ -109,8 +92,7 @@ function Sidebar({
           target="_blank"
           rel="noreferrer"
         >
-          <Eye size={15} /> Profile View{" "}
-          <ExternalLink size={13} className="ml-auto opacity-70" />
+          <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
         </a>
         <a className={path === "/settings" ? "active" : ""} href="/settings">
           <Settings size={16} /> Settings
@@ -128,13 +110,7 @@ function Sidebar({
   );
 }
 
-function Header({
-  onMenu,
-  onToast,
-}: {
-  onMenu: () => void;
-  onToast: (s: string) => void;
-}) {
+function Header({ onMenu, onToast }: { onMenu: () => void; onToast: (s: string) => void }) {
   const [busy, setBusy] = useState(false);
   const slug = businessProfile.slug || "elan-events";
   return (
@@ -225,10 +201,7 @@ function Public() {
         </a>
         <div className="nav-ctas">
           <a href="/login">Log in</a>
-          <a
-            className="dark-button bg-[#000000] border-[#000000]"
-            href="/login"
-          >
+          <a className="dark-button bg-[#000000] border-[#000000]" href="/login">
             Enter Studio <ArrowRight size={15} />
           </a>
         </div>
@@ -243,14 +216,11 @@ function Public() {
             <em>the remarkable.</em>
           </h1>
           <p>
-            LuxeAdmin brings your luxury event studio, clientele, and creative
-            storytelling into one considered place.
+            LuxeAdmin brings your luxury event studio, clientele, and creative storytelling into one
+            considered place.
           </p>
           <div className="hero-ctas">
-            <a
-              className="dark-button bg-[#000000] border-[#000000]"
-              href="/settings"
-            >
+            <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">
               Enter your studio <ArrowRight size={15} />
             </a>
             <a className="text-link text-[#0058be]" href={`/${slug}`}>
@@ -263,18 +233,11 @@ function Public() {
           href={`/${slug}`}
           className="profile-card group transition-transform hover:-translate-y-1 block text-decoration-none"
         >
-          <div className="profile-image bg-[#f3f4f6] text-[#000000] font-mono">
-            É
-          </div>
+          <div className="profile-image bg-[#f3f4f6] text-[#000000] font-mono">É</div>
           <div className="profile-meta">
             <span className="eyebrow">Luxury Event Studio · Lagos</span>
-            <h2 className="group-hover:text-[#0058be] transition-colors">
-              Élan Events
-            </h2>
-            <p>
-              We design unforgettable weddings, corporate events, and private
-              celebrations.
-            </p>
+            <h2 className="group-hover:text-[#0058be] transition-colors">Élan Events</h2>
+            <p>We design unforgettable weddings, corporate events, and private celebrations.</p>
           </div>
           <div className="profile-foot">
             <span>Bespoke Experiences</span>
@@ -285,43 +248,8 @@ function Public() {
         </a>
       </section>
 
-      <section className="workflow" id="workflow">
-        <div className="section-intro">
-          <span className="eyebrow">A better way to build</span>
-          <h2>
-            Everything in its
-            <br />
-            <em>right place.</em>
-          </h2>
-        </div>
-        <div className="workflow-grid">
-          <div>
-            <span className="step">01</span>
-            <h3>Create</h3>
-            <p>
-              Shape a public profile that feels like your work, and invite
-              discerning clients in.
-            </p>
-          </div>
-          <div>
-            <span className="step">02</span>
-            <h3>Curate</h3>
-            <p>
-              Keep your services, stories, and 10 social channels beautifully
-              unified.
-            </p>
-          </div>
-          <div>
-            <span className="step">03</span>
-            <h3>Convert</h3>
-            <p>
-              Turn a first consultation inquiry into a considered, lasting
-              relationship.
-            </p>
-          </div>
-        </div>
-      </section>
       <TrustedBusinesses />
+      <WorkflowSection />
       <SiteFooter />
     </main>
   );
@@ -347,15 +275,10 @@ function Login() {
           Password
           <input type="password" defaultValue="password" />
         </label>
-        <a
-          className="dark-button login-button bg-[#000000] border-[#000000]"
-          href="/settings"
-        >
+        <a className="dark-button login-button bg-[#000000] border-[#000000]" href="/settings">
           Sign in <ArrowRight size={15} />
         </a>
-        <small>
-          By continuing, you agree to LuxeAdmin&apos;s terms and privacy policy.
-        </small>
+        <small>By continuing, you agree to LuxeAdmin&apos;s terms and privacy policy.</small>
       </div>
     </main>
   );
@@ -393,12 +316,10 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
       total: items.length,
       newToday: items.filter(l => l.status === "new").length,
       conversion: Math.round(
-        (items.filter(l => l.status === "converted").length /
-          (items.length || 1)) *
-          100,
+        (items.filter(l => l.status === "converted").length / (items.length || 1)) * 100
       ),
     }),
-    [items],
+    [items]
   );
 
   return (
@@ -424,11 +345,7 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
           value={String(metrics.newToday).padStart(2, "0")}
           detail="Needs attention"
         />
-        <Metric
-          label="Conversion rate"
-          value={`${metrics.conversion}%`}
-          detail="Last 30 days"
-        />
+        <Metric label="Conversion rate" value={`${metrics.conversion}%`} detail="Last 30 days" />
       </div>
       <div className="table-card">
         <div className="table-head">
@@ -456,9 +373,7 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
                   <td>{lead.service}</td>
                   <td>{date(lead.eventDate)}</td>
                   <td>
-                    <span className={`status ${lead.status}`}>
-                      {statusLabel(lead.status)}
-                    </span>
+                    <span className={`status ${lead.status}`}>{statusLabel(lead.status)}</span>
                   </td>
                   <td>
                     <ChevronRight size={16} />
@@ -505,11 +420,7 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
                 onClick={async () => {
                   await updateLeadStatus(selectedLead.id, "contacted");
                   setItems(
-                    items.map(x =>
-                      x.id === selectedLead.id
-                        ? { ...x, status: "contacted" }
-                        : x,
-                    ),
+                    items.map(x => (x.id === selectedLead.id ? { ...x, status: "contacted" } : x))
                   );
                   onToast("Lead marked as contacted");
                 }}
@@ -522,10 +433,8 @@ function Leads({ onToast }: { onToast: (s: string) => void }) {
                   await updateLeadStatus(selectedLead.id, "converted");
                   setItems(
                     items.map(x =>
-                      x.id === selectedLead.id
-                        ? { ...x, status: "converted" as LeadStatus }
-                        : x,
-                    ),
+                      x.id === selectedLead.id ? { ...x, status: "converted" as LeadStatus } : x
+                    )
                   );
                   onToast("Lead converted to customer");
                 }}
@@ -551,11 +460,7 @@ function Customers() {
         description="The people behind the remarkable moments."
       />
       <div className="metrics">
-        <Metric
-          label="Total customers"
-          value="03"
-          detail="Active relationships"
-        />
+        <Metric label="Total customers" value="03" detail="Active relationships" />
         <Metric label="Active projects" value="02" detail="In progress" />
         <Metric
           label="Revenue"
@@ -594,9 +499,7 @@ function Customers() {
                     </td>
                     <td>{money(c.totalRevenue)}</td>
                     <td>
-                      <span className={`status ${p.status}`}>
-                        {statusLabel(p.status)}
-                      </span>
+                      <span className={`status ${p.status}`}>{statusLabel(p.status)}</span>
                     </td>
                     <td>
                       <ChevronRight size={16} />
@@ -717,26 +620,15 @@ function ProfileSettings({ onToast }: { onToast: (s: string) => void }) {
         <div className="form-grid">
           <label>
             Full name
-            <input
-              value={name}
-              onChange={event => setName(event.target.value)}
-            />
+            <input value={name} onChange={event => setName(event.target.value)} />
           </label>
           <label>
             Email address
-            <input
-              type="email"
-              value={email}
-              onChange={event => setEmail(event.target.value)}
-            />
+            <input type="email" value={email} onChange={event => setEmail(event.target.value)} />
           </label>
           <label>
             Phone number
-            <input
-              type="tel"
-              value={phone}
-              onChange={event => setPhone(event.target.value)}
-            />
+            <input type="tel" value={phone} onChange={event => setPhone(event.target.value)} />
           </label>
         </div>
       </div>
@@ -783,14 +675,7 @@ export default function Page() {
   if (currentPath === "/") return <Public />;
 
   // If path is a public business profile slug (e.g. /elan-events, /maison-bell-events, etc.)
-  const adminRoutes = [
-    "/leads",
-    "/customers",
-    "/settings",
-    "/profile",
-    "/login",
-    "/",
-  ];
+  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login", "/"];
   if (!adminRoutes.includes(currentPath)) {
     const slug = currentPath.replace(/^\//, "").split("/")[0] || "elan-events";
     return <ElanEventsPage slug={slug} />;

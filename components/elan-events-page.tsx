@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -26,12 +25,9 @@ import {
   Video,
   X,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { getBusinessBySlug, submitConsultationInquiry, submitReview } from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
-import {
-  getBusinessBySlug,
-  submitConsultationInquiry,
-  submitReview,
-} from "@/lib/api";
 import type {
   BusinessProfile,
   ButtonRadiusType,
@@ -45,14 +41,9 @@ interface ElanEventsPageProps {
   slug?: string;
 }
 
-export function ElanEventsPage({
-  initialProfile,
-  slug = "elan-events",
-}: ElanEventsPageProps) {
+export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEventsPageProps) {
   // Live dynamic profile state
-  const [profile, setProfile] = useState<BusinessProfile>(
-    initialProfile || defaultProfile,
-  );
+  const [profile, setProfile] = useState<BusinessProfile>(initialProfile || defaultProfile);
 
   // Fetch freshest profile and subscribe to settings changes
   useEffect(() => {
@@ -69,8 +60,7 @@ export function ElanEventsPage({
 
     if (typeof window !== "undefined") {
       window.addEventListener("luxe_profile_updated", handleProfileUpdate);
-      return () =>
-        window.removeEventListener("luxe_profile_updated", handleProfileUpdate);
+      return () => window.removeEventListener("luxe_profile_updated", handleProfileUpdate);
     }
   }, [slug]);
 
@@ -105,8 +95,7 @@ export function ElanEventsPage({
   // Modals
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] =
-    useState<PortfolioProject | null>(null);
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
 
   // Newsletter
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -117,8 +106,7 @@ export function ElanEventsPage({
     name: "",
     email: "",
     phone: "",
-    service:
-      (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
+    service: (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
     eventDate: "",
     budget: "50000",
     message: "",
@@ -197,8 +185,7 @@ export function ElanEventsPage({
     return (sum / profile.reviews.length).toFixed(1);
   }, [profile.reviews]);
 
-  const totalReviews =
-    (profile.reviews?.length || 0) > 3 ? profile.reviews.length : 127;
+  const totalReviews = (profile.reviews?.length || 0) > 3 ? profile.reviews.length : 127;
 
   const handleCopyLink = () => {
     const url =
@@ -215,9 +202,7 @@ export function ElanEventsPage({
     e.preventDefault();
     if (!newsletterEmail) return;
     setNewsletterSubscribed(true);
-    showToast(
-      `Thank you for subscribing to the ${profile.businessName} Journal.`,
-    );
+    showToast(`Thank you for subscribing to the ${profile.businessName} Journal.`);
     setNewsletterEmail("");
   };
 
@@ -230,26 +215,21 @@ export function ElanEventsPage({
         email: quoteForm.email,
         phone: quoteForm.phone,
         service:
-          quoteForm.service ||
-          (profile.services as ServiceItem[])?.[0]?.name ||
-          "Luxury Weddings",
+          quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
         eventDate: quoteForm.eventDate || new Date().toISOString().slice(0, 10),
         budget: Number(quoteForm.budget) || 50000,
-        message:
-          quoteForm.message ||
-          "Consultation request submitted via public profile.",
+        message: quoteForm.message || "Consultation request submitted via public profile.",
       });
       setQuoteSubmitting(false);
       setQuoteModalOpen(false);
       showToast(
-        "Consultation inquiry sent! Our studio directors will contact you within 24 hours.",
+        "Consultation inquiry sent! Our studio directors will contact you within 24 hours."
       );
       setQuoteForm({
         name: "",
         email: "",
         phone: "",
-        service:
-          (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
+        service: (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
         eventDate: "",
         budget: "50000",
         message: "",
@@ -423,16 +403,13 @@ export function ElanEventsPage({
     }
   };
 
-  const monogram = profile.businessName
-    ? profile.businessName[0].toUpperCase()
-    : "É";
+  const monogram = profile.businessName ? profile.businessName[0].toUpperCase() : "É";
 
   // WhatsApp clean link generator
-  const cleanPhone = (
-    profile.whatsAppNumber ||
-    profile.phone ||
-    "+234 800 ELAN VIP"
-  ).replace(/[^0-9]/g, "");
+  const cleanPhone = (profile.whatsAppNumber || profile.phone || "+234 800 ELAN VIP").replace(
+    /[^0-9]/g,
+    ""
+  );
   const whatsAppLink = `https://wa.me/${cleanPhone || "2348003526847"}`;
 
   return (
@@ -448,13 +425,10 @@ export function ElanEventsPage({
               style={{ color: primaryColor }}
               className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
             >
-              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin
-              Preview
+              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
             </span>
             <span className="text-[#c4c7c7]">·</span>
-            <span className="font-mono">
-              luxeadmin.com/{profile.slug || slug}
-            </span>
+            <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={handleCopyLink}
@@ -644,9 +618,7 @@ export function ElanEventsPage({
                 {/* ========================================================= */}
                 <div
                   className={`absolute inset-0 backface-hidden bg-gradient-to-b from-[#ffffff] via-[#fcfaf7] to-[#faf4ec] border border-[#e8dfd3] rounded-3xl p-8 sm:p-10 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between items-center text-center overflow-hidden transition-opacity duration-300 ${
-                    isFlipped
-                      ? "pointer-events-none z-0"
-                      : "pointer-events-auto z-10"
+                    isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10"
                   }`}
                 >
                   {/* Subtle background luxury pattern/watermark */}
@@ -677,9 +649,7 @@ export function ElanEventsPage({
                       title="Click to flip and view full studio contact details"
                     >
                       <RotateCw size={12} />
-                      <span className="font-medium text-[11px]">
-                        View Details
-                      </span>
+                      <span className="font-medium text-[11px]">View Details</span>
                     </button>
                   </div>
 
@@ -720,8 +690,7 @@ export function ElanEventsPage({
                     <div className="mt-2 flex items-center justify-center gap-2">
                       <span className="h-[1px] w-6 bg-[#d8ccbe]" />
                       <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#8a7f73] font-medium text-center">
-                        {profile.tagline ||
-                          `Bespoke Event Studio · ${profile.location}`}
+                        {profile.tagline || `Bespoke Event Studio · ${profile.location}`}
                       </span>
                       <span className="h-[1px] w-6 bg-[#d8ccbe]" />
                     </div>
@@ -762,9 +731,7 @@ export function ElanEventsPage({
                 {/* ========================================================= */}
                 <div
                   className={`absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-7 sm:p-8 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-y-auto transition-opacity duration-300 ${
-                    isFlipped
-                      ? "pointer-events-auto z-10"
-                      : "pointer-events-none z-0"
+                    isFlipped ? "pointer-events-auto z-10" : "pointer-events-none z-0"
                   }`}
                 >
                   {/* Top Header Row */}
@@ -807,9 +774,7 @@ export function ElanEventsPage({
                       className="inline-flex items-center gap-1.5 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#faf6f0] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs active:scale-95 z-20"
                     >
                       <RotateCw size={12} />
-                      <span className="font-medium text-[11px]">
-                        Return to Front
-                      </span>
+                      <span className="font-medium text-[11px]">Return to Front</span>
                     </button>
                   </div>
 
@@ -824,19 +789,16 @@ export function ElanEventsPage({
                   <div className="border-t border-[#ebd8ca]/80 divide-y divide-[#ebd8ca]/70 text-xs my-1">
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Clock3 size={15} style={{ color: primaryColor }} />{" "}
-                        Operating Hours:
+                        <Clock3 size={15} style={{ color: primaryColor }} /> Operating Hours:
                       </span>
                       <span className="font-semibold text-[#1c1917] text-right">
-                        {profile.operatingHours}: {profile.timeFrom} –{" "}
-                        {profile.timeTo}
+                        {profile.operatingHours}: {profile.timeFrom} – {profile.timeTo}
                       </span>
                     </div>
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <MapPin size={15} style={{ color: primaryColor }} />{" "}
-                        Studio Flagship:
+                        <MapPin size={15} style={{ color: primaryColor }} /> Studio Flagship:
                       </span>
                       <span className="font-semibold text-[#1c1917] truncate max-w-[220px] text-right">
                         {profile.physicalAddress || profile.location}
@@ -845,8 +807,7 @@ export function ElanEventsPage({
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Phone size={15} style={{ color: primaryColor }} />{" "}
-                        WhatsApp Line:
+                        <Phone size={15} style={{ color: primaryColor }} /> WhatsApp Line:
                       </span>
                       <span className="font-mono font-semibold text-[#1c1917] text-right">
                         {profile.whatsAppNumber || profile.phone}
@@ -855,8 +816,7 @@ export function ElanEventsPage({
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Mail size={15} style={{ color: primaryColor }} />{" "}
-                        Studio Email:
+                        <Mail size={15} style={{ color: primaryColor }} /> Studio Email:
                       </span>
                       <span className="font-semibold text-[#1c1917] truncate max-w-[200px] text-right">
                         {profile.emailAddress || profile.email}
@@ -962,8 +922,8 @@ export function ElanEventsPage({
                     {/* Tooltip on hover */}
                     <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
                       <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                        Our signature production pillars, spatial geometry, and
-                        white-glove event concierge.
+                        Our signature production pillars, spatial geometry, and white-glove event
+                        concierge.
                         <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
                       </div>
                     </div>
@@ -987,8 +947,7 @@ export function ElanEventsPage({
                       Bespoke Architectural Styling
                     </strong>
                     <span className="text-[#78716c]">
-                      Custom spatial geometry, mood lighting, and curated floral
-                      pavilions.
+                      Custom spatial geometry, mood lighting, and curated floral pavilions.
                     </span>
                   </div>
                 </div>
@@ -1028,8 +987,7 @@ export function ElanEventsPage({
                       White Glove VIP Concierge
                     </strong>
                     <span className="text-[#78716c]">
-                      Discreet high-net-worth guest handling and synchronized
-                      dining.
+                      Discreet high-net-worth guest handling and synchronized dining.
                     </span>
                   </div>
                 </div>
@@ -1043,8 +1001,7 @@ export function ElanEventsPage({
                   The {profile.businessName} Journal
                 </span>
                 <p className="text-xs text-[#6e665e] mt-0.5">
-                  Receive our quarterly lookbook of weddings, galas, and spatial
-                  design narratives.
+                  Receive our quarterly lookbook of weddings, galas, and spatial design narratives.
                 </p>
               </div>
 
@@ -1099,9 +1056,8 @@ export function ElanEventsPage({
                   {/* Tooltip on hover */}
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
                     <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                      Follow our daily creations, live behind-the-scenes
-                      transformations, and editorial showcases across{" "}
-                      {profile.socialChannels?.length || 10} platforms.
+                      Follow our daily creations, live behind-the-scenes transformations, and
+                      editorial showcases across {profile.socialChannels?.length || 10} platforms.
                       <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
                     </div>
                   </div>
@@ -1115,9 +1071,7 @@ export function ElanEventsPage({
               const meta = getSocialPlatformMeta(channel.type);
               const cleanUrl =
                 channel.url ||
-                (channel.handle?.startsWith("http")
-                  ? channel.handle
-                  : `https://${channel.handle}`);
+                (channel.handle?.startsWith("http") ? channel.handle : `https://${channel.handle}`);
               return (
                 <a
                   key={channel.id}
@@ -1183,8 +1137,8 @@ export function ElanEventsPage({
                   {/* Tooltip on hover */}
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
                     <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                      Verified 5-star ratings and authentic client reviews from
-                      our Google Business listing.
+                      Verified 5-star ratings and authentic client reviews from our Google Business
+                      listing.
                       <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
                     </div>
                   </div>
@@ -1218,10 +1172,7 @@ export function ElanEventsPage({
                 className="bg-white border border-[#eae2d6] rounded-2xl p-6 shadow-[0_4px_20px_rgba(70,40,20,0.03)] flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
-                  <div
-                    className="flex items-center gap-1"
-                    style={{ color: primaryColor }}
-                  >
+                  <div className="flex items-center gap-1" style={{ color: primaryColor }}>
                     {Array.from({ length: review.rating || 5 }).map((_, i) => (
                       <Star key={i} size={14} fill={primaryColor} />
                     ))}
@@ -1233,16 +1184,10 @@ export function ElanEventsPage({
 
                 <div className="pt-4 border-t border-[#f2ebe1] flex items-center justify-between text-xs">
                   <div>
-                    <strong className="text-[#1c1917] block font-medium">
-                      {review.author}
-                    </strong>
-                    <span className="text-[#8a8075] text-[11px]">
-                      {review.eventType}
-                    </span>
+                    <strong className="text-[#1c1917] block font-medium">{review.author}</strong>
+                    <span className="text-[#8a8075] text-[11px]">{review.eventType}</span>
                   </div>
-                  <span className="text-[10px] text-[#a69c90]">
-                    {review.date}
-                  </span>
+                  <span className="text-[10px] text-[#a69c90]">{review.date}</span>
                 </div>
               </div>
             ))}
@@ -1263,8 +1208,8 @@ export function ElanEventsPage({
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-[#6b7280] max-w-md leading-relaxed">
-              A bespoke selection of signature weddings, executive galas, and
-              private celebrations brought to life by {profile.businessName}.
+              A bespoke selection of signature weddings, executive galas, and private celebrations
+              brought to life by {profile.businessName}.
             </p>
           </div>
 
@@ -1331,10 +1276,7 @@ export function ElanEventsPage({
         {/* ========================================================================= */}
         {/* ABOUT & SERVICES SECTION: TWO-COLUMN LAYOUT */}
         {/* ========================================================================= */}
-        <section
-          id="about"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
-        >
+        <section id="about" className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* LEFT: Curated Services Breakdown */}
           <div id="services" className="lg:col-span-7 space-y-6">
             <div>
@@ -1356,8 +1298,7 @@ export function ElanEventsPage({
                   {/* Tooltip on hover */}
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
                     <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                      Custom tailored planning, spatial orchestration, and
-                      bespoke design direction.
+                      Custom tailored planning, spatial orchestration, and bespoke design direction.
                       <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
                     </div>
                   </div>
@@ -1414,47 +1355,28 @@ export function ElanEventsPage({
 
               <div className="border-t border-[#f0e8dc] pt-6 space-y-4 text-xs text-[#524b45]">
                 <div className="flex items-start gap-3">
-                  <Clock3
-                    size={16}
-                    style={{ color: primaryColor }}
-                    className="shrink-0 mt-0.5"
-                  />
+                  <Clock3 size={16} style={{ color: primaryColor }} className="shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-[#1c1917] block font-medium">
-                      Operating Hours
-                    </strong>
+                    <strong className="text-[#1c1917] block font-medium">Operating Hours</strong>
                     <span>
-                      {profile.operatingHours}: {profile.timeFrom} –{" "}
-                      {profile.timeTo}
+                      {profile.operatingHours}: {profile.timeFrom} – {profile.timeTo}
                     </span>
                     {profile.byAppointmentOnly && (
-                      <div className="text-[11px] text-[#8a8075] mt-0.5">
-                        (By appointment only)
-                      </div>
+                      <div className="text-[11px] text-[#8a8075] mt-0.5">(By appointment only)</div>
                     )}
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <MapPin
-                    size={16}
-                    style={{ color: primaryColor }}
-                    className="shrink-0 mt-0.5"
-                  />
+                  <MapPin size={16} style={{ color: primaryColor }} className="shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-[#1c1917] block font-medium">
-                      Studio Flagship
-                    </strong>
+                    <strong className="text-[#1c1917] block font-medium">Studio Flagship</strong>
                     <span>{profile.physicalAddress || profile.location}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Phone
-                    size={16}
-                    style={{ color: primaryColor }}
-                    className="shrink-0 mt-0.5"
-                  />
+                  <Phone size={16} style={{ color: primaryColor }} className="shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#1c1917] block font-medium">
                       Direct WhatsApp Concierge
@@ -1464,11 +1386,7 @@ export function ElanEventsPage({
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Mail
-                    size={16}
-                    style={{ color: primaryColor }}
-                    className="shrink-0 mt-0.5"
-                  />
+                  <Mail size={16} style={{ color: primaryColor }} className="shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-[#1c1917] block font-medium">
                       Inquiries & Proposals
@@ -1505,8 +1423,8 @@ export function ElanEventsPage({
               Planning something special?
             </h2>
             <p className="text-sm sm:text-base text-[#615851] leading-relaxed">
-              Tell us what you&apos;re planning and we&apos;ll get back to you
-              to schedule an initial consultation with our creative directors.
+              Tell us what you&apos;re planning and we&apos;ll get back to you to schedule an
+              initial consultation with our creative directors.
             </p>
           </div>
 
@@ -1568,22 +1486,13 @@ export function ElanEventsPage({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-[#635c55]">
-            <a
-              href="#portfolio"
-              className="hover:text-[#b84c24] transition-colors"
-            >
+            <a href="#portfolio" className="hover:text-[#b84c24] transition-colors">
               Portfolio
             </a>
-            <a
-              href="#services"
-              className="hover:text-[#b84c24] transition-colors"
-            >
+            <a href="#services" className="hover:text-[#b84c24] transition-colors">
               Services
             </a>
-            <a
-              href="#reviews"
-              className="hover:text-[#b84c24] transition-colors"
-            >
+            <a href="#reviews" className="hover:text-[#b84c24] transition-colors">
               Reviews
             </a>
             <a href="#about" className="hover:text-[#b84c24] transition-colors">
@@ -1596,12 +1505,9 @@ export function ElanEventsPage({
 
           <div className="text-center md:text-right text-[11px] text-[#8a8075]">
             <div>
-              © {new Date().getFullYear()} {profile.businessName}. All rights
-              reserved.
+              © {new Date().getFullYear()} {profile.businessName}. All rights reserved.
             </div>
-            <div className="text-[10px] text-[#a89e92] mt-0.5">
-              Powered by LuxeAdmin Platform
-            </div>
+            <div className="text-[10px] text-[#a89e92] mt-0.5">Powered by LuxeAdmin Platform</div>
           </div>
         </div>
       </footer>
@@ -1633,56 +1539,43 @@ export function ElanEventsPage({
                 Book a Consultation
               </h3>
               <p className="text-xs text-[#78716c] mt-1">
-                Tell {profile.businessName} about your upcoming celebration and
-                vision.
+                Tell {profile.businessName} about your upcoming celebration and vision.
               </p>
             </div>
 
             <form onSubmit={handleQuoteSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
-                  Your Full Name *
-                </label>
+                <label className="block text-[#4a443e] font-medium mb-1">Your Full Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Folashade Adeleke"
                   value={quoteForm.name}
-                  onChange={e =>
-                    setQuoteForm({ ...quoteForm, name: e.target.value })
-                  }
+                  onChange={e => setQuoteForm({ ...quoteForm, name: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Email Address *
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Email Address *</label>
                   <input
                     type="email"
                     required
                     placeholder="folashade@example.com"
                     value={quoteForm.email}
-                    onChange={e =>
-                      setQuoteForm({ ...quoteForm, email: e.target.value })
-                    }
+                    onChange={e => setQuoteForm({ ...quoteForm, email: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Phone / WhatsApp
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Phone / WhatsApp</label>
                   <input
                     type="tel"
                     placeholder="+234 800 000 0000"
                     value={quoteForm.phone}
-                    onChange={e =>
-                      setQuoteForm({ ...quoteForm, phone: e.target.value })
-                    }
+                    onChange={e => setQuoteForm({ ...quoteForm, phone: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
@@ -1690,14 +1583,10 @@ export function ElanEventsPage({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Service Required
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Service Required</label>
                   <select
                     value={quoteForm.service}
-                    onChange={e =>
-                      setQuoteForm({ ...quoteForm, service: e.target.value })
-                    }
+                    onChange={e => setQuoteForm({ ...quoteForm, service: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   >
                     {((profile.services as ServiceItem[]) || []).map(s => (
@@ -1709,15 +1598,11 @@ export function ElanEventsPage({
                 </div>
 
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">
-                    Estimated Date
-                  </label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Estimated Date</label>
                   <input
                     type="date"
                     value={quoteForm.eventDate}
-                    onChange={e =>
-                      setQuoteForm({ ...quoteForm, eventDate: e.target.value })
-                    }
+                    onChange={e => setQuoteForm({ ...quoteForm, eventDate: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
@@ -1731,9 +1616,7 @@ export function ElanEventsPage({
                   rows={3}
                   placeholder="Share details about your guest count, aesthetic preferences, venue location..."
                   value={quoteForm.message}
-                  onChange={e =>
-                    setQuoteForm({ ...quoteForm, message: e.target.value })
-                  }
+                  onChange={e => setQuoteForm({ ...quoteForm, message: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
@@ -1786,54 +1669,39 @@ export function ElanEventsPage({
 
             <form onSubmit={handleReviewSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#4a443e] font-medium mb-1">
-                  Your Name *
-                </label>
+                <label className="block text-[#4a443e] font-medium mb-1">Your Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Folashade Adeleke"
                   value={reviewForm.author}
-                  onChange={e =>
-                    setReviewForm({ ...reviewForm, author: e.target.value })
-                  }
+                  onChange={e => setReviewForm({ ...reviewForm, author: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#1f2937] font-medium mb-1">
-                  Event Type
-                </label>
+                <label className="block text-[#1f2937] font-medium mb-1">Event Type</label>
                 <input
                   type="text"
                   placeholder="e.g. Wedding, Milestone Gala, Corporate"
                   value={reviewForm.eventType}
-                  onChange={e =>
-                    setReviewForm({ ...reviewForm, eventType: e.target.value })
-                  }
+                  onChange={e => setReviewForm({ ...reviewForm, eventType: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#1f2937] font-medium mb-1">
-                  Rating
-                </label>
+                <label className="block text-[#1f2937] font-medium mb-1">Rating</label>
                 <div className="flex gap-2 items-center py-1">
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
                       type="button"
                       key={star}
-                      onClick={() =>
-                        setReviewForm({ ...reviewForm, rating: star })
-                      }
+                      onClick={() => setReviewForm({ ...reviewForm, rating: star })}
                       className="p-1 text-[#f59e0b] hover:scale-110 transition-transform cursor-pointer"
                     >
-                      <Star
-                        size={20}
-                        fill={star <= reviewForm.rating ? "#f59e0b" : "none"}
-                      />
+                      <Star size={20} fill={star <= reviewForm.rating ? "#f59e0b" : "none"} />
                     </button>
                   ))}
                 </div>
@@ -1848,9 +1716,7 @@ export function ElanEventsPage({
                   required
                   placeholder="Tell us about the artistry, communication, and execution..."
                   value={reviewForm.comment}
-                  onChange={e =>
-                    setReviewForm({ ...reviewForm, comment: e.target.value })
-                  }
+                  onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
                 />
               </div>
@@ -1902,9 +1768,7 @@ export function ElanEventsPage({
               />
             </div>
 
-            <p className="text-sm text-[#524b45] leading-relaxed">
-              {selectedProject.description}
-            </p>
+            <p className="text-sm text-[#524b45] leading-relaxed">{selectedProject.description}</p>
 
             <div className="p-4 rounded-2xl bg-[#faf6f0] border border-[#eee5d8] flex items-center justify-between text-xs text-[#78716c]">
               <span>

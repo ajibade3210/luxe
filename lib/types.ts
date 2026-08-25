@@ -1,10 +1,5 @@
 // Lead and inquiry types
-export type LeadStatus =
-  | "new"
-  | "contacted"
-  | "qualified"
-  | "converted"
-  | "closed";
+export type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "closed";
 
 export interface Lead {
   id: string;
