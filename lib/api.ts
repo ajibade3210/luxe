@@ -142,19 +142,55 @@ export async function checkSlugAvailability(
   };
 }
 
-export async function submitConsultationInquiry(
-  input: Omit<Lead, "id" | "createdAt" | "status">
-): Promise<Lead> {
+const LEADS_STORAGE_KEY = "luxe_leads_data";
+
+function loadPersistedLeads(): Lead[] {
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem(LEADS_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Fallback to default mock leads
+    }
+  }
+  return [...leads];
+}
+
+function savePersistedLeads(data: Lead[]): void {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(data));
+      window.dispatchEvent(new CustomEvent("luxe_leads_updated", { detail: data }));
+    } catch {
+      // Storage quota safety
+    }
+  }
+}
+
+/**
+ * Creates a new consultation inquiry lead.
+ *
+ * Mock implementation: Persists to local leads state & broadcasts updates.
+ * Ready for production: Replace function body with `await fetch('/api/v1/leads', ...)`
+ */
+export async function createLead(input: Omit<Lead, "id" | "createdAt" | "status">): Promise<Lead> {
   await delay(300);
+  const currentLeads = loadPersistedLeads();
   const newLead: Lead = {
     id: `l-${Date.now()}`,
     ...input,
     status: "new",
     createdAt: new Date().toISOString(),
   };
-  leads.unshift(newLead);
+  currentLeads.unshift(newLead);
+  savePersistedLeads(currentLeads);
   return newLead;
 }
+
+/** Backward-compatible alias for createLead */
+export const submitConsultationInquiry = createLead;
 
 /**
  * Generates a pre-formatted WhatsApp chat URL with the client's consultation inquiry brief.
@@ -171,8 +207,8 @@ export function createWhatsAppConsultationUrl(params: {
   budget?: number | string;
   message?: string;
 }): string {
-  const rawPhone = (params.studioPhone || "+2348003526847").replace(/[^0-9]/g, "");
-  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348003526847";
+  const rawPhone = (params.studioPhone || "+2348055966944").replace(/[^0-9]/g, "");
+  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
 
   const budgetDisplay = params.budget
     ? `$${Number(params.budget).toLocaleString()}`
@@ -250,9 +286,13 @@ export async function submitReview(input: Omit<ReviewItem, "id" | "date">): Prom
   return newReview;
 }
 
+/**
+ * Fetches all leads.
+ * Ready for production: Replace function body with `await fetch('/api/v1/leads').then(r => r.json())`
+ */
 export async function getLeads(): Promise<Lead[]> {
   await delay(100);
-  return leads;
+  return loadPersistedLeads();
 }
 
 export async function getCustomers(): Promise<Customer[]> {
@@ -280,10 +320,18 @@ export async function updateBusinessProfile(
   return current;
 }
 
-export async function updateLeadStatus(id: string, status: LeadStatus) {
+/**
+ * Updates a lead's workflow status (e.g. new -> contacted -> converted).
+ * Ready for production: Replace with `await fetch('/api/v1/leads/' + id, { method: 'PATCH', ... })`
+ */
+export async function updateLeadStatus(id: string, status: LeadStatus): Promise<Lead | undefined> {
   await delay(250);
-  const lead = leads.find(l => l.id === id);
-  if (lead) lead.status = status;
+  const currentLeads = loadPersistedLeads();
+  const lead = currentLeads.find(l => l.id === id);
+  if (lead) {
+    lead.status = status;
+    savePersistedLeads(currentLeads);
+  }
   return lead;
 }
 

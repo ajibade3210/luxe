@@ -26,9 +26,9 @@ import { SignupPage } from "@/components/signup-page";
 import { SiteFooter } from "@/components/site-footer";
 import { TrustedBusinesses } from "@/components/trusted-businesses";
 import { WorkflowSection } from "@/components/workflow-section";
-import { createSession, publishChanges, updateLeadStatus } from "@/lib/api";
-import { businessProfile, customers, leads } from "@/lib/mock-data";
-import type { LeadStatus } from "@/lib/types";
+import { createSession, getLeads, publishChanges, updateLeadStatus } from "@/lib/api";
+import { businessProfile, customers } from "@/lib/mock-data";
+import type { Lead, LeadStatus } from "@/lib/types";
 
 const money = (n: number) =>
   new Intl.NumberFormat("en-US", {
@@ -76,6 +76,20 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 
 function Sidebar({ path, open, onClose }: { path: string; open: boolean; onClose: () => void }) {
   const slug = businessProfile.slug || "elan-events";
+  const [leadCount, setLeadCount] = useState(6);
+
+  useEffect(() => {
+    getLeads().then(res => setLeadCount(res.length));
+    const handleLeadsUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Lead[]>;
+      if (customEvent.detail) {
+        setLeadCount(customEvent.detail.length);
+      }
+    };
+    window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
+    return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+  }, []);
+
   return (
     <aside className={`sidebar ${open ? "is-open" : ""}`}>
       <div className="sidebar-top">
@@ -86,7 +100,7 @@ function Sidebar({ path, open, onClose }: { path: string; open: boolean; onClose
       </div>
       <nav>
         <a className={path === "/leads" ? "active" : ""} href="/leads">
-          <Users size={16} /> Leads <span className="nav-count">{leads.length}</span>
+          <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
         </a>
         <a className={path === "/customers" ? "active" : ""} href="/customers">
           <Users size={16} /> Customers
@@ -458,7 +472,20 @@ function PageTitle({
 
 function Leads({ onToast }: { onToast: (s: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [items, setItems] = useState(leads);
+  const [items, setItems] = useState<Lead[]>([]);
+
+  useEffect(() => {
+    getLeads().then(setItems);
+    const handleLeadsUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Lead[]>;
+      if (customEvent.detail) {
+        setItems(customEvent.detail);
+      }
+    };
+    window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
+    return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+  }, []);
+
   const selectedLead = items.find(l => l.id === selected);
   const metrics = useMemo(
     () => ({

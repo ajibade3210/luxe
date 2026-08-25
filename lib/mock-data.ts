@@ -87,7 +87,7 @@ export const elanSocialChannels: SocialChannel[] = [
     label: "WhatsApp",
     connected: true,
     handle: "+234 800 ELAN VIP",
-    url: "https://wa.me/2348003526847",
+    url: "https://wa.me/2348055966944",
     description: "Direct VIP concierge & instant consultation desk",
     lastSynced: "2026-08-25T14:00:00Z",
   },

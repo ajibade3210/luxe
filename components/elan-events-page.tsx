@@ -430,7 +430,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     /[^0-9]/g,
     ""
   );
-  const whatsAppLink = `https://wa.me/${cleanPhone || "2348003526847"}`;
+  const whatsAppLink = `https://wa.me/${cleanPhone || "2348055966944"}`;
 
   // Render 404 screen if the requested slug is unregistered
   if (isNotFound) {
