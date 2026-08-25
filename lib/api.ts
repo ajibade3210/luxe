@@ -104,8 +104,8 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessProfile |
   const current = loadPersistedProfile();
   const normalized = (slug || "").toLowerCase().trim();
 
-  // If matches active persisted business slug
-  if (!normalized || normalized === current.slug) {
+  // If matches active persisted business slug or default preview
+  if (!normalized || normalized === current.slug || normalized === "elan-events") {
     return current;
   }
 
@@ -122,11 +122,8 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessProfile |
     };
   }
 
-  // Return active business profile with requested preview slug
-  return {
-    ...current,
-    slug: normalized,
-  };
+  // Slug not found in registry
+  return null;
 }
 
 export async function checkSlugAvailability(

@@ -23,6 +23,8 @@ import { getBusinessBySlug, submitConsultationInquiry, submitReview } from "@/li
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
 import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/lib/types";
 
+import { NotFoundView } from "./not-found-view";
+
 interface ElanEventsPageProps {
   initialProfile?: BusinessProfile;
   slug?: string;
@@ -31,17 +33,24 @@ interface ElanEventsPageProps {
 export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEventsPageProps) {
   // Live dynamic profile state
   const [profile, setProfile] = useState<BusinessProfile>(initialProfile || defaultProfile);
+  const [isNotFound, setIsNotFound] = useState(false);
 
   // Fetch freshest profile and subscribe to settings changes
   useEffect(() => {
     getBusinessBySlug(slug).then(res => {
-      if (res) setProfile(res);
+      if (res) {
+        setProfile(res);
+        setIsNotFound(false);
+      } else {
+        setIsNotFound(true);
+      }
     });
 
     const handleProfileUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<BusinessProfile>;
       if (customEvent.detail) {
         setProfile(customEvent.detail);
+        setIsNotFound(false);
       }
     };
 
@@ -398,6 +407,11 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     ""
   );
   const whatsAppLink = `https://wa.me/${cleanPhone || "2348003526847"}`;
+
+  // Render 404 screen if the requested slug is unregistered
+  if (isNotFound) {
+    return <NotFoundView slug={slug} />;
+  }
 
   return (
     <div
