@@ -647,20 +647,22 @@ export function ElanEventsPage({
 
                   {/* Middle Area: Arched Crest + Company Logo / Name + Tagline */}
                   <div className="my-auto py-2 z-10 flex flex-col items-center max-w-md w-full">
-                    {/* Arched Architectural Brand Crest */}
-                    <div className="relative mb-3 flex flex-col items-center">
+                    {/* Arched Architectural Brand Crest (Enlarged) */}
+                    <div className="relative mb-3.5 flex flex-col items-center">
                       <div
-                        style={{
-                          borderColor: primaryColor,
-                          backgroundColor: secondaryColor,
-                        }}
-                        className="w-16 h-16 sm:w-18 sm:h-18 rounded-full border flex items-center justify-center font-serif text-3xl font-normal shadow-xs transition-transform duration-300 hover:scale-105"
+                        style={{ borderColor: primaryColor, backgroundColor: secondaryColor }}
+                        className="w-22 h-22 sm:w-26 sm:h-26 rounded-full border-2 p-1.5 flex items-center justify-center shadow-xs transition-transform duration-300 hover:scale-105"
                       >
-                        <span style={{ color: primaryColor }}>{monogram}</span>
+                        <div
+                          style={{ borderColor: `${primaryColor}40` }}
+                          className="w-full h-full rounded-full border border-dashed flex items-center justify-center font-serif text-4xl sm:text-5xl font-normal"
+                        >
+                          <span style={{ color: primaryColor }}>{monogram}</span>
+                        </div>
                       </div>
                       <div
                         style={{ backgroundColor: primaryColor }}
-                        className="w-8 h-[2px] rounded-full mt-2 opacity-60"
+                        className="w-10 h-[2px] rounded-full mt-2.5 opacity-60"
                       />
                     </div>
 
