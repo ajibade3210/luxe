@@ -174,23 +174,9 @@ export function SignupPage() {
           )}
 
           {/* Form Title */}
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-3 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-7 tracking-tight">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
-          <p
-            className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed block"
-            style={{ marginBottom: "28px" }}
-          >
-            {claimSlug ? (
-              <>
-                Create your director account to secure{" "}
-                <span className="font-semibold text-[#855e2e]">luxeadmin.com/{claimSlug}</span>{" "}
-                before anyone else.
-              </>
-            ) : (
-              "Bring your clientele, luxury events, and creative storytelling into one considered place."
-            )}
-          </p>
 
           {/* Google Signup Option */}
           <button
