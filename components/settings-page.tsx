@@ -11,14 +11,17 @@ import {
   ExternalLink,
   GripVertical,
   ImagePlus,
+  Info,
   Link2,
   Loader2,
   Mail,
   MapPin,
   MessageSquare,
   Plus,
+  RefreshCw,
   Save,
   Sparkles,
+  Star,
   Trash2,
   Upload,
   X,
@@ -33,9 +36,11 @@ import {
   uploadPortfolioImage,
 } from "@/lib/api";
 import type {
+  BusinessProfile,
   ButtonRadiusType,
   ColorScheme,
   PortfolioProject,
+  ServiceItem,
   SocialChannel,
 } from "@/lib/types";
 
@@ -66,11 +71,28 @@ function Card({
   return (
     <section className="settings-card">
       <div className="settings-card-heading">
-        <div>
+        <div className="flex items-center">
           <span className="step">{number}</span>
           <h2>{title}</h2>
+          {description && (
+            <div className="relative group/info inline-flex items-center ml-1.5 self-center">
+              <button
+                type="button"
+                aria-label={description}
+                className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
+              >
+                <Info size={15} />
+              </button>
+              {/* Tooltip on hover */}
+              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 hidden group-hover/info:block z-30 pointer-events-none">
+                <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
+                  {description}
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-        {description && <p>{description}</p>}
       </div>
       {children}
     </section>
@@ -95,11 +117,14 @@ export function EnhancedSettingsPage({
   const [about, setAbout] = useState(initialMockProfile.description);
 
   // Services
-  const [services, setServices] = useState<string[]>(
-    initialMockProfile.services || [],
+  const [services, setServices] = useState<ServiceItem[]>(
+    (initialMockProfile.services as ServiceItem[]) || [],
   );
-  const [newServiceInput, setNewServiceInput] = useState("");
   const [showAddService, setShowAddService] = useState(false);
+  const [newServiceInput, setNewServiceInput] = useState("");
+  const [newServiceCategory, setNewServiceCategory] = useState("Bespoke");
+  const [newServiceDesc, setNewServiceDesc] = useState("");
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
 
   // Portfolio
   const [portfolio, setPortfolio] = useState<PortfolioProject[]>(
@@ -116,11 +141,12 @@ export function EnhancedSettingsPage({
     stats: "250 Guests · Bespoke Styling",
   });
 
-  // Google Reviews
+  // Google Reviews & Reputation
   const [googleReviewsLink, setGoogleReviewsLink] = useState(
     initialMockProfile.googleReviewsLink ||
       "https://business.google.com/elan-events",
   );
+  const [isSyncingReviews, setIsSyncingReviews] = useState(false);
 
   // Social Channels
   const [channels, setChannels] = useState<SocialChannel[]>(
@@ -198,7 +224,7 @@ export function EnhancedSettingsPage({
       setEmail(p.email);
       setAbout(p.description);
       if (p.logoUrl) setLogoUrl(p.logoUrl);
-      setServices(p.services || []);
+      setServices((p.services as ServiceItem[]) || []);
       setPortfolio(p.portfolio || []);
       setChannels(p.socialChannels || []);
       setGoogleReviewsLink(p.googleReviewsLink || "");
@@ -256,16 +282,32 @@ export function EnhancedSettingsPage({
 
   const addService = () => {
     const trimmed = newServiceInput.trim();
-    if (trimmed && !services.includes(trimmed)) {
-      setServices([...services, trimmed]);
+    if (!trimmed) return;
+    const exists = services.some(
+      s => s.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (!exists) {
+      const item: ServiceItem = {
+        id: `svc-${Date.now()}`,
+        name: trimmed,
+        category: newServiceCategory || "Bespoke",
+        description: newServiceDesc.trim(),
+      };
+      setServices(prev => [...prev, item]);
       setNewServiceInput("");
+      setNewServiceCategory("Bespoke");
+      setNewServiceDesc("");
       setShowAddService(false);
       onToast(`Service "${trimmed}" added`);
     }
   };
 
-  const removeService = (serviceToRemove: string) => {
-    setServices(services.filter(s => s !== serviceToRemove));
+  const removeService = (id: string) => {
+    setServices(prev => prev.filter(s => s.id !== id));
+  };
+
+  const updateService = (id: string, patch: Partial<ServiceItem>) => {
+    setServices(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)));
   };
 
   const handleAddProject = (e: React.FormEvent) => {
@@ -373,6 +415,14 @@ export function EnhancedSettingsPage({
     updated[targetIndex] = temp;
     setPortfolio(updated);
     onToast(`Moved "${temp.title}" ${direction}`);
+  };
+
+  const handleSyncReviews = async () => {
+    setIsSyncingReviews(true);
+    setTimeout(() => {
+      setIsSyncingReviews(false);
+      onToast("Google reviews synced! 48 authenticated 5-star reviews active.");
+    }, 800);
   };
 
   const saveAll = async () => {
@@ -643,55 +693,188 @@ export function EnhancedSettingsPage({
         title="Services & offerings"
         description="Make your expertise easy to understand for prospective couples and clients."
       >
-        <div className="service-pills">
-          {services.map(service => (
-            <span key={service} className="inline-flex items-center gap-2">
-              {service}
-              <button
-                type="button"
-                onClick={() => removeService(service)}
-                aria-label={`Remove service ${service}`}
-                className="hover:text-[#ba1a1a] cursor-pointer"
-              >
-                ×
-              </button>
-            </span>
+        <div className="space-y-3">
+          {/* Service rows */}
+          {services.map((service, _i) => (
+            <div
+              key={service.id ?? service.name ?? _i}
+              className="border border-[#e5e7eb] rounded-lg bg-white"
+            >
+              {editingServiceId === service.id ? (
+                /* Inline edit form */
+                <div className="p-4 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label className="block">
+                      <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                        Service Name
+                      </span>
+                      <input
+                        value={service.name}
+                        onChange={e =>
+                          updateService(service.id, { name: e.target.value })
+                        }
+                        className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                        Category
+                      </span>
+                      <input
+                        value={service.category}
+                        onChange={e =>
+                          updateService(service.id, { category: e.target.value })
+                        }
+                        list="category-options"
+                        className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                      />
+                      <datalist id="category-options">
+                        {["Bespoke", "Corporate", "Creative", "Concierge"].map(
+                          c => <option key={c} value={c} />,
+                        )}
+                      </datalist>
+                    </label>
+                  </div>
+                  <label className="block">
+                    <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                      Description
+                    </span>
+                    <textarea
+                      rows={2}
+                      value={service.description}
+                      onChange={e =>
+                        updateService(service.id, {
+                          description: e.target.value,
+                        })
+                      }
+                      className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+                    />
+                  </label>
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setEditingServiceId(null)}
+                      className="outline-button text-xs py-1.5 px-3"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Collapsed view */
+                <div className="flex items-center justify-between gap-3 px-4 py-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-[#191c1d] truncate">
+                        {service.name}
+                      </span>
+                      <span className="text-[10px] font-medium text-[#0058be] bg-[#f0f6ff] border border-[#dbeafe] px-2 py-0.5 rounded-full shrink-0">
+                        {service.category}
+                      </span>
+                    </div>
+                    {service.description && (
+                      <p className="text-[11px] text-[#6b7280] mt-0.5 line-clamp-1">
+                        {service.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setEditingServiceId(service.id)}
+                      className="text-[#9ca3af] hover:text-[#0058be] p-1.5 rounded hover:bg-[#f3f4f5] transition-colors cursor-pointer text-xs"
+                      title="Edit service"
+                    >
+                      ✎
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeService(service.id)}
+                      aria-label={`Remove ${service.name}`}
+                      className="text-[#9ca3af] hover:text-[#ba1a1a] p-1.5 rounded hover:bg-[#fef2f2] transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
 
+          {/* Add service form */}
           {showAddService ? (
-            <div className="inline-flex items-center gap-2 border border-[#0058be] rounded px-2 py-1 bg-white">
-              <input
-                type="text"
-                autoFocus
-                placeholder="Enter service name..."
-                value={newServiceInput}
-                onChange={e => setNewServiceInput(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Enter") addService();
-                  if (e.key === "Escape") setShowAddService(false);
-                }}
-                className="text-xs border-0 p-1 outline-none w-40 bg-transparent"
-              />
-              <button
-                type="button"
-                onClick={addService}
-                className="text-xs bg-[#000000] hover:bg-[#262626] text-white px-2.5 py-1 rounded font-medium"
-              >
-                Add
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowAddService(false)}
-                className="text-xs text-[#6b7280]"
-              >
-                Cancel
-              </button>
+            <div className="border border-[#0058be] rounded-lg bg-white p-4 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="block">
+                  <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                    Service Name
+                  </span>
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="e.g. Luxury Weddings"
+                    value={newServiceInput}
+                    onChange={e => setNewServiceInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") addService();
+                      if (e.key === "Escape") setShowAddService(false);
+                    }}
+                    className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                    Category
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="e.g. Bespoke"
+                    value={newServiceCategory}
+                    onChange={e => setNewServiceCategory(e.target.value)}
+                    list="new-category-options"
+                    className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                  />
+                  <datalist id="new-category-options">
+                    {["Bespoke", "Corporate", "Creative", "Concierge"].map(
+                      c => <option key={c} value={c} />,
+                    )}
+                  </datalist>
+                </label>
+              </div>
+              <label className="block">
+                <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
+                  Description
+                </span>
+                <textarea
+                  rows={2}
+                  placeholder="Brief description of this service..."
+                  value={newServiceDesc}
+                  onChange={e => setNewServiceDesc(e.target.value)}
+                  className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+                />
+              </label>
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowAddService(false)}
+                  className="outline-button text-xs py-1.5 px-3"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={addService}
+                  className="dark-button text-xs py-1.5 px-4"
+                >
+                  Add Service
+                </button>
+              </div>
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setShowAddService(true)}
-              className="add-service cursor-pointer"
+              className="add-service cursor-pointer w-full"
             >
               <Plus size={14} /> Add service
             </button>
@@ -760,26 +943,97 @@ export function EnhancedSettingsPage({
       </Card>
 
       {/* Card 04: Reputation Management */}
-      <Card number="04" title="Reputation Management">
-        <p className="settings-copy">
-          Connect your Google Business Profile to automatically sync and display
-          your latest 5-star reviews on your public page.
-        </p>
-        <label>
-          Google Business link
-          <input
-            value={googleReviewsLink}
-            onChange={e => setGoogleReviewsLink(e.target.value)}
-            placeholder="https://business.google.com/..."
-          />
-        </label>
-        <button
-          type="button"
-          onClick={() => onToast("Google reviews linked successfully")}
-          className="dark-button wide-button bg-[#1c1917]"
-        >
-          <Link2 size={15} /> Connect Google reviews
-        </button>
+      <Card
+        number="04"
+        title="Reputation Management"
+        description="Connect your Google Business Profile to showcase authenticated client reviews."
+      >
+        <div className="space-y-4">
+          {/* Google Business Integration Box */}
+          <div className="border border-[#e5e7eb] rounded-lg p-4 sm:p-5 bg-white space-y-4">
+            {/* Top Status Row */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-[#e5e7eb]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-[#191c1d]">Google Business Profile</h4>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                      Live Sync Active
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#6b7280] mt-0.5">
+                    <div className="flex text-[#eab308]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={11} fill="currentColor" />
+                      ))}
+                    </div>
+                    <span className="font-semibold text-[#191c1d]">5.0</span>
+                    <span>·</span>
+                    <span>48 Verified 5-Star Reviews</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSyncReviews}
+                disabled={isSyncingReviews}
+                className="outline-button text-xs py-1.5 px-3"
+              >
+                <RefreshCw
+                  size={13}
+                  className={isSyncingReviews ? "animate-spin text-[#0058be]" : ""}
+                />
+                {isSyncingReviews ? "Syncing Reviews..." : "Sync Now"}
+              </button>
+            </div>
+
+            {/* URL Link Input */}
+            <div>
+              <label className="block text-[#1f2937] font-medium text-xs mb-1.5">
+                Google Business Profile URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={googleReviewsLink}
+                  onChange={e => setGoogleReviewsLink(e.target.value)}
+                  placeholder="https://business.google.com/..."
+                  className="flex-1 bg-white border border-[#e5e7eb] rounded px-3.5 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                />
+                <button
+                  type="button"
+                  onClick={() => onToast("Google business link saved")}
+                  className="dark-button text-xs px-4"
+                >
+                  Save Link
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
       </Card>
 
       {/* Card 05: Social Channels Management */}
@@ -908,7 +1162,11 @@ export function EnhancedSettingsPage({
       </Card>
 
       {/* Card 07: Appearance & Branding */}
-      <Card number="07" title="Appearance & Branding">
+      <Card
+        number="07"
+        title="Appearance & Branding"
+        description="Customize palette colors and button corner radii to match your studio aesthetic."
+      >
         <span className="eyebrow">Colors (VibeCoder Lumina Palette)</span>
         <div className="color-row">
           {(

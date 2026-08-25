@@ -10,6 +10,7 @@ import {
   Clock3,
   Globe,
   Heart,
+  Info,
   Mail,
   MapPin,
   Menu,
@@ -36,6 +37,7 @@ import type {
   ButtonRadiusType,
   ColorScheme,
   PortfolioProject,
+  ServiceItem,
 } from "@/lib/types";
 
 interface ElanEventsPageProps {
@@ -115,7 +117,8 @@ export function ElanEventsPage({
     name: "",
     email: "",
     phone: "",
-    service: profile.services?.[0] || "Luxury Weddings",
+    service:
+      (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
     eventDate: "",
     budget: "50000",
     message: "",
@@ -227,7 +230,9 @@ export function ElanEventsPage({
         email: quoteForm.email,
         phone: quoteForm.phone,
         service:
-          quoteForm.service || profile.services?.[0] || "Luxury Weddings",
+          quoteForm.service ||
+          (profile.services as ServiceItem[])?.[0]?.name ||
+          "Luxury Weddings",
         eventDate: quoteForm.eventDate || new Date().toISOString().slice(0, 10),
         budget: Number(quoteForm.budget) || 50000,
         message:
@@ -243,7 +248,8 @@ export function ElanEventsPage({
         name: "",
         email: "",
         phone: "",
-        service: profile.services?.[0] || "Luxury Weddings",
+        service:
+          (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
         eventDate: "",
         budget: "50000",
         message: "",
@@ -442,10 +448,13 @@ export function ElanEventsPage({
               style={{ color: primaryColor }}
               className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
             >
-              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
+              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin
+              Preview
             </span>
             <span className="text-[#c4c7c7]">·</span>
-            <span className="font-mono">luxeadmin.com/{profile.slug || slug}</span>
+            <span className="font-mono">
+              luxeadmin.com/{profile.slug || slug}
+            </span>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={handleCopyLink}
@@ -479,9 +488,7 @@ export function ElanEventsPage({
             href={`/${profile.slug || slug}`}
             className="group flex items-center gap-3 text-decoration-none"
           >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105 overflow-hidden shadow-2xs shrink-0"
-            >
+            <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105 overflow-hidden shadow-2xs shrink-0">
               {profile.logoUrl ? (
                 <img
                   src={profile.logoUrl}
@@ -490,7 +497,10 @@ export function ElanEventsPage({
                 />
               ) : (
                 <div
-                  style={{ backgroundColor: secondaryColor, color: primaryColor }}
+                  style={{
+                    backgroundColor: secondaryColor,
+                    color: primaryColor,
+                  }}
                   className="w-full h-full rounded-full border flex items-center justify-center font-serif"
                 >
                   {monogram}
@@ -634,7 +644,9 @@ export function ElanEventsPage({
                 {/* ========================================================= */}
                 <div
                   className={`absolute inset-0 backface-hidden bg-gradient-to-b from-[#ffffff] via-[#fcfaf7] to-[#faf4ec] border border-[#e8dfd3] rounded-3xl p-8 sm:p-10 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between items-center text-center overflow-hidden transition-opacity duration-300 ${
-                    isFlipped ? 'pointer-events-none z-0' : 'pointer-events-auto z-10'
+                    isFlipped
+                      ? "pointer-events-none z-0"
+                      : "pointer-events-auto z-10"
                   }`}
                 >
                   {/* Subtle background luxury pattern/watermark */}
@@ -657,7 +669,7 @@ export function ElanEventsPage({
 
                     <button
                       type="button"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setIsFlipped(true);
                       }}
@@ -684,7 +696,10 @@ export function ElanEventsPage({
                           />
                         ) : (
                           <div
-                            style={{ backgroundColor: secondaryColor, color: primaryColor }}
+                            style={{
+                              backgroundColor: secondaryColor,
+                              color: primaryColor,
+                            }}
                             className="w-full h-full rounded-full flex items-center justify-center font-serif text-6xl font-normal select-none"
                           >
                             {monogram}
@@ -729,7 +744,7 @@ export function ElanEventsPage({
 
                     <button
                       type="button"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setIsFlipped(true);
                       }}
@@ -747,14 +762,20 @@ export function ElanEventsPage({
                 {/* ========================================================= */}
                 <div
                   className={`absolute inset-0 backface-hidden rotate-y-180 bg-[#ffffff] border border-[#e8dfd3] rounded-3xl p-7 sm:p-8 shadow-[0_16px_40px_rgba(70,40,20,0.06)] flex flex-col justify-between overflow-y-auto transition-opacity duration-300 ${
-                    isFlipped ? 'pointer-events-auto z-10' : 'pointer-events-none z-0'
+                    isFlipped
+                      ? "pointer-events-auto z-10"
+                      : "pointer-events-none z-0"
                   }`}
                 >
                   {/* Top Header Row */}
                   <div className="flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
                       <div
-                        style={{ backgroundColor: secondaryColor, borderColor: '#ebd8ca', color: primaryColor }}
+                        style={{
+                          backgroundColor: secondaryColor,
+                          borderColor: "#ebd8ca",
+                          color: primaryColor,
+                        }}
                         className="w-11 h-11 rounded-2xl border flex items-center justify-center font-serif text-xl font-normal shrink-0 shadow-2xs overflow-hidden"
                       >
                         {profile.logoUrl ? (
@@ -779,14 +800,16 @@ export function ElanEventsPage({
 
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setIsFlipped(false)
+                      onClick={e => {
+                        e.stopPropagation();
+                        setIsFlipped(false);
                       }}
                       className="inline-flex items-center gap-1.5 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#faf6f0] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs active:scale-95 z-20"
                     >
                       <RotateCw size={12} />
-                      <span className="font-medium text-[11px]">Return to Front</span>
+                      <span className="font-medium text-[11px]">
+                        Return to Front
+                      </span>
                     </button>
                   </div>
 
@@ -801,16 +824,19 @@ export function ElanEventsPage({
                   <div className="border-t border-[#ebd8ca]/80 divide-y divide-[#ebd8ca]/70 text-xs my-1">
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Clock3 size={15} style={{ color: primaryColor }} /> Operating Hours:
+                        <Clock3 size={15} style={{ color: primaryColor }} />{" "}
+                        Operating Hours:
                       </span>
                       <span className="font-semibold text-[#1c1917] text-right">
-                        {profile.operatingHours}: {profile.timeFrom} – {profile.timeTo}
+                        {profile.operatingHours}: {profile.timeFrom} –{" "}
+                        {profile.timeTo}
                       </span>
                     </div>
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <MapPin size={15} style={{ color: primaryColor }} /> Studio Flagship:
+                        <MapPin size={15} style={{ color: primaryColor }} />{" "}
+                        Studio Flagship:
                       </span>
                       <span className="font-semibold text-[#1c1917] truncate max-w-[220px] text-right">
                         {profile.physicalAddress || profile.location}
@@ -819,7 +845,8 @@ export function ElanEventsPage({
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Phone size={15} style={{ color: primaryColor }} /> WhatsApp Line:
+                        <Phone size={15} style={{ color: primaryColor }} />{" "}
+                        WhatsApp Line:
                       </span>
                       <span className="font-mono font-semibold text-[#1c1917] text-right">
                         {profile.whatsAppNumber || profile.phone}
@@ -828,7 +855,8 @@ export function ElanEventsPage({
 
                     <div className="py-2.5 flex items-center justify-between gap-3">
                       <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-                        <Mail size={15} style={{ color: primaryColor }} /> Studio Email:
+                        <Mail size={15} style={{ color: primaryColor }} />{" "}
+                        Studio Email:
                       </span>
                       <span className="font-semibold text-[#1c1917] truncate max-w-[200px] text-right">
                         {profile.emailAddress || profile.email}
@@ -848,7 +876,7 @@ export function ElanEventsPage({
                       <span>Verified LuxeAdmin Studio</span>
                     </div>
                     <span className="font-mono text-[11px] text-[#78716c] uppercase">
-                      ID: {profile.slug?.toUpperCase() || 'ELAN-EVENTS'}
+                      ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
                     </span>
                   </div>
 
@@ -857,9 +885,9 @@ export function ElanEventsPage({
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setQuoteModalOpen(true)
+                        onClick={e => {
+                          e.stopPropagation();
+                          setQuoteModalOpen(true);
                         }}
                         style={{ backgroundColor: buttonColor }}
                         className={`text-white text-xs font-bold uppercase tracking-wider py-3 shadow-xs hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
@@ -883,9 +911,9 @@ export function ElanEventsPage({
                     <div className="flex items-center justify-between text-xs text-[#78716c] pt-1">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleCopyLink()
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleCopyLink();
                         }}
                         style={{ color: primaryColor }}
                         className="font-medium hover:underline flex items-center gap-1.5 cursor-pointer"
@@ -896,9 +924,9 @@ export function ElanEventsPage({
 
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setIsFlipped(false)
+                        onClick={e => {
+                          e.stopPropagation();
+                          setIsFlipped(false);
                         }}
                         className="text-[#78716c] hover:text-[#1c1917] flex items-center gap-1 cursor-pointer font-medium"
                       >
@@ -915,35 +943,31 @@ export function ElanEventsPage({
           {/* RIGHT CARD: Company Studio Card & Newsletter */}
           <div className="lg:col-span-6 bg-white border border-[#eae3d8] rounded-3xl p-8 sm:p-10 shadow-[0_12px_36px_rgba(40,30,20,0.04)] flex flex-col justify-between max-w-[480px] w-full mx-auto lg:mx-0">
             <div>
-              <div className="flex items-center justify-between border-b border-[#f0e8dc] pb-5 mb-6">
-                <div>
-                  <span
-                    style={{ color: primaryColor }}
-                    className="text-[10px] uppercase tracking-[0.16em] font-semibold"
-                  >
-                    Studio Highlights
-                  </span>
-                  <h2 className="font-serif text-2xl text-[#1c1917] font-normal mt-1">
+              <div className="border-b border-[#f0e8dc] pb-5 mb-6">
+                <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-[#0058be]">
+                  Studio Highlights
+                </span>
+                <div className="flex items-center gap-2 mt-1">
+                  <h2 className="font-serif text-2xl text-[#191c1d] font-normal">
                     The Art of Grand Occasions
                   </h2>
-                </div>
-                <div
-                  style={{
-                    backgroundColor: secondaryColor,
-                    borderColor: "#ebd8ca",
-                    color: primaryColor,
-                  }}
-                  className="w-12 h-12 rounded-2xl border flex items-center justify-center font-serif text-2xl overflow-hidden shadow-2xs"
-                >
-                  {profile.logoUrl ? (
-                    <img
-                      src={profile.logoUrl}
-                      alt={profile.businessName}
-                      className="w-full h-full rounded-2xl object-cover"
-                    />
-                  ) : (
-                    monogram
-                  )}
+                  <div className="relative group/info inline-flex items-center ml-1">
+                    <button
+                      type="button"
+                      aria-label="Studio highlights info"
+                      className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
+                    >
+                      <Info size={17} />
+                    </button>
+                    {/* Tooltip on hover */}
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
+                      <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
+                        Our signature production pillars, spatial geometry, and
+                        white-glove event concierge.
+                        <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1015,10 +1039,7 @@ export function ElanEventsPage({
             {/* Newsletter Subscription Box */}
             <div className="mt-8 pt-6 border-t border-[#f0e8dc]">
               <div className="mb-3">
-                <span
-                  style={{ color: primaryColor }}
-                  className="text-[11px] font-serif italic"
-                >
+                <span className="text-[11px] font-medium text-[#0058be] block">
                   The {profile.businessName} Journal
                 </span>
                 <p className="text-xs text-[#6e665e] mt-0.5">
@@ -1058,23 +1079,35 @@ export function ElanEventsPage({
         {/* SOCIAL CHANNELS SECTION */}
         {/* ========================================================================= */}
         <section className="space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#ebd8ca] pb-6">
+          <div className="flex items-center justify-between border-b border-[#e5e7eb] pb-6">
             <div>
-              <span
-                style={{ color: primaryColor }}
-                className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-              >
+              <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-[#0058be]">
                 Digital Presence
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal mt-1">
-                Social Channels
-              </h2>
+              <div className="flex items-center gap-2 mt-1">
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#191c1d] font-normal tracking-tight">
+                  Social Channels
+                </h2>
+                <div className="relative group/info inline-flex items-center ml-1">
+                  <button
+                    type="button"
+                    aria-label="Social channels info"
+                    className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
+                  >
+                    <Info size={18} />
+                  </button>
+                  {/* Tooltip on hover */}
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
+                    <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
+                      Follow our daily creations, live behind-the-scenes
+                      transformations, and editorial showcases across{" "}
+                      {profile.socialChannels?.length || 10} platforms.
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-xs sm:text-sm text-[#78716c] max-w-md">
-              Follow our daily creations, live behind-the-scenes
-              transformations, and editorial showcases across{" "}
-              {profile.socialChannels?.length || 10} platforms.
-            </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5 sm:gap-4">
@@ -1123,9 +1156,9 @@ export function ElanEventsPage({
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-[#e8d5c4] pb-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="flex" style={{ color: primaryColor }}>
+                <div className="flex text-[#eab308]">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={18} fill={primaryColor} />
+                    <Star key={i} size={18} fill="currentColor" />
                   ))}
                 </div>
                 <span className="font-serif text-2xl text-[#1c1917] font-semibold ml-1">
@@ -1135,9 +1168,28 @@ export function ElanEventsPage({
                   · Based on {totalReviews} reviews
                 </span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal">
-                Client Testimonials
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal">
+                  Client Testimonials
+                </h2>
+                <div className="relative group/info inline-flex items-center ml-1">
+                  <button
+                    type="button"
+                    aria-label="Client testimonials info"
+                    className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-white/60 cursor-pointer"
+                  >
+                    <Info size={18} />
+                  </button>
+                  {/* Tooltip on hover */}
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
+                    <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
+                      Verified 5-star ratings and authentic client reviews from
+                      our Google Business listing.
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -1151,8 +1203,7 @@ export function ElanEventsPage({
                 href={profile.googleReviewsLink || "https://google.com"}
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: primaryColor }}
-                className="inline-flex items-center gap-1.5 text-xs hover:underline font-medium"
+                className="inline-flex items-center gap-1.5 text-xs text-[#0058be] hover:underline font-medium"
               >
                 <span>See all reviews on Google</span>
                 <ArrowUpRight size={13} />
@@ -1202,70 +1253,73 @@ export function ElanEventsPage({
         {/* PORTFOLIO SECTION: OUR BEST WORK */}
         {/* ========================================================================= */}
         <section id="portfolio" className="space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#ebd8ca] pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#e5e7eb] pb-6">
             <div>
-              <span
-                style={{ color: primaryColor }}
-                className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-              >
+              <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-[#0058be]">
                 Curated Showcase
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal mt-1">
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#191c1d] font-normal mt-1 tracking-tight">
                 Our Best Work
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-[#78716c] max-w-md">
-              A selection of bespoke weddings, executive galas, and private
-              celebrations brought to life by {profile.businessName}.
+            <p className="text-xs sm:text-sm text-[#6b7280] max-w-md leading-relaxed">
+              A bespoke selection of signature weddings, executive galas, and
+              private celebrations brought to life by {profile.businessName}.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {(profile.portfolio || []).map((project, index) => (
               <div
                 key={project.id}
                 onClick={() => setSelectedProject(project)}
-                className="group bg-white border border-[#eae2d6] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(40,30,20,0.03)] hover:shadow-[0_16px_40px_rgba(70,40,20,0.08)] transition-all duration-300 cursor-pointer flex flex-col"
+                className="group bg-white border border-[#e5e7eb] rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between"
               >
-                {/* Project Image Box */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#ebe4da]">
+                {/* Project Image Hero Box */}
+                <div className="relative aspect-[16/11] overflow-hidden bg-[#f3f4f5]">
                   <img
                     src={project.image}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
-                  <div
-                    style={{ color: primaryColor }}
-                    className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[11px] font-medium border border-[#e8ded3] shadow-2xs"
-                  >
-                    0{index + 1} · {project.category}
+                  {/* Subtle vignette gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 opacity-30 group-hover:opacity-50 transition-opacity" />
+
+                  {/* Floating Category Pill */}
+                  <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-medium text-[#191c1d] border border-white/50 shadow-xs flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] font-semibold text-[#0058be]">
+                      #{String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[#9ca3af]">·</span>
+                    <span>{project.category}</span>
                   </div>
                 </div>
 
                 {/* Project Details */}
-                <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-4">
+                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <div className="flex items-center gap-1.5 text-xs text-[#8a8075] mb-1.5">
-                      <MapPin size={12} style={{ color: primaryColor }} />
-                      <span>{project.location}</span>
+                    <div className="flex items-center gap-1.5 text-xs text-[#6b7280] font-medium mb-1.5">
+                      <MapPin size={12} className="text-[#0058be] shrink-0" />
+                      <span className="truncate">{project.location}</span>
                     </div>
-                    <h3 className="font-serif text-xl sm:text-2xl text-[#1c1917] group-hover:opacity-80 transition-opacity font-normal">
+                    <h3 className="font-serif text-xl sm:text-2xl text-[#191c1d] font-normal leading-snug group-hover:text-[#0058be] transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#665e56] leading-relaxed mt-2 line-clamp-3">
+                    <p className="text-xs sm:text-sm text-[#4b5563] leading-relaxed mt-2.5 line-clamp-3">
                       {project.description}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-[#f2ece2] flex items-center justify-between text-xs">
-                    <span className="text-[#8c8276] text-[11px]">
+                  <div className="pt-4 border-t border-[#f3f4f5] flex items-center justify-between text-xs">
+                    <span className="text-[#6b7280] text-[11px] font-medium truncate max-w-[58%]">
                       {project.stats}
                     </span>
-                    <span
-                      style={{ color: primaryColor }}
-                      className="font-medium group-hover:translate-x-1 transition-transform inline-flex items-center gap-1"
-                    >
-                      View Gallery <ArrowRight size={13} />
+                    <span className="font-semibold text-xs text-[#191c1d] group-hover:text-[#0058be] transition-colors inline-flex items-center gap-1 shrink-0">
+                      Explore Project{" "}
+                      <ArrowRight
+                        size={13}
+                        className="group-hover:translate-x-1 transition-transform"
+                      />
                     </span>
                   </div>
                 </div>
@@ -1284,43 +1338,55 @@ export function ElanEventsPage({
           {/* LEFT: Curated Services Breakdown */}
           <div id="services" className="lg:col-span-7 space-y-6">
             <div>
-              <span
-                style={{ color: primaryColor }}
-                className="text-[10px] uppercase tracking-[0.2em] font-semibold"
-              >
+              <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-[#0058be]">
                 Offerings
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal mt-1">
-                Bespoke Services
-              </h2>
+              <div className="flex items-center gap-2 mt-1">
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#191c1d] font-normal">
+                  Bespoke Services
+                </h2>
+                <div className="relative group/info inline-flex items-center ml-1">
+                  <button
+                    type="button"
+                    aria-label="Bespoke services info"
+                    className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
+                  >
+                    <Info size={18} />
+                  </button>
+                  {/* Tooltip on hover */}
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
+                    <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
+                      Custom tailored planning, spatial orchestration, and
+                      bespoke design direction.
+                      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-4">
-              {(profile.services || []).map((serviceName, i) => (
+              {((profile.services as ServiceItem[]) || []).map((service, i) => (
                 <div
-                  key={serviceName}
-                  className="bg-white border border-[#eae3d8] rounded-2xl p-5 sm:p-6 shadow-2xs hover:border-[#b84c24]/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  key={service.id ?? service.name ?? i}
+                  className="bg-white border border-[#eae3d8] rounded-2xl p-5 sm:p-6 shadow-2xs hover:border-[#0058be]/20 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span
-                        style={{ color: primaryColor }}
-                        className="text-xs font-serif font-semibold"
-                      >
-                        0{i + 1}
+                      <span className="text-xs font-mono font-semibold text-[#0058be]">
+                        #{String(i + 1).padStart(2, "0")}
                       </span>
                       <h4 className="font-serif text-lg text-[#1c1917] font-medium">
-                        {serviceName}
+                        {service.name}
                       </h4>
                     </div>
                     <p className="text-xs text-[#6e665e] max-w-lg leading-relaxed">
-                      Custom tailored planning, spatial orchestration, and
-                      bespoke design direction curated by {profile.businessName}
-                      .
+                      {service.description ||
+                        `Custom tailored planning, spatial orchestration, and bespoke design direction curated by ${profile.businessName}.`}
                     </p>
                   </div>
-                  <span className="self-start sm:self-center text-[10px] uppercase tracking-wider text-[#8a8075] bg-[#faf6f0] border border-[#ede3d6] px-3 py-1 rounded-full shrink-0">
-                    Bespoke
+                  <span className="self-start sm:self-center text-[10px] uppercase tracking-wider text-[#0058be] bg-[#f0f6ff] border border-[#dbeafe] px-3 py-1 rounded-full shrink-0 font-medium">
+                    {service.category || "Bespoke"}
                   </span>
                 </div>
               ))}
@@ -1434,13 +1500,6 @@ export function ElanEventsPage({
           }}
           className="border border-[#ebd4c2] rounded-3xl p-8 sm:p-14 shadow-[0_16px_40px_rgba(70,40,20,0.05)] text-center max-w-4xl mx-auto space-y-6"
         >
-          <div
-            style={{ color: primaryColor }}
-            className="w-12 h-12 rounded-full bg-[#ffffff] border border-[#e4d0bf] font-serif text-2xl flex items-center justify-center mx-auto shadow-2xs"
-          >
-            {monogram}
-          </div>
-
           <div className="space-y-3 max-w-xl mx-auto">
             <h2 className="font-serif text-3xl sm:text-5xl text-[#1c1917] font-normal tracking-tight">
               Planning something special?
@@ -1641,9 +1700,9 @@ export function ElanEventsPage({
                     }
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   >
-                    {(profile.services || []).map(s => (
-                      <option key={s} value={s}>
-                        {s}
+                    {((profile.services as ServiceItem[]) || []).map(s => (
+                      <option key={s.id} value={s.name}>
+                        {s.name}
                       </option>
                     ))}
                   </select>

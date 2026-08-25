@@ -12,26 +12,70 @@ import type {
   Lead,
   LeadStatus,
   ReviewItem,
+  ServiceItem,
   SocialChannel,
   User,
 } from "./types";
 
 const STORAGE_KEY = "luxe_business_profile";
+/** Bump this whenever a breaking schema change is made to BusinessProfile. */
+const PROFILE_VERSION = 2; // v2: services migrated from string[] to ServiceItem[]
+const VERSION_KEY = "luxe_profile_version";
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Normalizes services from any format (string[] or ServiceItem[]) to ServiceItem[].
+ * This is the single source-of-truth migration point for both localStorage data
+ * and future API responses — callers never need to handle the old format.
+ *
+ * When switching to a real API, call this on the raw API response before storing
+ * it in state. The function is intentionally format-agnostic.
+ */
+export function normalizeServices(
+  raw: (string | ServiceItem)[] | undefined,
+): ServiceItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((s, i) => {
+    if (typeof s === "string") {
+      return {
+        id: `svc-legacy-${i}`,
+        name: s,
+        category: "Bespoke",
+        description: "",
+      } satisfies ServiceItem;
+    }
+    // Ensure id always exists even if API omits it
+    return { ...s, id: s.id ?? `svc-${i}` } satisfies ServiceItem;
+  });
+}
 
 function loadPersistedProfile(): BusinessProfile {
   if (typeof window !== "undefined") {
     try {
+      const storedVersion = Number(localStorage.getItem(VERSION_KEY) ?? "0");
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
+
+      if (saved && storedVersion >= PROFILE_VERSION) {
+        // Schema is current — merge persisted data
         const parsed = JSON.parse(saved);
+        if (parsed.services) {
+          parsed.services = normalizeServices(parsed.services);
+        }
         Object.assign(businessProfile, parsed);
+      } else if (storedVersion < PROFILE_VERSION) {
+        // Stale schema — clear and re-persist with fresh mock data
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.setItem(VERSION_KEY, String(PROFILE_VERSION));
       }
     } catch {
       // Fallback to in-memory profile
     }
   }
+  // Always normalize in-memory profile (handles fresh mock data path)
+  businessProfile.services = normalizeServices(
+    businessProfile.services as (string | ServiceItem)[],
+  );
   return businessProfile;
 }
 
@@ -39,6 +83,7 @@ function savePersistedProfile(profile: BusinessProfile) {
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      localStorage.setItem(VERSION_KEY, String(PROFILE_VERSION));
       window.dispatchEvent(
         new CustomEvent("luxe_profile_updated", { detail: profile }),
       );

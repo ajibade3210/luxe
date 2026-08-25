@@ -110,6 +110,13 @@ export interface ColorScheme {
 
 export type ButtonRadiusType = "Square" | "Subtle" | "Rounded" | "Pill";
 
+export interface ServiceItem {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+}
+
 export interface BusinessProfile {
   id: string;
   businessName: string;
@@ -122,7 +129,7 @@ export interface BusinessProfile {
   phone: string;
   logoUrl?: string;
   googleReviewsLink?: string;
-  services: string[];
+  services: ServiceItem[];
   socialChannels: SocialChannel[];
   reviews: ReviewItem[];
   portfolio: PortfolioProject[];
