@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { PortfolioProject } from "@/lib/types";
 
 interface StudioPortfolioSectionProps {
@@ -60,11 +60,7 @@ export function StudioPortfolioSection({
                   {proj.description}
                 </p>
               )}
-              <div className="mt-4 pt-3 border-t border-[#f0e8dc] flex items-center justify-between text-[11px] text-[#78716c]">
-                <span className="flex items-center gap-1">
-                  <Sparkles size={12} className="text-[#a87d46]" />
-                  <span>{proj.stats}</span>
-                </span>
+              <div className="mt-4 pt-2 flex items-center justify-end text-[11px]">
                 <span
                   style={{ color: primaryColor }}
                   className="font-medium group-hover:underline flex items-center gap-0.5"

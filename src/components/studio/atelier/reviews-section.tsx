@@ -49,11 +49,11 @@ export function StudioReviewsSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {reviews.map((rev, idx) => (
           <div
             key={rev.id || idx}
-            className="bg-white border border-[#e8dfd3] rounded-3xl p-7 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all"
+            className="bg-white border border-[#e8dfd3] rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -70,16 +70,11 @@ export function StudioReviewsSection({
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[#f0e8dc] flex items-center gap-3">
+            <div className="pt-2 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#f4ece1] text-[#855e2e] font-serif flex items-center justify-center text-xs font-bold shrink-0">
                 {rev.author ? rev.author[0] : "C"}
               </div>
-              <div>
-                <strong className="text-xs text-[#1c1917] block font-medium">{rev.author}</strong>
-                <span className="text-[10px] text-[#8c8278]">
-                  {rev.eventType} · Verified Patron
-                </span>
-              </div>
+              <strong className="text-xs text-[#1c1917] block font-medium">{rev.author}</strong>
             </div>
           </div>
         ))}
