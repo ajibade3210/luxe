@@ -1,23 +1,17 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
 import { HeroRotatingCard } from "@/components/landing/hero-rotating-card";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { TrustedBusinesses } from "@/components/landing/trusted-businesses";
 import { WorkflowSection } from "@/components/landing/workflow-section";
+import { BrandLogo } from "@/components/shared/brand-logo";
+import { useScroll } from "@/hooks";
 import { businessProfile } from "@/lib/mock-data";
 
 export function PublicLandingPage() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScroll(20);
   const slug = businessProfile.slug || "elan-events";
-
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   return (
     <main className="public">
@@ -29,10 +23,7 @@ export function PublicLandingPage() {
             <a href={`/${slug}`}>Studio Demo</a>
           </nav>
         </div>
-        <a href="/" className="public-logo" aria-label="Shopwus home">
-          <span className="brand-mark bg-[#000000] text-white">É</span>
-          <span>Shopwus</span>
-        </a>
+        <BrandLogo className="public-logo" />
         <div className="nav-ctas">
           <a href="/signup">Sign up</a>
           <a className="dark-button bg-[#000000] border-[#000000]" href="/login">

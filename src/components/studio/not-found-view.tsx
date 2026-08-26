@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { isAuthenticated } from "@/lib/api";
 import { featuredOrganizations } from "@/lib/mock-data";
 import type { OrganizationPreview } from "@/lib/types";
@@ -101,21 +102,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
 
       {/* Top Header Navigation */}
       <header className="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between z-10">
-        <Link
-          href="/"
-          className="flex items-center gap-3 text-decoration-none group"
-          aria-label="Shopwus Homepage"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold shadow-xs group-hover:bg-[#2d3032] transition-colors">
-            É
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-sm tracking-tight text-[#191c1d]">Shopwus</span>
-            <span className="text-[10px] text-[#8e9192] uppercase tracking-wider font-mono">
-              Atelier Studio
-            </span>
-          </div>
-        </Link>
+        <BrandLogo subtitle="Atelier Studio" />
 
         <div className="flex items-center gap-2.5">
           <Link

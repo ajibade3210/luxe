@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowRight, Check, Lock, Mail, Shield, Sparkles, User } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AuthHeader } from "@/components/auth/auth-header";
 import { GoogleIcon } from "@/components/shared/icons";
 import { checkSlugAvailability, createSession, updateBusinessProfile } from "@/lib/api";
 
@@ -119,20 +119,7 @@ export function SignupPage() {
       />
 
       {/* Top Header */}
-      <header className="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between z-10">
-        <Link href="/" className="flex items-center gap-2.5 text-decoration-none group">
-          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold">
-            É
-          </div>
-          <span className="font-bold text-base tracking-tight text-[#191c1d]">Shopwus</span>
-        </Link>
-        <Link
-          href={`/login${claimSlug ? `?claim=${encodeURIComponent(claimSlug)}` : ""}`}
-          className="text-xs text-[#5c5f60] hover:text-[#191c1d] font-medium transition-colors"
-        >
-          Already have a studio? <b className="text-[#191c1d] underline">Sign in</b>
-        </Link>
-      </header>
+      <AuthHeader mode="signup" claimSlug={claimSlug} />
 
       {/* Main Signup Form Container */}
       <div className="w-full max-w-lg mx-auto px-6 py-10 my-auto z-10">

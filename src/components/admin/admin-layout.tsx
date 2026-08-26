@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type { Lead } from "@/lib/types";
@@ -21,12 +22,7 @@ import type { Lead } from "@/lib/types";
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
 export function Brand() {
-  return (
-    <a href="/" className="brand">
-      <span className="brand-mark">Ś</span>
-      <span>Shopwus</span>
-    </a>
-  );
+  return <BrandLogo className="brand" textClassName="text-white" />;
 }
 
 export function Toast({ message, onClose }: { message: string; onClose: () => void }) {

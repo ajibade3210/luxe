@@ -138,7 +138,7 @@ function CreatePreviewCard() {
       <div className="card-body-content">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#191c1d] text-[#f4ece1] flex items-center justify-center font-serif text-lg font-bold shadow-sm">
-            É
+            Ś
           </div>
           <div>
             <div className="flex items-center gap-1.5">

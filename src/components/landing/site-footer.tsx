@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 interface AiPrompt {
   label: string;
@@ -200,10 +201,7 @@ export function SiteFooter() {
       <div className="footer-main-grid">
         {/* Left Column: Brand & AI Concierge */}
         <div className="footer-brand-column">
-          <a href="/" className="footer-logo-brand" aria-label="Shopwus Homepage">
-            <span className="footer-logo-monogram">É</span>
-            <span className="footer-logo-text">Shopwus</span>
-          </a>
+          <BrandLogo size="md" />
 
           <p className="footer-mission-text">
             The premier studio operating system engineered for luxury event architects, bespoke
