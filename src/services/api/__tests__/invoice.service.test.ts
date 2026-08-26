@@ -152,4 +152,46 @@ describe("invoice service", () => {
     const fetched = await getInvoiceById(draft.id);
     expect(fetched).toBeUndefined();
   });
+
+  it("accurately computes multi-item subtotal, discount, and tax totals", async () => {
+    const draft = await saveInvoiceDraft({
+      customerId: "c-calc-test",
+      customerName: "Multi Item Calculation",
+      customerEmail: "calc@example.com",
+      billingAddress: "Abuja",
+      issueDate: "2026-08-26",
+      dueDate: "2026-09-10",
+      paymentTerms: "Net 30",
+      currency: "NGN",
+      items: [
+        {
+          id: "item-1",
+          description: "Floral Design",
+          quantity: 2,
+          unit: "arrangements",
+          unitPrice: 50000,
+          amount: 100000,
+        },
+        {
+          id: "item-2",
+          description: "Ambient Lighting",
+          quantity: 3,
+          unit: "fixtures",
+          unitPrice: 20000,
+          amount: 60000,
+        },
+      ],
+      subtotal: 160000,
+      discount: 10000,
+      taxRate: 7.5,
+      taxAmount: 11250,
+      total: 161250,
+      notes: "Calculation verification",
+    });
+
+    expect(draft.subtotal).toBe(160000);
+    expect(draft.discount).toBe(10000);
+    expect(draft.taxAmount).toBe(11250);
+    expect(draft.total).toBe(161250);
+  });
 });

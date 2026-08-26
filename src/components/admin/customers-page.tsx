@@ -10,8 +10,8 @@ import { CustomerAddModal } from "./customers/customer-add-modal";
 import { CustomerDetailDrawer } from "./customers/customer-detail-drawer";
 import { CustomerImportModal } from "./customers/customer-import-modal";
 import { CustomerMessageModal } from "./customers/customer-message-modal";
-import { CustomerProjectModal } from "./customers/customer-project-modal";
 import { CustomerResendInvoiceModal } from "./customers/customer-resend-invoice-modal";
+import { CustomerServiceModal } from "./customers/customer-service-modal";
 import { CustomerTable } from "./customers/customer-table";
 import { InvoiceModal } from "./invoices/invoice-modal";
 
@@ -176,7 +176,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         onSubmit={handleCreateCustomer}
       />
 
-      <CustomerProjectModal
+      <CustomerServiceModal
         isOpen={showAddServiceModal}
         customer={selectedCustomer}
         onClose={() => setShowAddServiceModal(false)}

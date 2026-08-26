@@ -16,7 +16,7 @@ interface CustomerServiceModalProps {
   ) => Promise<boolean>;
 }
 
-export function CustomerProjectModal({
+export function CustomerServiceModal({
   isOpen,
   customer,
   onClose,

@@ -40,3 +40,12 @@ export const CUSTOM_EVENTS = {
   profileUpdated: "luxe_profile_updated",
   authChanged: "luxe_auth_changed",
 } as const;
+
+export const API_ENDPOINTS = {
+  leads: "/api/leads",
+  customers: "/api/customers",
+  invoices: "/api/invoices",
+  analytics: "/api/analytics",
+  profile: "/api/profile",
+  auth: "/api/auth",
+} as const;

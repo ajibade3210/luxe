@@ -86,4 +86,20 @@ describe("customer service", () => {
     const activeAgain = await toggleCustomerActiveStatus(customer.id, true);
     expect(activeAgain.isActive).toBe(true);
   });
+
+  it("filters customers by search query", async () => {
+    await createCustomer({
+      name: "Unique Searchable Name",
+      email: "uniquesearch@example.com",
+    });
+
+    const searchByName = await getCustomers("Unique Searchable");
+    expect(searchByName.some(c => c.name === "Unique Searchable Name")).toBe(true);
+
+    const searchByEmail = await getCustomers("uniquesearch@example.com");
+    expect(searchByEmail.some(c => c.email === "uniquesearch@example.com")).toBe(true);
+
+    const noMatch = await getCustomers("nonexistent_random_xyz_query");
+    expect(noMatch.length).toBe(0);
+  });
 });
