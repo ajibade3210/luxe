@@ -50,6 +50,8 @@ export function createSession(user: Partial<UserSession>): UserSession {
   };
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
+    // biome-ignore lint/suspicious/noDocumentCookie: cookie synchronization required for Next.js edge middleware
+    document.cookie = `${STORAGE_KEYS.session}=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=2592000; SameSite=Lax`;
     window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.authChanged, { detail: session }));
   }
   return session;
@@ -115,6 +117,8 @@ export async function signUpWithGoogle(data?: {
 export function clearSession(): void {
   if (typeof window !== "undefined") {
     localStorage.removeItem(STORAGE_KEYS.session);
+    // biome-ignore lint/suspicious/noDocumentCookie: cookie synchronization required for Next.js edge middleware
+    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax`;
     window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.authChanged, { detail: null }));
   }
 }
