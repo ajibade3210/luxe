@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Mail, MapPin, Phone, X } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   createWhatsAppConsultationUrl,
@@ -126,7 +126,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
 
-      const sections = ["social", "portfolio", "services", "reviews", "about"];
+      const sections = ["social", "portfolio", "services", "reviews"];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -408,39 +408,6 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
           buttonColor={buttonColor}
           radiusClass={radiusClass}
         />
-
-        {/* SECTION: About */}
-        <section id="about" className="scroll-mt-24">
-          <div
-            style={{ backgroundColor: cardBgColor }}
-            className="border border-[#e8dfd3] rounded-3xl p-8 sm:p-14 text-center max-w-4xl mx-auto space-y-6 shadow-2xs"
-          >
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">About</h2>
-            <blockquote className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal leading-relaxed italic">
-              &ldquo;{profile.description}&rdquo;
-            </blockquote>
-            <div className="flex items-center justify-center gap-4 text-xs text-[#78716c] pt-2">
-              <span className="flex items-center gap-1.5">
-                <MapPin size={14} style={{ color: primaryColor }} />
-                {profile.physicalAddress || profile.location}
-              </span>
-              {isWhatsAppEnabled && (
-                <>
-                  <span>·</span>
-                  <span className="flex items-center gap-1.5">
-                    <Phone size={14} style={{ color: primaryColor }} />
-                    {profile.whatsAppNumber || profile.phone}
-                  </span>
-                </>
-              )}
-              <span>·</span>
-              <span className="flex items-center gap-1.5">
-                <Mail size={14} style={{ color: primaryColor }} />
-                {profile.emailAddress || profile.email}
-              </span>
-            </div>
-          </div>
-        </section>
 
         {/* CTA BANNER */}
         <section

@@ -59,9 +59,6 @@ export function StudioFooter({
             <a href="#reviews" className="hover:text-[#b84c24] transition-colors">
               Reviews
             </a>
-            <a href="#about" className="hover:text-[#b84c24] transition-colors">
-              About
-            </a>
             <a href="/login" className="hover:text-[#b84c24] transition-colors">
               Studio Login
             </a>

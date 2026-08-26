@@ -150,15 +150,6 @@ export function StudioNavbar({
             >
               Reviews
             </a>
-            <a
-              href="#about"
-              style={{
-                color: activeSection === "about" ? primaryColor : undefined,
-              }}
-              className="transition-colors hover:opacity-80"
-            >
-              About
-            </a>
           </nav>
 
           {/* Primary CTA */}
@@ -215,13 +206,6 @@ export function StudioNavbar({
                 className="hover:text-[#1c1917]"
               >
                 Reviews
-              </a>
-              <a
-                href="#about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-[#1c1917]"
-              >
-                About & Hours
               </a>
             </nav>
             <button
