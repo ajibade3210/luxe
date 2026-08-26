@@ -767,9 +767,14 @@ textarea:focus {
   display: flex;
   flex: 0 0 240px;
   flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  max-height: 100vh;
   border-right: 1px solid var(--border-subtle);
   background: var(--surface-container-low);
   padding: 28px 18px 22px;
+  z-index: 40;
 }
 .sidebar-top {
   display: flex;
@@ -851,7 +856,7 @@ textarea:focus {
   align-items: center;
   justify-content: space-between;
   height: 76px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: none;
   padding: 0 42px;
 }
 .search {

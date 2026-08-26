@@ -22,7 +22,7 @@ import type { Lead } from "@/lib/types";
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
 export function Brand() {
-  return <BrandLogo className="brand" textClassName="text-white" />;
+  return <BrandLogo className="brand" href="/" />;
 }
 
 export function Toast({ message, onClose }: { message: string; onClose: () => void }) {

@@ -73,7 +73,7 @@ export function BrandLogo({
       <div className="flex flex-col">
         <span
           className={cn(
-            "font-bold tracking-tight text-[#191c1d] group-hover:text-black transition-colors",
+            "font-bold tracking-tight text-[#191c1d] group-hover:text-[#855e2e] transition-colors",
             sizeClasses.text,
             textClassName
           )}

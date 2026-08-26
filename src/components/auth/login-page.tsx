@@ -52,12 +52,15 @@ export function LoginPage() {
             <span>Studio Director Portal</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-3 tracking-tight">
+          <h1
+            style={{ marginBottom: "36px" }}
+            className="text-xl sm:text-2xl font-serif text-[#191c1d] font-bold tracking-tight whitespace-nowrap"
+          >
             Return to your studio.
           </h1>
 
           {/* Action Area with Generous Spacing */}
-          <div className="space-y-4 pt-1">
+          <div style={{ marginTop: "12px" }}>
             <button
               type="button"
               disabled={isSubmitting}
