@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { getLeads, publishChanges } from "@/lib/api";
+import { getCustomers, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
-import type { Lead } from "@/lib/types";
+import type { Customer, Lead } from "@/lib/types";
 
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
@@ -59,20 +59,22 @@ export function PageTitle({
   title,
   description,
   action,
+  children,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
-  description: string;
+  description?: string;
   action?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <div className="page-title">
       <div>
-        <span className="eyebrow">{eyebrow}</span>
+        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h1>{title}</h1>
-        <p>{description}</p>
+        {description && <p>{description}</p>}
       </div>
-      {action}
+      {(action || children) && <div className="page-title-actions">{action || children}</div>}
     </div>
   );
 }
@@ -87,18 +89,32 @@ export function Sidebar({
   onClose: () => void;
 }) {
   const slug = businessProfile.slug || "elan-events";
-  const [leadCount, setLeadCount] = useState(6);
+  const [leadCount, setLeadCount] = useState(5);
+  const [customerCount, setCustomerCount] = useState(3);
 
   useEffect(() => {
     getLeads().then(res => setLeadCount(res.length));
+    getCustomers().then(res => setCustomerCount(res.length));
+
     const handleLeadsUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Lead[]>;
       if (customEvent.detail) {
         setLeadCount(customEvent.detail.length);
       }
     };
+    const handleCustomersUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Customer[]>;
+      if (customEvent.detail) {
+        setCustomerCount(customEvent.detail.length);
+      }
+    };
+
     window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
-    return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+    window.addEventListener("luxe_customers_updated", handleCustomersUpdate);
+    return () => {
+      window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+      window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
+    };
   }, []);
 
   return (
@@ -114,7 +130,7 @@ export function Sidebar({
           <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
         </a>
         <a className={path === "/customers" ? "active" : ""} href="/customers">
-          <Users size={16} /> Customers
+          <Users size={16} /> Customers <span className="nav-count">{customerCount}</span>
         </a>
         <a
           className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"

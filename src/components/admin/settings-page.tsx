@@ -132,10 +132,10 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       if (claim) {
         setSlug(claim);
         setName(
-          claim
+          `${claim
             .split("-")
             .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ") + " Atelier"
+            .join(" ")} Atelier`
         );
       }
     }

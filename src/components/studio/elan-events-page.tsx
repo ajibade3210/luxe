@@ -159,7 +159,6 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
         return "rounded-2xl";
       case "Pill":
         return "rounded-full";
-      case "Subtle":
       default:
         return "rounded-lg";
     }

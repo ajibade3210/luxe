@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Shield, User } from "lucide-react";
+import { ArrowRight, Check, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GoogleIcon } from "@/components/shared/icons";
 import { getCurrentUser, updateBusinessProfile } from "@/lib/api";

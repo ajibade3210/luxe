@@ -66,10 +66,10 @@ export async function signInWithGoogle(options?: { claimSlug?: string }): Promis
 
   const claim = options?.claimSlug;
   const studioName = claim
-    ? claim
+    ? `${claim
         .split("-")
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ") + " Atelier"
+        .join(" ")} Atelier`
     : "Élan Events";
   const studioSlug = claim || "elan-events";
 
@@ -97,10 +97,10 @@ export async function signUpWithGoogle(data?: {
   const effectiveSlug = data?.slug || "my-atelier";
   const effectiveName =
     data?.studioName ||
-    effectiveSlug
+    `${effectiveSlug
       .split("-")
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ") + " Atelier";
+      .join(" ")} Atelier`;
   const effectiveDirector = data?.fullName || "Amelia Bell";
 
   return createSession({

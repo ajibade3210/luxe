@@ -655,8 +655,8 @@ em {
   .connector-pulse-beam,
   .mobile-pulse-beam,
   .node-center-dot {
-    animation: none !important;
-    opacity: 0 !important;
+    animation: none;
+    opacity: 0;
   }
 }
 .legacy-footer {
