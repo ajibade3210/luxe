@@ -67,7 +67,9 @@ export function LeadDetailDrawer({
           </div>
           <div>
             <span className="eyebrow">Status</span>
-            <b className={`status ${lead.status}`}>{formatStatusLabel(lead.status)}</b>
+            <div className="mt-1.5 flex items-center">
+              <span className={`status ${lead.status}`}>{formatStatusLabel(lead.status)}</span>
+            </div>
           </div>
         </div>
 
