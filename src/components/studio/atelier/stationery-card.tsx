@@ -140,11 +140,6 @@ export function StationeryCard({
             <p className="text-sm sm:text-base text-[#1c1917] font-serif italic leading-relaxed">
               &ldquo;{profile.description}&rdquo;
             </p>
-            {profile.tagline && (
-              <span className="text-xs uppercase tracking-[0.16em] text-[#8c8278] font-medium block mt-4 font-sans">
-                — {profile.tagline}
-              </span>
-            )}
           </div>
 
           {/* Verification Banner */}

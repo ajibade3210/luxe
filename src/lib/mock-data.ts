@@ -277,7 +277,7 @@ export const businessProfile: BusinessProfile = {
   operatingHours: "Mon–Fri",
   timeFrom: "09:00 AM",
   timeTo: "06:00 PM",
-  byAppointmentOnly: true,
+  byAppointmentOnly: false,
   whatsAppNumber: "+234 800 ELAN VIP",
   emailAddress: "hello@elanevents.com",
   physicalAddress: "Victoria Island, Lagos, Nigeria",

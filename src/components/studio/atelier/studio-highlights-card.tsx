@@ -4,7 +4,6 @@ import {
   Clock3,
   Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Share2,
   ShieldCheck,
@@ -34,7 +33,7 @@ export function StudioHighlightsCard({
   buttonColor,
   radiusClass,
 }: StudioHighlightsCardProps) {
-  // Live Store Open / Closed Status computation
+  // Compute live open/closed operational status
   const getStoreStatus = () => {
     if (profile.byAppointmentOnly) {
       return {
@@ -43,7 +42,7 @@ export function StudioHighlightsCard({
         label: "By Appointment Only",
         dotColor: "bg-amber-500",
         badgeBg: "bg-amber-50 text-amber-800 border-amber-200/80",
-        detail: `${profile.operatingHours || "Mon–Sat"} · ${profile.timeFrom || "09:00 AM"} – ${profile.timeTo || "06:00 PM"}`,
+        scheduleBadge: "Private Atelier",
       };
     }
 
@@ -86,7 +85,7 @@ export function StudioHighlightsCard({
         label: "Open Now",
         dotColor: "bg-emerald-500",
         badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
-        detail: `Open today until ${profile.timeTo || "06:00 PM"}`,
+        scheduleBadge: profile.operatingHours || "Mon–Sat",
       };
     }
 
@@ -96,7 +95,7 @@ export function StudioHighlightsCard({
       label: "Closed Now",
       dotColor: "bg-stone-400",
       badgeBg: "bg-stone-100 text-stone-700 border-stone-200/80",
-      detail: `Opens ${profile.timeFrom || "09:00 AM"} (${profile.operatingHours || "Mon–Sat"})`,
+      scheduleBadge: profile.operatingHours || "Mon–Sat",
     };
   };
 
@@ -104,61 +103,65 @@ export function StudioHighlightsCard({
   const address = profile.physicalAddress || profile.location;
   const hasSubstantialCustomers = totalCustomers >= 10;
 
+  // Check if WhatsApp is enabled in settings (connected toggle and valid phone number)
+  const whatsAppChannel = profile.socialChannels?.find(c => c.type === "whatsapp");
+  const isWhatsAppEnabled =
+    (whatsAppChannel ? whatsAppChannel.connected : true) &&
+    Boolean((profile.whatsAppNumber || profile.phone)?.trim());
+
   return (
     <div className="bg-[#faf6f0] border border-[#e8dfd3] rounded-3xl p-6 sm:p-8 shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between max-w-[480px] w-full h-[580px]">
-      <div className="space-y-4 sm:space-y-5">
-        {/* Top Row: Verified Business Assurance Badge & Client Metric */}
-        <div className="flex items-center justify-between">
+      {/* Top Bar: Verification and Patron Metrics */}
+      <div className="flex items-center justify-between">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">
+          <ShieldCheck size={14} className="text-[#0058be]" />
+          <span className="text-[11px] font-semibold text-[#1c1917] tracking-wide">
+            Verified Atelier
+          </span>
+        </div>
+
+        {hasSubstantialCustomers ? (
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">
-            <ShieldCheck size={14} className="text-[#0058be]" />
-            <span className="text-[11px] font-semibold text-[#1c1917] tracking-wide">
-              Verified Atelier
+            <CheckCircle2 size={13} style={{ color: primaryColor }} />
+            <span className="text-[11px] font-semibold text-[#1c1917]">
+              {totalCustomers}+ Clients Served
             </span>
           </div>
+        ) : (
+          <span className="font-mono text-[10px] text-[#8c8278] uppercase tracking-wider">
+            ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
+          </span>
+        )}
+      </div>
 
-          {hasSubstantialCustomers && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">
-              <CheckCircle2 size={13} style={{ color: primaryColor }} />
-              <span className="text-[11px] font-semibold text-[#1c1917]">
-                {totalCustomers}+ Clients Served
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Live Operational Status Card */}
-        <div className="bg-white border border-[#e8dfd3] rounded-2xl p-4 sm:p-4.5 shadow-2xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                {status.isOpen && (
-                  <span
-                    className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status.dotColor}`}
-                  />
-                )}
+      {/* Main Cohesive Details Container */}
+      <div className="bg-white border border-[#e8dfd3] rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
+        {/* Live Status Header Row */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#f0e8dc]">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              {status.isOpen && (
                 <span
-                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${status.dotColor}`}
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status.dotColor}`}
                 />
-              </span>
-              <span className="text-xs font-semibold text-[#1c1917]">{status.label}</span>
-            </div>
-
-            <span
-              className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${status.badgeBg}`}
-            >
-              {status.isAppointment ? "Private Atelier" : profile.operatingHours || "Mon–Sat"}
+              )}
+              <span
+                className={`relative inline-flex rounded-full h-2.5 w-2.5 ${status.dotColor}`}
+              />
             </span>
+            <span className="text-xs font-semibold text-[#1c1917]">{status.label}</span>
           </div>
 
-          <div className="text-xs text-[#6b645c] flex items-center gap-2">
-            <Clock3 size={13} className="text-[#8c8278] shrink-0" />
-            <span>{status.detail}</span>
-          </div>
+          <span
+            className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${status.badgeBg}`}
+          >
+            {status.scheduleBadge}
+          </span>
         </div>
 
-        {/* Contact Details Stack (Moved from Left Stationery Card) */}
-        <div className="bg-white border border-[#e8dfd3] rounded-2xl p-4 sm:p-5 shadow-2xs divide-y divide-[#f0e8dc] text-xs">
-          <div className="pb-2.5 flex items-center justify-between gap-3">
+        {/* Concise Contact & Location Stack */}
+        <div className="divide-y divide-[#f5ede3] text-xs space-y-0.5">
+          <div className="py-2.5 flex items-center justify-between gap-3">
             <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
               <Clock3 size={14} style={{ color: primaryColor }} /> Operating Hours:
             </span>
@@ -172,54 +175,64 @@ export function StudioHighlightsCard({
               <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
                 <MapPin size={14} style={{ color: primaryColor }} /> Studio Flagship:
               </span>
-              <span className="font-semibold text-[#1c1917] truncate max-w-[200px] text-right">
+              <span className="font-semibold text-[#1c1917] truncate max-w-[210px] text-right">
                 {address}
               </span>
             </div>
           )}
 
-          <div className="py-2.5 flex items-center justify-between gap-3">
-            <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
-              <Phone size={14} style={{ color: primaryColor }} /> WhatsApp Line:
-            </span>
-            <span className="font-mono font-semibold text-[#1c1917] text-right">
-              {profile.whatsAppNumber || profile.phone}
-            </span>
-          </div>
+          {isWhatsAppEnabled && (
+            <div className="py-2.5 flex items-center justify-between gap-3">
+              <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
+                <Phone size={14} style={{ color: primaryColor }} /> WhatsApp Line:
+              </span>
+              <span className="font-mono font-semibold text-[#1c1917] text-right">
+                {profile.whatsAppNumber || profile.phone}
+              </span>
+            </div>
+          )}
 
           <div className="pt-2.5 flex items-center justify-between gap-3">
             <span className="text-[#5c544d] flex items-center gap-2 font-medium shrink-0">
               <Mail size={14} style={{ color: primaryColor }} /> Studio Email:
             </span>
-            <span className="font-semibold text-[#1c1917] truncate max-w-[190px] text-right">
+            <span className="font-semibold text-[#1c1917] truncate max-w-[200px] text-right">
               {profile.emailAddress || profile.email}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Action Footer (Moved from Left Stationery Card) */}
-      <div className="pt-3 space-y-2.5 border-t border-[#ebd8ca]">
-        <div className="grid grid-cols-2 gap-3">
+      {/* Action Footer */}
+      <div className="space-y-3 pt-2">
+        <div className={isWhatsAppEnabled ? "grid grid-cols-2 gap-3" : "w-full"}>
           <button
             type="button"
             onClick={() => setQuoteModalOpen(true)}
             style={{ backgroundColor: buttonColor }}
-            className={`text-white text-xs font-bold uppercase tracking-wider py-3.5 shadow-xs hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
+            className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 shadow-xs hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
           >
             <span>Get a Quote</span>
             <ArrowRight size={13} />
           </button>
 
-          <a
-            href={whatsAppLink}
-            target="_blank"
-            rel="noreferrer"
-            className={`bg-white hover:bg-[#faf6f0] text-[#1c1917] border border-[#d6c7b7] text-xs font-bold uppercase tracking-wider py-3.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
-          >
-            <MessageCircle size={14} className="text-[#25D366]" />
-            <span>WhatsApp Us</span>
-          </a>
+          {isWhatsAppEnabled && (
+            <a
+              href={whatsAppLink}
+              target="_blank"
+              rel="noreferrer"
+              className={`bg-white hover:bg-[#faf6f0] text-[#1c1917] border border-[#d6c7b7] text-xs font-bold uppercase tracking-wider py-3.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
+            >
+              <svg
+                className="w-4 h-4 text-[#25D366] shrink-0"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.49 0-2.95-.4-4.22-1.16l-.3-.18-3.13.82.83-3.05-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.28-8.24 2.21 0 4.29.86 5.85 2.43a8.188 8.188 0 0 1 2.41 5.81c0 4.55-3.7 8.26-8.26 8.26zm4.53-6.19c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.66.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.77 2.71 4.3 3.79.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z" />
+              </svg>
+              <span>WhatsApp Us</span>
+            </a>
+          )}
         </div>
 
         <div className="flex items-center justify-center text-xs text-[#78716c]">

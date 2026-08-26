@@ -84,7 +84,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
   const [timeFrom, setTimeFrom] = useState(initialMockProfile.timeFrom || "09:00 AM");
   const [timeTo, setTimeTo] = useState(initialMockProfile.timeTo || "06:00 PM");
   const [byAppointmentOnly, setByAppointmentOnly] = useState(
-    initialMockProfile.byAppointmentOnly ?? true
+    initialMockProfile.byAppointmentOnly ?? false
   );
   const [whatsAppNumber, setWhatsAppNumber] = useState(
     initialMockProfile.whatsAppNumber || "+234 800 ELAN VIP"
