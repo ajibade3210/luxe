@@ -1,21 +1,107 @@
-import { activities, customers } from "@/lib/mock-data";
-import type { Customer } from "@/lib/types";
+import { activities, customers as initialCustomers } from "@/lib/mock-data";
+import type { Customer, Project, ProjectStatus } from "@/lib/types";
+
+let currentCustomers: Customer[] = [...initialCustomers];
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
+function notifyCustomersUpdated() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("luxe_customers_updated", {
+        detail: currentCustomers,
+      })
+    );
+  }
+}
+
+/**
+ * Fetch all customers
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch('/api/customers'); return res.json();`
+ */
 export async function getCustomers(): Promise<Customer[]> {
   await delay(100);
-  return customers;
+  return currentCustomers;
 }
 
 export async function getCustomer(id: string): Promise<Customer | undefined> {
   await delay(120);
-  return customers.find(c => c.id === id);
+  return currentCustomers.find(c => c.id === id);
 }
 
 export async function getCustomerActivity(id: string) {
   await delay(100);
   return activities.filter(a => a.customerId === id);
+}
+
+export interface NewCustomerInput {
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  projectName?: string;
+  service?: string;
+  amount?: number;
+  status?: ProjectStatus;
+}
+
+/**
+ * Create a new customer in the studio directory
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch('/api/customers', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
+ */
+export async function createCustomer(input: NewCustomerInput): Promise<Customer> {
+  await delay(250);
+
+  const newId = `c${Date.now()}`;
+  const initialProject: Project = {
+    id: `p-${Date.now()}`,
+    customerId: newId,
+    name: input.projectName || "Initial Studio Project",
+    service: input.service || "Bespoke Styling",
+    amount: input.amount || 0,
+    status: input.status || "active",
+    createdAt: new Date().toISOString(),
+  };
+
+  const newCustomer: Customer = {
+    id: newId,
+    name: input.name,
+    email: input.email,
+    phone: input.phone || "",
+    company: input.company || "",
+    totalRevenue: input.amount || 0,
+    projects: [initialProject],
+    createdAt: new Date().toISOString(),
+  };
+
+  currentCustomers = [newCustomer, ...currentCustomers];
+  notifyCustomersUpdated();
+
+  return newCustomer;
+}
+
+/**
+ * Send an invoice to a customer with pending project/retainer
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch(`/api/customers/${customerId}/invoices/send`, { method: 'POST' }); return res.json();`
+ */
+export async function sendCustomerInvoice(
+  customerId: string,
+  projectId?: string
+): Promise<{ success: boolean; invoiceId: string; recipient: string; amount: number }> {
+  await delay(300);
+
+  const customer = currentCustomers.find(c => c.id === customerId);
+  const project = customer?.projects.find(p => (projectId ? p.id === projectId : true));
+
+  return {
+    success: true,
+    invoiceId: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    recipient: customer?.email || "customer@example.com",
+    amount: project?.amount || 0,
+  };
 }
 
 /**
@@ -27,7 +113,7 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
   await delay(350);
 
   if (typeof window === "undefined") {
-    return { count: customers.length, filename: "customers.csv" };
+    return { count: currentCustomers.length, filename: "customers.csv" };
   }
 
   const headers = [
@@ -41,7 +127,7 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
     "Primary Service",
     "Latest Status",
   ];
-  const rows = customers.map(c => [
+  const rows = currentCustomers.map(c => [
     c.id,
     `"${c.name}"`,
     c.email,
@@ -65,5 +151,5 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  return { count: customers.length, filename };
+  return { count: currentCustomers.length, filename };
 }
