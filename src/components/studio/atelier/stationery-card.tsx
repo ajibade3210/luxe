@@ -11,6 +11,7 @@ interface StationeryCardProps {
   primaryColor: string;
   secondaryColor: string;
   buttonColor: string;
+  cardBgColor?: string;
   monogram: string;
   averageRating?: string | number;
   totalReviews?: number;
@@ -28,6 +29,7 @@ export function StationeryCard({
   primaryColor,
   secondaryColor,
   buttonColor: _buttonColor,
+  cardBgColor = "#faf6f0",
   monogram,
   averageRating: _averageRating,
   totalReviews: _totalReviews,
@@ -45,7 +47,10 @@ export function StationeryCard({
         }`}
       >
         {/* FRONT FACE: Luxury Minimalist Stationery Card */}
-        <div className="card-face card-front rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col items-center justify-center relative overflow-hidden">
+        <div
+          style={{ backgroundColor: cardBgColor }}
+          className="card-face card-front rounded-3xl p-6 sm:p-8 border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col items-center justify-center relative overflow-hidden"
+        >
           {/* Top Bar with Flip Button */}
           <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10">
             <button
@@ -91,7 +96,10 @@ export function StationeryCard({
         </div>
 
         {/* BACK FACE: Studio Vision & Atelier Statement */}
-        <div className="card-face card-back rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
+        <div
+          style={{ backgroundColor: cardBgColor }}
+          className="card-face card-back rounded-3xl p-6 sm:p-8 border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden"
+        >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div

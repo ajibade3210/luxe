@@ -285,6 +285,7 @@ export const businessProfile: BusinessProfile = {
     primary: "#000000",
     secondary: "#0058BE",
     button: "#000000",
+    cardBackground: "#faf6f0",
     text: "#191C1D",
   },
   buttonRadius: "Subtle",

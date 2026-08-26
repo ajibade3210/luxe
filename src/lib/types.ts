@@ -142,6 +142,7 @@ export interface ColorScheme {
   primary: string;
   secondary: string;
   button: string;
+  cardBackground?: string;
   text: string;
 }
 

@@ -19,6 +19,7 @@ interface StudioHighlightsCardProps {
   primaryColor: string;
   secondaryColor: string;
   buttonColor: string;
+  cardBgColor?: string;
   radiusClass: string;
 }
 
@@ -31,6 +32,7 @@ export function StudioHighlightsCard({
   primaryColor,
   secondaryColor: _secondaryColor,
   buttonColor,
+  cardBgColor = "#faf6f0",
   radiusClass,
 }: StudioHighlightsCardProps) {
   // Compute live open/closed operational status
@@ -110,7 +112,10 @@ export function StudioHighlightsCard({
     Boolean((profile.whatsAppNumber || profile.phone)?.trim());
 
   return (
-    <div className="bg-[#faf6f0] border border-[#e8dfd3] rounded-3xl p-6 sm:p-8 shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between max-w-[480px] w-full h-[580px]">
+    <div
+      style={{ backgroundColor: cardBgColor }}
+      className="border border-[#e8dfd3] rounded-3xl p-6 sm:p-8 shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between max-w-[480px] w-full h-[580px]"
+    >
       {/* Top Bar: Verification and Patron Metrics */}
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">

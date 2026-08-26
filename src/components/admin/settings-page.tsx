@@ -110,6 +110,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
       primary: "#000000",
       secondary: "#0058BE",
       button: "#000000",
+      cardBackground: "#FAF6F0",
       text: "#191C1D",
     }
   );
