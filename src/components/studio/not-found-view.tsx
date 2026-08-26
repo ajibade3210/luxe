@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { CUSTOM_EVENTS } from "@/constants";
 import { isAuthenticated } from "@/lib/api";
 import { featuredOrganizations } from "@/lib/mock-data";
 import type { OrganizationPreview } from "@/lib/types";
@@ -21,35 +22,23 @@ interface NotFoundViewProps {
   slug?: string;
 }
 
-// Simple Levenshtein-like similarity for smart recommendation
+// Simple similarity search for smart recommendation
 function findClosestMatch(query: string, list: OrganizationPreview[]): OrganizationPreview | null {
-  if (!query) return null;
-  const q = query.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (q.length < 2) return null;
+  if (!query || list.length === 0) return null;
+  const q = query.toLowerCase().trim();
 
-  // Exact substring match
-  for (const org of list) {
-    const slugClean = org.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const nameClean = org.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (
-      slugClean.includes(q) ||
-      q.includes(slugClean) ||
-      nameClean.includes(q) ||
-      q.includes(nameClean)
-    ) {
-      return org;
-    }
-  }
+  // 1. Direct prefix / substring match
+  const sub = list.find(
+    org => org.slug.toLowerCase().includes(q) || org.name.toLowerCase().includes(q)
+  );
+  if (sub) return sub;
 
-  // Prefix matching
-  for (const org of list) {
-    const slugClean = org.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (slugClean.startsWith(q.slice(0, 4)) || q.startsWith(slugClean.slice(0, 4))) {
-      return org;
-    }
-  }
+  // 2. First letter match fallback
+  const firstLetter = list.find(org => org.slug.toLowerCase().startsWith(q.slice(0, 1)));
+  if (firstLetter) return firstLetter;
 
-  return null;
+  // 3. Fallback to first available preview
+  return list[0] || null;
 }
 
 export function NotFoundView({ slug }: NotFoundViewProps) {
@@ -62,8 +51,8 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
   useEffect(() => {
     setSignedIn(isAuthenticated());
     const handleAuthChange = () => setSignedIn(isAuthenticated());
-    window.addEventListener("luxe_auth_changed", handleAuthChange);
-    return () => window.removeEventListener("luxe_auth_changed", handleAuthChange);
+    window.addEventListener(CUSTOM_EVENTS.authChanged, handleAuthChange);
+    return () => window.removeEventListener(CUSTOM_EVENTS.authChanged, handleAuthChange);
   }, []);
 
   const claimHref = signedIn

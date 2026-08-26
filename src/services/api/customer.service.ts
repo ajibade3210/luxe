@@ -1,3 +1,4 @@
+import { CUSTOM_EVENTS } from "@/constants";
 import { activities, customers as initialCustomers } from "@/lib/mock-data";
 import { AddProjectInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
 import type { Customer, Project, ProjectStatus } from "@/lib/types";
@@ -9,7 +10,7 @@ const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 function notifyCustomersUpdated() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(
-      new CustomEvent("luxe_customers_updated", {
+      new CustomEvent(CUSTOM_EVENTS.customersUpdated, {
         detail: currentCustomers,
       })
     );

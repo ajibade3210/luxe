@@ -17,6 +17,7 @@ import {
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { CUSTOM_EVENTS } from "@/constants";
 import { getCustomers, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type { Customer, Lead } from "@/lib/types";
@@ -130,11 +131,11 @@ export function Sidebar({
       }
     };
 
-    window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
-    window.addEventListener("luxe_customers_updated", handleCustomersUpdate);
+    window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
+    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
     return () => {
-      window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
-      window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
     };
   }, []);
 

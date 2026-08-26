@@ -4,6 +4,7 @@
  * Every action includes a 1-line swap for real REST/GraphQL backend APIs.
  */
 
+import { CUSTOM_EVENTS } from "@/constants";
 import { InvoiceInputSchema } from "@/lib/schemas";
 import type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms } from "@/lib/types";
 import { CURRENCY_SYMBOLS } from "@/utils";
@@ -113,7 +114,9 @@ const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
 const notifyInvoicesUpdated = () => {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("luxe_invoices_updated", { detail: persistedInvoices }));
+    window.dispatchEvent(
+      new CustomEvent(CUSTOM_EVENTS.invoicesUpdated, { detail: persistedInvoices })
+    );
   }
 };
 

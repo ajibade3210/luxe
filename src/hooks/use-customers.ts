@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CUSTOM_EVENTS } from "@/constants";
 import {
   addProjectToCustomer,
   createCustomer,
@@ -23,6 +24,7 @@ export const AVAILABLE_SERVICES = [
   "Private Dinners & Floral Scenography",
   "VIP Concierge Production",
   "Bespoke Atelier Styling",
+  "Brand Activations & Ephemeral Lounges",
 ] as const;
 
 export function useCustomers(onToast?: (message: string) => void) {
@@ -53,12 +55,12 @@ export function useCustomers(onToast?: (message: string) => void) {
       }
     };
 
-    window.addEventListener("luxe_customers_updated", handleCustomersUpdate);
-    window.addEventListener("luxe_invoices_updated", handleInvoicesUpdate);
+    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
 
     return () => {
-      window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
-      window.removeEventListener("luxe_invoices_updated", handleInvoicesUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
     };
   }, [searchQuery]);
 

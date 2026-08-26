@@ -918,7 +918,7 @@ code {
   padding: 22px 0;
 }
 
-.detail-grid b {
+.detail-grid > div > b {
   display: block;
   margin-top: 7px;
   font-size: 12px;

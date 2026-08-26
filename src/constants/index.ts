@@ -35,6 +35,8 @@ export const RESERVED_SLUGS = [
 
 export const CUSTOM_EVENTS = {
   leadsUpdated: "luxe_leads_updated",
+  customersUpdated: "luxe_customers_updated",
+  invoicesUpdated: "luxe_invoices_updated",
   profileUpdated: "luxe_profile_updated",
   authChanged: "luxe_auth_changed",
 } as const;

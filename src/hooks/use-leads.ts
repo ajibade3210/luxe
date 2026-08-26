@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { CUSTOM_EVENTS } from "@/constants";
 import { convertLeadToCustomer, exportLeadsCSV, getLeads, updateLeadStatus } from "@/lib/api";
 import type { Lead } from "@/lib/types";
 
@@ -21,8 +22,8 @@ export function useLeads(notify?: (message: string) => void) {
         setItems(customEvent.detail);
       }
     };
-    window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
-    return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
+    window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
+    return () => window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
   }, [searchQuery]);
 
   const handleSearch = (val: string) => {

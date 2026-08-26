@@ -2,6 +2,7 @@
 
 import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { CUSTOM_EVENTS } from "@/constants";
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
@@ -55,8 +56,8 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     };
 
     if (typeof window !== "undefined") {
-      window.addEventListener("luxe_profile_updated", handleProfileUpdate);
-      return () => window.removeEventListener("luxe_profile_updated", handleProfileUpdate);
+      window.addEventListener(CUSTOM_EVENTS.profileUpdated, handleProfileUpdate);
+      return () => window.removeEventListener(CUSTOM_EVENTS.profileUpdated, handleProfileUpdate);
     }
   }, [slug]);
 

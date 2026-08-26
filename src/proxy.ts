@@ -12,10 +12,22 @@ const PROTECTED_ROUTES = [
 
 const AUTH_ROUTES = ["/login", "/signup"];
 
+function isValidSession(cookieValue?: string): boolean {
+  if (!cookieValue || cookieValue.trim().length === 0) return false;
+  try {
+    const parsed = JSON.parse(decodeURIComponent(cookieValue));
+    return Boolean(
+      parsed && typeof parsed === "object" && (parsed.id || parsed.email || parsed.token)
+    );
+  } catch {
+    return cookieValue.trim().length >= 8;
+  }
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(STORAGE_KEYS.session)?.value;
-  const isAuthenticated = Boolean(sessionCookie && sessionCookie.trim().length > 0);
+  const isAuthenticated = isValidSession(sessionCookie);
 
   const isProtectedRoute = PROTECTED_ROUTES.some(
     route => pathname === route || pathname.startsWith(`${route}/`)
