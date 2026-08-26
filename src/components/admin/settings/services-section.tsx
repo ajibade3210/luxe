@@ -37,7 +37,6 @@ export function ServicesSection({
 }: ServicesSectionProps) {
   return (
     <Card
-      number="02"
       title="Services & offerings"
       description="Make your expertise easy to understand for prospective couples and clients."
     >

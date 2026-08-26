@@ -128,14 +128,30 @@ export function Sidebar({
           <Settings size={16} /> Settings
         </a>
       </nav>
-      <a className="account" href="/profile" aria-label="Open profile settings">
-        <div className="avatar bg-[#000000] text-white">AB</div>
-        <div>
-          <b>Amelia Bell</b>
-          <span>Studio Director</span>
-        </div>
-        <ChevronRight size={15} />
-      </a>
+      <div className="mt-auto pt-4 border-t border-[#e5e7eb]">
+        <a
+          className={`flex items-center gap-3 p-3 rounded-xl text-decoration-none transition-all cursor-pointer ${
+            path === "/profile"
+              ? "bg-white text-[#191c1d] shadow-2xs"
+              : "hover:bg-white/80 hover:shadow-2xs text-[#191c1d]"
+          }`}
+          href="/profile"
+          aria-label="Open profile settings"
+        >
+          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shrink-0 shadow-2xs">
+            AB
+          </div>
+          <div className="min-w-0 flex-1">
+            <b className="text-xs font-bold text-[#191c1d] block leading-tight truncate">
+              Amelia Bell
+            </b>
+            <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
+              Studio Director
+            </span>
+          </div>
+          <ChevronRight size={14} className="text-[#9ca3af] shrink-0" />
+        </a>
+      </div>
     </aside>
   );
 }

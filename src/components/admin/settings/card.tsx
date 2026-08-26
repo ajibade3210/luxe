@@ -2,18 +2,17 @@ import { Info } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface CardProps {
-  number: string;
+  number?: string;
   title: string;
   description?: string;
   children: ReactNode;
 }
 
-export function Card({ number, title, description, children }: CardProps) {
+export function Card({ title, description, children }: CardProps) {
   return (
     <section className="settings-card">
       <div className="settings-card-heading">
         <div className="flex items-center">
-          <span className="step">{number}</span>
           <h2>{title}</h2>
           {description && (
             <div className="relative group/info inline-flex items-center ml-1.5 self-center">

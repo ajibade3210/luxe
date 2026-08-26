@@ -48,7 +48,6 @@ export function IdentitySection({
 }: IdentitySectionProps) {
   return (
     <Card
-      number="01"
       title="Business profile"
       description="The foundation of your public customer-facing presence."
     >

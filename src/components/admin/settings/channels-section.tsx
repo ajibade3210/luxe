@@ -28,7 +28,6 @@ export function ChannelsSection({
     <>
       {/* Card 04: Reputation Management */}
       <Card
-        number="04"
         title="Reputation Management"
         description="Connect your Google Business Profile to showcase authenticated client reviews."
       >

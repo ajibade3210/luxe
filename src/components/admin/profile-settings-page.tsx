@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Shield } from "lucide-react";
+import { ArrowRight, Check, Shield, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GoogleIcon } from "@/components/shared/icons";
 import { getCurrentUser, updateBusinessProfile } from "@/lib/api";
@@ -10,6 +10,7 @@ export function ProfileSettingsPage({ onToast }: { onToast: (message: string) =>
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [imageFailed, setImageFailed] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -17,10 +18,7 @@ export function ProfileSettingsPage({ onToast }: { onToast: (message: string) =>
       setName(user.name);
       setEmail(user.email);
       setPhone(user.phone || "+234 800 ELAN VIP");
-      setAvatar(
-        user.avatar ||
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
-      );
+      setAvatar(user.avatar || "AB");
     });
   }, []);
 
@@ -34,8 +32,21 @@ export function ProfileSettingsPage({ onToast }: { onToast: (message: string) =>
     onToast("Profile credentials updated successfully");
   };
 
+  const isImageUrl =
+    avatar &&
+    (avatar.startsWith("http://") || avatar.startsWith("https://") || avatar.startsWith("/"));
+  const initials = name
+    ? name
+        .split(" ")
+        .map(w => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "AB";
+
   return (
-    <section className="content profile-content">
+    <section className="content profile-content max-w-5xl mx-auto space-y-7 pb-16">
+      {/* Page Title */}
       <div className="page-title">
         <div>
           <span className="eyebrow">Studio credentials</span>
@@ -46,44 +57,97 @@ export function ProfileSettingsPage({ onToast }: { onToast: (message: string) =>
           </p>
         </div>
       </div>
-      <div className="profile-panel">
-        <div className="section-label">
-          <span className="step">01</span>
+
+      {/* Director Identity Panel (No 01 Numbering) */}
+      <div className="bg-white border border-[#eae3d7] rounded-3xl p-7 sm:p-9 shadow-sm space-y-7">
+        <div className="border-b border-[#f0e8dc] pb-5">
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight">
+            Director identity
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5c5f60] mt-1">
+            Your studio leadership and contact credentials.
+          </p>
+        </div>
+
+        {/* Avatar and Leadership Title */}
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#191c1d] text-white flex items-center justify-center font-serif text-xl italic font-bold shadow-xs shrink-0 overflow-hidden border border-[#eae3d7]">
+            {isImageUrl && !imageFailed ? (
+              <img
+                src={avatar}
+                alt={name}
+                onError={() => setImageFailed(true)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span>{initials}</span>
+            )}
+          </div>
           <div>
-            <h2>Director identity</h2>
-            <p>Your studio leadership and contact credentials.</p>
+            <b className="text-base text-[#191c1d] font-bold block">{name || "Studio Director"}</b>
+            <span className="text-xs text-[#5c5f60] mt-0.5 block">
+              Studio Director · Élan Events
+            </span>
           </div>
         </div>
-        <div className="avatar-row">
-          <img src={avatar} alt={name} className="avatar-lg" />
+
+        {/* Clean Input Grid with Generous Spacing */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
           <div>
-            <b>{name}</b>
-            <span className="text-xs text-[#5c5f60] block">Studio Director · Élan Events</span>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
+              Full name
+            </label>
+            <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <input
+                value={name}
+                onChange={event => setName(event.target.value)}
+                placeholder="Amelia Bell"
+                className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+              />
+            </div>
           </div>
-        </div>
-        <div className="form-grid">
-          <label>
-            Full name
-            <input value={name} onChange={event => setName(event.target.value)} />
-          </label>
-          <label>
-            Email address
-            <input type="email" value={email} onChange={event => setEmail(event.target.value)} />
-          </label>
-          <label>
-            Phone number
-            <input type="tel" value={phone} onChange={event => setPhone(event.target.value)} />
-          </label>
+
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
+              Email address
+            </label>
+            <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <input
+                type="email"
+                value={email}
+                onChange={event => setEmail(event.target.value)}
+                placeholder="amelia@elanevents.com"
+                className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+              />
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
+              Phone number
+            </label>
+            <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <input
+                type="tel"
+                value={phone}
+                onChange={event => setPhone(event.target.value)}
+                placeholder="+234 800 ELAN VIP"
+                className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="profile-panel">
-        <div className="section-label">
-          <span className="step">02</span>
-          <div>
-            <h2>Authentication & Security</h2>
-            <p>Your account is authenticated and protected via Google OAuth.</p>
-          </div>
+      {/* Authentication & Security Panel (No 02 Numbering) */}
+      <div className="bg-white border border-[#eae3d7] rounded-3xl p-7 sm:p-9 shadow-sm space-y-6">
+        <div className="border-b border-[#f0e8dc] pb-5">
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight">
+            Authentication & Security
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5c5f60] mt-1">
+            Your account is authenticated and protected via Google OAuth.
+          </p>
         </div>
 
         <div className="border border-[#ded7cb] bg-[#faf8f5] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -113,13 +177,18 @@ export function ProfileSettingsPage({ onToast }: { onToast: (message: string) =>
         </div>
       </div>
 
-      <button
-        className="dark-button bg-[#000000] border-[#000000]"
-        disabled={saving}
-        onClick={save}
-      >
-        {saving ? "Saving…" : "Save profile changes"} <ArrowRight size={15} />
-      </button>
+      {/* Save Button */}
+      <div className="pt-2">
+        <button
+          type="button"
+          className="dark-button bg-[#191c1d] hover:bg-[#2d3032] !text-white px-7 py-3.5 rounded-xl text-xs font-semibold shadow-xs flex items-center gap-2 cursor-pointer transition-all"
+          disabled={saving}
+          onClick={save}
+        >
+          <span>{saving ? "Saving…" : "Save profile changes"}</span>
+          <ArrowRight size={15} />
+        </button>
+      </div>
     </section>
   );
 }

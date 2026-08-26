@@ -37,7 +37,6 @@ export function ContactSection({
 }: ContactSectionProps) {
   return (
     <Card
-      number="06"
       title="Business Details"
       description="Detailed operational and contact information rendered in the stationery card."
     >

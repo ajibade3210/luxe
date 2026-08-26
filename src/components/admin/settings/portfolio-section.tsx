@@ -57,9 +57,8 @@ export function PortfolioSection({
   return (
     <>
       <Card
-        number="03"
-        title="Portfolio Gallery"
-        description="Keep your 'Best Work' fresh to attract high-end clientele."
+        title="Portfolio showcase"
+        description="High-resolution visuals that highlight your aesthetic standard and client transformations."
       >
         <div className="space-y-4">
           <div className="button-row">

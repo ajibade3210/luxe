@@ -16,7 +16,6 @@ export function AppearanceSection({
 }: AppearanceSectionProps) {
   return (
     <Card
-      number="07"
       title="Appearance & Branding"
       description="Customize palette colors and button corner radii to match your studio aesthetic."
     >
