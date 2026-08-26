@@ -7,23 +7,39 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   EUR: "€",
 };
 
-export const formatMoney = (n: number, currency: CurrencyCode = "NGN") => {
-  if (currency === "NGN") {
-    return `₦${new Intl.NumberFormat("en-NG", {
-      maximumFractionDigits: 0,
-    }).format(n)}`;
+const DEFAULT_CURRENCY: CurrencyCode = "NGN";
+const DEFAULT_LOCALE = "en-US";
+const DEFAULT_DECIMALS = 0;
+const FALLBACK_ZERO = "0";
+
+const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
+  NGN: "en-NG",
+  USD: "en-US",
+  GBP: "en-GB",
+  EUR: "en-IE",
+};
+
+export interface FormatMoneyOptions {
+  decimals?: number;
+}
+
+export const formatMoney = (
+  n: number,
+  currency: CurrencyCode = DEFAULT_CURRENCY,
+  options?: FormatMoneyOptions
+): string => {
+  if (!Number.isFinite(n)) {
+    return `${CURRENCY_SYMBOLS[currency] ?? ""}${FALLBACK_ZERO}`;
   }
-  if (currency === "GBP") {
-    return `£${new Intl.NumberFormat("en-GB", {
-      maximumFractionDigits: 0,
-    }).format(n)}`;
-  }
-  if (currency === "EUR") {
-    return `€${new Intl.NumberFormat("de-DE", {
-      maximumFractionDigits: 0,
-    }).format(n)}`;
-  }
-  return `$${new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 0,
-  }).format(n)}`;
+
+  const locale = CURRENCY_LOCALES[currency] ?? DEFAULT_LOCALE;
+  const decimals = options?.decimals ?? DEFAULT_DECIMALS;
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+    maximumFractionDigits: decimals,
+    minimumFractionDigits: decimals,
+  }).format(n);
 };

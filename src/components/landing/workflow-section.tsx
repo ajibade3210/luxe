@@ -292,7 +292,7 @@ function ConvertPreviewCard() {
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs font-bold font-mono text-[#191c1d] block">$65,000</span>
+            <span className="text-xs font-bold font-mono text-[#191c1d] block">₦65,000</span>
             <span className="text-[9px] text-[#855e2e] font-semibold">Tier 1 Bespoke</span>
           </div>
         </div>
@@ -313,7 +313,7 @@ function ConvertPreviewCard() {
           <span className="text-[#5c5f60]">Deposit Retained</span>
           <span className="font-bold text-[#191c1d] flex items-center gap-1">
             <CheckCircle2 size={12} className="text-[#2e7d32]" />
-            $32,500 Paid
+            ₦32,500 Paid
           </span>
         </div>
       </div>

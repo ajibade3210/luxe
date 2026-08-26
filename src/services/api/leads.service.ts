@@ -145,7 +145,7 @@ export function createWhatsAppConsultationUrl(params: {
   const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
 
   const budgetDisplay = params.budget
-    ? `$${Number(params.budget).toLocaleString()}`
+    ? `₦${Number(params.budget).toLocaleString()}`
     : "Custom / To be discussed";
 
   const brief = `✨ *New Consultation Inquiry — ${appName}*
@@ -199,7 +199,7 @@ export async function exportLeadsCSV(): Promise<{ count: number; filename: strin
     l.phone || "N/A",
     `"${l.service || "Bespoke"}"`,
     l.eventDate || "Flexible",
-    l.budget ? `$${Number(l.budget).toLocaleString()}` : "Custom",
+    l.budget ? `₦${Number(l.budget).toLocaleString()}` : "Custom",
     l.status,
     l.createdAt,
     `"${(l.message || "").replace(/"/g, '""')}"`,

@@ -27,10 +27,17 @@ export function Brand() {
 }
 
 export function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
   return (
     <div className="toast">
       <Check size={15} /> {message}
-      <button onClick={onClose} aria-label="Close notification">
+      <button type="button" onClick={onClose} aria-label="Close notification">
         <X size={14} />
       </button>
     </div>

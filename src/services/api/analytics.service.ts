@@ -26,7 +26,7 @@ export interface ChartData {
 export interface TrendingServiceItem {
   name: string;
   category: string;
-  price: string;
+  price: number;
   volume: number;
   image: string;
 }
@@ -60,8 +60,8 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       progressPercent: 60,
     },
     revenue: {
-      value: "$6,200",
-      rawNumber: 6200,
+      value: "₦62,000",
+      rawNumber: 62000,
       change: "-2.33%",
       isPositive: false,
       progressPercent: 48,
@@ -80,7 +80,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Full Wedding Production",
         category: "Bespoke Styling",
-        price: "$96,000",
+        price: 96000,
         volume: 240,
         image:
           "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=160&q=80",
@@ -88,7 +88,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Gala & Dining",
         category: "Corporate & VIP",
-        price: "$74,000",
+        price: 74000,
         volume: 220,
         image:
           "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=160&q=80",
@@ -96,7 +96,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Floral Architecture",
         category: "Scenography",
-        price: "$28,000",
+        price: 28000,
         volume: 200,
         image:
           "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=160&q=80",
@@ -104,7 +104,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Editorial Brand Launch",
         category: "Hospitality Gala",
-        price: "$45,000",
+        price: 45000,
         volume: 100,
         image:
           "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=160&q=80",
@@ -112,7 +112,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Soirée Curations",
         category: "Intimate Dinner",
-        price: "$18,500",
+        price: 18500,
         volume: 100,
         image:
           "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=160&q=80",
@@ -137,7 +137,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       progressPercent: 78,
     },
     revenue: {
-      value: "$198,254",
+      value: "₦198,254",
       rawNumber: 198254,
       change: "+25.00%",
       isPositive: true,
@@ -157,7 +157,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Full Wedding Production",
         category: "Bespoke Styling",
-        price: "$96,000",
+        price: 96000,
         volume: 240,
         image:
           "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=160&q=80",
@@ -165,7 +165,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Gala & Dining",
         category: "Corporate & VIP",
-        price: "$74,000",
+        price: 74000,
         volume: 220,
         image:
           "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=160&q=80",
@@ -173,7 +173,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Floral Architecture",
         category: "Scenography",
-        price: "$28,000",
+        price: 28000,
         volume: 200,
         image:
           "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=160&q=80",
@@ -181,7 +181,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Editorial Brand Launch",
         category: "Hospitality Gala",
-        price: "$45,000",
+        price: 45000,
         volume: 100,
         image:
           "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=160&q=80",
@@ -189,7 +189,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Soirée Curations",
         category: "Intimate Dinner",
-        price: "$18,500",
+        price: 18500,
         volume: 100,
         image:
           "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=160&q=80",
@@ -214,7 +214,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       progressPercent: 82,
     },
     revenue: {
-      value: "$1,420,000",
+      value: "₦1,420,000",
       rawNumber: 1420000,
       change: "+45.20%",
       isPositive: true,
@@ -234,7 +234,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Full Wedding Production",
         category: "Bespoke Styling",
-        price: "$96,000",
+        price: 96000,
         volume: 480,
         image:
           "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=160&q=80",
@@ -242,7 +242,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Gala & Dining",
         category: "Corporate & VIP",
-        price: "$74,000",
+        price: 74000,
         volume: 390,
         image:
           "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=160&q=80",
@@ -250,7 +250,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Floral Architecture",
         category: "Scenography",
-        price: "$28,000",
+        price: 28000,
         volume: 310,
         image:
           "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=160&q=80",
@@ -258,7 +258,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Editorial Brand Launch",
         category: "Hospitality Gala",
-        price: "$45,000",
+        price: 45000,
         volume: 190,
         image:
           "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=160&q=80",
@@ -266,7 +266,7 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       {
         name: "Private Soirée Curations",
         category: "Intimate Dinner",
-        price: "$18,500",
+        price: 18500,
         volume: 160,
         image:
           "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=160&q=80",

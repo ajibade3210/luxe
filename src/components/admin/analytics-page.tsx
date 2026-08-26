@@ -9,6 +9,7 @@ import {
   type Timeframe,
 } from "@/lib/api";
 import { businessProfile as initialMockProfile } from "@/lib/mock-data";
+import { formatMoney } from "./admin-layout";
 
 export function AnalyticsPage({ onToast }: { onToast: (message: string) => void }) {
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
@@ -224,7 +225,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
 
           <div>
             <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] tracking-tight">
-              {data.revenue.value}
+              {formatMoney(data.revenue.rawNumber)}
             </div>
 
             {/* Custom Track Bar */}
@@ -385,7 +386,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
                       {service.name}
                     </b>
                     <span className="text-[11px] text-[#8c827a] font-medium block mt-0.5">
-                      {service.price}
+                      {formatMoney(service.price)}
                     </span>
                   </div>
                 </div>
