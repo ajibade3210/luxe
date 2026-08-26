@@ -73,8 +73,8 @@ export function StudioNavbar({
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? "bg-[#ffffff]/90 backdrop-blur-md shadow-[0_4px_24px_rgba(40,30,20,0.06)] border-b border-[#ece7de] py-3"
-            : "bg-[#faf8f5] border-b border-[#ebe6dc] py-5"
+            ? "bg-white/90 backdrop-blur-md shadow-[0_4px_24px_rgba(40,30,20,0.06)] border-b border-[#ece7de] py-3"
+            : "bg-transparent py-5"
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between">
