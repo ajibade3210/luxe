@@ -141,6 +141,31 @@ export async function updateCustomerProjectStatus(
   return updatedCustomer;
 }
 
+/**
+ * Toggle customer active status (isActive: true/false)
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch(`/api/customers/${customerId}/status`, { method: 'PATCH', body: JSON.stringify({ isActive }) }); return res.json();`
+ */
+export async function toggleCustomerActiveStatus(
+  customerId: string,
+  isActive: boolean
+): Promise<Customer> {
+  await delay(150);
+  const custIndex = currentCustomers.findIndex(c => c.id === customerId);
+  if (custIndex === -1) {
+    throw new Error("Customer not found");
+  }
+
+  const updatedCustomer: Customer = {
+    ...currentCustomers[custIndex],
+    isActive,
+  };
+
+  currentCustomers[custIndex] = updatedCustomer;
+  notifyCustomersUpdated();
+  return updatedCustomer;
+}
+
 export async function getCustomer(id: string): Promise<Customer | undefined> {
   await delay(120);
   return currentCustomers.find(c => c.id === id);
@@ -160,6 +185,7 @@ export interface NewCustomerInput {
   service?: string;
   amount?: number;
   status?: ProjectStatus;
+  isActive?: boolean;
 }
 
 /**
@@ -192,6 +218,7 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
     company: input.company || "",
     totalRevenue: projects.reduce((acc, p) => acc + (p.amount || 0), 0),
     projects,
+    isActive: input.isActive ?? true,
     createdAt: new Date().toISOString(),
   };
 
@@ -300,17 +327,8 @@ export async function importCustomers(
       company: "",
       notes: r.notes?.trim() || "Imported via bulk customer register",
       totalRevenue: 0,
-      projects: [
-        {
-          id: `p-${Date.now()}-${idx}`,
-          customerId: id,
-          name: "General Client Account",
-          service: "Bespoke Event Production & Styling",
-          amount: 0,
-          status: "pending",
-          createdAt: new Date().toISOString(),
-        },
-      ],
+      projects: [],
+      isActive: true,
       createdAt: new Date().toISOString(),
     };
   });

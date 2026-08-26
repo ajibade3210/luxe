@@ -46,6 +46,7 @@ export interface Customer {
   projects: Project[];
   totalRevenue: number;
   notes?: string;
+  isActive: boolean;
   createdAt: string;
 }
 

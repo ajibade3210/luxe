@@ -439,6 +439,7 @@ export const customers: Customer[] = [
     projects: [projects[0], projects[1], projects[2]],
     totalRevenue: 126000,
     notes: "Prefers understated architectural florals, soft candlelight and French linen.",
+    isActive: true,
     createdAt: "2026-06-01",
   },
   {
@@ -449,6 +450,7 @@ export const customers: Customer[] = [
     projects: [projects[3], projects[4]],
     totalRevenue: 43000,
     notes: "Ikoyi resident. Loves seasonal botanical menus and string quartets.",
+    isActive: true,
     createdAt: "2026-05-10",
   },
   {
@@ -459,6 +461,7 @@ export const customers: Customer[] = [
     projects: [projects[5], projects[6]],
     totalRevenue: 96000,
     notes: "Annual gala partner. Requires strict security and VIP concierge protocols.",
+    isActive: true,
     createdAt: "2026-08-01",
   },
 ];
