@@ -1,13 +1,31 @@
 "use client";
 
-import { ArrowRight, ChevronRight, X } from "lucide-react";
+import { ArrowRight, ChevronRight, Download, X } from "lucide-react";
 import { useState } from "react";
+import { exportCustomersCSV } from "@/lib/api";
 import { customers } from "@/lib/mock-data";
 import { formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
 
-export function CustomersPage() {
+export function CustomersPage({ onToast }: { onToast?: (message: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
   const selectedCustomer = customers.find(c => c.id === selected);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const res = await exportCustomersCSV();
+      if (onToast) {
+        onToast(`Customer list exported successfully (${res.count} records).`);
+      }
+    } catch {
+      if (onToast) {
+        onToast("Failed to export customer list.");
+      }
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <section className="content">
@@ -15,6 +33,17 @@ export function CustomersPage() {
         eyebrow="Client relationships"
         title="Customers"
         description="The people behind the remarkable moments."
+        action={
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
+          >
+            <Download size={14} className={isExporting ? "animate-bounce" : ""} />
+            <span>{isExporting ? "Exporting..." : "Export List"}</span>
+          </button>
+        }
       />
       <div className="metrics">
         <Metric label="Total customers" value="03" detail="Active relationships" />

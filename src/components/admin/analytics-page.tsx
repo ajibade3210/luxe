@@ -118,9 +118,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
                 <span className="text-[#10b981]">Copied!</span>
               </>
             ) : (
-              <>
-                <Copy size={13} />
-              </>
+              <Copy size={13} />
             )}
           </button>
           <a

@@ -1,14 +1,15 @@
 "use client";
 
-import { ArrowRight, Check, ChevronRight, X } from "lucide-react";
+import { Check, ChevronRight, Download, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getLeads, updateLeadStatus } from "@/lib/api";
+import { exportLeadsCSV, getLeads, updateLeadStatus } from "@/lib/api";
 import type { Lead, LeadStatus } from "@/lib/types";
 import { formatDate, formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
 
 export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [items, setItems] = useState<Lead[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     getLeads().then(setItems);
@@ -21,6 +22,18 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
     window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
     return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
   }, []);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const res = await exportLeadsCSV();
+      onToast(`Lead inquiries list exported successfully (${res.count} records).`);
+    } catch {
+      onToast("Failed to export leads list.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const selectedLead = items.find(l => l.id === selected);
   const metrics = useMemo(
@@ -41,8 +54,14 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
         title="Leads & inquiries"
         description="A considered view of every client opportunity."
         action={
-          <button className="outline-button">
-            Export list <ArrowRight size={14} />
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
+          >
+            <Download size={14} className={isExporting ? "animate-bounce" : ""} />
+            <span>{isExporting ? "Exporting..." : "Export List"}</span>
           </button>
         }
       />

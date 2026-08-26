@@ -113,3 +113,58 @@ _Sent via ${params.studioName} on ${appName}_`;
 
   return `https://wa.me/${targetPhone}?text=${encodeURIComponent(brief)}`;
 }
+
+/**
+ * Export Leads / Inquiries List as CSV
+ * When connecting to real backend, easily swap with:
+ * `window.location.href = '/api/leads/export?format=csv'`
+ */
+export async function exportLeadsCSV(): Promise<{ count: number; filename: string }> {
+  await delay(350);
+
+  const leads = await getLeads();
+
+  if (typeof window === "undefined") {
+    return { count: leads.length, filename: "leads.csv" };
+  }
+
+  const headers = [
+    "ID",
+    "Client Name",
+    "Email",
+    "Phone",
+    "Service Requested",
+    "Estimated Date",
+    "Target Budget",
+    "Inquiry Status",
+    "Submitted At",
+    "Message / Vision",
+  ];
+
+  const rows = leads.map(l => [
+    l.id,
+    `"${l.name}"`,
+    l.email,
+    l.phone || "N/A",
+    `"${l.service || "Bespoke"}"`,
+    l.eventDate || "Flexible",
+    l.budget ? `$${Number(l.budget).toLocaleString()}` : "Custom",
+    l.status,
+    l.createdAt,
+    `"${(l.message || "").replace(/"/g, '""')}"`,
+  ]);
+
+  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const filename = `elan-atelier-leads-${new Date().toISOString().split("T")[0]}.csv`;
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  return { count: leads.length, filename };
+}

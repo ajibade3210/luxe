@@ -45,7 +45,7 @@ export default function Page() {
     ) : currentPath === "/leads" ? (
       <LeadsPage onToast={setToast} />
     ) : currentPath === "/customers" ? (
-      <CustomersPage />
+      <CustomersPage onToast={setToast} />
     ) : currentPath === "/profile" ? (
       <ProfileSettingsPage onToast={setToast} />
     ) : (
