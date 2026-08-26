@@ -105,28 +105,28 @@ export function SignupPage() {
           <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight mb-3">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-8 block">
+          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-9 block">
             Reserve your bespoke public profile URL and unlock your studio director dashboard with
             Google.
           </p>
 
-          {/* Form Input Fields with Clean Generous Gaps */}
-          <div className="space-y-6 mb-8 pt-1">
+          {/* Form Input Fields with Clean Proximity to Inputs and Clear Separation from Top */}
+          <div className="space-y-6 mb-8 pt-2">
             {/* Studio Handle / Slug */}
             <div>
-              <div className="flex items-center justify-between mb-2.5">
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d]">
                   Studio Handle / Public URL
                 </label>
                 <span className="text-[10px] text-[#8e9192]">
                   {isCheckingSlug ? (
                     "Checking…"
                   ) : slugAvailable ? (
-                    <span className="text-[#10b981] flex items-center gap-1 font-sans">
+                    <span className="text-[#10b981] flex items-center gap-1 font-sans font-medium">
                       <Check size={10} /> Available
                     </span>
                   ) : (
-                    <span className="text-[#ef4444] font-sans">Unavailable</span>
+                    <span className="text-[#ef4444] font-sans font-medium">Unavailable</span>
                   )}
                 </span>
               </div>
@@ -146,7 +146,7 @@ export function SignupPage() {
 
             {/* Studio Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Studio / Brand Name
               </label>
               <input
