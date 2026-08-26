@@ -45,54 +45,56 @@ export function LoginPage() {
       <AuthHeader mode="login" claimSlug={claimParam} />
 
       {/* Main Login Form Container */}
-      <div className="w-full max-w-md mx-auto px-6 py-10 my-auto z-10">
-        <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-10 shadow-sm text-center">
+      <div className="w-full max-w-md mx-auto px-6 py-12 my-auto z-10">
+        <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-12 shadow-[0_12px_40px_rgba(40,30,20,0.04)] text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-6">
             <span>Studio Director Portal</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-3 tracking-tight">
             Return to your studio.
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-8">
+          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-8 max-w-sm mx-auto">
             Sign in to curate inquiries, review private client briefs, and publish atelier updates.
           </p>
 
-          {/* Google Sign In Button */}
-          <button
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin text-[#0058be]" />
-                <span>Signing in with Google…</span>
-              </>
-            ) : (
-              <>
-                <GoogleIcon className="w-4 h-4" />
-                <span>Continue with Google</span>
-              </>
-            )}
-          </button>
-
-          {/* Switch to Signup */}
-          <p className="text-xs text-[#78716c] mt-6">
-            Don&apos;t have an atelier yet?{" "}
-            <a
-              href={claimParam ? `/signup?claim=${encodeURIComponent(claimParam)}` : "/signup"}
-              className="text-[#191c1d] font-semibold hover:underline"
+          {/* Action Area with Generous Spacing */}
+          <div className="space-y-4 pt-1">
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={handleGoogleSignIn}
+              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
             >
-              Open Studio →
-            </a>
-          </p>
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin text-[#0058be]" />
+                  <span>Signing in with Google…</span>
+                </>
+              ) : (
+                <>
+                  <GoogleIcon className="w-4 h-4" />
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+
+            {/* Switch to Signup */}
+            <p className="text-xs text-[#78716c] pt-2">
+              Don&apos;t have an atelier yet?{" "}
+              <a
+                href={claimParam ? `/signup?claim=${encodeURIComponent(claimParam)}` : "/signup"}
+                className="text-[#191c1d] font-semibold hover:underline"
+              >
+                Open Studio →
+              </a>
+            </p>
+          </div>
 
           {/* Privacy & Security Note */}
-          <div className="flex items-center gap-2 mt-8 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">
-            <Shield size={12} className="text-[#10b981]" />
+          <div className="flex items-center gap-2 mt-10 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">
+            <Shield size={13} className="text-[#10b981]" />
             <span>Encrypted with bank-grade 256-bit security.</span>
           </div>
         </div>
