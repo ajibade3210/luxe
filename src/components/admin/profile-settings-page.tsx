@@ -1,58 +1,64 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { PageTitle } from "./admin-layout";
+import { ArrowRight, Check, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
+import { GoogleIcon } from "@/components/shared/icons";
+import { getCurrentUser, updateBusinessProfile } from "@/lib/api";
 
-export function ProfileSettingsPage({ onToast }: { onToast: (s: string) => void }) {
+export function ProfileSettingsPage({ onToast }: { onToast: (message: string) => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [saving, setSaving] = useState(false);
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [name, setName] = useState("Amelia Bell");
-  const [email, setEmail] = useState("amelia@elanevents.com");
-  const [phone, setPhone] = useState("+234 800 352 6847");
+
+  useEffect(() => {
+    getCurrentUser().then(user => {
+      setName(user.name);
+      setEmail(user.email);
+      setPhone(user.phone || "+234 800 ELAN VIP");
+      setAvatar(
+        user.avatar ||
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+      );
+    });
+  }, []);
 
   const save = async () => {
     setSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await updateBusinessProfile({
+      email,
+      phone,
+    });
     setSaving(false);
-    onToast("Profile settings saved");
+    onToast("Profile credentials updated successfully");
   };
 
   return (
-    <section className="content narrow profile-settings">
-      <PageTitle
-        eyebrow="Account settings"
-        title="Your profile"
-        description="Manage the details and preferences connected to your Shopwus account."
-      />
-      <div className="profile-panel">
-        <div className="profile-panel-heading">
-          <div>
-            <span className="eyebrow">Profile picture</span>
-            <h2>Make it personal.</h2>
-          </div>
-          <div className="profile-avatar-large bg-[#000000] text-white">
-            {photo ? <img src={photo} alt="Profile preview" /> : "AB"}
-          </div>
+    <section className="content profile-content">
+      <div className="page-title">
+        <div>
+          <span className="eyebrow">Studio credentials</span>
+          <h1>Personal profile</h1>
+          <p>
+            Manage the director details, Google identity, and notification channels for your
+            atelier.
+          </p>
         </div>
-        <label className="upload-field">
-          Profile picture
-          <input
-            type="file"
-            accept="image/*"
-            onChange={event => {
-              const file = event.target.files?.[0];
-              if (file) setPhoto(URL.createObjectURL(file));
-            }}
-          />
-        </label>
       </div>
       <div className="profile-panel">
         <div className="section-label">
           <span className="step">01</span>
           <div>
-            <h2>Personal details</h2>
-            <p>Your name and contact information.</p>
+            <h2>Director identity</h2>
+            <p>Your studio leadership and contact credentials.</p>
+          </div>
+        </div>
+        <div className="avatar-row">
+          <img src={avatar} alt={name} className="avatar-lg" />
+          <div>
+            <b>{name}</b>
+            <span className="text-xs text-[#5c5f60] block">Studio Director · Élan Events</span>
           </div>
         </div>
         <div className="form-grid">
@@ -70,29 +76,43 @@ export function ProfileSettingsPage({ onToast }: { onToast: (s: string) => void 
           </label>
         </div>
       </div>
+
       <div className="profile-panel">
         <div className="section-label">
           <span className="step">02</span>
           <div>
-            <h2>Password</h2>
-            <p>Use a unique password to keep your account secure.</p>
+            <h2>Authentication & Security</h2>
+            <p>Your account is authenticated and protected via Google OAuth.</p>
           </div>
         </div>
-        <div className="form-grid">
-          <label>
-            Current password
-            <input type="password" placeholder="Enter current password" />
-          </label>
-          <label>
-            New password
-            <input type="password" placeholder="Enter new password" />
-          </label>
-          <label>
-            Confirm new password
-            <input type="password" placeholder="Confirm new password" />
-          </label>
+
+        <div className="border border-[#ded7cb] bg-[#faf8f5] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-white border border-[#eae3d7] flex items-center justify-center shrink-0 shadow-2xs">
+              <GoogleIcon className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <strong className="text-xs text-[#191c1d] font-semibold">
+                  Google Account Active
+                </strong>
+                <span className="inline-flex items-center gap-1 text-[10px] bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] px-2 py-0.5 rounded-full font-medium">
+                  <Check size={10} /> Verified
+                </span>
+              </div>
+              <span className="text-xs text-[#5c5f60] font-mono mt-0.5 block">
+                {email || "director@elanatelier.com"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs text-[#5c5f60] bg-white px-3 py-1.5 rounded-lg border border-[#eae3d7]">
+            <Shield size={13} className="text-[#10b981]" />
+            <span>Bank-grade 256-bit OAuth</span>
+          </div>
         </div>
       </div>
+
       <button
         className="dark-button bg-[#000000] border-[#000000]"
         disabled={saving}

@@ -1,20 +1,17 @@
 "use client";
 
-import { ArrowRight, Check, Lock, Mail, Shield, Sparkles, User } from "lucide-react";
+import { Check, Loader2, Shield, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthHeader } from "@/components/auth/auth-header";
 import { GoogleIcon } from "@/components/shared/icons";
-import { checkSlugAvailability, createSession, updateBusinessProfile } from "@/lib/api";
+import { checkSlugAvailability, signUpWithGoogle, updateBusinessProfile } from "@/lib/api";
 
 export function SignupPage() {
   const router = useRouter();
   const [claimSlug, setClaimSlug] = useState("");
   const [studioName, setStudioName] = useState("");
   const [slug, setSlug] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(true);
@@ -53,58 +50,24 @@ export function SignupPage() {
 
   const handleGoogleSignup = async () => {
     setIsSubmitting(true);
-    const effectiveSlug = slug || "new-studio";
+    const effectiveSlug = slug || claimSlug || "my-atelier";
     const effectiveName = studioName || "My Luxury Studio";
-    const effectiveDirector = fullName || "Studio Director";
-    const effectiveEmail = email || "director@atelier.com";
 
-    createSession({
-      name: effectiveDirector,
-      email: effectiveEmail,
-      role: "Studio Director",
-      studioName: effectiveName,
-      studioSlug: effectiveSlug,
-    });
+    try {
+      await signUpWithGoogle({
+        slug: effectiveSlug,
+        studioName: effectiveName,
+      });
 
-    await updateBusinessProfile({
-      businessName: effectiveName,
-      slug: effectiveSlug,
-      email: effectiveEmail,
-    });
+      await updateBusinessProfile({
+        businessName: effectiveName,
+        slug: effectiveSlug,
+      });
 
-    setIsSubmitting(false);
-    router.push(`/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const effectiveSlug = slug || "new-studio";
-    const effectiveName = studioName || "My Luxury Studio";
-    const effectiveDirector = fullName || "Studio Director";
-    const effectiveEmail = email || "director@atelier.com";
-
-    // 1. Create authenticated session
-    createSession({
-      name: effectiveDirector,
-      email: effectiveEmail,
-      role: "Studio Director",
-      studioName: effectiveName,
-      studioSlug: effectiveSlug,
-    });
-
-    // 2. Persist claimed studio settings
-    await updateBusinessProfile({
-      businessName: effectiveName,
-      slug: effectiveSlug,
-      email: effectiveEmail,
-    });
-
-    setIsSubmitting(false);
-
-    // 3. Navigate to Studio Settings dashboard
-    router.push(`/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
+      router.push(`/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
+    } catch {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -142,48 +105,17 @@ export function SignupPage() {
           <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
+          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mt-2 mb-6">
+            Reserve your bespoke public profile URL and unlock your studio director dashboard with
+            Google.
+          </p>
 
-          {/* Google Signup Option */}
-          <button
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleGoogleSignup}
-            style={{ marginTop: "28px", marginBottom: "24px" }}
-            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs"
-          >
-            <GoogleIcon className="w-4 h-4" />
-            <span>Continue with Google</span>
-          </button>
-
-          {/* Divider */}
-          <div className="relative flex items-center justify-center my-7">
-            <div className="border-t border-[#ede7dc] w-full" />
-            <span className="bg-white px-3.5 text-[10px] uppercase font-semibold text-[#8e9192] tracking-wider absolute">
-              or continue with email
-            </span>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Studio Name */}
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
-                Studio / Business Name
-              </label>
-              <input
-                type="text"
-                required
-                value={studioName}
-                onChange={e => setStudioName(e.target.value)}
-                placeholder="e.g. Élan Events Atelier"
-                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
-              />
-            </div>
-
+          <div className="space-y-4 mb-6">
             {/* Studio Handle / Slug */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
-                  Studio Handle / URL Slug
+                  Studio Handle / Public URL
                 </label>
                 <span className="text-[10px] text-[#8e9192]">
                   {isCheckingSlug ? (
@@ -197,13 +129,12 @@ export function SignupPage() {
                   )}
                 </span>
               </div>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1">
                   shopwus.com/
                 </span>
                 <input
                   type="text"
-                  required
                   value={slug}
                   onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
                   placeholder="your-studio"
@@ -212,75 +143,55 @@ export function SignupPage() {
               </div>
             </div>
 
-            {/* Director Full Name */}
+            {/* Studio Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
-                Director Full Name
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+                Studio / Brand Name
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
-                <User size={14} className="text-[#8e9192] shrink-0" />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  placeholder="Amelia Bell"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
-                />
-              </div>
+              <input
+                type="text"
+                value={studioName}
+                onChange={e => setStudioName(e.target.value)}
+                placeholder="e.g. Élan Events Atelier"
+                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
+              />
             </div>
+          </div>
 
-            {/* Work Email */}
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
-                Work Email Address
-              </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
-                <Mail size={14} className="text-[#8e9192] shrink-0" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="director@studio.com"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
-                />
-              </div>
-            </div>
+          {/* Primary Google Signup Button */}
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={handleGoogleSignup}
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin text-[#0058be]" />
+                <span>Opening Atelier with Google…</span>
+              </>
+            ) : (
+              <>
+                <GoogleIcon className="w-4 h-4" />
+                <span>Continue with Google</span>
+              </>
+            )}
+          </button>
 
-            {/* Password */}
-            <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
-                Password
-              </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all gap-2.5">
-                <Lock size={14} className="text-[#8e9192] shrink-0" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{ color: "#ffffff" }}
-              className="w-full mt-2 bg-[#191c1d] !text-white font-medium text-xs py-3 rounded-xl hover:bg-[#2d3032] transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+          {/* Switch to Login */}
+          <p className="text-xs text-[#78716c] text-center mt-6">
+            Already have an atelier?{" "}
+            <a
+              href={claimSlug ? `/login?claim=${encodeURIComponent(claimSlug)}` : "/login"}
+              className="text-[#191c1d] font-semibold hover:underline"
             >
-              <span>{isSubmitting ? "Opening Atelier…" : "Create Account & Open Studio"}</span>
-              <ArrowRight size={14} />
-            </button>
-          </form>
+              Sign In →
+            </a>
+          </p>
 
           {/* Privacy Note */}
-          <div className="flex items-center gap-2 mt-5 text-[11px] text-[#8e9192] justify-center">
-            <Shield size={12} />
+          <div className="flex items-center gap-2 mt-8 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">
+            <Shield size={12} className="text-[#10b981]" />
             <span>Encrypted with bank-grade 256-bit security.</span>
           </div>
         </div>
