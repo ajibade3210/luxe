@@ -13,8 +13,11 @@ export function loadPersistedLeads(): Lead[] {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.leads);
       if (saved) {
-        memoryLeads = JSON.parse(saved);
-        return memoryLeads;
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          memoryLeads = parsed;
+          return memoryLeads;
+        }
       }
     } catch {
       // Fallback to memory

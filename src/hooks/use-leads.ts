@@ -15,7 +15,9 @@ export function useLeads(notify?: (message: string) => void) {
   const [isConverting, setIsConverting] = useState(false);
 
   useEffect(() => {
-    getLeads(searchQuery).then(setItems);
+    getLeads(searchQuery)
+      .then(setItems)
+      .catch(() => setItems([]));
     const handleLeadsUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Lead[]>;
       if (customEvent.detail) {
@@ -29,7 +31,9 @@ export function useLeads(notify?: (message: string) => void) {
   const handleSearch = (val: string) => {
     setSearchQuery(val);
     setCurrentPage(1);
-    getLeads(val).then(setItems);
+    getLeads(val)
+      .then(setItems)
+      .catch(() => setItems([]));
   };
 
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));

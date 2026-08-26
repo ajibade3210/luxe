@@ -38,8 +38,12 @@ export function useCustomers(onToast?: (message: string) => void) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    getCustomers(searchQuery).then(setItems);
-    getInvoices().then(setInvoices);
+    getCustomers(searchQuery)
+      .then(setItems)
+      .catch(() => setItems([]));
+    getInvoices()
+      .then(setInvoices)
+      .catch(() => setInvoices([]));
 
     const handleCustomersUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Customer[]>;

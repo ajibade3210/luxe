@@ -410,10 +410,19 @@ export async function markInvoiceAsUnpaid(id: string): Promise<Invoice> {
  * Backend swap:
  * `const res = await fetch(`/api/invoices/${id}/pdf`); const data = await res.json(); return data.url;`
  */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function generateInvoicePdfUrl(id: string): Promise<string> {
   await delay(300);
   const target = persistedInvoices.find(i => i.id === id);
-  const invoiceNum = target ? target.invoiceNumber : "INV-2026";
+  const invoiceNum = target ? escapeHtml(target.invoiceNumber) : "INV-2026";
 
   if (typeof window === "undefined") {
     return `https://shopwus.com/invoices/${invoiceNum}.pdf`;
@@ -421,6 +430,12 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
 
   // Create an interactive printable document blob URL
   const sym = CURRENCY_SYMBOLS[target?.currency || "NGN"] || "₦";
+  const customerName = escapeHtml(target?.customerName || "Client");
+  const billingAddress = escapeHtml(target?.billingAddress || "");
+  const issueDate = escapeHtml(target?.issueDate || "");
+  const dueDate = escapeHtml(target?.dueDate || "");
+  const paymentTerms = escapeHtml(target?.paymentTerms || "Net 14");
+  const statusLabel = escapeHtml(target?.status || "INVOICE");
 
   const htmlContent = `<!DOCTYPE html>
 <html>
@@ -446,14 +461,14 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
       <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Luxury Event Scenography & Production</div>
     </div>
     <div style="text-align: right;">
-      <div class="badge">${target?.status || "INVOICE"}</div>
+      <div class="badge">${statusLabel}</div>
       <div style="font-size: 16px; font-weight: bold; margin-top: 4px;">${invoiceNum}</div>
     </div>
   </div>
   <div class="meta">
     <div><b>Billed by:</b><br/>Élan Atelier Limited<br/>Victoria Island, Lagos</div>
-    <div><b>Billed to:</b><br/>${target?.customerName || "Client"}<br/>${target?.billingAddress || ""}</div>
-    <div><b>Dates:</b><br/>Issue: ${target?.issueDate || ""}<br/>Due: ${target?.dueDate || ""}<br/>Terms: ${target?.paymentTerms || "Net 14"}</div>
+    <div><b>Billed to:</b><br/>${customerName}<br/>${billingAddress}</div>
+    <div><b>Dates:</b><br/>Issue: ${issueDate}<br/>Due: ${dueDate}<br/>Terms: ${paymentTerms}</div>
   </div>
   <table class="table">
     <thead>
@@ -469,7 +484,7 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
         .map(
           item => `
         <tr>
-          <td><b>${item.description}</b></td>
+          <td><b>${escapeHtml(item.description)}</b></td>
           <td>${item.quantity}</td>
           <td>${sym}${item.unitPrice.toLocaleString()}</td>
           <td style="text-align: right;">${sym}${item.amount.toLocaleString()}</td>
