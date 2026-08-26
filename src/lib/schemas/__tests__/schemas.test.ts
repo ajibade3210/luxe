@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  AddProjectInputSchema,
+  AddServiceInputSchema,
   CreateLeadInputSchema,
   InvoiceInputSchema,
   NewCustomerInputSchema,
@@ -34,25 +34,25 @@ describe("Runtime Schema Validation (Zod)", () => {
     });
   });
 
-  describe("NewCustomerInputSchema & AddProjectInputSchema", () => {
+  describe("NewCustomerInputSchema & AddServiceInputSchema", () => {
     it("validates valid customer input", () => {
       const validCustomer = {
         name: "Crown & Laurel Co.",
         email: "events@crownlaurel.com",
-        projectName: "Gala 2026",
+        serviceName: "Gala 2026",
         amount: 25000,
       };
       const parsed = NewCustomerInputSchema.parse(validCustomer);
       expect(parsed.name).toBe("Crown & Laurel Co.");
     });
 
-    it("rejects negative amount in project input", () => {
-      const invalidProject = {
+    it("rejects negative amount in service input", () => {
+      const invalidService = {
         name: "Autumn Exhibition",
         service: "Curation",
         amount: -500,
       };
-      expect(() => AddProjectInputSchema.parse(invalidProject)).toThrow();
+      expect(() => AddServiceInputSchema.parse(invalidService)).toThrow();
     });
   });
 

@@ -33,16 +33,16 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
     startIndex,
     paginatedItems,
     totalRevenue,
-    activeProjectsCount,
+    activeServicesCount,
     isExporting,
     isSubmitting,
     handleSearch,
     reloadCustomers,
     handleExport,
     handleCreateCustomer,
-    handleAddProject,
-    handleDeleteProject,
-    handleUpdateProjectStatus,
+    handleAddService,
+    handleDeleteService,
+    handleUpdateServiceStatus,
     handleToggleCustomerStatus,
     handleResendInvoice,
     handleDeleteDraftInvoice,
@@ -51,7 +51,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
   const [showSendMessageModal, setShowSendMessageModal] = useState(false);
   const [confirmResendInvoice, setConfirmResendInvoice] = useState<Invoice | null>(null);
 
@@ -114,6 +114,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               <Download size={14} className={isExporting ? "animate-bounce" : ""} />
               <span>{isExporting ? "Exporting..." : "Export"}</span>
             </button>
+
             <button
               type="button"
               onClick={() => setShowAddModal(true)}
@@ -134,7 +135,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         />
         <Metric
           label="Active services"
-          value={String(activeProjectsCount).padStart(2, "0")}
+          value={String(activeServicesCount).padStart(2, "0")}
           detail="In progress"
         />
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />
@@ -161,11 +162,11 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         onToggleStatus={handleToggleCustomerStatus}
         onOpenMessageModal={() => setShowSendMessageModal(true)}
         onOpenInvoiceModal={handleOpenInvoiceModalForCustomer}
-        onOpenAddProjectModal={() => setShowAddProjectModal(true)}
+        onOpenAddServiceModal={() => setShowAddServiceModal(true)}
         onConfirmResendInvoice={setConfirmResendInvoice}
         onDeleteDraftInvoice={handleDeleteDraftInvoice}
-        onDeleteProject={handleDeleteProject}
-        onUpdateProjectStatus={handleUpdateProjectStatus}
+        onDeleteService={handleDeleteService}
+        onUpdateServiceStatus={handleUpdateServiceStatus}
       />
 
       <CustomerAddModal
@@ -176,10 +177,10 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
       />
 
       <CustomerProjectModal
-        isOpen={showAddProjectModal}
+        isOpen={showAddServiceModal}
         customer={selectedCustomer}
-        onClose={() => setShowAddProjectModal(false)}
-        onSubmit={handleAddProject}
+        onClose={() => setShowAddServiceModal(false)}
+        onSubmit={handleAddService}
       />
 
       <CustomerMessageModal

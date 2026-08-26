@@ -55,7 +55,7 @@ describe("leads service", () => {
     expect(convertedLead.status).toBe("converted");
     expect(customer.name).toBe("Conversion Client");
     expect(customer.email).toBe("convert@luxury.com");
-    expect(customer.projects.length).toBeGreaterThan(0);
-    expect(customer.projects[0].name).toBe("Full Wedding Production");
+    expect(customer.services.length).toBeGreaterThan(0);
+    expect(customer.services[0].name).toBe("Full Wedding Production");
   });
 });

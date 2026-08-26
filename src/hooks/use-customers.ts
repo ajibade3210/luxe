@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { CUSTOM_EVENTS } from "@/constants";
 import {
-  addProjectToCustomer,
+  addServiceToCustomer,
   createCustomer,
-  deleteCustomerProject,
+  deleteCustomerService,
   deleteInvoice,
   exportCustomersCSV,
   getCustomers,
@@ -14,9 +14,9 @@ import {
   type NewCustomerInput,
   resendInvoice,
   toggleCustomerActiveStatus,
-  updateCustomerProjectStatus,
+  updateCustomerServiceStatus,
 } from "@/lib/api";
-import type { Customer, ProjectStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/lib/types";
 
 export const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",
@@ -110,10 +110,10 @@ export function useCustomers(onToast?: (message: string) => void) {
     }
   };
 
-  const handleAddProject = async (
+  const handleAddService = async (
     customerId: string,
     customerName: string,
-    data: { name: string; service: string; amount: number; status: ProjectStatus }
+    data: { name: string; service: string; amount: number; status: ServiceStatus }
   ) => {
     if (!data.name) {
       onToast?.("Please enter a service name.");
@@ -121,7 +121,7 @@ export function useCustomers(onToast?: (message: string) => void) {
     }
 
     try {
-      const updatedCust = await addProjectToCustomer(customerId, data);
+      const updatedCust = await addServiceToCustomer(customerId, data);
       setItems(prev => prev.map(c => (c.id === updatedCust.id ? updatedCust : c)));
       onToast?.(`Service "${data.name}" added to ${customerName}.`);
       return true;
@@ -131,15 +131,15 @@ export function useCustomers(onToast?: (message: string) => void) {
     }
   };
 
-  const handleDeleteProject = async (
+  const handleDeleteService = async (
     customerId: string,
-    projectId: string,
-    projectName: string
+    serviceId: string,
+    serviceName: string
   ) => {
     try {
-      const updated = await deleteCustomerProject(customerId, projectId);
+      const updated = await deleteCustomerService(customerId, serviceId);
       setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      onToast?.(`Service "${projectName}" removed.`);
+      onToast?.(`Service "${serviceName}" removed.`);
       return true;
     } catch {
       onToast?.("Failed to remove service.");
@@ -147,17 +147,17 @@ export function useCustomers(onToast?: (message: string) => void) {
     }
   };
 
-  const handleUpdateProjectStatus = async (
+  const handleUpdateServiceStatus = async (
     customerId: string,
-    projectId: string,
-    status: ProjectStatus,
-    projectName: string,
+    serviceId: string,
+    status: ServiceStatus,
+    serviceName: string,
     statusLabel: string
   ) => {
     try {
-      const updated = await updateCustomerProjectStatus(customerId, projectId, status);
+      const updated = await updateCustomerServiceStatus(customerId, serviceId, status);
       setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      onToast?.(`Service "${projectName}" marked as ${statusLabel}.`);
+      onToast?.(`Service "${serviceName}" marked as ${statusLabel}.`);
       return true;
     } catch {
       onToast?.("Failed to update service status.");
@@ -212,8 +212,8 @@ export function useCustomers(onToast?: (message: string) => void) {
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedItems = items.slice(startIndex, startIndex + pageSize);
   const totalRevenue = items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
-  const activeProjectsCount = items.reduce(
-    (acc, c) => acc + c.projects.filter(p => p.status === "active").length,
+  const activeServicesCount = items.reduce(
+    (acc, c) => acc + c.services.filter(s => s.status === "active").length,
     0
   );
 
@@ -234,16 +234,16 @@ export function useCustomers(onToast?: (message: string) => void) {
     startIndex,
     paginatedItems,
     totalRevenue,
-    activeProjectsCount,
+    activeServicesCount,
     isExporting,
     isSubmitting,
     handleSearch,
     reloadCustomers,
     handleExport,
     handleCreateCustomer,
-    handleAddProject,
-    handleDeleteProject,
-    handleUpdateProjectStatus,
+    handleAddService,
+    handleDeleteService,
+    handleUpdateServiceStatus,
     handleToggleCustomerStatus,
     handleResendInvoice,
     handleDeleteDraftInvoice,

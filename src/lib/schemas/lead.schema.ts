@@ -3,8 +3,9 @@ import { z } from "zod";
 export const LeadStatusSchema = z.enum(["new", "contacted", "qualified", "converted", "closed"]);
 
 export const CreateLeadInputSchema = z.object({
+  businessId: z.string().optional(),
   name: z.string().min(1, "Name is required").trim(),
-  email: z.string().email("Invalid email address").trim(),
+  email: z.email("Invalid email address").trim(),
   phone: z.string().optional(),
   service: z.string().min(1, "Service is required").trim(),
   services: z.array(z.string()).optional(),

@@ -17,10 +17,11 @@ export const InvoiceItemSchema = z.object({
 
 export const InvoiceInputSchema = z.object({
   id: z.string().optional(),
+  businessId: z.string().optional(),
   invoiceNumber: z.string().optional(),
   customerId: z.string().min(1, "Customer is required"),
   customerName: z.string().min(1, "Customer name is required").trim(),
-  customerEmail: z.string().email("Invalid customer email").trim(),
+  customerEmail: z.email("Invalid customer email").trim(),
   billingAddress: z.string().trim(),
   issueDate: z.string().min(1, "Issue date is required"),
   dueDate: z.string().min(1, "Due date is required"),
@@ -38,10 +39,11 @@ export const InvoiceInputSchema = z.object({
 
 export const InvoiceSchema = z.object({
   id: z.string().min(1),
+  businessId: z.string().optional(),
   invoiceNumber: z.string().min(1),
   customerId: z.string().min(1),
   customerName: z.string().min(1).trim(),
-  customerEmail: z.string().email().trim(),
+  customerEmail: z.email().trim(),
   billingAddress: z.string().trim(),
   issueDate: z.string().min(1),
   dueDate: z.string().min(1),

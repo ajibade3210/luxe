@@ -3,6 +3,7 @@ export type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "clos
 
 export interface Lead {
   id: string;
+  businessId?: string;
   name: string;
   email: string;
   phone?: string;
@@ -15,35 +16,38 @@ export interface Lead {
   createdAt: string;
 }
 
-// Customer and project types
-export type ProjectStatus = "active" | "completed" | "pending" | "cancelled";
+// Customer and service types
+export type ServiceStatus = "active" | "completed" | "pending" | "cancelled";
 
-export interface Project {
+export interface CustomerService {
   id: string;
+  businessId?: string;
   customerId: string;
   name: string;
   service: string;
   amount: number;
-  status: ProjectStatus;
+  status: ServiceStatus;
   createdAt: string;
   completedAt?: string;
 }
 
 export interface Activity {
   id: string;
+  businessId?: string;
   customerId: string;
-  type: "contact" | "update" | "note" | "project";
+  type: "contact" | "update" | "note" | "service";
   description: string;
   timestamp: string;
 }
 
 export interface Customer {
   id: string;
+  businessId?: string;
   name: string;
   email: string;
   phone?: string;
   company?: string;
-  projects: Project[];
+  services: CustomerService[];
   totalRevenue: number;
   notes?: string;
   isActive: boolean;
@@ -68,6 +72,7 @@ export interface InvoiceItem {
 
 export interface Invoice {
   id: string;
+  businessId?: string;
   invoiceNumber: string;
   customerId: string;
   customerName: string;
@@ -157,6 +162,7 @@ export interface ServiceItem {
 
 export interface BusinessProfile {
   id: string;
+  businessId?: string;
   businessName: string;
   slug: string;
   tagline: string;

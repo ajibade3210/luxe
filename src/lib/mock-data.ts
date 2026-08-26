@@ -2,10 +2,10 @@ import type {
   Activity,
   BusinessProfile,
   Customer,
+  CustomerService,
   Lead,
   OrganizationPreview,
   PortfolioProject,
-  Project,
   ReviewItem,
   ServiceItem,
   SocialChannel,
@@ -362,7 +362,7 @@ export const leads: Lead[] = [
   },
 ];
 
-const projects: Project[] = [
+export const customerServices: CustomerService[] = [
   {
     id: "p1",
     customerId: "c1",
@@ -437,7 +437,7 @@ export const customers: Customer[] = [
     email: "amara@example.com",
     phone: "+234 803 555 0177",
     company: "Adeleke Holdings",
-    projects: [projects[0], projects[1], projects[2]],
+    services: [customerServices[0], customerServices[1], customerServices[2]],
     totalRevenue: 126000,
     notes: "Prefers understated architectural florals, soft candlelight and French linen.",
     isActive: true,
@@ -448,7 +448,7 @@ export const customers: Customer[] = [
     name: "Dr. Amina Bello",
     email: "amina.bello@example.com",
     phone: "+234 809 794 6095",
-    projects: [projects[3], projects[4]],
+    services: [customerServices[3], customerServices[4]],
     totalRevenue: 43000,
     notes: "Ikoyi resident. Loves seasonal botanical menus and string quartets.",
     isActive: true,
@@ -459,7 +459,7 @@ export const customers: Customer[] = [
     name: "Babatunde Alabi",
     email: "babatunde@mtn.com",
     company: "MTN Group",
-    projects: [projects[5], projects[6]],
+    services: [customerServices[5], customerServices[6]],
     totalRevenue: 96000,
     notes: "Annual gala partner. Requires strict security and VIP concierge protocols.",
     isActive: true,
@@ -471,7 +471,7 @@ export const activities: Activity[] = [
   {
     id: "a1",
     customerId: "c1",
-    type: "project",
+    type: "service",
     description: "Floral architecture moodboard approved",
     timestamp: "2026-08-25T13:00:00Z",
   },

@@ -48,6 +48,7 @@ export async function createLead(input: Omit<Lead, "id" | "createdAt" | "status"
   const currentLeads = loadPersistedLeads();
   const newLead: Lead = {
     id: `l-${Date.now()}`,
+    businessId: validatedInput.businessId || "elan-events",
     ...validatedInput,
     status: "new",
     createdAt: new Date().toISOString(),
@@ -120,17 +121,17 @@ export async function convertLeadToCustomer(
   targetLead.status = "converted";
   savePersistedLeads(leads);
 
-  const projectName = targetLead.service
+  const serviceName = targetLead.service
     ? targetLead.service.toLowerCase().includes("production")
       ? targetLead.service
       : `${targetLead.service} Production`
-    : "Studio Project";
+    : "Bespoke Service";
 
   const customer = await createCustomer({
     name: targetLead.name,
     email: targetLead.email,
     phone: targetLead.phone,
-    projectName,
+    serviceName,
     service: targetLead.service || "Bespoke Styling",
     amount: targetLead.budget || 25000,
     status: "pending",

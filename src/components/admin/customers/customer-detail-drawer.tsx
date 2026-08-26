@@ -2,7 +2,7 @@
 
 import { MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
 import type { Invoice } from "@/lib/api";
-import type { Customer, ProjectStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/lib/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
 interface CustomerDetailDrawerProps {
@@ -12,15 +12,15 @@ interface CustomerDetailDrawerProps {
   onToggleStatus: (customerId: string, isActive: boolean) => void;
   onOpenMessageModal: (customer: Customer) => void;
   onOpenInvoiceModal: (customer: Customer, invoice?: Invoice) => void;
-  onOpenAddProjectModal: () => void;
+  onOpenAddServiceModal: () => void;
   onConfirmResendInvoice: (invoice: Invoice) => void;
   onDeleteDraftInvoice: (invoiceId: string) => void;
-  onDeleteProject: (customerId: string, projectId: string, projectName: string) => void;
-  onUpdateProjectStatus: (
+  onDeleteService: (customerId: string, serviceId: string, serviceName: string) => void;
+  onUpdateServiceStatus: (
     customerId: string,
-    projectId: string,
-    status: ProjectStatus,
-    projectName: string,
+    serviceId: string,
+    status: ServiceStatus,
+    serviceName: string,
     statusLabel: string
   ) => void;
 }
@@ -32,13 +32,15 @@ export function CustomerDetailDrawer({
   onToggleStatus,
   onOpenMessageModal,
   onOpenInvoiceModal,
-  onOpenAddProjectModal,
+  onOpenAddServiceModal,
   onConfirmResendInvoice,
   onDeleteDraftInvoice,
-  onDeleteProject,
-  onUpdateProjectStatus,
+  onDeleteService,
+  onUpdateServiceStatus,
 }: CustomerDetailDrawerProps) {
   if (!customer) return null;
+
+  const servicesList = customer.services || [];
 
   return (
     <div className="drawer-backdrop" onClick={onClose}>
@@ -223,7 +225,7 @@ export function CustomerDetailDrawer({
             <div className="flex items-center gap-2">
               <span className="eyebrow">Services</span>
               <span className="text-[10px] font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded-full">
-                {customer.projects.length}
+                {servicesList.length}
               </span>
             </div>
             <button
@@ -231,7 +233,7 @@ export function CustomerDetailDrawer({
               disabled={!customer.isActive}
               onClick={() => {
                 if (!customer.isActive) return;
-                onOpenAddProjectModal();
+                onOpenAddServiceModal();
               }}
               className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all ${
                 customer.isActive
@@ -245,20 +247,20 @@ export function CustomerDetailDrawer({
             </button>
           </div>
 
-          {customer.projects.length > 0 ? (
+          {servicesList.length > 0 ? (
             <div className="space-y-2.5 pt-1">
-              {customer.projects.map(project => (
+              {servicesList.map(service => (
                 <div
-                  key={project.id}
+                  key={service.id}
                   className="group bg-[#faf8f5] hover:bg-[#f8f5ee] border border-[#eee7dc] hover:border-[#ded3c2] rounded-2xl p-3.5 transition-all space-y-2.5"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h4 className="text-xs font-bold text-[#191c1d] tracking-tight leading-snug truncate">
-                        {project.name}
+                        {service.name}
                       </h4>
                       <span className="text-[11px] text-[#78716c] font-normal block mt-0.5 truncate">
-                        {project.service}
+                        {service.service}
                       </span>
                     </div>
 
@@ -267,7 +269,7 @@ export function CustomerDetailDrawer({
                       disabled={!customer.isActive}
                       onClick={() => {
                         if (!customer.isActive) return;
-                        onDeleteProject(customer.id, project.id, project.name);
+                        onDeleteService(customer.id, service.id, service.name);
                       }}
                       title={customer.isActive ? "Delete service scope" : "Customer is inactive"}
                       className={`p-1.5 rounded-lg transition-all shrink-0 ${
@@ -286,33 +288,33 @@ export function CustomerDetailDrawer({
                         Value:
                       </span>
                       <span className="font-mono text-xs font-bold text-[#191c1d]">
-                        {formatMoney(project.amount)}
+                        {formatMoney(service.amount)}
                       </span>
                     </div>
 
                     <div className="relative shrink-0">
                       <select
                         disabled={!customer.isActive}
-                        value={project.status}
+                        value={service.status}
                         onChange={e => {
                           if (!customer.isActive) return;
-                          const nextStatus = e.target.value as ProjectStatus;
-                          onUpdateProjectStatus(
+                          const nextStatus = e.target.value as ServiceStatus;
+                          onUpdateServiceStatus(
                             customer.id,
-                            project.id,
+                            service.id,
                             nextStatus,
-                            project.name,
+                            service.name,
                             formatStatusLabel(nextStatus)
                           );
                         }}
                         className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border transition-all shadow-2xs ${
                           !customer.isActive
                             ? "bg-[#f3f4f6] text-[#9ca3af] border-[#e5e7eb] cursor-not-allowed opacity-60"
-                            : project.status === "active"
+                            : service.status === "active"
                               ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0] hover:bg-[#d1fae5] cursor-pointer"
-                              : project.status === "completed"
+                              : service.status === "completed"
                                 ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe] hover:bg-[#dbeafe] cursor-pointer"
-                                : project.status === "cancelled"
+                                : service.status === "cancelled"
                                   ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca] hover:bg-[#fee2e2] cursor-pointer"
                                   : "bg-[#fefce8] text-[#854d0e] border-[#fef08a] hover:bg-[#fef9c3] cursor-pointer"
                         }`}

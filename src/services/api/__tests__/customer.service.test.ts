@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  addProjectToCustomer,
+  addServiceToCustomer,
   createCustomer,
-  deleteCustomerProject,
+  deleteCustomerService,
   getCustomers,
   toggleCustomerActiveStatus,
-  updateCustomerProjectStatus,
+  updateCustomerServiceStatus,
 } from "../customer.service";
 
 describe("customer service", () => {
@@ -15,13 +15,13 @@ describe("customer service", () => {
     expect(list.length).toBeGreaterThan(0);
   });
 
-  it("creates a customer and attaches initial project scope", async () => {
+  it("creates a customer and attaches initial service scope", async () => {
     const customer = await createCustomer({
       name: "Marcus & Elena Vance",
       email: "marcus@vance.com",
       phone: "+1 415 555 2671",
       company: "Vance Global",
-      projectName: "Private Gala Reception",
+      serviceName: "Private Gala Reception",
       service: "Corporate Galas & Summits",
       amount: 40000,
       status: "active",
@@ -29,47 +29,47 @@ describe("customer service", () => {
 
     expect(customer.id).toBeDefined();
     expect(customer.name).toBe("Marcus & Elena Vance");
-    expect(customer.projects.length).toBe(1);
-    expect(customer.projects[0].name).toBe("Private Gala Reception");
+    expect(customer.services.length).toBe(1);
+    expect(customer.services[0].name).toBe("Private Gala Reception");
     expect(customer.totalRevenue).toBe(40000);
   });
 
-  it("adds a second project scope to a customer and recalculates revenue", async () => {
+  it("adds a second service scope to a customer and recalculates revenue", async () => {
     const customer = await createCustomer({
       name: "Scope Expansion Client",
       email: "scope@test.com",
       amount: 20000,
-      projectName: "Phase 1",
+      serviceName: "Phase 1",
       service: "Bespoke Styling",
     });
 
-    const updated = await addProjectToCustomer(customer.id, {
+    const updated = await addServiceToCustomer(customer.id, {
       name: "Phase 2 Lighting",
       service: "VIP Concierge Production",
       amount: 15000,
       status: "active",
     });
 
-    expect(updated.projects.length).toBe(2);
+    expect(updated.services.length).toBe(2);
     expect(updated.totalRevenue).toBe(35000);
   });
 
-  it("updates project status and deletes a project scope", async () => {
+  it("updates service status and deletes a service scope", async () => {
     const customer = await createCustomer({
       name: "Status Mod Client",
       email: "status-mod@test.com",
-      projectName: "Production Scope",
+      serviceName: "Production Scope",
       service: "Full Wedding Production",
       amount: 30000,
     });
 
-    const projId = customer.projects[0].id;
-    const withUpdatedStatus = await updateCustomerProjectStatus(customer.id, projId, "completed");
-    expect(withUpdatedStatus.projects[0].status).toBe("completed");
+    const svcId = customer.services[0].id;
+    const withUpdatedStatus = await updateCustomerServiceStatus(customer.id, svcId, "completed");
+    expect(withUpdatedStatus.services[0].status).toBe("completed");
 
-    const withDeletedProj = await deleteCustomerProject(customer.id, projId);
-    expect(withDeletedProj.projects.length).toBe(0);
-    expect(withDeletedProj.totalRevenue).toBe(0);
+    const withDeletedSvc = await deleteCustomerService(customer.id, svcId);
+    expect(withDeletedSvc.services.length).toBe(0);
+    expect(withDeletedSvc.totalRevenue).toBe(0);
   });
 
   it("toggles customer active status", async () => {

@@ -54,11 +54,11 @@ export function LeadsPage({ onToast }: { onToast?: (s: string) => void }) {
       phone: lead.phone || "",
       company: "",
       totalRevenue: lead.budget || 25000,
-      projects: [
+      services: [
         {
-          id: `p-${Date.now()}`,
+          id: `svc-${Date.now()}`,
           customerId: lead.id,
-          name: lead.service ? `${lead.service} Production` : "Studio Project",
+          name: lead.service ? `${lead.service} Production` : "Bespoke Service",
           service: lead.service || "Bespoke Styling",
           amount: lead.budget || 25000,
           status: "pending",

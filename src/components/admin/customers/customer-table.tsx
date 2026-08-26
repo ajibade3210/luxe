@@ -56,8 +56,9 @@ export function CustomerTable({
           </thead>
           <tbody>
             {paginatedItems.map(c => {
-              const hasProjects = c.projects && c.projects.length > 0;
-              const p = hasProjects ? c.projects[0] : null;
+              const servicesList = c.services || [];
+              const hasServices = servicesList.length > 0;
+              const s = hasServices ? servicesList[0] : null;
 
               return (
                 <tr key={c.id} onClick={() => onSelectCustomer(c.id)} className="cursor-pointer">
@@ -69,15 +70,15 @@ export function CustomerTable({
                     </small>
                   </td>
                   <td>
-                    {p ? (
+                    {s ? (
                       <div className="flex items-center">
-                        <b className="truncate max-w-[220px]">{p.name}</b>
-                        {c.projects.length > 1 && (
+                        <b className="truncate max-w-[220px]">{s.name}</b>
+                        {servicesList.length > 1 && (
                           <span
                             className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
-                            title={`${c.projects.length} connected services / scopes`}
+                            title={`${servicesList.length} connected services / scopes`}
                           >
-                            +{c.projects.length - 1}
+                            +{servicesList.length - 1}
                           </span>
                         )}
                       </div>

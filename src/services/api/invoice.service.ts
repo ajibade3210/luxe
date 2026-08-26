@@ -198,6 +198,7 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
 
   const newInvoice: Invoice = {
     id: newId,
+    businessId: validatedInput.businessId || "elan-events",
     invoiceNumber: newInvoiceNumber,
     customerId: validatedInput.customerId,
     customerName: validatedInput.customerName,
@@ -272,6 +273,7 @@ export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
 
   const newInvoice: Invoice = {
     id: newId,
+    businessId: validatedInput.businessId || "elan-events",
     invoiceNumber: newInvoiceNumber,
     customerId: input.customerId,
     customerName: input.customerName,

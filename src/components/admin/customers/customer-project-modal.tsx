@@ -3,16 +3,16 @@
 import { Check, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
-import type { Customer, ProjectStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/lib/types";
 
-interface CustomerProjectModalProps {
+interface CustomerServiceModalProps {
   isOpen: boolean;
   customer: Customer | null;
   onClose: () => void;
   onSubmit: (
     customerId: string,
     customerName: string,
-    data: { name: string; service: string; amount: number; status: ProjectStatus }
+    data: { name: string; service: string; amount: number; status: ServiceStatus }
   ) => Promise<boolean>;
 }
 
@@ -21,13 +21,13 @@ export function CustomerProjectModal({
   customer,
   onClose,
   onSubmit,
-}: CustomerProjectModalProps) {
+}: CustomerServiceModalProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     categories: [AVAILABLE_SERVICES[0] as string],
     amount: 35000,
-    status: "pending" as ProjectStatus,
+    status: "pending" as ServiceStatus,
   });
 
   if (!isOpen || !customer) return null;
@@ -171,7 +171,7 @@ export function CustomerProjectModal({
                   onChange={e =>
                     setFormData({
                       ...formData,
-                      status: e.target.value as ProjectStatus,
+                      status: e.target.value as ServiceStatus,
                     })
                   }
                   className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"

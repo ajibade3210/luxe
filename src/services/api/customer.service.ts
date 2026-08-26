@@ -1,7 +1,7 @@
 import { CUSTOM_EVENTS } from "@/constants";
 import { activities, customers as initialCustomers } from "@/lib/mock-data";
-import { AddProjectInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
-import type { Customer, Project, ProjectStatus } from "@/lib/types";
+import { AddServiceInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
+import type { Customer, CustomerService, ServiceStatus } from "@/lib/types";
 
 let currentCustomers: Customer[] = [...initialCustomers];
 
@@ -36,24 +36,24 @@ export async function getCustomers(query?: string): Promise<Customer[]> {
       c.company?.toLowerCase().includes(q) ||
       c.notes?.toLowerCase().includes(q);
 
-    const matchesProject = c.projects.some(
-      p => p.name.toLowerCase().includes(q) || p.service.toLowerCase().includes(q)
+    const matchesService = c.services.some(
+      s => s.name.toLowerCase().includes(q) || s.service.toLowerCase().includes(q)
     );
 
-    return matchesBasic || matchesProject;
+    return matchesBasic || matchesService;
   });
 }
 
 /**
- * Add a new Project / Scope to an existing customer
+ * Add a new Service / Scope to an existing customer
  * When connecting to real backend, easily swap with:
- * `const res = await fetch(`/api/customers/${customerId}/projects`, { method: 'POST', body: JSON.stringify(input) }); return res.json();`
+ * `const res = await fetch(`/api/customers/${customerId}/services`, { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
-export async function addProjectToCustomer(
+export async function addServiceToCustomer(
   customerId: string,
-  input: { name: string; service: string; amount: number; status?: ProjectStatus }
+  input: { name: string; service: string; amount: number; status?: ServiceStatus }
 ): Promise<Customer> {
-  const validatedInput = AddProjectInputSchema.parse(input);
+  const validatedInput = AddServiceInputSchema.parse(input);
   await delay(200);
   const custIndex = currentCustomers.findIndex(c => c.id === customerId);
   if (custIndex === -1) {
@@ -61,8 +61,9 @@ export async function addProjectToCustomer(
   }
 
   const existing = currentCustomers[custIndex];
-  const newProject: Project = {
-    id: `p-${Date.now()}`,
+  const newService: CustomerService = {
+    id: `svc-${Date.now()}`,
+    businessId: existing.businessId || "elan-events",
     customerId,
     name: validatedInput.name,
     service: validatedInput.service,
@@ -71,12 +72,12 @@ export async function addProjectToCustomer(
     createdAt: new Date().toISOString(),
   };
 
-  const updatedProjects = [...existing.projects, newProject];
-  const updatedRevenue = updatedProjects.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const updatedServices = [...existing.services, newService];
+  const updatedRevenue = updatedServices.reduce((acc, s) => acc + (s.amount || 0), 0);
 
   const updatedCustomer: Customer = {
     ...existing,
-    projects: updatedProjects,
+    services: updatedServices,
     totalRevenue: updatedRevenue,
   };
 
@@ -86,13 +87,13 @@ export async function addProjectToCustomer(
 }
 
 /**
- * Delete a Project from a customer
+ * Delete a Service from a customer
  * When connecting to real backend, easily swap with:
- * `const res = await fetch(`/api/customers/${customerId}/projects/${projectId}`, { method: 'DELETE' }); return res.json();`
+ * `const res = await fetch(`/api/customers/${customerId}/services/${serviceId}`, { method: 'DELETE' }); return res.json();`
  */
-export async function deleteCustomerProject(
+export async function deleteCustomerService(
   customerId: string,
-  projectId: string
+  serviceId: string
 ): Promise<Customer> {
   await delay(200);
   const custIndex = currentCustomers.findIndex(c => c.id === customerId);
@@ -101,12 +102,12 @@ export async function deleteCustomerProject(
   }
 
   const existing = currentCustomers[custIndex];
-  const updatedProjects = existing.projects.filter(p => p.id !== projectId);
-  const updatedRevenue = updatedProjects.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const updatedServices = existing.services.filter(s => s.id !== serviceId);
+  const updatedRevenue = updatedServices.reduce((acc, s) => acc + (s.amount || 0), 0);
 
   const updatedCustomer: Customer = {
     ...existing,
-    projects: updatedProjects,
+    services: updatedServices,
     totalRevenue: updatedRevenue,
   };
 
@@ -116,14 +117,14 @@ export async function deleteCustomerProject(
 }
 
 /**
- * Update a Project status for a customer
+ * Update a Service status for a customer
  * When connecting to real backend, easily swap with:
- * `const res = await fetch(`/api/customers/${customerId}/projects/${projectId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }); return res.json();`
+ * `const res = await fetch(`/api/customers/${customerId}/services/${serviceId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }); return res.json();`
  */
-export async function updateCustomerProjectStatus(
+export async function updateCustomerServiceStatus(
   customerId: string,
-  projectId: string,
-  status: ProjectStatus
+  serviceId: string,
+  status: ServiceStatus
 ): Promise<Customer> {
   await delay(150);
   const custIndex = currentCustomers.findIndex(c => c.id === customerId);
@@ -132,11 +133,11 @@ export async function updateCustomerProjectStatus(
   }
 
   const existing = currentCustomers[custIndex];
-  const updatedProjects = existing.projects.map(p => (p.id === projectId ? { ...p, status } : p));
+  const updatedServices = existing.services.map(s => (s.id === serviceId ? { ...s, status } : s));
 
   const updatedCustomer: Customer = {
     ...existing,
-    projects: updatedProjects,
+    services: updatedServices,
   };
 
   currentCustomers[custIndex] = updatedCustomer;
@@ -180,14 +181,15 @@ export async function getCustomerActivity(id: string) {
 }
 
 export interface NewCustomerInput {
+  businessId?: string;
   name: string;
   email: string;
   phone?: string;
   company?: string;
-  projectName?: string;
+  serviceName?: string;
   service?: string;
   amount?: number;
-  status?: ProjectStatus;
+  status?: ServiceStatus;
   isActive?: boolean;
 }
 
@@ -201,12 +203,15 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
   await delay(250);
 
   const newId = `c${Date.now()}`;
-  const projects: Project[] = [];
-  if (validatedInput.projectName?.trim()) {
-    projects.push({
-      id: `p-${Date.now()}`,
+  const businessId = validatedInput.businessId || "elan-events";
+  const services: CustomerService[] = [];
+  const initialServiceName = validatedInput.serviceName?.trim();
+  if (initialServiceName) {
+    services.push({
+      id: `svc-${Date.now()}`,
+      businessId,
       customerId: newId,
-      name: validatedInput.projectName.trim(),
+      name: initialServiceName,
       service: validatedInput.service || "Bespoke Styling",
       amount: validatedInput.amount || 0,
       status: validatedInput.status || "active",
@@ -216,12 +221,13 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
 
   const newCustomer: Customer = {
     id: newId,
+    businessId,
     name: validatedInput.name,
     email: validatedInput.email,
     phone: validatedInput.phone || "",
     company: validatedInput.company || "",
-    totalRevenue: projects.reduce((acc, p) => acc + (p.amount || 0), 0),
-    projects,
+    totalRevenue: services.reduce((acc, s) => acc + (s.amount || 0), 0),
+    services,
     isActive: validatedInput.isActive ?? true,
     createdAt: new Date().toISOString(),
   };
@@ -233,24 +239,24 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
 }
 
 /**
- * Send an invoice to a customer with pending project/retainer
+ * Send an invoice to a customer with pending service/retainer
  * When connecting to real backend, easily swap with:
  * `const res = await fetch(`/api/customers/${customerId}/invoices/send`, { method: 'POST' }); return res.json();`
  */
 export async function sendCustomerInvoice(
   customerId: string,
-  projectId?: string
+  serviceId?: string
 ): Promise<{ success: boolean; invoiceId: string; recipient: string; amount: number }> {
   await delay(300);
 
   const customer = currentCustomers.find(c => c.id === customerId);
-  const project = customer?.projects.find(p => (projectId ? p.id === projectId : true));
+  const service = customer?.services.find(s => (serviceId ? s.id === serviceId : true));
 
   return {
     success: true,
     invoiceId: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
     recipient: customer?.email || "customer@example.com",
-    amount: project?.amount || 0,
+    amount: service?.amount || 0,
   };
 }
 
@@ -273,7 +279,7 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
     "Phone",
     "Company",
     "Total Revenue",
-    "Projects Count",
+    "Services Count",
     "Primary Service",
     "Latest Status",
   ];
@@ -284,9 +290,9 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
     c.phone || "N/A",
     c.company ? `"${c.company}"` : "Private Client",
     c.totalRevenue,
-    c.projects.length,
-    c.projects[0]?.service ? `"${c.projects[0].service}"` : "Bespoke",
-    c.projects[0]?.status || "N/A",
+    c.services.length,
+    c.services[0]?.service ? `"${c.services[0].service}"` : "Bespoke",
+    c.services[0]?.status || "N/A",
   ]);
 
   const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
@@ -331,7 +337,7 @@ export async function importCustomers(
       company: "",
       notes: r.notes?.trim() || "Imported via bulk customer register",
       totalRevenue: 0,
-      projects: [],
+      services: [],
       isActive: true,
       createdAt: new Date().toISOString(),
     };

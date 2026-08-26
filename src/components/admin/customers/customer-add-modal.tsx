@@ -4,7 +4,7 @@ import { Check, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
 import type { NewCustomerInput } from "@/lib/api";
-import type { ProjectStatus } from "@/lib/types";
+import type { ServiceStatus } from "@/lib/types";
 
 interface CustomerAddModalProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ export function CustomerAddModal({
     email: "",
     phone: "",
     company: "",
-    projectName: "",
+    serviceName: "",
     service: AVAILABLE_SERVICES[0],
     amount: 0,
     status: "pending",
@@ -41,7 +41,7 @@ export function CustomerAddModal({
         email: "",
         phone: "",
         company: "",
-        projectName: "",
+        serviceName: "",
         service: AVAILABLE_SERVICES[0],
         amount: 0,
         status: "pending",
@@ -151,8 +151,8 @@ export function CustomerAddModal({
               </label>
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
-                  value={formData.projectName}
-                  onChange={e => setFormData({ ...formData, projectName: e.target.value })}
+                  value={formData.serviceName || ""}
+                  onChange={e => setFormData({ ...formData, serviceName: e.target.value })}
                   placeholder="e.g. Floral Styling & Scenography (Optional)"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
                 />
@@ -205,12 +205,12 @@ export function CustomerAddModal({
                 <select
                   value={formData.status}
                   onChange={e =>
-                    setFormData({ ...formData, status: e.target.value as ProjectStatus })
+                    setFormData({ ...formData, status: e.target.value as ServiceStatus })
                   }
                   className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
                 >
                   <option value="pending">Pending (Review / Invoicing)</option>
-                  <option value="active">Active Project</option>
+                  <option value="active">Active Service</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>

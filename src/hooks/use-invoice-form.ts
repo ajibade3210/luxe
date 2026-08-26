@@ -69,11 +69,11 @@ export function useInvoiceForm({
     existingInvoice?.items || [
       {
         id: "item-1",
-        description: initialCustomer?.projects[0]?.name || "Bespoke Event Production & Styling",
+        description: initialCustomer?.services[0]?.name || "Bespoke Event Production & Styling",
         quantity: 1,
         unit: "package",
-        unitPrice: initialCustomer?.projects[0]?.amount || 45000,
-        amount: initialCustomer?.projects[0]?.amount || 45000,
+        unitPrice: initialCustomer?.services[0]?.amount || 45000,
+        amount: initialCustomer?.services[0]?.amount || 45000,
       },
     ]
   );
