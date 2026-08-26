@@ -12,7 +12,7 @@ const PROTECTED_ROUTES = [
 
 const AUTH_ROUTES = ["/login", "/signup"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(STORAGE_KEYS.session)?.value;
   const isAuthenticated = Boolean(sessionCookie && sessionCookie.trim().length > 0);
