@@ -51,7 +51,7 @@ export function LeadTable({
             <tr>
               <th>Name</th>
               <th>Service requested</th>
-              <th>Event date</th>
+              <th>Estimated date</th>
               <th>Status</th>
               <th />
             </tr>

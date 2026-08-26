@@ -68,7 +68,7 @@ export function ConsultationModal({
             Book a Consultation
           </h3>
           <p className="text-xs text-[#78716c] mt-1">
-            Tell {profile.businessName} about your upcoming celebration and vision.
+            Tell {profile.businessName} about your project, order, or service inquiry.
           </p>
         </div>
 
@@ -138,10 +138,12 @@ export function ConsultationModal({
           </div>
 
           <div>
-            <label className="block text-[#1f2937] font-medium mb-1">Event Vision / Details</label>
+            <label className="block text-[#1f2937] font-medium mb-1">
+              Project / Order Vision & Details
+            </label>
             <textarea
               rows={3}
-              placeholder="Share details about your guest count, aesthetic preferences, venue location..."
+              placeholder="Share details about your requirements, timeline, quantity, or aesthetic preferences..."
               value={quoteForm.message}
               onChange={e => setQuoteForm({ ...quoteForm, message: e.target.value })}
               className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"

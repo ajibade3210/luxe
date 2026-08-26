@@ -58,7 +58,7 @@ export function LeadDetailDrawer({
             <b>{lead.service}</b>
           </div>
           <div>
-            <span className="eyebrow">Event date</span>
+            <span className="eyebrow">Estimated date</span>
             <b>{formatDate(lead.eventDate)}</b>
           </div>
           <div>

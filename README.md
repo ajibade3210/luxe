@@ -1,6 +1,6 @@
 # Shopwus
 
-A luxury studio management platform and client-facing digital showcase application built with Next.js 16, React 19, and Tailwind CSS.
+A luxury studio and shop management platform and client-facing digital showcase application for service, product, and goods providers, built with Next.js 16, React 19, and Tailwind CSS.
 
 ---
 
