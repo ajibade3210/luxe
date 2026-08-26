@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowRight, Check, Info, Mail, MapPin, MessageCircle, Phone, X } from "lucide-react";
+import { ArrowRight, Check, Mail, MapPin, MessageCircle, Phone, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
+  getCustomers,
   submitConsultationInquiry,
   submitReview,
 } from "@/lib/api";
@@ -20,6 +21,7 @@ import { StudioServicesSection } from "./atelier/services-section";
 import { StudioSocialSection } from "./atelier/social-section";
 import { StationeryCard } from "./atelier/stationery-card";
 import { StudioFooter } from "./atelier/studio-footer";
+import { StudioHighlightsCard } from "./atelier/studio-highlights-card";
 import { StudioNavbar } from "./atelier/studio-navbar";
 import { NotFoundView } from "./not-found-view";
 
@@ -111,8 +113,13 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [_newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  const [customerCount, setCustomerCount] = useState<number>(14);
+
+  useEffect(() => {
+    getCustomers().then(res => {
+      if (res?.length) setCustomerCount(res.length);
+    });
+  }, []);
 
   // Scroll listener for sticky header & active nav section
   useEffect(() => {
@@ -194,14 +201,6 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
       navigator.clipboard.writeText(url);
     }
     showToast("Business profile link copied to clipboard!");
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail) return;
-    setNewsletterSubscribed(true);
-    showToast(`Thank you for subscribing to the ${profile.businessName} Journal.`);
-    setNewsletterEmail("");
   };
 
   const handleQuoteSubmit = async (e: React.FormEvent) => {
@@ -344,105 +343,19 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
               </div>
             </div>
 
-            {/* RIGHT: Studio Highlights & Newsletter */}
+            {/* RIGHT: Studio Operational Status & Presence Card */}
             <div className="lg:col-span-6 flex items-center justify-center">
-              <div className="bg-white border border-[#eae3d8] rounded-3xl p-8 sm:p-10 shadow-[0_12px_36px_rgba(40,30,20,0.04)] flex flex-col justify-between max-w-[480px] w-full h-[580px]">
-                <div>
-                  <div className="border-b border-[#f0e8dc] pb-5 mb-6">
-                    <span className="text-[10px] uppercase tracking-[0.16em] font-semibold text-[#0058be]">
-                      Studio Highlights
-                    </span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <h2 className="font-serif text-2xl text-[#191c1d] font-normal">
-                        The Art of Grand Occasions
-                      </h2>
-                      <div className="relative group/info inline-flex items-center ml-1">
-                        <button
-                          type="button"
-                          aria-label="Studio highlights info"
-                          className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
-                        >
-                          <Info size={17} />
-                        </button>
-                        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 hidden group-hover/info:block z-30 pointer-events-none">
-                          <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                            Our signature production pillars, spatial geometry, and white-glove
-                            event concierge.
-                            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 text-xs text-[#5a534c]">
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-[#faf7f2] border border-[#eee7dc]">
-                      <div
-                        style={{
-                          backgroundColor: secondaryColor,
-                          color: primaryColor,
-                        }}
-                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                      >
-                        <Check size={12} />
-                      </div>
-                      <div>
-                        <strong className="text-[#1c1917] block font-medium">
-                          Bespoke Architectural Styling
-                        </strong>
-                        <span className="text-[#78716c]">
-                          Custom spatial geometry, mood lighting, and curated floral pavilions.
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-xl bg-[#faf7f2] border border-[#eee7dc]">
-                      <div
-                        style={{
-                          backgroundColor: secondaryColor,
-                          color: primaryColor,
-                        }}
-                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                      >
-                        <Check size={12} />
-                      </div>
-                      <div>
-                        <strong className="text-[#1c1917] block font-medium">
-                          Discreet VIP Concierge
-                        </strong>
-                        <span className="text-[#78716c]">
-                          Dedicated protocol directors, private security, and high-profile guest
-                          relations.
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Newsletter Journal Subscription */}
-                <div className="pt-6 border-t border-[#f0e8dc] mt-6">
-                  <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-[#8c8278] block mb-2">
-                    Subscribe to Studio Journal
-                  </span>
-                  <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
-                    <input
-                      type="email"
-                      required
-                      placeholder="Enter your email"
-                      value={newsletterEmail}
-                      onChange={e => setNewsletterEmail(e.target.value)}
-                      className="flex-1 bg-[#faf8f5] border border-[#dec9ba] rounded-lg px-3.5 py-2 text-xs text-[#1c1917] focus:outline-none focus:border-[#b84c24]"
-                    />
-                    <button
-                      type="submit"
-                      style={{ backgroundColor: buttonColor }}
-                      className={`text-white text-xs font-medium px-4 py-2 shadow-2xs hover:brightness-95 transition-all cursor-pointer shrink-0 ${radiusClass}`}
-                    >
-                      Join
-                    </button>
-                  </form>
-                </div>
-              </div>
+              <StudioHighlightsCard
+                profile={profile}
+                totalCustomers={customerCount}
+                setQuoteModalOpen={setQuoteModalOpen}
+                handleCopyLink={handleCopyLink}
+                whatsAppLink={whatsAppLink}
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
+                buttonColor={buttonColor}
+                radiusClass={radiusClass}
+              />
             </div>
           </div>
         </section>
