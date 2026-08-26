@@ -40,19 +40,17 @@ export function ProjectModal({ project, onClose, onInquire, primaryColor }: Proj
 
         <p className="text-sm text-[#524b45] leading-relaxed">{project.description}</p>
 
-        <div className="p-4 rounded-2xl bg-[#faf6f0] border border-[#eee5d8] flex items-center justify-between text-xs text-[#78716c]">
-          <span>
-            <strong>Scope:</strong> {project.stats}
-          </span>
+        <div className="pt-2 flex items-center justify-end">
           <button
             onClick={() => {
               onClose();
               onInquire();
             }}
-            style={{ color: primaryColor }}
-            className="font-medium hover:underline flex items-center gap-1 cursor-pointer"
+            style={{ backgroundColor: primaryColor }}
+            className="text-white text-xs font-medium px-6 py-3 rounded-full hover:opacity-95 transition-all cursor-pointer flex items-center gap-2 shadow-2xs"
           >
-            Inquire about similar celebration <ArrowRight size={13} />
+            <span>Inquire about similar celebration</span>
+            <ArrowRight size={14} />
           </button>
         </div>
       </div>
