@@ -87,31 +87,35 @@ export function SignupPage() {
       {/* Main Signup Form Container */}
       <div className="w-full max-w-lg mx-auto px-6 py-12 my-auto z-10">
         <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-12 shadow-[0_12px_40px_rgba(40,30,20,0.04)]">
-          {/* Claim Banner Pill */}
-          {claimSlug ? (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-6 w-full justify-center">
-              <Sparkles size={13} className="text-[#855e2e]" />
-              <span>
-                Reserving Handle: <span className="font-semibold text-[#6f4c22]">/{claimSlug}</span>
-              </span>
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-6">
-              <span>Create Your Atelier</span>
-            </div>
-          )}
+          {/* Header Section */}
+          <div className="mb-10">
+            {/* Claim Banner Pill */}
+            {claimSlug ? (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-5 w-full justify-center">
+                <Sparkles size={13} className="text-[#855e2e]" />
+                <span>
+                  Reserving Handle:{" "}
+                  <span className="font-semibold text-[#6f4c22]">/{claimSlug}</span>
+                </span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-5">
+                <span>Create Your Atelier</span>
+              </div>
+            )}
 
-          {/* Form Title & Subtitle */}
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight mb-3">
-            {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
-          </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-9 block">
-            Reserve your bespoke public profile URL and unlock your studio director dashboard with
-            Google.
-          </p>
+            {/* Form Title & Subtitle */}
+            <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight mb-2.5">
+              {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
+            </h1>
+            <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed">
+              Reserve your bespoke public profile URL and unlock your studio director dashboard with
+              Google.
+            </p>
+          </div>
 
-          {/* Form Input Fields with Clean Proximity to Inputs and Clear Separation from Top */}
-          <div className="space-y-6 mb-8 pt-2">
+          {/* Form Input Fields with Tight Label Proximity and Clean Separation */}
+          <div className="space-y-6 mb-9">
             {/* Studio Handle / Slug */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -149,18 +153,20 @@ export function SignupPage() {
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Studio / Brand Name
               </label>
-              <input
-                type="text"
-                value={studioName}
-                onChange={e => setStudioName(e.target.value)}
-                placeholder="e.g. Élan Events Atelier"
-                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
-              />
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+                <input
+                  type="text"
+                  value={studioName}
+                  onChange={e => setStudioName(e.target.value)}
+                  placeholder="e.g. Élan Events Atelier"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                />
+              </div>
             </div>
           </div>
 
           {/* Primary Google Signup Button */}
-          <div className="pt-2">
+          <div className="pt-1">
             <button
               type="button"
               disabled={isSubmitting}
