@@ -1,0 +1,136 @@
+/* GPU-accelerated Stroke Dashoffset Animation */
+.connector-pulse-beam {
+  stroke-dasharray: 95 780;
+  stroke-dashoffset: 95;
+  animation: travelCircuitPulse 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: stroke-dashoffset, opacity;
+}
+
+@keyframes travelCircuitPulse {
+  0% {
+    stroke-dashoffset: 95;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  82% {
+    stroke-dashoffset: -780;
+    opacity: 1;
+  }
+  88%,
+  100% {
+    stroke-dashoffset: -780;
+    opacity: 0;
+  }
+}
+
+/* Synchronized Node Dot Glow Animations (Position-Stable) */
+.node-group {
+  transition: all 0.2s ease;
+}
+
+.node-center-dot {
+  transition:
+    fill 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.dot-1 {
+  animation: nodeGlow1 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.dot-2 {
+  animation: nodeGlow2 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.dot-3 {
+  animation: nodeGlow3 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes nodeGlow1 {
+  0%,
+  6% {
+    fill: #191c1d;
+    opacity: 1;
+  }
+  14%,
+  100% {
+    fill: #855e2e;
+    opacity: 0.6;
+  }
+}
+
+@keyframes nodeGlow2 {
+  0%,
+  38% {
+    fill: #855e2e;
+    opacity: 0.6;
+  }
+  44%,
+  50% {
+    fill: #191c1d;
+    opacity: 1;
+  }
+  58%,
+  100% {
+    fill: #855e2e;
+    opacity: 0.6;
+  }
+}
+
+@keyframes nodeGlow3 {
+  0%,
+  76% {
+    fill: #855e2e;
+    opacity: 0.6;
+  }
+  82%,
+  88% {
+    fill: #191c1d;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    fill: #855e2e;
+    opacity: 0.6;
+  }
+}
+
+.mobile-pulse-beam {
+  stroke-dasharray: 20 60;
+  stroke-dashoffset: 20;
+  animation: mobileCircuitPulse 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.mobile-beam-2 {
+  animation-delay: 1.4s;
+}
+
+@keyframes mobileCircuitPulse {
+  0% {
+    stroke-dashoffset: 20;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  80% {
+    stroke-dashoffset: -56;
+    opacity: 1;
+  }
+  88%,
+  100% {
+    stroke-dashoffset: -56;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connector-pulse-beam,
+  .mobile-pulse-beam,
+  .node-center-dot {
+    animation: none;
+    opacity: 0;
+  }
+}
