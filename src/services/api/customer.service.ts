@@ -171,15 +171,18 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
   await delay(250);
 
   const newId = `c${Date.now()}`;
-  const initialProject: Project = {
-    id: `p-${Date.now()}`,
-    customerId: newId,
-    name: input.projectName || "Initial Studio Project",
-    service: input.service || "Bespoke Styling",
-    amount: input.amount || 0,
-    status: input.status || "active",
-    createdAt: new Date().toISOString(),
-  };
+  const projects: Project[] = [];
+  if (input.projectName?.trim()) {
+    projects.push({
+      id: `p-${Date.now()}`,
+      customerId: newId,
+      name: input.projectName.trim(),
+      service: input.service || "Bespoke Styling",
+      amount: input.amount || 0,
+      status: input.status || "active",
+      createdAt: new Date().toISOString(),
+    });
+  }
 
   const newCustomer: Customer = {
     id: newId,
@@ -187,8 +190,8 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
     email: input.email,
     phone: input.phone || "",
     company: input.company || "",
-    totalRevenue: input.amount || 0,
-    projects: [initialProject],
+    totalRevenue: projects.reduce((acc, p) => acc + (p.amount || 0), 0),
+    projects,
     createdAt: new Date().toISOString(),
   };
 

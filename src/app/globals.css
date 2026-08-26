@@ -1637,39 +1637,6 @@ blockquote {
 .drawer-block > .eyebrow {
   margin-bottom: 14px;
 }
-.drawer-project {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  border-bottom: 1px solid var(--line);
-  padding: 14px 0;
-}
-.drawer-project:last-child {
-  border-bottom: 0;
-}
-.drawer-project b {
-  display: block;
-  font-size: 17px;
-  line-height: 1.25;
-}
-.drawer-project small {
-  display: block;
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.drawer-project strong {
-  display: block;
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 21px;
-  font-weight: 400;
-  white-space: nowrap;
-}
-.drawer .status {
-  margin-top: 7px;
-}
 .drawer-notes {
   margin-top: 30px;
 }

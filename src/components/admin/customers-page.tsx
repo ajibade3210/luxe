@@ -86,7 +86,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
     company: "",
     projectName: "",
     service: AVAILABLE_SERVICES[0],
-    amount: 50000,
+    amount: 0,
     status: "pending",
   });
 
@@ -170,7 +170,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         company: "",
         projectName: "",
         service: AVAILABLE_SERVICES[0],
-        amount: 50000,
+        amount: 0,
         status: "pending",
       });
       if (onToast) {
@@ -411,12 +411,8 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
             </thead>
             <tbody>
               {paginatedItems.map(c => {
-                const p = c.projects[0] || {
-                  name: "Atelier Project",
-                  service: "Bespoke Styling",
-                  amount: c.totalRevenue || 0,
-                  status: "pending" as ProjectStatus,
-                };
+                const hasProjects = c.projects && c.projects.length > 0;
+                const p = hasProjects ? c.projects[0] : null;
 
                 return (
                   <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
@@ -428,21 +424,35 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                       </small>
                     </td>
                     <td>
-                      <div className="flex items-center">
-                        <b className="truncate max-w-[170px]">{p.name}</b>
-                        {c.projects.length > 1 && (
-                          <span
-                            className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
-                            title={`${c.projects.length} connected projects / services`}
-                          >
-                            +{c.projects.length - 1}
-                          </span>
-                        )}
-                      </div>
-                      <small>{p.service}</small>
+                      {p ? (
+                        <>
+                          <div className="flex items-center">
+                            <b className="truncate max-w-[170px]">{p.name}</b>
+                            {c.projects.length > 1 && (
+                              <span
+                                className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
+                                title={`${c.projects.length} connected projects / services`}
+                              >
+                                +{c.projects.length - 1}
+                              </span>
+                            )}
+                          </div>
+                          <small>{p.service}</small>
+                        </>
+                      ) : (
+                        <span className="text-xs text-[#8c827a] font-normal italic">
+                          No active project
+                        </span>
+                      )}
                     </td>
                     <td>
-                      <span className={`status ${p.status}`}>{formatStatusLabel(p.status)}</span>
+                      {p ? (
+                        <span className={`status ${p.status}`}>{formatStatusLabel(p.status)}</span>
+                      ) : (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-[#8e9192] bg-[#f5f5f4] border border-[#e7e5e4] px-2 py-0.5 rounded">
+                          Unassigned
+                        </span>
+                      )}
                     </td>
                     <td>
                       <ChevronRight size={16} />
@@ -647,69 +657,102 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
 
             {/* Projects list */}
             <div className="drawer-block">
-              <div className="flex items-center justify-between pb-1">
-                <span className="eyebrow">Projects ({selectedCustomer.projects.length})</span>
+              <div className="flex items-center justify-between pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="eyebrow">Projects & Scopes</span>
+                  <span className="text-[10px] font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded-full">
+                    {selectedCustomer.projects.length}
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={() => setShowAddProjectModal(true)}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer bg-[#faf7f2] hover:bg-[#f5eee3] px-2 py-0.5 rounded-md border border-[#ded5c8] transition-colors"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer bg-[#faf7f2] hover:bg-[#f5eee3] px-2.5 py-1 rounded-lg border border-[#ded5c8] transition-all hover:shadow-2xs"
                 >
                   <Plus size={11} />
                   <span>Add Project</span>
                 </button>
               </div>
-              <div className="space-y-2 pt-2">
-                {selectedCustomer.projects.map(project => (
-                  <div
-                    className="drawer-project flex items-center justify-between gap-3"
-                    key={project.id}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <b className="truncate block">{project.name}</b>
-                      <small className="block truncate text-[#6b7280]">{project.service}</small>
+
+              {selectedCustomer.projects.length > 0 ? (
+                <div className="space-y-2.5 pt-1">
+                  {selectedCustomer.projects.map(project => (
+                    <div
+                      key={project.id}
+                      className="group bg-[#faf8f5] hover:bg-[#f8f5ee] border border-[#eee7dc] hover:border-[#ded3c2] rounded-2xl p-3.5 transition-all space-y-2.5"
+                    >
+                      {/* Top: Project Name, Service Subtitle & Subtle Delete */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-xs font-bold text-[#191c1d] tracking-tight leading-snug truncate">
+                            {project.name}
+                          </h4>
+                          <span className="text-[11px] text-[#78716c] font-normal block mt-0.5 truncate">
+                            {project.service}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleDeleteProject(selectedCustomer.id, project.id, project.name)
+                          }
+                          title="Delete project scope"
+                          className="opacity-50 group-hover:opacity-100 p-1.5 rounded-lg text-[#9ca3af] hover:text-[#dc2626] hover:bg-[#fee2e2] transition-all cursor-pointer shrink-0"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+
+                      {/* Bottom Meta: Value & Status Selector */}
+                      <div className="flex items-center justify-between gap-3 pt-2 border-t border-[#f0e8dc]">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#8e9192]">
+                            Value:
+                          </span>
+                          <span className="font-mono text-xs font-bold text-[#191c1d]">
+                            {formatMoney(project.amount)}
+                          </span>
+                        </div>
+
+                        {/* Interactive Status Selector */}
+                        <div className="relative shrink-0">
+                          <select
+                            value={project.status}
+                            onChange={e =>
+                              handleUpdateProjectStatus(
+                                selectedCustomer.id,
+                                project.id,
+                                e.target.value as ProjectStatus,
+                                project.name
+                              )
+                            }
+                            className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border cursor-pointer focus:outline-none transition-all shadow-2xs ${
+                              project.status === "active"
+                                ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0] hover:bg-[#d1fae5]"
+                                : project.status === "completed"
+                                  ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe] hover:bg-[#dbeafe]"
+                                  : project.status === "cancelled"
+                                    ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca] hover:bg-[#fee2e2]"
+                                    : "bg-[#fefce8] text-[#854d0e] border-[#fef08a] hover:bg-[#fef9c3]"
+                            }`}
+                            title="Click to switch project status"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
-                    <div className="drawer-project-meta flex items-center gap-2 shrink-0">
-                      <strong>{formatMoney(project.amount)}</strong>
-                      <select
-                        value={project.status}
-                        onChange={e =>
-                          handleUpdateProjectStatus(
-                            selectedCustomer.id,
-                            project.id,
-                            e.target.value as ProjectStatus,
-                            project.name
-                          )
-                        }
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border cursor-pointer focus:outline-none transition-colors ${
-                          project.status === "active"
-                            ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]"
-                            : project.status === "completed"
-                              ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
-                              : project.status === "cancelled"
-                                ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]"
-                                : "bg-[#fefce8] text-[#854d0e] border-[#fef08a]"
-                        }`}
-                        title="Click to switch project status"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleDeleteProject(selectedCustomer.id, project.id, project.name)
-                        }
-                        title="Delete project"
-                        className="p-1.5 rounded-lg bg-white border border-[#fecaca] hover:bg-[#fee2e2] text-[#dc2626] transition-colors cursor-pointer ml-1"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-[#8c827a] py-3 italic bg-[#faf8f5] rounded-xl text-center border border-dashed border-[#ded5c8]">
+                  No projects recorded yet.
+                </div>
+              )}
             </div>
           </aside>
         </div>
@@ -1073,13 +1116,13 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0e8dc]">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Project / Event Scope
+                    Project Scope (Optional)
                   </label>
                   <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                     <input
                       value={formData.projectName}
                       onChange={e => setFormData({ ...formData, projectName: e.target.value })}
-                      placeholder="e.g. Lake Como 3-Day Wedding Gala"
+                      placeholder="e.g. Lake Como Wedding Gala (Optional)"
                       className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
                     />
                   </div>
@@ -1108,17 +1151,18 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Contract Value ($)
+                    Contract Value (₦)
                   </label>
                   <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                     <input
                       type="number"
                       step="1000"
                       min="0"
-                      value={formData.amount}
+                      value={formData.amount || ""}
                       onChange={e =>
                         setFormData({ ...formData, amount: Number(e.target.value) || 0 })
                       }
+                      placeholder="0"
                       className="w-full text-xs text-[#191c1d] font-mono focus:outline-none"
                     />
                   </div>
