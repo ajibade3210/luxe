@@ -101,19 +101,20 @@ export function SignupPage() {
             </div>
           )}
 
-          {/* Form Title */}
-          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight">
+          {/* Form Title & Subtitle */}
+          <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight mb-3">
             {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mt-2 mb-8">
+          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-8 block">
             Reserve your bespoke public profile URL and unlock your studio director dashboard with
             Google.
           </p>
 
-          <div className="space-y-4 mb-8">
+          {/* Form Input Fields with Clean Generous Gaps */}
+          <div className="space-y-6 mb-8 pt-1">
             {/* Studio Handle / Slug */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-2.5">
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60]">
                   Studio Handle / Public URL
                 </label>
@@ -129,8 +130,8 @@ export function SignupPage() {
                   )}
                 </span>
               </div>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+                <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1 font-medium">
                   shopwus.com/
                 </span>
                 <input
@@ -145,7 +146,7 @@ export function SignupPage() {
 
             {/* Studio Name */}
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#5c5f60] mb-2.5">
                 Studio / Brand Name
               </label>
               <input
@@ -153,41 +154,32 @@ export function SignupPage() {
                 value={studioName}
                 onChange={e => setStudioName(e.target.value)}
                 placeholder="e.g. Élan Events Atelier"
-                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
+                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:bg-white focus:outline-none focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] transition-all"
               />
             </div>
           </div>
 
           {/* Primary Google Signup Button */}
-          <button
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleGoogleSignup}
-            className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin text-[#0058be]" />
-                <span>Opening Atelier with Google…</span>
-              </>
-            ) : (
-              <>
-                <GoogleIcon className="w-4 h-4" />
-                <span>Continue with Google</span>
-              </>
-            )}
-          </button>
-
-          {/* Switch to Login */}
-          <p className="text-xs text-[#78716c] text-center mt-6">
-            Already have an atelier?{" "}
-            <a
-              href={claimSlug ? `/login?claim=${encodeURIComponent(claimSlug)}` : "/login"}
-              className="text-[#191c1d] font-semibold hover:underline"
+          <div className="pt-2">
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={handleGoogleSignup}
+              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
             >
-              Sign In →
-            </a>
-          </p>
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin text-[#0058be]" />
+                  <span>Opening Atelier with Google…</span>
+                </>
+              ) : (
+                <>
+                  <GoogleIcon className="w-4 h-4" />
+                  <span>Continue with Google</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Privacy Note */}
           <div className="flex items-center gap-2 mt-10 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">

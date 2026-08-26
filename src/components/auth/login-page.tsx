@@ -55,9 +55,6 @@ export function LoginPage() {
           <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold mb-3 tracking-tight">
             Return to your studio.
           </h1>
-          <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed mb-8 max-w-sm mx-auto">
-            Sign in to curate inquiries, review private client briefs, and publish atelier updates.
-          </p>
 
           {/* Action Area with Generous Spacing */}
           <div className="space-y-4 pt-1">
@@ -79,17 +76,6 @@ export function LoginPage() {
                 </>
               )}
             </button>
-
-            {/* Switch to Signup */}
-            <p className="text-xs text-[#78716c] pt-2">
-              Don&apos;t have an atelier yet?{" "}
-              <a
-                href={claimParam ? `/signup?claim=${encodeURIComponent(claimParam)}` : "/signup"}
-                className="text-[#191c1d] font-semibold hover:underline"
-              >
-                Open Studio →
-              </a>
-            </p>
           </div>
 
           {/* Privacy & Security Note */}
