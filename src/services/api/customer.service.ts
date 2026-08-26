@@ -1,4 +1,5 @@
 import { activities, customers as initialCustomers } from "@/lib/mock-data";
+import { AddProjectInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
 import type { Customer, Project, ProjectStatus } from "@/lib/types";
 
 let currentCustomers: Customer[] = [...initialCustomers];
@@ -51,6 +52,7 @@ export async function addProjectToCustomer(
   customerId: string,
   input: { name: string; service: string; amount: number; status?: ProjectStatus }
 ): Promise<Customer> {
+  const validatedInput = AddProjectInputSchema.parse(input);
   await delay(200);
   const custIndex = currentCustomers.findIndex(c => c.id === customerId);
   if (custIndex === -1) {
@@ -61,10 +63,10 @@ export async function addProjectToCustomer(
   const newProject: Project = {
     id: `p-${Date.now()}`,
     customerId,
-    name: input.name,
-    service: input.service,
-    amount: input.amount,
-    status: input.status || "pending",
+    name: validatedInput.name,
+    service: validatedInput.service,
+    amount: validatedInput.amount,
+    status: validatedInput.status || "pending",
     createdAt: new Date().toISOString(),
   };
 
@@ -194,31 +196,32 @@ export interface NewCustomerInput {
  * `const res = await fetch('/api/customers', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
 export async function createCustomer(input: NewCustomerInput): Promise<Customer> {
+  const validatedInput = NewCustomerInputSchema.parse(input);
   await delay(250);
 
   const newId = `c${Date.now()}`;
   const projects: Project[] = [];
-  if (input.projectName?.trim()) {
+  if (validatedInput.projectName?.trim()) {
     projects.push({
       id: `p-${Date.now()}`,
       customerId: newId,
-      name: input.projectName.trim(),
-      service: input.service || "Bespoke Styling",
-      amount: input.amount || 0,
-      status: input.status || "active",
+      name: validatedInput.projectName.trim(),
+      service: validatedInput.service || "Bespoke Styling",
+      amount: validatedInput.amount || 0,
+      status: validatedInput.status || "active",
       createdAt: new Date().toISOString(),
     });
   }
 
   const newCustomer: Customer = {
     id: newId,
-    name: input.name,
-    email: input.email,
-    phone: input.phone || "",
-    company: input.company || "",
+    name: validatedInput.name,
+    email: validatedInput.email,
+    phone: validatedInput.phone || "",
+    company: validatedInput.company || "",
     totalRevenue: projects.reduce((acc, p) => acc + (p.amount || 0), 0),
     projects,
-    isActive: input.isActive ?? true,
+    isActive: validatedInput.isActive ?? true,
     createdAt: new Date().toISOString(),
   };
 

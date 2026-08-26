@@ -1,5 +1,6 @@
 import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { leads as defaultLeads } from "@/lib/mock-data";
+import { CreateLeadInputSchema } from "@/lib/schemas";
 import type { Customer, Lead, LeadStatus } from "@/lib/types";
 import { createCustomer } from "./customer.service";
 
@@ -39,11 +40,12 @@ export function savePersistedLeads(data: Lead[]): void {
  * Swappable with: `await fetch('/api/v1/leads', { method: 'POST', body: JSON.stringify(input) })`
  */
 export async function createLead(input: Omit<Lead, "id" | "createdAt" | "status">): Promise<Lead> {
+  const validatedInput = CreateLeadInputSchema.parse(input);
   await delay(300);
   const currentLeads = loadPersistedLeads();
   const newLead: Lead = {
     id: `l-${Date.now()}`,
-    ...input,
+    ...validatedInput,
     status: "new",
     createdAt: new Date().toISOString(),
   };

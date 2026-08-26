@@ -4,6 +4,7 @@
  * Every action includes a 1-line swap for real REST/GraphQL backend APIs.
  */
 
+import { InvoiceInputSchema } from "@/lib/schemas";
 import type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms } from "@/lib/types";
 import { CURRENCY_SYMBOLS } from "@/utils";
 
@@ -153,14 +154,19 @@ export async function getInvoicesByCustomerId(customerId: string): Promise<Invoi
  * `const res = await fetch('/api/invoices/draft', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
 export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
+  const validatedInput = InvoiceInputSchema.parse(input);
   await delay(200);
 
-  let existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+  let existingIdx = validatedInput.id
+    ? persistedInvoices.findIndex(i => i.id === validatedInput.id)
+    : -1;
 
   // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
-  if (existingIdx < 0 && input.customerId?.startsWith("l")) {
+  if (existingIdx < 0 && validatedInput.customerId?.startsWith("l")) {
     existingIdx = persistedInvoices.findIndex(
-      i => i.customerId === input.customerId || i.customerEmail === input.customerEmail
+      i =>
+        i.customerId === validatedInput.customerId ||
+        i.customerEmail === validatedInput.customerEmail
     );
   }
 
@@ -170,10 +176,10 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
     const existing = persistedInvoices[existingIdx];
     const updated: Invoice = {
       ...existing,
-      ...input,
+      ...validatedInput,
       id: existing.id,
       invoiceNumber: existing.invoiceNumber,
-      currency: input.currency || existing.currency || "NGN",
+      currency: validatedInput.currency || existing.currency || "NGN",
       status: "draft",
       updatedAt: now,
     };
@@ -184,27 +190,27 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
 
   const newId = `inv-${Date.now()}`;
   const newInvoiceNumber =
-    input.invoiceNumber ||
+    validatedInput.invoiceNumber ||
     `INV-${new Date().getFullYear()}-${String(persistedInvoices.length + 1).padStart(3, "0")}`;
 
   const newInvoice: Invoice = {
     id: newId,
     invoiceNumber: newInvoiceNumber,
-    customerId: input.customerId,
-    customerName: input.customerName,
-    customerEmail: input.customerEmail,
-    billingAddress: input.billingAddress,
-    issueDate: input.issueDate,
-    dueDate: input.dueDate,
-    paymentTerms: input.paymentTerms,
-    currency: input.currency || "NGN",
-    items: input.items,
-    subtotal: input.subtotal,
-    discount: input.discount,
-    taxRate: input.taxRate,
-    taxAmount: input.taxAmount,
-    total: input.total,
-    notes: input.notes,
+    customerId: validatedInput.customerId,
+    customerName: validatedInput.customerName,
+    customerEmail: validatedInput.customerEmail,
+    billingAddress: validatedInput.billingAddress,
+    issueDate: validatedInput.issueDate,
+    dueDate: validatedInput.dueDate,
+    paymentTerms: validatedInput.paymentTerms,
+    currency: validatedInput.currency || "NGN",
+    items: validatedInput.items,
+    subtotal: validatedInput.subtotal,
+    discount: validatedInput.discount,
+    taxRate: validatedInput.taxRate,
+    taxAmount: validatedInput.taxAmount,
+    total: validatedInput.total,
+    notes: validatedInput.notes,
     status: "draft",
     createdAt: now,
     updatedAt: now,
@@ -221,14 +227,19 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
  * `const res = await fetch('/api/invoices/send', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
 export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
+  const validatedInput = InvoiceInputSchema.parse(input);
   await delay(300);
 
-  let existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+  let existingIdx = validatedInput.id
+    ? persistedInvoices.findIndex(i => i.id === validatedInput.id)
+    : -1;
 
   // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
-  if (existingIdx < 0 && input.customerId?.startsWith("l")) {
+  if (existingIdx < 0 && validatedInput.customerId?.startsWith("l")) {
     existingIdx = persistedInvoices.findIndex(
-      i => i.customerId === input.customerId || i.customerEmail === input.customerEmail
+      i =>
+        i.customerId === validatedInput.customerId ||
+        i.customerEmail === validatedInput.customerEmail
     );
   }
 
@@ -238,10 +249,10 @@ export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
     const existing = persistedInvoices[existingIdx];
     const updated: Invoice = {
       ...existing,
-      ...input,
+      ...validatedInput,
       id: existing.id,
       invoiceNumber: existing.invoiceNumber,
-      currency: input.currency || existing.currency || "NGN",
+      currency: validatedInput.currency || existing.currency || "NGN",
       status: "sent",
       sentAt: now,
       updatedAt: now,

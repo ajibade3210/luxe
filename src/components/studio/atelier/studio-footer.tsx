@@ -1,4 +1,7 @@
+import Link from "next/link";
 import type { BusinessProfile } from "@/lib/types";
+
+const HOME_ROUTE = "/";
 
 interface StudioFooterProps {
   profile: BusinessProfile;
@@ -69,7 +72,12 @@ export function StudioFooter({
           <div>
             © {new Date().getFullYear()} {profile.businessName}. All rights reserved.
           </div>
-          <div className="text-[10px] text-[#a89e92]">Powered by Shopwus Platform</div>
+          <Link
+            href={HOME_ROUTE}
+            className="text-[10px] text-[#a89e92] hover:text-[#78716c] transition-colors underline-offset-2 hover:underline"
+          >
+            Powered by Shopwus Platform
+          </Link>
         </div>
       </div>
     </footer>
