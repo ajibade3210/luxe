@@ -1,77 +1,58 @@
 "use client";
 
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Loader2,
-  Mail,
-  MessageSquare,
-  MoreHorizontal,
-  Plus,
-  RefreshCw,
-  Search,
-  Trash2,
-  Upload,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import {
-  addProjectToCustomer,
-  createCustomer,
-  deleteCustomerProject,
-  deleteInvoice,
-  exportCustomersCSV,
-  getCustomers,
-  getInvoices,
-  type Invoice,
-  type NewCustomerInput,
-  resendInvoice,
-  toggleCustomerActiveStatus,
-  updateCustomerProjectStatus,
-} from "@/lib/api";
-import type { Customer, ProjectStatus } from "@/lib/types";
-import { formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
+import { Download, MoreHorizontal, Plus, Upload } from "lucide-react";
+import { useState } from "react";
+import { useCustomers } from "@/hooks/use-customers";
+import type { Invoice } from "@/lib/api";
+import type { Customer } from "@/lib/types";
+import { formatMoney, Metric, PageTitle, useAdminToast } from "./admin-layout";
+import { CustomerAddModal } from "./customers/customer-add-modal";
+import { CustomerDetailDrawer } from "./customers/customer-detail-drawer";
 import { CustomerImportModal } from "./customers/customer-import-modal";
+import { CustomerMessageModal } from "./customers/customer-message-modal";
+import { CustomerProjectModal } from "./customers/customer-project-modal";
+import { CustomerResendInvoiceModal } from "./customers/customer-resend-invoice-modal";
+import { CustomerTable } from "./customers/customer-table";
 import { InvoiceModal } from "./invoices/invoice-modal";
 
-const AVAILABLE_SERVICES = [
-  "Full Wedding Production & Styling",
-  "Corporate Galas & Summits",
-  "Private Dinners & Floral Scenography",
-  "VIP Concierge Production",
-  "Bespoke Atelier Styling",
-];
-
 export function CustomersPage({ onToast }: { onToast?: (message: string) => void }) {
-  const [items, setItems] = useState<Customer[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [isExporting, setIsExporting] = useState(false);
+  const { showToast } = useAdminToast();
+  const notify = onToast || showToast;
+
+  const {
+    items,
+    selectedCustomer,
+    customerInvoices,
+    setSelectedCustomerId,
+    searchQuery,
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    startIndex,
+    paginatedItems,
+    totalRevenue,
+    activeProjectsCount,
+    isExporting,
+    isSubmitting,
+    handleSearch,
+    reloadCustomers,
+    handleExport,
+    handleCreateCustomer,
+    handleAddProject,
+    handleDeleteProject,
+    handleUpdateProjectStatus,
+    handleToggleCustomerStatus,
+    handleResendInvoice,
+    handleDeleteDraftInvoice,
+  } = useCustomers(notify);
+
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Add Service Modal State
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [isAddingProject, setIsAddingProject] = useState(false);
-  const [projectFormData, setProjectFormData] = useState({
-    name: "",
-    categories: [AVAILABLE_SERVICES[0]],
-    amount: 35000,
-    status: "pending" as ProjectStatus,
-  });
-
-  // Send Message Modal State
   const [showSendMessageModal, setShowSendMessageModal] = useState(false);
-  const [messageText, setMessageText] = useState("");
-
-  // Resend Invoice Confirmation State
   const [confirmResendInvoice, setConfirmResendInvoice] = useState<Invoice | null>(null);
 
   // Invoice Modal State
@@ -79,268 +60,11 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
   const [invoiceModalCustomer, setInvoiceModalCustomer] = useState<Customer | undefined>(undefined);
   const [invoiceModalInvoice, setInvoiceModalInvoice] = useState<Invoice | undefined>(undefined);
 
-  // Form State for Add Customer Modal
-  const [formData, setFormData] = useState<NewCustomerInput>({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    projectName: "",
-    service: AVAILABLE_SERVICES[0],
-    amount: 0,
-    status: "pending",
-  });
-
-  useEffect(() => {
-    getCustomers(searchQuery).then(setItems);
-    getInvoices().then(setInvoices);
-
-    const handleCustomersUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Customer[]>;
-      if (customEvent.detail) {
-        setItems(customEvent.detail);
-      }
-    };
-
-    const handleInvoicesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoices(customEvent.detail);
-      }
-    };
-
-    window.addEventListener("luxe_customers_updated", handleCustomersUpdate);
-    window.addEventListener("luxe_invoices_updated", handleInvoicesUpdate);
-
-    return () => {
-      window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
-      window.removeEventListener("luxe_invoices_updated", handleInvoicesUpdate);
-    };
-  }, [searchQuery]);
-
-  const handleSearch = (val: string) => {
-    setSearchQuery(val);
-    setCurrentPage(1);
-    getCustomers(val).then(setItems);
-  };
-
-  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-
-  const selectedCustomer = items.find(c => c.id === selected);
-  const customerInvoices = selectedCustomer
-    ? invoices.filter(
-        inv =>
-          inv.customerId === selectedCustomer.id || inv.customerEmail === selectedCustomer.email
-      )
-    : [];
-
-  const handleExport = async () => {
-    setIsExporting(true);
-    try {
-      const res = await exportCustomersCSV();
-      if (onToast) {
-        onToast(`Customer list exported successfully (${res.count} records).`);
-      }
-    } catch {
-      if (onToast) {
-        onToast("Failed to export customer list.");
-      }
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const handleCreateCustomer = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email) {
-      if (onToast) onToast("Please enter both customer name and email.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const newCustomer = await createCustomer(formData);
-      setItems(prev => [newCustomer, ...prev]);
-      setShowAddModal(false);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        projectName: "",
-        service: AVAILABLE_SERVICES[0],
-        amount: 0,
-        status: "pending",
-      });
-      if (onToast) {
-        onToast(`Customer "${newCustomer.name}" added successfully.`);
-      }
-    } catch {
-      if (onToast) {
-        onToast("Failed to create customer.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleToggleCategory = (cat: string) => {
-    setProjectFormData(prev => {
-      const exists = prev.categories.includes(cat);
-      if (exists) {
-        if (prev.categories.length === 1) return prev;
-        return { ...prev, categories: prev.categories.filter(c => c !== cat) };
-      }
-      return { ...prev, categories: [...prev.categories, cat] };
-    });
-  };
-
-  const handleAddProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCustomer) return;
-    if (!projectFormData.name) {
-      if (onToast) onToast("Please enter a service name.");
-      return;
-    }
-
-    setIsAddingProject(true);
-    try {
-      const updatedCust = await addProjectToCustomer(selectedCustomer.id, {
-        name: projectFormData.name,
-        service: projectFormData.categories.join(" · ") || AVAILABLE_SERVICES[0],
-        amount: projectFormData.amount,
-        status: projectFormData.status,
-      });
-      setItems(prev => prev.map(c => (c.id === updatedCust.id ? updatedCust : c)));
-      setShowAddProjectModal(false);
-      setProjectFormData({
-        name: "",
-        categories: [AVAILABLE_SERVICES[0]],
-        amount: 35000,
-        status: "pending",
-      });
-      if (onToast) {
-        onToast(`Service "${projectFormData.name}" added to ${selectedCustomer.name}.`);
-      }
-    } catch {
-      if (onToast) onToast("Failed to add service.");
-    } finally {
-      setIsAddingProject(false);
-    }
-  };
-
   const handleOpenInvoiceModalForCustomer = (customer: Customer, existing?: Invoice) => {
     setInvoiceModalCustomer(customer);
     setInvoiceModalInvoice(existing);
     setShowInvoiceModal(true);
   };
-
-  const handleResendInvoiceDirectly = async (invoiceId: string) => {
-    try {
-      const res = await resendInvoice(invoiceId);
-      if (onToast) {
-        onToast(`Invoice ${res.invoiceNumber} re-sent to ${res.customerEmail}.`);
-      }
-    } catch {
-      if (onToast) {
-        onToast("Failed to resend invoice.");
-      }
-    }
-  };
-
-  const handleDeleteDraftDirectly = async (invoiceId: string) => {
-    try {
-      await deleteInvoice(invoiceId);
-      if (onToast) {
-        onToast("Draft invoice deleted successfully.");
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to delete draft.";
-      if (onToast) onToast(msg);
-    }
-  };
-
-  // Delete service scope from customer
-  const handleDeleteProject = async (
-    customerId: string,
-    projectId: string,
-    projectName: string
-  ) => {
-    try {
-      const updated = await deleteCustomerProject(customerId, projectId);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      if (onToast) onToast(`Service "${projectName}" removed.`);
-    } catch {
-      if (onToast) onToast("Failed to remove service.");
-    }
-  };
-
-  // Update service status
-  const handleUpdateProjectStatus = async (
-    customerId: string,
-    projectId: string,
-    status: ProjectStatus,
-    projectName: string
-  ) => {
-    try {
-      const updated = await updateCustomerProjectStatus(customerId, projectId, status);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      if (onToast) onToast(`Service "${projectName}" marked as ${formatStatusLabel(status)}.`);
-    } catch {
-      if (onToast) onToast("Failed to update service status.");
-    }
-  };
-
-  // Toggle Customer Active/Inactive status
-  const handleToggleCustomerStatus = async (customerId: string, isActive: boolean) => {
-    try {
-      const updated = await toggleCustomerActiveStatus(customerId, isActive);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      if (onToast) {
-        onToast(`Customer "${updated.name}" is now ${isActive ? "Active" : "Inactive"}.`);
-      }
-    } catch {
-      if (onToast) onToast("Failed to update customer status.");
-    }
-  };
-
-  // Open Message Modal with custom greeting
-  const handleOpenMessageModal = (customer: Customer) => {
-    setMessageText(
-      `Dear ${customer.name},\n\nThank you for choosing Élan Atelier. We would love to follow up on your project details and ensure everything is progressing flawlessly.\n\nWarm regards,\nÉlan Atelier Team`
-    );
-    setShowSendMessageModal(true);
-  };
-
-  // Send WhatsApp message
-  const handleSendWhatsAppMessage = (phone: string, text: string) => {
-    const cleanPhone = phone.replace(/[^0-9]/g, "");
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
-    if (typeof window !== "undefined") {
-      window.open(waUrl, "_blank");
-    }
-    setShowSendMessageModal(false);
-    if (onToast) onToast("WhatsApp consultation message prepared and opened.");
-  };
-
-  // Send Email message
-  const handleSendEmailMessage = (email: string, name: string, text: string) => {
-    const subject = encodeURIComponent(`Élan Atelier · Update for ${name}`);
-    const body = encodeURIComponent(text);
-    if (typeof window !== "undefined") {
-      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-    }
-    setShowSendMessageModal(false);
-    if (onToast) onToast(`Email dispatched to ${email}.`);
-  };
-
-  const totalRevenue = items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
-  const activeProjectsCount = items.reduce(
-    (acc, c) => acc + c.projects.filter(p => p.status === "active").length,
-    0
-  );
 
   return (
     <section className="content">
@@ -416,1040 +140,79 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />
       </div>
 
-      <div className="table-card">
-        <div className="table-head">
-          <h2>All customers</h2>
-          <div className="table-search-box">
-            <Search size={13} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => handleSearch(e.target.value)}
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Service</th>
-                <th>Status</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedItems.map(c => {
-                const hasProjects = c.projects && c.projects.length > 0;
-                const p = hasProjects ? c.projects[0] : null;
+      <CustomerTable
+        items={items}
+        paginatedItems={paginatedItems}
+        searchQuery={searchQuery}
+        onSearch={handleSearch}
+        onSelectCustomer={setSelectedCustomerId}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        startIndex={startIndex}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
-                return (
-                  <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
-                    <td>
-                      <b>{c.name}</b>
-                      <small>
-                        {c.email}
-                        {c.phone ? ` · ${c.phone}` : ""}
-                      </small>
-                    </td>
-                    <td>
-                      {p ? (
-                        <div className="flex items-center">
-                          <b className="truncate max-w-[220px]">{p.name}</b>
-                          {c.projects.length > 1 && (
-                            <span
-                              className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
-                              title={`${c.projects.length} connected services / scopes`}
-                            >
-                              +{c.projects.length - 1}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex items-center min-h-[38px]">
-                          <span className="text-sm font-semibold text-[#9ca3af] leading-none select-none">
-                            —
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      <div className="flex items-center min-h-[38px]">
-                        <span
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            c.isActive
-                              ? "bg-[#10b981] shadow-xs shadow-emerald-500/20"
-                              : "bg-[#d1d5db]"
-                          }`}
-                          title={c.isActive ? "Active Customer" : "Inactive Customer"}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      <ChevronRight size={16} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      <CustomerDetailDrawer
+        customer={selectedCustomer}
+        customerInvoices={customerInvoices}
+        onClose={() => setSelectedCustomerId(null)}
+        onToggleStatus={handleToggleCustomerStatus}
+        onOpenMessageModal={() => setShowSendMessageModal(true)}
+        onOpenInvoiceModal={handleOpenInvoiceModalForCustomer}
+        onOpenAddProjectModal={() => setShowAddProjectModal(true)}
+        onConfirmResendInvoice={setConfirmResendInvoice}
+        onDeleteDraftInvoice={handleDeleteDraftInvoice}
+        onDeleteProject={handleDeleteProject}
+        onUpdateProjectStatus={handleUpdateProjectStatus}
+      />
 
-        {/* Pagination Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-[#f0e8dc] bg-[#fdfbf7] text-xs text-[#5c5f60] rounded-b-3xl">
-          <div className="flex items-center gap-2">
-            <span>
-              Showing <b className="text-[#191c1d]">{items.length === 0 ? 0 : startIndex + 1}</b>–
-              <b className="text-[#191c1d]">{Math.min(startIndex + pageSize, items.length)}</b> of{" "}
-              <b className="text-[#191c1d]">{items.length}</b> records
-            </span>
-            <div className="hidden sm:flex items-center gap-1.5 ml-3 border-l border-[#ded7cb] pl-3">
-              <span className="text-[11px] text-[#8c827a]">Per page:</span>
-              <select
-                value={pageSize}
-                onChange={e => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-                className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-xs text-[#191c1d] focus:outline-none"
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-              </select>
-            </div>
-          </div>
+      <CustomerAddModal
+        isOpen={showAddModal}
+        isSubmitting={isSubmitting}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleCreateCustomer}
+      />
 
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              disabled={currentPage <= 1}
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              <ChevronLeft size={13} />
-              <span>Previous</span>
-            </button>
+      <CustomerProjectModal
+        isOpen={showAddProjectModal}
+        customer={selectedCustomer}
+        onClose={() => setShowAddProjectModal(false)}
+        onSubmit={handleAddProject}
+      />
 
-            <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    page === currentPage
-                      ? "bg-[#191c1d] text-white shadow-2xs"
-                      : "bg-white border border-[#ded7cb] text-[#5c5f60] hover:bg-[#faf8f5] hover:text-[#191c1d]"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
+      <CustomerMessageModal
+        isOpen={showSendMessageModal}
+        customer={selectedCustomer}
+        onClose={() => setShowSendMessageModal(false)}
+        onToast={notify}
+      />
 
-            <button
-              type="button"
-              disabled={currentPage >= totalPages}
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              <span>Next</span>
-              <ChevronRight size={13} />
-            </button>
-          </div>
-        </div>
-      </div>
+      <CustomerResendInvoiceModal
+        invoice={confirmResendInvoice}
+        onClose={() => setConfirmResendInvoice(null)}
+        onConfirm={handleResendInvoice}
+      />
 
-      {/* Customer Details Drawer */}
-      {selectedCustomer && (
-        <div className="drawer-backdrop" onClick={() => setSelected(null)}>
-          <aside className="drawer" onClick={e => e.stopPropagation()}>
-            <button
-              type="button"
-              className="drawer-close"
-              onClick={() => setSelected(null)}
-              aria-label="Close customer details"
-            >
-              <X />
-            </button>
-            <div className="flex items-center justify-between">
-              <span className="eyebrow">Customer details</span>
-              {/* Simplistic Active / Inactive status toggle */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleToggleCustomerStatus(selectedCustomer.id, !selectedCustomer.isActive)
-                }
-                title={`Click to mark as ${selectedCustomer.isActive ? "Inactive" : "Active"}`}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  selectedCustomer.isActive
-                    ? "bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0] hover:bg-[#d1fae5]"
-                    : "bg-[#f3f4f6] text-[#6b7280] border border-[#e5e7eb] hover:bg-[#e5e7eb]"
-                }`}
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    selectedCustomer.isActive ? "bg-[#10b981]" : "bg-[#9ca3af]"
-                  }`}
-                />
-                <span>{selectedCustomer.isActive ? "Active" : "Inactive"}</span>
-              </button>
-            </div>
-            <h2>{selectedCustomer.name}</h2>
-            <p className="drawer-email">
-              {selectedCustomer.email}
-              {selectedCustomer.phone ? ` · ${selectedCustomer.phone}` : ""}
-            </p>
-            {selectedCustomer.company && (
-              <p className="drawer-company">{selectedCustomer.company}</p>
-            )}
+      <InvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => {
+          setShowInvoiceModal(false);
+          setInvoiceModalCustomer(undefined);
+          setInvoiceModalInvoice(undefined);
+        }}
+        onToast={notify}
+        initialCustomer={invoiceModalCustomer}
+        existingInvoice={invoiceModalInvoice}
+        allCustomers={items}
+      />
 
-            {/* Top Send Message Action */}
-            <div className="pt-3 pb-1">
-              <button
-                type="button"
-                disabled={!selectedCustomer.isActive}
-                className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold w-full transition-all shadow-xs ${
-                  selectedCustomer.isActive
-                    ? "bg-[#111827] hover:bg-black text-white cursor-pointer"
-                    : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
-                }`}
-                onClick={() => {
-                  if (!selectedCustomer.isActive) return;
-                  handleOpenMessageModal(selectedCustomer);
-                }}
-                title={selectedCustomer.isActive ? "Send Message" : "Customer is inactive"}
-              >
-                <MessageSquare size={14} />
-                <span>Send Message</span>
-              </button>
-            </div>
-
-            {/* Client notes (Above Invoices & Projects) */}
-            {selectedCustomer.notes && (
-              <div className="drawer-block">
-                <span className="eyebrow">Client notes</span>
-                <p>{selectedCustomer.notes}</p>
-              </div>
-            )}
-
-            {/* Invoicing Section in Drawer */}
-            <div className="drawer-block">
-              <div className="flex items-center justify-between pb-1">
-                <span className="eyebrow">Invoices & Billing</span>
-                <button
-                  type="button"
-                  disabled={!selectedCustomer.isActive}
-                  onClick={() => {
-                    if (!selectedCustomer.isActive) return;
-                    handleOpenInvoiceModalForCustomer(selectedCustomer);
-                  }}
-                  className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-colors ${
-                    selectedCustomer.isActive
-                      ? "text-[#855e2e] hover:text-[#5c3e1a] bg-[#faf7f2] hover:bg-[#f5eee3] border-[#ded5c8] cursor-pointer"
-                      : "text-[#9ca3af] bg-[#f3f4f6] border-[#e5e7eb] cursor-not-allowed opacity-60"
-                  }`}
-                  title={selectedCustomer.isActive ? "New Invoice" : "Customer is inactive"}
-                >
-                  <Plus size={11} />
-                  <span>New Invoice</span>
-                </button>
-              </div>
-
-              {customerInvoices.length > 0 ? (
-                <div className="space-y-2 pt-2">
-                  {customerInvoices.map(inv => (
-                    <div
-                      key={inv.id}
-                      className="bg-[#faf8f5] border border-[#eee7dc] rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <b className="text-[#191c1d]">{inv.invoiceNumber}</b>
-                          <span
-                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
-                              inv.status === "paid"
-                                ? "bg-[#ecfdf5] text-[#065f46]"
-                                : inv.status === "sent"
-                                  ? "bg-[#eff6ff] text-[#1e40af]"
-                                  : "bg-[#fefce8] text-[#854d0e]"
-                            }`}
-                          >
-                            {inv.status}
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-[#6b7280] block mt-0.5">
-                          {formatMoney(inv.total)} · Due {inv.dueDate}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        {/* Edit / View in Modal */}
-                        <button
-                          type="button"
-                          onClick={() => handleOpenInvoiceModalForCustomer(selectedCustomer, inv)}
-                          className="px-2.5 py-1 rounded-lg bg-white border border-[#d1d5db] hover:bg-[#f3f4f6] text-[11px] font-semibold text-[#374151] cursor-pointer"
-                        >
-                          {inv.status === "draft" ? "Edit" : "View"}
-                        </button>
-
-                        {/* Resend button if sent (triggers confirmation prompt) */}
-                        {inv.status === "sent" && (
-                          <button
-                            type="button"
-                            disabled={!selectedCustomer.isActive}
-                            onClick={() => {
-                              if (!selectedCustomer.isActive) return;
-                              setConfirmResendInvoice(inv);
-                            }}
-                            title={
-                              selectedCustomer.isActive
-                                ? "Resend invoice to customer"
-                                : "Customer is inactive"
-                            }
-                            className={`p-1.5 rounded-lg border transition-colors ${
-                              selectedCustomer.isActive
-                                ? "bg-white border-[#d1d5db] hover:bg-[#eff6ff] text-[#1e40af] hover:border-[#bfdbfe] cursor-pointer"
-                                : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
-                            }`}
-                          >
-                            <RefreshCw size={12} />
-                          </button>
-                        )}
-
-                        {/* Delete button: ONLY IF DRAFT */}
-                        {inv.status === "draft" && (
-                          <button
-                            type="button"
-                            disabled={!selectedCustomer.isActive}
-                            onClick={() => {
-                              if (!selectedCustomer.isActive) return;
-                              handleDeleteDraftDirectly(inv.id);
-                            }}
-                            title={
-                              selectedCustomer.isActive
-                                ? "Delete unsent draft"
-                                : "Customer is inactive"
-                            }
-                            className={`p-1.5 rounded-lg border ${
-                              selectedCustomer.isActive
-                                ? "bg-white border-[#fecaca] hover:bg-[#fee2e2] text-[#dc2626] cursor-pointer"
-                                : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
-                            }`}
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-xs text-[#8c827a] py-2 italic">No invoices generated yet.</div>
-              )}
-            </div>
-
-            {/* Projects list */}
-            <div className="drawer-block">
-              <div className="flex items-center justify-between pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="eyebrow">Services</span>
-                  <span className="text-[10px] font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded-full">
-                    {selectedCustomer.projects.length}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  disabled={!selectedCustomer.isActive}
-                  onClick={() => {
-                    if (!selectedCustomer.isActive) return;
-                    setShowAddProjectModal(true);
-                  }}
-                  className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all ${
-                    selectedCustomer.isActive
-                      ? "text-[#855e2e] hover:text-[#5c3e1a] bg-[#faf7f2] hover:bg-[#f5eee3] border-[#ded5c8] hover:shadow-2xs cursor-pointer"
-                      : "text-[#9ca3af] bg-[#f3f4f6] border-[#e5e7eb] cursor-not-allowed opacity-60"
-                  }`}
-                  title={selectedCustomer.isActive ? "Add Service" : "Customer is inactive"}
-                >
-                  <Plus size={11} />
-                  <span>Add Service</span>
-                </button>
-              </div>
-
-              {selectedCustomer.projects.length > 0 ? (
-                <div className="space-y-2.5 pt-1">
-                  {selectedCustomer.projects.map(project => (
-                    <div
-                      key={project.id}
-                      className="group bg-[#faf8f5] hover:bg-[#f8f5ee] border border-[#eee7dc] hover:border-[#ded3c2] rounded-2xl p-3.5 transition-all space-y-2.5"
-                    >
-                      {/* Top: Service Name, Subtitle & Subtle Delete */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-xs font-bold text-[#191c1d] tracking-tight leading-snug truncate">
-                            {project.name}
-                          </h4>
-                          <span className="text-[11px] text-[#78716c] font-normal block mt-0.5 truncate">
-                            {project.service}
-                          </span>
-                        </div>
-
-                        <button
-                          type="button"
-                          disabled={!selectedCustomer.isActive}
-                          onClick={() => {
-                            if (!selectedCustomer.isActive) return;
-                            handleDeleteProject(selectedCustomer.id, project.id, project.name);
-                          }}
-                          title={
-                            selectedCustomer.isActive
-                              ? "Delete service scope"
-                              : "Customer is inactive"
-                          }
-                          className={`p-1.5 rounded-lg transition-all shrink-0 ${
-                            selectedCustomer.isActive
-                              ? "opacity-50 group-hover:opacity-100 text-[#9ca3af] hover:text-[#dc2626] hover:bg-[#fee2e2] cursor-pointer"
-                              : "text-[#d1d5db] cursor-not-allowed opacity-40"
-                          }`}
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-
-                      {/* Bottom Meta: Value & Status Selector */}
-                      <div className="flex items-center justify-between gap-3 pt-2 border-t border-[#f0e8dc]">
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#8e9192]">
-                            Value:
-                          </span>
-                          <span className="font-mono text-xs font-bold text-[#191c1d]">
-                            {formatMoney(project.amount)}
-                          </span>
-                        </div>
-
-                        {/* Interactive Status Selector */}
-                        <div className="relative shrink-0">
-                          <select
-                            disabled={!selectedCustomer.isActive}
-                            value={project.status}
-                            onChange={e => {
-                              if (!selectedCustomer.isActive) return;
-                              handleUpdateProjectStatus(
-                                selectedCustomer.id,
-                                project.id,
-                                e.target.value as ProjectStatus,
-                                project.name
-                              );
-                            }}
-                            className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border transition-all shadow-2xs ${
-                              !selectedCustomer.isActive
-                                ? "bg-[#f3f4f6] text-[#9ca3af] border-[#e5e7eb] cursor-not-allowed opacity-60"
-                                : project.status === "active"
-                                  ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0] hover:bg-[#d1fae5] cursor-pointer"
-                                  : project.status === "completed"
-                                    ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe] hover:bg-[#dbeafe] cursor-pointer"
-                                    : project.status === "cancelled"
-                                      ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca] hover:bg-[#fee2e2] cursor-pointer"
-                                      : "bg-[#fefce8] text-[#854d0e] border-[#fef08a] hover:bg-[#fef9c3] cursor-pointer"
-                            }`}
-                            title={
-                              selectedCustomer.isActive
-                                ? "Click to switch service status"
-                                : "Customer is inactive"
-                            }
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-xs text-[#8c827a] py-3 italic bg-[#faf8f5] rounded-xl text-center border border-dashed border-[#ded5c8]">
-                  No services recorded yet.
-                </div>
-              )}
-            </div>
-          </aside>
-        </div>
-      )}
-
-      {/* Add Service to Customer Modal */}
-      {showAddProjectModal && selectedCustomer && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
-          onClick={() => setShowAddProjectModal(false)}
-        >
-          <div
-            className="bg-white border border-[#eae3d7] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 relative"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-                  Add Service · {selectedCustomer.name}
-                </span>
-                <h3 className="text-xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-                  New Service
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAddProjectModal(false)}
-                className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddProject} className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                  Service Name *
-                </label>
-                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                  <input
-                    required
-                    value={projectFormData.name}
-                    onChange={e => setProjectFormData({ ...projectFormData, name: e.target.value })}
-                    placeholder="e.g. Floral Scenography & Styling"
-                    className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d]">
-                    Category
-                  </label>
-                  <span className="text-[10px] text-[#8e9192] italic">Select one or more</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5 p-2 bg-[#faf8f5] border border-[#ded7cb] rounded-2xl">
-                  {AVAILABLE_SERVICES.map(cat => {
-                    const isSelected = projectFormData.categories.includes(cat);
-                    return (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => handleToggleCategory(cat)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-                          isSelected
-                            ? "bg-[#191c1d] text-white border-[#191c1d] shadow-2xs"
-                            : "bg-white text-[#5c5f60] border-[#ded7cb] hover:border-[#855e2e] hover:text-[#191c1d]"
-                        }`}
-                      >
-                        {isSelected ? "✓ " : "+ "}
-                        {cat}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Budget / Value (₦)
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      type="number"
-                      step="1000"
-                      min="0"
-                      value={projectFormData.amount}
-                      onChange={e =>
-                        setProjectFormData({
-                          ...projectFormData,
-                          amount: Number(e.target.value) || 0,
-                        })
-                      }
-                      className="w-full text-xs text-[#191c1d] font-mono focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Status
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                    <select
-                      value={projectFormData.status}
-                      onChange={e =>
-                        setProjectFormData({
-                          ...projectFormData,
-                          status: e.target.value as ProjectStatus,
-                        })
-                      }
-                      className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="active">Active</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#f0e8dc]">
-                <button
-                  type="button"
-                  onClick={() => setShowAddProjectModal(false)}
-                  className="px-4 py-2.5 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isAddingProject}
-                  className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  {isAddingProject ? (
-                    <>
-                      <Loader2 size={13} className="animate-spin" />
-                      <span>Saving…</span>
-                    </>
-                  ) : (
-                    <>
-                      <Check size={13} />
-                      <span>Add Service</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Send Message Modal */}
-      {showSendMessageModal && selectedCustomer && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
-          onClick={() => setShowSendMessageModal(false)}
-        >
-          <div
-            className="bg-white border border-[#eae3d7] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 relative max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-                  Client Communication
-                </span>
-                <h3 className="text-xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-                  Send Message
-                </h3>
-                <p className="text-xs text-[#5c5f60] mt-0.5">
-                  Recipient: <b className="text-[#191c1d]">{selectedCustomer.name}</b>
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowSendMessageModal(false)}
-                className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Channels Availability Summary */}
-            <div className="flex items-center gap-2 text-xs flex-wrap">
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
-                  selectedCustomer.phone
-                    ? "bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]"
-                    : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb]"
-                }`}
-              >
-                <MessageSquare size={12} />
-                <span>
-                  {selectedCustomer.phone
-                    ? selectedCustomer.phone
-                    : "No Phone (WhatsApp unavailable)"}
-                </span>
-              </span>
-
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
-                  selectedCustomer.email
-                    ? "bg-[#eff6ff] text-[#1e40af] border border-[#bfdbfe]"
-                    : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb]"
-                }`}
-              >
-                <Mail size={12} />
-                <span>
-                  {selectedCustomer.email ? selectedCustomer.email : "No Email (Email unavailable)"}
-                </span>
-              </span>
-            </div>
-
-            {/* Message Body */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Message Content *
-              </label>
-              <textarea
-                rows={5}
-                value={messageText}
-                onChange={e => setMessageText(e.target.value)}
-                placeholder="Type your bespoke message or client update here..."
-                className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-2xl p-4 text-xs text-[#191c1d] focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] focus:bg-white focus:outline-none transition-all"
-              />
-            </div>
-
-            {/* Actions: WhatsApp or Email */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              {/* WhatsApp Button */}
-              <button
-                type="button"
-                disabled={!selectedCustomer.phone?.trim()}
-                onClick={() => handleSendWhatsAppMessage(selectedCustomer.phone || "", messageText)}
-                className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-                  selectedCustomer.phone?.trim()
-                    ? "bg-[#15803d] hover:bg-[#166534] text-white shadow-xs hover:-translate-y-0.5 cursor-pointer"
-                    : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
-                }`}
-              >
-                <MessageSquare size={14} />
-                <span>
-                  {selectedCustomer.phone?.trim() ? "Send via WhatsApp" : "WhatsApp (No phone)"}
-                </span>
-              </button>
-
-              {/* Email Button */}
-              <button
-                type="button"
-                disabled={!selectedCustomer.email?.trim()}
-                onClick={() =>
-                  handleSendEmailMessage(selectedCustomer.email, selectedCustomer.name, messageText)
-                }
-                className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-                  selectedCustomer.email?.trim()
-                    ? "bg-[#111827] hover:bg-black text-white shadow-xs hover:-translate-y-0.5 cursor-pointer"
-                    : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
-                }`}
-              >
-                <Mail size={14} />
-                <span>
-                  {selectedCustomer.email?.trim() ? "Send via Email" : "Email (No email)"}
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add New Customer Modal */}
-      {showAddModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            className="bg-white border border-[#eae3d7] rounded-3xl max-w-xl w-full p-7 sm:p-9 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-                  Client Directory · New Relationship
-                </span>
-                <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-                  Add New Customer
-                </h3>
-                <p className="text-xs text-[#5c5f60] mt-1">
-                  Register a client profile, allocate project scope, and set initial payment status.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateCustomer} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Customer / Client Name *
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      required
-                      value={formData.name}
-                      onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="e.g. Olivia & Liam Sterling"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Email Address *
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      required
-                      type="email"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="client@luxuryholding.com"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Phone / WhatsApp Number
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+234 800 000 0000"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Company / Organization
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      value={formData.company}
-                      onChange={e => setFormData({ ...formData, company: e.target.value })}
-                      placeholder="Sterling Estates Limited"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0e8dc]">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Service Scope (Optional)
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      value={formData.projectName}
-                      onChange={e => setFormData({ ...formData, projectName: e.target.value })}
-                      placeholder="e.g. Floral Styling & Scenography (Optional)"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Service Specialization
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                    <select
-                      value={formData.service}
-                      onChange={e => setFormData({ ...formData, service: e.target.value })}
-                      className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
-                    >
-                      {AVAILABLE_SERVICES.map(svc => (
-                        <option key={svc} value={svc}>
-                          {svc}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Contract Value (₦)
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                    <input
-                      type="number"
-                      step="1000"
-                      min="0"
-                      value={formData.amount || ""}
-                      onChange={e =>
-                        setFormData({ ...formData, amount: Number(e.target.value) || 0 })
-                      }
-                      placeholder="0"
-                      className="w-full text-xs text-[#191c1d] font-mono focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                    Initial Status
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                    <select
-                      value={formData.status}
-                      onChange={e =>
-                        setFormData({ ...formData, status: e.target.value as ProjectStatus })
-                      }
-                      className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
-                    >
-                      <option value="pending">Pending (Review / Invoicing)</option>
-                      <option value="active">Active Project</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#f0e8dc]">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-6 py-2.5 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 size={14} className="animate-spin" />
-                      <span>Saving…</span>
-                    </>
-                  ) : (
-                    <>
-                      <Check size={14} />
-                      <span>Save Customer</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Invoice Modal for Customer Billing */}
-      {showInvoiceModal && invoiceModalCustomer && (
-        <InvoiceModal
-          isOpen={showInvoiceModal}
-          onClose={() => {
-            setShowInvoiceModal(false);
-            setInvoiceModalCustomer(undefined);
-            setInvoiceModalInvoice(undefined);
-          }}
-          onToast={msg => {
-            if (onToast) onToast(msg);
-          }}
-          initialCustomer={invoiceModalCustomer}
-          existingInvoice={invoiceModalInvoice}
-          allCustomers={items}
-        />
-      )}
-
-      {/* Resend Invoice Confirmation Modal */}
-      {confirmResendInvoice && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
-          onClick={() => setConfirmResendInvoice(null)}
-        >
-          <div
-            className="bg-white border border-[#eae3d7] rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 relative"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1e40af] block">
-                  Invoice Re-Dispatch
-                </span>
-                <h3 className="text-lg font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-                  Resend Invoice {confirmResendInvoice.invoiceNumber}?
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setConfirmResendInvoice(null)}
-                className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="text-xs text-[#5c5f60] space-y-2">
-              <p>
-                Are you sure you want to re-send this invoice to{" "}
-                <b className="text-[#191c1d]">{confirmResendInvoice.customerName}</b>?
-              </p>
-              <div className="bg-[#faf8f5] p-3 rounded-xl border border-[#eee7dc] space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-[#8c827a]">Recipient:</span>
-                  <b className="text-[#191c1d]">{confirmResendInvoice.customerEmail}</b>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8c827a]">Total Due:</span>
-                  <b className="font-mono text-[#191c1d]">
-                    {formatMoney(confirmResendInvoice.total)}
-                  </b>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#8c827a]">Due Date:</span>
-                  <span className="text-[#191c1d]">{confirmResendInvoice.dueDate}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#f0e8dc]">
-              <button
-                type="button"
-                onClick={() => setConfirmResendInvoice(null)}
-                className="px-4 py-2 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  const inv = confirmResendInvoice;
-                  setConfirmResendInvoice(null);
-                  await handleResendInvoiceDirectly(inv.id);
-                }}
-                className="inline-flex items-center gap-1.5 bg-[#111827] hover:bg-black text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer"
-              >
-                <RefreshCw size={13} />
-                <span>Confirm Resend</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Customer CSV Import Modal */}
       <CustomerImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
-        onToast={msg => onToast?.(msg)}
-        onImportSuccess={() => getCustomers(searchQuery).then(setItems)}
+        onToast={notify}
+        onImportSuccess={reloadCustomers}
       />
     </section>
   );

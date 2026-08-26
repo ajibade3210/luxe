@@ -9,9 +9,11 @@ import {
   type Timeframe,
 } from "@/lib/api";
 import { businessProfile as initialMockProfile } from "@/lib/mock-data";
-import { formatMoney } from "./admin-layout";
+import { formatMoney, useAdminToast } from "./admin-layout";
 
-export function AnalyticsPage({ onToast }: { onToast: (message: string) => void }) {
+export function AnalyticsPage({ onToast }: { onToast?: (message: string) => void }) {
+  const { showToast } = useAdminToast();
+  const notify = onToast || showToast;
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
   const [data, setData] = useState<AnalyticsOverview | null>(null);
   const [slug, setSlug] = useState(initialMockProfile.slug || "elan-events");
@@ -37,7 +39,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
       navigator.clipboard.writeText(publicUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      onToast("Public studio URL copied to clipboard!");
+      notify("Public studio URL copied to clipboard!");
     }
   };
 
@@ -249,7 +251,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
             </h2>
             <button
               type="button"
-              onClick={() => onToast("Detailed telemetry report generated.")}
+              onClick={() => notify("Detailed telemetry report generated.")}
               className="text-xs font-semibold text-[#a06840] hover:text-[#6d3e1e] transition-colors cursor-pointer"
             >
               See all
@@ -359,7 +361,7 @@ export function AnalyticsPage({ onToast }: { onToast: (message: string) => void 
             </h2>
             <button
               type="button"
-              onClick={() => onToast("Viewing all catalog items.")}
+              onClick={() => notify("Viewing all catalog items.")}
               className="text-xs font-semibold text-[#a06840] hover:text-[#6d3e1e] transition-colors cursor-pointer"
             >
               See all

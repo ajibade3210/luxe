@@ -14,13 +14,26 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { getCustomers, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type { Customer, Lead } from "@/lib/types";
 
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
+
+interface AdminToastContextType {
+  showToast: (message: string) => void;
+}
+
+const AdminToastContext = createContext<AdminToastContextType>({
+  showToast: () => {},
+});
+
+export function useAdminToast() {
+  return useContext(AdminToastContext);
+}
 
 export function Brand() {
   return <BrandLogo className="brand" href="/" />;
@@ -235,17 +248,29 @@ export function AdminLayout({
   onToast,
 }: {
   children: React.ReactNode;
-  path: string;
-  onToast: (s: string) => void;
+  path?: string;
+  onToast?: (s: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const pathname = usePathname();
+  const currentPath = path || pathname || "/";
+
+  const handleToast = (msg: string) => {
+    setToastMessage(msg);
+    if (onToast) onToast(msg);
+  };
+
   return (
-    <div className="admin">
-      <Sidebar path={path} open={open} onClose={() => setOpen(false)} />
-      <div className="admin-main">
-        <Header onMenu={() => setOpen(true)} onToast={onToast} />
-        {children}
+    <AdminToastContext.Provider value={{ showToast: handleToast }}>
+      <div className="admin">
+        <Sidebar path={currentPath} open={open} onClose={() => setOpen(false)} />
+        <div className="admin-main">
+          <Header onMenu={() => setOpen(true)} onToast={handleToast} />
+          {children}
+        </div>
+        {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}
       </div>
-    </div>
+    </AdminToastContext.Provider>
   );
 }

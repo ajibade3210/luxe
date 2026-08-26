@@ -19,7 +19,7 @@ import type {
   ServiceItem,
   SocialChannel,
 } from "@/lib/types";
-
+import { useAdminToast } from "./admin-layout";
 import { AppearanceSection } from "./settings/appearance-section";
 import { ChannelsSection } from "./settings/channels-section";
 import { ContactSection } from "./settings/contact-section";
@@ -27,7 +27,9 @@ import { IdentitySection } from "./settings/identity-section";
 import { PortfolioSection } from "./settings/portfolio-section";
 import { ServicesSection } from "./settings/services-section";
 
-export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void }) {
+export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => void }) {
+  const { showToast } = useAdminToast();
+  const notify = onToast || showToast;
   // Main settings state
   const [name, setName] = useState(initialMockProfile.businessName);
   const [slug, setSlug] = useState(initialMockProfile.slug);
@@ -199,12 +201,12 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     setNewServiceInput("");
     setNewServiceDesc("");
     setShowAddService(false);
-    onToast(`Added service "${newSvc.name}"`);
+    notify(`Added service "${newSvc.name}"`);
   };
 
   const removeService = (id: string) => {
     setServices(prev => prev.filter(s => s.id !== id));
-    onToast("Service removed");
+    notify("Service removed");
   };
 
   const updateService = (id: string, patch: Partial<ServiceItem>) => {
@@ -213,7 +215,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
 
   const toggleChannel = (id: string) => {
     setChannels(prev => prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)));
-    onToast("Channel status toggled");
+    notify("Channel status toggled");
   };
 
   const updateChannelHandle = (id: string, handle: string) => {
@@ -222,7 +224,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
 
   const removeProject = (id: string) => {
     setPortfolio(prev => prev.filter(p => p.id !== id));
-    onToast("Project removed from gallery");
+    notify("Project removed from gallery");
   };
 
   const handleAddProject = (e: React.FormEvent) => {
@@ -250,7 +252,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
       stats: "250 Guests · Bespoke Styling",
     });
-    onToast(`Added project "${proj.title}" to gallery`);
+    notify(`Added project "${proj.title}" to gallery`);
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,10 +263,10 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       const res = await uploadBusinessLogo(file);
       if (res.url) {
         setLogoUrl(res.url);
-        onToast("Business logo uploaded! CDN URL generated.");
+        notify("Business logo uploaded! CDN URL generated.");
       }
     } catch {
-      onToast("Error uploading logo");
+      notify("Error uploading logo");
     } finally {
       setIsUploadingLogo(false);
     }
@@ -278,10 +280,10 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       const res = await uploadPortfolioImage(file);
       if (res.url) {
         setNewProject(prev => ({ ...prev, image: res.url }));
-        onToast("Project image uploaded! URL generated.");
+        notify("Project image uploaded! URL generated.");
       }
     } catch {
-      onToast("Error uploading project photo");
+      notify("Error uploading project photo");
     } finally {
       setIsUploadingProjectImage(false);
     }
@@ -306,7 +308,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       const [movedItem] = updated.splice(draggedProjectIndex, 1);
       updated.splice(dragOverProjectIndex, 0, movedItem);
       setPortfolio(updated);
-      onToast("Gallery arrangement updated");
+      notify("Gallery arrangement updated");
     }
     setDraggedProjectIndex(null);
     setDragOverProjectIndex(null);
@@ -320,14 +322,14 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     updated[index] = updated[targetIndex];
     updated[targetIndex] = temp;
     setPortfolio(updated);
-    onToast(`Moved "${temp.title}" ${direction}`);
+    notify(`Moved "${temp.title}" ${direction}`);
   };
 
   const handleSyncReviews = async () => {
     setIsSyncingReviews(true);
     setTimeout(() => {
       setIsSyncingReviews(false);
-      onToast("Google reviews synced! 48 authenticated 5-star reviews active.");
+      notify("Google reviews synced! 48 authenticated 5-star reviews active.");
     }, 800);
   };
 
@@ -364,7 +366,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     });
     await publishChanges();
     setSaving(false);
-    onToast("All studio settings & public profile saved successfully");
+    notify("All studio settings & public profile saved successfully");
   };
 
   const copyProfileLink = () => {
@@ -372,7 +374,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
-    onToast("Public profile link copied to clipboard!");
+    notify("Public profile link copied to clipboard!");
   };
 
   return (
@@ -430,7 +432,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         setLogoUrl={setLogoUrl}
         isUploadingLogo={isUploadingLogo}
         handleLogoUpload={handleLogoUpload}
-        onToast={onToast}
+        onToast={notify}
       />
 
       {/* Modular Section 02: Services & Offerings */}
@@ -470,7 +472,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         handleDragStart={handleDragStart}
         handleDragEnter={handleDragEnter}
         handleDragEnd={handleDragEnd}
-        onToast={onToast}
+        onToast={notify}
       />
 
       {/* Modular Section 04 & 05: Reputation & Social Channels */}
@@ -482,7 +484,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         channels={channels}
         updateChannelHandle={updateChannelHandle}
         toggleChannel={toggleChannel}
-        onToast={onToast}
+        onToast={notify}
       />
 
       {/* Modular Section 06: Contact & Operating Hours */}
@@ -516,7 +518,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         <button
           type="button"
           className="outline-button"
-          onClick={() => onToast("Section builder coming soon")}
+          onClick={() => notify("Section builder coming soon")}
         >
           <Plus size={14} /> Add new section
         </button>

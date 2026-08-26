@@ -21,10 +21,19 @@ import {
   updateLeadStatus,
 } from "@/lib/api";
 import type { Customer, Lead } from "@/lib/types";
-import { formatDate, formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
+import {
+  formatDate,
+  formatMoney,
+  formatStatusLabel,
+  Metric,
+  PageTitle,
+  useAdminToast,
+} from "./admin-layout";
 import { InvoiceModal } from "./invoices/invoice-modal";
 
-export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
+export function LeadsPage({ onToast }: { onToast?: (s: string) => void }) {
+  const { showToast } = useAdminToast();
+  const notify = onToast || showToast;
   const [selected, setSelected] = useState<string | null>(null);
   const [items, setItems] = useState<Lead[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,9 +77,9 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
     setIsExporting(true);
     try {
       const res = await exportLeadsCSV();
-      onToast(`Lead inquiries list exported successfully (${res.count} records).`);
+      notify(`Lead inquiries list exported successfully (${res.count} records).`);
     } catch {
-      onToast("Failed to export leads list.");
+      notify("Failed to export leads list.");
     } finally {
       setIsExporting(false);
     }
@@ -84,9 +93,9 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
       // Remove lead from active lead register
       setItems(prev => prev.filter(l => l.id !== leadId));
       setSelected(null);
-      onToast(`Lead converted to customer and moved to customer register: ${customer.name}.`);
+      notify(`Lead converted to customer and moved to customer register: ${customer.name}.`);
     } catch {
-      onToast("Failed to convert lead to customer.");
+      notify("Failed to convert lead to customer.");
     } finally {
       setIsConverting(false);
     }
@@ -156,9 +165,9 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
       if (updated) {
         setItems(prev => prev.map(l => (l.id === lead.id ? updated : l)));
       }
-      onToast(`Message prepared via WhatsApp. Lead status updated to Contacted.`);
+      notify(`Message prepared via WhatsApp. Lead status updated to Contacted.`);
     } catch {
-      onToast("WhatsApp opened, but failed to update status.");
+      notify("WhatsApp opened, but failed to update status.");
     }
   };
 
@@ -177,9 +186,9 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
       if (updated) {
         setItems(prev => prev.map(l => (l.id === lead.id ? updated : l)));
       }
-      onToast(`Consultation email prepared. Lead status updated to Contacted.`);
+      notify(`Consultation email prepared. Lead status updated to Contacted.`);
     } catch {
-      onToast("Email opened, but failed to update status.");
+      notify("Email opened, but failed to update status.");
     }
   };
 
@@ -583,7 +592,7 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
             setInvoiceCustomer(undefined);
             setInvoiceModalInvoice(undefined);
           }}
-          onToast={onToast}
+          onToast={notify}
           initialCustomer={invoiceCustomer}
           existingInvoice={invoiceModalInvoice}
         />
