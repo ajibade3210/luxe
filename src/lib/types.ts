@@ -49,6 +49,9 @@ export interface Customer {
   createdAt: string;
 }
 
+// Currency types
+export type CurrencyCode = "NGN" | "USD" | "GBP" | "EUR";
+
 // Invoice types
 export type InvoiceStatus = "draft" | "sent" | "paid" | "cancelled";
 export type PaymentTerms = "Due on receipt" | "Net 14" | "Net 30" | "Net 60";
@@ -72,6 +75,7 @@ export interface Invoice {
   issueDate: string;
   dueDate: string;
   paymentTerms: PaymentTerms;
+  currency?: CurrencyCode;
   items: InvoiceItem[];
   subtotal: number;
   discount: number;
@@ -174,6 +178,7 @@ export interface BusinessProfile {
   physicalAddress: string;
   colors: ColorScheme;
   buttonRadius: ButtonRadiusType;
+  currency?: CurrencyCode;
   updatedAt: string;
 }
 

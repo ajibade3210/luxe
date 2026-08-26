@@ -14,6 +14,7 @@ import { businessProfile as initialMockProfile } from "@/lib/mock-data";
 import type {
   ButtonRadiusType,
   ColorScheme,
+  CurrencyCode,
   PortfolioProject,
   ServiceItem,
   SocialChannel,
@@ -37,6 +38,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
   const [location, setLocation] = useState(initialMockProfile.location);
   const [website, setWebsite] = useState(initialMockProfile.website);
   const [email, setEmail] = useState(initialMockProfile.email);
+  const [currency, setCurrency] = useState<CurrencyCode>(initialMockProfile.currency || "NGN");
   const [about, setAbout] = useState(initialMockProfile.description);
 
   // Services
@@ -146,9 +148,10 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       setTagline(data.tagline || "");
       setLocation(data.location || "");
       setWebsite(data.website || "");
-      setEmail(data.email || "");
-      setAbout(data.description || "");
-      setLogoUrl(data.logoUrl || "");
+      if (data.email) setEmail(data.email);
+      if (data.currency) setCurrency(data.currency);
+      if (data.description) setAbout(data.description);
+      if (data.logoUrl) setLogoUrl(data.logoUrl);
       if (data.services) {
         setServices(data.services);
       }
@@ -343,6 +346,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
       description: about,
       website,
       email,
+      currency,
       logoUrl,
       services,
       portfolio: orderedPortfolio,
@@ -418,6 +422,8 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         setWebsite={setWebsite}
         email={email}
         setEmail={setEmail}
+        currency={currency}
+        setCurrency={setCurrency}
         about={about}
         setAbout={setAbout}
         logoUrl={logoUrl}

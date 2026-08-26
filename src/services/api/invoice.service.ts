@@ -4,9 +4,10 @@
  * Every action includes a 1-line swap for real REST/GraphQL backend APIs.
  */
 
-import type { Invoice, InvoiceItem, InvoiceStatus, PaymentTerms } from "@/lib/types";
+import type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms } from "@/lib/types";
+import { CURRENCY_SYMBOLS } from "@/utils";
 
-export type { Invoice, InvoiceItem, InvoiceStatus, PaymentTerms };
+export type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms };
 
 export interface InvoiceInput {
   id?: string;
@@ -18,6 +19,7 @@ export interface InvoiceInput {
   issueDate: string;
   dueDate: string;
   paymentTerms: PaymentTerms;
+  currency?: CurrencyCode;
   items: InvoiceItem[];
   subtotal: number;
   discount: number;
@@ -39,6 +41,7 @@ const INITIAL_INVOICES: Invoice[] = [
     issueDate: "2026-08-20",
     dueDate: "2026-09-03",
     paymentTerms: "Net 14",
+    currency: "NGN",
     items: [
       {
         id: "item-1",
@@ -96,6 +99,7 @@ const INITIAL_INVOICES: Invoice[] = [
     total: 35000,
     notes: "Please remit payment to the specified studio account before the due date.",
     status: "sent",
+    currency: "NGN",
     sentAt: "2026-08-24T14:30:00Z",
     createdAt: "2026-08-24T11:00:00Z",
     updatedAt: "2026-08-24T14:30:00Z",
@@ -106,48 +110,45 @@ let persistedInvoices: Invoice[] = [...INITIAL_INVOICES];
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
-function notifyInvoicesUpdated() {
+const notifyInvoicesUpdated = () => {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(
-      new CustomEvent("luxe_invoices_updated", {
-        detail: persistedInvoices,
-      })
-    );
+    window.dispatchEvent(new CustomEvent("luxe_invoices_updated", { detail: persistedInvoices }));
   }
-}
+};
 
 /**
- * 1. Fetch all invoices
+ * 1. Get All Invoices (Searchable, Filterable)
  * Backend swap:
- * `const res = await fetch('/api/invoices'); return res.json();`
+ * `const res = await fetch('/api/invoices' + (status ? '?status=' + status : '')); return res.json();`
  */
-export async function getInvoices(): Promise<Invoice[]> {
+export async function getInvoices(status?: InvoiceStatus): Promise<Invoice[]> {
   await delay(100);
-  return persistedInvoices;
+  if (!status) return persistedInvoices;
+  return persistedInvoices.filter(i => i.status === status);
 }
 
 /**
- * 2. Fetch single invoice by ID
+ * 2. Get Single Invoice by ID
  * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}`); return res.json();`
+ * `const res = await fetch('/api/invoices/' + id); return res.json();`
  */
-export async function getInvoice(id: string): Promise<Invoice | undefined> {
-  await delay(100);
-  return persistedInvoices.find(inv => inv.id === id);
+export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
+  await delay(80);
+  return persistedInvoices.find(i => i.id === id);
 }
 
 /**
- * 3. Fetch invoices by customer ID
+ * 3. Get Invoices for a specific Customer / Lead
  * Backend swap:
- * `const res = await fetch(`/api/customers/${customerId}/invoices`); return res.json();`
+ * `const res = await fetch('/api/customers/' + customerId + '/invoices'); return res.json();`
  */
-export async function getInvoicesByCustomer(customerId: string): Promise<Invoice[]> {
+export async function getInvoicesByCustomerId(customerId: string): Promise<Invoice[]> {
   await delay(100);
-  return persistedInvoices.filter(inv => inv.customerId === customerId);
+  return persistedInvoices.filter(i => i.customerId === customerId);
 }
 
 /**
- * 4. Save Invoice as DRAFT (Create new draft or update existing draft)
+ * 4. Create or Save Draft Invoice
  * Backend swap:
  * `const res = await fetch('/api/invoices/draft', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
@@ -172,6 +173,7 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
       ...input,
       id: existing.id,
       invoiceNumber: existing.invoiceNumber,
+      currency: input.currency || existing.currency || "NGN",
       status: "draft",
       updatedAt: now,
     };
@@ -195,6 +197,7 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
     issueDate: input.issueDate,
     dueDate: input.dueDate,
     paymentTerms: input.paymentTerms,
+    currency: input.currency || "NGN",
     items: input.items,
     subtotal: input.subtotal,
     discount: input.discount,
@@ -238,6 +241,7 @@ export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
       ...input,
       id: existing.id,
       invoiceNumber: existing.invoiceNumber,
+      currency: input.currency || existing.currency || "NGN",
       status: "sent",
       sentAt: now,
       updatedAt: now,
@@ -262,6 +266,7 @@ export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
     issueDate: input.issueDate,
     dueDate: input.dueDate,
     paymentTerms: input.paymentTerms,
+    currency: input.currency || "NGN",
     items: input.items,
     subtotal: input.subtotal,
     discount: input.discount,
@@ -346,6 +351,8 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
   }
 
   // Create an interactive printable document blob URL
+  const sym = CURRENCY_SYMBOLS[target?.currency || "NGN"] || "₦";
+
   const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
@@ -395,8 +402,8 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
         <tr>
           <td><b>${item.description}</b></td>
           <td>${item.quantity}</td>
-          <td>$${item.unitPrice.toLocaleString()}</td>
-          <td style="text-align: right;">$${item.amount.toLocaleString()}</td>
+          <td>${sym}${item.unitPrice.toLocaleString()}</td>
+          <td style="text-align: right;">${sym}${item.amount.toLocaleString()}</td>
         </tr>
       `
         )
@@ -404,7 +411,7 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
     </tbody>
   </table>
   <div class="total-box">
-    <div>Total Due: $${(target?.total || 0).toLocaleString()}</div>
+    <div>Total Due: ${sym}${(target?.total || 0).toLocaleString()}</div>
   </div>
   <div class="bank-box">
     <b>Remittance Banking Details</b><br/>
@@ -447,6 +454,7 @@ export function createWhatsAppInvoiceUrl(
   const defaultPhone = "+2348055966944";
   const rawPhone = (invoice.customerId || studioPhone || defaultPhone).replace(/[^0-9]/g, "");
   const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
+  const sym = CURRENCY_SYMBOLS[invoice.currency || "NGN"] || "₦";
 
   const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/invoices/${invoice.invoiceNumber}`;
 
@@ -456,7 +464,7 @@ Dear *${invoice.customerName}*,
 
 Here are your invoice details for *${invoice.items[0]?.description || "Atelier Services"}*:
 
-💰 *Total Amount Due:* $${Number(invoice.total).toLocaleString()}
+💰 *Total Amount Due:* ${sym}${Number(invoice.total).toLocaleString()}
 📅 *Due Date:* ${invoice.dueDate}
 📄 *Payment Terms:* ${invoice.paymentTerms}
 

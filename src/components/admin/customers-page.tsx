@@ -338,7 +338,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               <tr>
                 <th>Customer</th>
                 <th>Project</th>
-                <th>Value</th>
                 <th>Status</th>
                 <th>Invoicing</th>
                 <th />
@@ -357,8 +356,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                 );
                 const hasSent = cInvoices.some(i => i.status === "sent" || i.status === "paid");
                 const isPending = p.status === "pending";
-                const totalCustValue =
-                  c.totalRevenue || c.projects.reduce((acc, proj) => acc + (proj.amount || 0), 0);
 
                 return (
                   <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
@@ -382,11 +379,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                         )}
                       </div>
                       <small>{p.service}</small>
-                    </td>
-                    <td>
-                      <span className="font-mono font-bold text-[#191c1d]">
-                        {formatMoney(totalCustValue)}
-                      </span>
                     </td>
                     <td>
                       <span className={`status ${p.status}`}>{formatStatusLabel(p.status)}</span>

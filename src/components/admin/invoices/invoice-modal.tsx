@@ -26,7 +26,8 @@ import {
   saveInvoiceDraft,
   sendInvoice,
 } from "@/lib/api";
-import type { Customer } from "@/lib/types";
+import type { CurrencyCode, Customer } from "@/lib/types";
+import { CURRENCY_SYMBOLS } from "@/utils";
 import { formatMoney } from "../admin-layout";
 
 const PAYMENT_TERMS_OPTIONS: PaymentTerms[] = ["Due on receipt", "Net 14", "Net 30", "Net 60"];
@@ -72,6 +73,7 @@ export function InvoiceModal({
   const [paymentTerms, setPaymentTerms] = useState<PaymentTerms>(
     existingInvoice?.paymentTerms || "Net 14"
   );
+  const [currency, setCurrency] = useState<CurrencyCode>(existingInvoice?.currency || "NGN");
   const [items, setItems] = useState<InvoiceItem[]>(
     existingInvoice?.items || [
       {
@@ -131,9 +133,7 @@ export function InvoiceModal({
         if (item.id !== id) return item;
         const updated = { ...item, [field]: value };
         if (field === "quantity" || field === "unitPrice") {
-          const qty = field === "quantity" ? Number(value) : item.quantity;
-          const price = field === "unitPrice" ? Number(value) : item.unitPrice;
-          updated.amount = qty * price;
+          updated.amount = Number(updated.quantity) * Number(updated.unitPrice);
         }
         return updated;
       })
@@ -170,6 +170,7 @@ export function InvoiceModal({
     issueDate,
     dueDate,
     paymentTerms,
+    currency,
     items,
     subtotal,
     discount,
@@ -208,7 +209,7 @@ export function InvoiceModal({
     try {
       const sent = await sendInvoice(buildPayload());
       onToast(
-        `Invoice ${sent.invoiceNumber} sent via email to ${sent.customerEmail} (${formatMoney(sent.total)}).`
+        `Invoice ${sent.invoiceNumber} sent via email to ${sent.customerEmail} (${formatMoney(sent.total, currency)}).`
       );
       if (onInvoiceSaved) onInvoiceSaved(sent);
       onClose();
@@ -512,8 +513,8 @@ export function InvoiceModal({
                   />
                 </div>
 
-                {/* Dates & Payment Terms */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                {/* Dates, Payment Terms & Currency */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
                       Issue Date *
@@ -523,7 +524,7 @@ export function InvoiceModal({
                       required
                       value={issueDate}
                       onChange={e => setIssueDate(e.target.value)}
-                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
                     />
                   </div>
 
@@ -536,7 +537,7 @@ export function InvoiceModal({
                       required
                       value={dueDate}
                       onChange={e => setDueDate(e.target.value)}
-                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
                     />
                   </div>
 
@@ -547,13 +548,29 @@ export function InvoiceModal({
                     <select
                       value={paymentTerms}
                       onChange={e => setPaymentTerms(e.target.value as PaymentTerms)}
-                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
                     >
                       {PAYMENT_TERMS_OPTIONS.map(opt => (
                         <option key={opt} value={opt}>
                           {opt}
                         </option>
                       ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
+                      Currency *
+                    </label>
+                    <select
+                      value={currency}
+                      onChange={e => setCurrency(e.target.value as CurrencyCode)}
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                    >
+                      <option value="NGN">NGN (₦) · Naira</option>
+                      <option value="USD">USD ($) · Dollar</option>
+                      <option value="GBP">GBP (£) · Pound</option>
+                      <option value="EUR">EUR (€) · Euro</option>
                     </select>
                   </div>
                 </div>
@@ -612,7 +629,7 @@ export function InvoiceModal({
                         {/* Amount */}
                         <div className="w-28 text-right px-2">
                           <span className="text-xs font-mono font-bold text-[#111827]">
-                            {formatMoney(item.amount)}
+                            {formatMoney(item.amount, currency)}
                           </span>
                         </div>
 
@@ -642,7 +659,7 @@ export function InvoiceModal({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-3 border-t border-[#f3f4f6]">
                   <div>
                     <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
-                      Discount ($)
+                      Discount ({CURRENCY_SYMBOLS[currency]})
                     </label>
                     <input
                       type="number"
@@ -674,7 +691,7 @@ export function InvoiceModal({
                       Total Due
                     </label>
                     <div className="w-full bg-[#f3f4f6] border border-[#e5e7eb] rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold text-[#111827]">
-                      {formatMoney(total)}
+                      {formatMoney(total, currency)}
                     </div>
                   </div>
                 </div>
@@ -787,13 +804,13 @@ export function InvoiceModal({
                       <div className="min-w-0 pr-2">
                         <b className="text-[#111827] block truncate">{item.description}</b>
                         <span className="text-[10px] text-[#9ca3af] block">
-                          {formatMoney(item.unitPrice)} each
+                          {formatMoney(item.unitPrice, currency)} each
                         </span>
                       </div>
                       <div className="flex items-center gap-6 shrink-0">
                         <span className="text-xs font-mono text-[#6b7280]">{item.quantity}</span>
                         <span className="text-xs font-mono font-bold text-[#111827]">
-                          {formatMoney(item.amount)}
+                          {formatMoney(item.amount, currency)}
                         </span>
                       </div>
                     </div>
@@ -804,23 +821,23 @@ export function InvoiceModal({
                 <div className="space-y-1.5 text-xs border-b border-[#f3f4f6] pb-4">
                   <div className="flex justify-between text-[#6b7280]">
                     <span>Subtotal</span>
-                    <span className="font-mono">{formatMoney(subtotal)}</span>
+                    <span className="font-mono">{formatMoney(subtotal, currency)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-[#16a34a]">
                       <span>Discount</span>
-                      <span className="font-mono">-{formatMoney(discount)}</span>
+                      <span className="font-mono">-{formatMoney(discount, currency)}</span>
                     </div>
                   )}
                   {taxRate > 0 && (
                     <div className="flex justify-between text-[#6b7280]">
                       <span>Tax ({taxRate}%)</span>
-                      <span className="font-mono">+{formatMoney(taxAmount)}</span>
+                      <span className="font-mono">+{formatMoney(taxAmount, currency)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-bold text-[#111827] pt-1.5 border-t border-[#f3f4f6]">
                     <span>Total Due</span>
-                    <span className="font-mono">{formatMoney(total)}</span>
+                    <span className="font-mono">{formatMoney(total, currency)}</span>
                   </div>
                 </div>
 

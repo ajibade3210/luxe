@@ -288,6 +288,7 @@ export const businessProfile: BusinessProfile = {
     text: "#191C1D",
   },
   buttonRadius: "Subtle",
+  currency: "NGN",
   updatedAt: "2026-08-25T12:00:00Z",
 };
 

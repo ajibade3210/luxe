@@ -1,4 +1,5 @@
-import { Check, Copy, Loader2, Upload } from "lucide-react";
+import { Copy, Loader2, Upload } from "lucide-react";
+import type { CurrencyCode } from "@/lib/types";
 import { Card } from "./card";
 
 interface IdentitySectionProps {
@@ -15,6 +16,8 @@ interface IdentitySectionProps {
   setWebsite: (v: string) => void;
   email: string;
   setEmail: (v: string) => void;
+  currency?: CurrencyCode;
+  setCurrency?: (v: CurrencyCode) => void;
   about: string;
   setAbout: (v: string) => void;
   logoUrl: string;
@@ -38,6 +41,8 @@ export function IdentitySection({
   setWebsite,
   email,
   setEmail,
+  currency = "NGN",
+  setCurrency,
   about,
   setAbout,
   logoUrl,
@@ -99,13 +104,13 @@ export function IdentitySection({
                 </div>
                 <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-xs shrink-0">
                   <Upload size={14} />
-                  <span>{isUploadingLogo ? "Uploading to CDN..." : "Upload New Logo"}</span>
+                  <span>{isUploadingLogo ? "Uploading..." : "Replace Logo"}</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                    className="hidden"
                     onChange={handleLogoUpload}
                     disabled={isUploadingLogo}
-                    className="hidden"
                   />
                 </label>
               </div>
@@ -150,21 +155,28 @@ export function IdentitySection({
         </label>
 
         <label>
-          Public profile slug & URL
-          <div className="slug-input relative">
-            <span>shopwus.com/</span>
+          Claim handle / custom slug
+          <div className="relative">
             <input
               value={slug}
-              onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
+              onChange={e =>
+                setSlug(
+                  e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, "-")
+                    .replace(/-+/g, "-")
+                )
+              }
+              placeholder="e.g. elan-events"
             />
             {slugStatus === "checking" && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#747878] flex items-center gap-1">
-                <Loader2 size={12} className="animate-spin" /> checking…
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8c827a]">
+                checking...
               </span>
             )}
             {slugStatus === "available" && slug && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2e7d32] flex items-center gap-1 font-medium bg-[#f0fdf4] px-2 py-0.5 rounded">
-                <Check size={12} /> available
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#16a34a] font-medium bg-[#f0fdf4] px-2 py-0.5 rounded">
+                available
               </span>
             )}
             {slugStatus === "taken" && (
@@ -195,9 +207,23 @@ export function IdentitySection({
           <input value={website} onChange={e => setWebsite(e.target.value)} />
         </label>
 
-        <label className="full">
+        <label>
           Primary contact email
           <input value={email} onChange={e => setEmail(e.target.value)} />
+        </label>
+
+        <label>
+          Default Studio Currency
+          <select
+            value={currency}
+            onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
+            className="w-full bg-white border border-[#ded7cb] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none font-semibold"
+          >
+            <option value="NGN">NGN (₦) — Nigerian Naira (Default)</option>
+            <option value="USD">USD ($) — US Dollar</option>
+            <option value="GBP">GBP (£) — British Pound</option>
+            <option value="EUR">EUR (€) — Euro</option>
+          </select>
         </label>
 
         <label className="full">
