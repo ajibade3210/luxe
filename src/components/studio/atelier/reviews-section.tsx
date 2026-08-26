@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import type { ReviewItem } from "@/lib/types";
 
 interface StudioReviewsSectionProps {
@@ -6,6 +6,7 @@ interface StudioReviewsSectionProps {
   averageRating: string | number;
   totalReviews: number;
   setReviewModalOpen: (v: boolean) => void;
+  googleReviewsLink?: string;
   primaryColor: string;
   buttonColor: string;
   radiusClass: string;
@@ -13,43 +14,39 @@ interface StudioReviewsSectionProps {
 
 export function StudioReviewsSection({
   reviews,
-  averageRating,
-  totalReviews,
+  averageRating: _averageRating,
+  totalReviews: _totalReviews,
   setReviewModalOpen,
-  primaryColor,
+  googleReviewsLink,
+  primaryColor: _primaryColor,
   buttonColor: _buttonColor,
   radiusClass: _radiusClass,
 }: StudioReviewsSectionProps) {
+  const googleLink = googleReviewsLink || "https://www.google.com/search?q=Elan+Events+reviews";
+
   return (
     <section id="reviews" className="scroll-mt-24">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-4 border-b border-[#ebd8ca]">
-        <div>
-          <span
-            style={{ color: primaryColor }}
-            className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
-          >
-            Authenticated Client Voices
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal mt-1">
-            Words from our Couples & Patrons
-          </h2>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="flex text-[#eab308]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} fill="currentColor" />
-              ))}
-            </div>
-            <span className="text-xs font-bold text-[#1c1917]">{averageRating} Rating</span>
-            <span className="text-xs text-[#8c8278]">· {totalReviews} Verified Experiences</span>
-          </div>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Reviews</h2>
 
-        <button
-          onClick={() => setReviewModalOpen(true)}
-          className="outline-button text-xs py-2 px-4 self-start md:self-auto cursor-pointer"
-        >
-          Leave a Review
-        </button>
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <a
+            href={googleLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-[#5c544d] hover:text-[#1c1917] bg-white hover:bg-[#faf6f0] px-4 py-2 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs"
+          >
+            <span>View More Reviews</span>
+            <ArrowUpRight size={13} />
+          </a>
+
+          <button
+            onClick={() => setReviewModalOpen(true)}
+            className="outline-button text-xs py-2 px-4 cursor-pointer"
+          >
+            Leave a Review
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

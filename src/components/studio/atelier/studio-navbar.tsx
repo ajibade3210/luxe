@@ -112,6 +112,17 @@ export function StudioNavbar({
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#68625c]">
+            {profile.socialChannels?.some(c => c.connected) && (
+              <a
+                href="#social"
+                style={{
+                  color: activeSection === "social" ? primaryColor : undefined,
+                }}
+                className="transition-colors hover:opacity-80"
+              >
+                Socials
+              </a>
+            )}
             <a
               href="#portfolio"
               style={{
@@ -175,6 +186,15 @@ export function StudioNavbar({
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#faf8f5] border-b border-[#e8dfd3] px-6 py-5 space-y-4 animate-fadeIn">
             <nav className="flex flex-col gap-3.5 text-sm font-medium text-[#68625c]">
+              {profile.socialChannels?.some(c => c.connected) && (
+                <a
+                  href="#social"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-[#1c1917]"
+                >
+                  Social Networks
+                </a>
+              )}
               <a
                 href="#portfolio"
                 onClick={() => setMobileMenuOpen(false)}

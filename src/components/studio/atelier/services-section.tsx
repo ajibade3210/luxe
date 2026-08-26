@@ -34,20 +34,8 @@ export function StudioServicesSection({
 
   return (
     <section id="services" className="scroll-mt-24">
-      <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-        <span
-          style={{ color: primaryColor }}
-          className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
-        >
-          Curated Atelier Services
-        </span>
-        <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal">
-          Designed for Unforgettable Experiences
-        </h2>
-        <p className="text-xs sm:text-sm text-[#78716c] leading-relaxed">
-          From full-scale event architecture to creative direction, we bring uncompromising
-          precision and elegance to every occasion.
-        </p>
+      <div className="mb-8">
+        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Services</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

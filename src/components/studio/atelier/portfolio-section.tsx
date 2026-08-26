@@ -13,36 +13,15 @@ interface StudioPortfolioSectionProps {
 export function StudioPortfolioSection({
   portfolio,
   setSelectedProject,
-  setQuoteModalOpen,
+  setQuoteModalOpen: _setQuoteModalOpen,
   primaryColor,
-  buttonColor,
-  radiusClass,
+  buttonColor: _buttonColor,
+  radiusClass: _radiusClass,
 }: StudioPortfolioSectionProps) {
   return (
     <section id="portfolio" className="scroll-mt-24">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-4 border-b border-[#ebd8ca]">
-        <div>
-          <span
-            style={{ color: primaryColor }}
-            className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
-          >
-            Curated Portfolio
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal mt-1">
-            Our Best Work
-          </h2>
-          <p className="text-xs sm:text-sm text-[#78716c] mt-1">
-            A selective archive of grand celebrations, destination weddings, and curated galas.
-          </p>
-        </div>
-
-        <button
-          onClick={() => setQuoteModalOpen(true)}
-          style={{ backgroundColor: buttonColor }}
-          className={`text-white text-xs font-medium px-5 py-2.5 shadow-2xs hover:shadow-xs transition-all cursor-pointer self-start md:self-auto ${radiusClass}`}
-        >
-          Commission Atelier
-        </button>
+      <div className="mb-8">
+        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Portfolio</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

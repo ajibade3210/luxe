@@ -8,14 +8,12 @@ import {
   Phone,
   RotateCw,
   Share2,
-  Star,
 } from "lucide-react";
 import type { BusinessProfile } from "@/lib/types";
-import { getSocialChannelStyle } from "./social-badge";
 
 interface StationeryCardProps {
   profile: BusinessProfile;
-  slug: string;
+  slug?: string;
   isFlipped: boolean;
   setIsFlipped: (v: boolean) => void;
   setQuoteModalOpen: (v: boolean) => void;
@@ -24,8 +22,8 @@ interface StationeryCardProps {
   secondaryColor: string;
   buttonColor: string;
   monogram: string;
-  averageRating: string | number;
-  totalReviews: number;
+  averageRating?: string | number;
+  totalReviews?: number;
   whatsAppLink: string;
   radiusClass: string;
 }
@@ -41,8 +39,8 @@ export function StationeryCard({
   secondaryColor,
   buttonColor,
   monogram,
-  averageRating,
-  totalReviews,
+  averageRating: _averageRating,
+  totalReviews: _totalReviews,
   whatsAppLink,
   radiusClass,
 }: StationeryCardProps) {
@@ -56,100 +54,51 @@ export function StationeryCard({
           isFlipped ? "is-flipped" : ""
         }`}
       >
-        {/* FRONT FACE: Luxury Stationery Card */}
-        <div className="card-face card-front rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                style={{
-                  backgroundColor: secondaryColor,
-                  color: primaryColor,
-                  borderColor: primaryColor,
-                }}
-                className="w-12 h-12 rounded-full border flex items-center justify-center font-serif text-xl font-normal overflow-hidden shadow-2xs shrink-0"
-              >
-                {profile.logoUrl ? (
-                  <img
-                    src={profile.logoUrl}
-                    alt={profile.businessName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  monogram
-                )}
-              </div>
-              <div>
-                <h3 className="font-serif text-lg font-normal text-[#1c1917] leading-tight">
-                  {profile.businessName}
-                </h3>
-                <span className="text-[10px] uppercase tracking-[0.14em] text-[#8c8278]">
-                  {profile.location}
-                </span>
-              </div>
-            </div>
-
+        {/* FRONT FACE: Luxury Minimalist Stationery Card */}
+        <div className="card-face card-front rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col items-center justify-center relative overflow-hidden">
+          {/* Top Bar with Flip Button */}
+          <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10">
             <button
               type="button"
               onClick={e => {
                 e.stopPropagation();
                 setIsFlipped(true);
               }}
-              className="inline-flex items-center gap-1 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#efe8de] px-3 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#efe8de] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs"
             >
               <RotateCw size={12} />
               <span className="font-medium text-[11px]">Flip Card</span>
             </button>
           </div>
 
-          <div className="my-6 space-y-2">
-            <span
-              style={{ color: primaryColor }}
-              className="text-[10px] uppercase tracking-[0.18em] font-semibold block"
+          {/* Centered Identity: Logo, Business Name, Address */}
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <div
+              style={{
+                backgroundColor: secondaryColor,
+                color: primaryColor,
+                borderColor: primaryColor,
+              }}
+              className="w-52 h-52 sm:w-60 sm:h-60 rounded-full border-2 flex items-center justify-center font-serif text-7xl sm:text-8xl font-normal overflow-hidden shadow-sm shrink-0"
             >
-              Crest of Excellence
-            </span>
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal leading-snug">
-              {profile.tagline ||
-                "We design unforgettable weddings, corporate galas, and private celebrations."}
-            </h2>
-          </div>
-
-          <div className="pt-4 border-t border-[#ebd8ca] flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="flex text-[#eab308]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={13} fill="currentColor" />
-                ))}
-              </div>
-              <span className="font-semibold text-[#1c1917]">{averageRating}</span>
-              <span className="text-[#8c8278]">({totalReviews} client reviews)</span>
+              {profile.logoUrl ? (
+                <img
+                  src={profile.logoUrl}
+                  alt={profile.businessName}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                monogram
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
-              {profile.socialChannels
-                ?.filter(c => c.connected)
-                .slice(0, 4)
-                .map(channel => {
-                  const style = getSocialChannelStyle(channel.type);
-                  return (
-                    <a
-                      key={channel.id}
-                      href={channel.url || "#"}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={e => e.stopPropagation()}
-                      style={{
-                        backgroundColor: style.bg,
-                        borderColor: style.border,
-                        color: style.color,
-                      }}
-                      className="w-7 h-7 rounded-full border flex items-center justify-center hover:scale-110 transition-transform shadow-2xs"
-                      title={channel.label}
-                    >
-                      {style.icon}
-                    </a>
-                  );
-                })}
+            <div className="space-y-1.5 max-w-sm">
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal leading-tight">
+                {profile.businessName}
+              </h2>
+              <span className="text-xs uppercase tracking-[0.16em] text-[#8c8278] font-medium block">
+                {profile.physicalAddress || profile.location}
+              </span>
             </div>
           </div>
         </div>
@@ -288,7 +237,7 @@ export function StationeryCard({
               </a>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-[#78716c] pt-1">
+            <div className="flex items-center justify-center text-xs text-[#78716c] pt-1">
               <button
                 type="button"
                 onClick={e => {
@@ -300,18 +249,6 @@ export function StationeryCard({
               >
                 <Share2 size={13} />
                 <span>Copy Profile Link</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={e => {
-                  e.stopPropagation();
-                  setIsFlipped(false);
-                }}
-                className="text-[#78716c] hover:text-[#1c1917] flex items-center gap-1 cursor-pointer font-medium"
-              >
-                <RotateCw size={12} />
-                <span>Flip back</span>
               </button>
             </div>
           </div>

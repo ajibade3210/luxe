@@ -15,6 +15,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 5. Run `yarn format` and fix all lint issues.
 
 RULES:
+- STRICT SCOPE ENFORCEMENT: NEVER introduce, create, or add any unrequested features, elements, icons, components, sections, or UI decorations unless the user explicitly asked for them. Limit all implementation strictly to the exact user directive without making assumptions or adding unsolicited extras.
 - Architect all state and data flows behind an abstraction layer (e.g. service/repository pattern) so mock data can be swapped for real API calls later with minimal refactoring.
 - Design layouts to be responsive across Mobile, Tablet, and Desktop breakpoints from the start.
 - Keep designs simple — avoid over-engineering or adding unrequested features.
