@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AdminLayout, Toast } from "@/components/admin/admin-layout";
+import { AnalyticsPage } from "@/components/admin/analytics-page";
 import { CustomersPage } from "@/components/admin/customers-page";
 import { LeadsPage } from "@/components/admin/leads-page";
 import { ProfileSettingsPage } from "@/components/admin/profile-settings-page";
@@ -22,14 +23,26 @@ export default function Page() {
   if (currentPath === "/") return <PublicLandingPage />;
 
   // If path is a public business profile slug (e.g. /elan-events, /maison-bell-events, etc.)
-  const adminRoutes = ["/leads", "/customers", "/settings", "/profile", "/login", "/signup", "/"];
+  const adminRoutes = [
+    "/analytics",
+    "/overview",
+    "/leads",
+    "/customers",
+    "/settings",
+    "/profile",
+    "/login",
+    "/signup",
+    "/",
+  ];
   if (!adminRoutes.includes(currentPath)) {
     const slug = currentPath.replace(/^\//, "").split("/")[0] || "elan-events";
     return <ElanEventsPage slug={slug} />;
   }
 
   const page =
-    currentPath === "/leads" ? (
+    currentPath === "/analytics" || currentPath === "/overview" ? (
+      <AnalyticsPage onToast={setToast} />
+    ) : currentPath === "/leads" ? (
       <LeadsPage onToast={setToast} />
     ) : currentPath === "/customers" ? (
       <CustomersPage />

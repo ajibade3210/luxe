@@ -10,6 +10,7 @@ import {
   Menu,
   Search,
   Settings,
+  TrendingUp,
   Users,
   X,
 } from "lucide-react";
@@ -126,6 +127,12 @@ export function Sidebar({
         </button>
       </div>
       <nav>
+        <a
+          className={path === "/analytics" || path === "/overview" ? "active" : ""}
+          href="/analytics"
+        >
+          <TrendingUp size={16} /> Analytics
+        </a>
         <a className={path === "/leads" ? "active" : ""} href="/leads">
           <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
         </a>

@@ -29,6 +29,8 @@ export const RESERVED_SLUGS = [
   "settings",
   "api",
   "profile",
+  "analytics",
+  "overview",
 ] as const;
 
 export const CUSTOM_EVENTS = {
