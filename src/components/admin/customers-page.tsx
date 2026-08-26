@@ -8,19 +8,25 @@ import {
   FileText,
   Loader2,
   Plus,
+  RefreshCw,
   Send,
+  Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   createCustomer,
+  deleteInvoice,
   exportCustomersCSV,
   getCustomers,
+  getInvoices,
+  type Invoice,
   type NewCustomerInput,
-  sendCustomerInvoice,
+  resendInvoice,
 } from "@/lib/api";
 import type { Customer, ProjectStatus } from "@/lib/types";
 import { formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
+import { InvoiceModal } from "./invoices/invoice-modal";
 
 const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",
@@ -32,11 +38,16 @@ const AVAILABLE_SERVICES = [
 
 export function CustomersPage({ onToast }: { onToast?: (message: string) => void }) {
   const [items, setItems] = useState<Customer[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [sendingInvoiceId, setSendingInvoiceId] = useState<string | null>(null);
+
+  // Invoice Modal State
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [invoiceModalCustomer, setInvoiceModalCustomer] = useState<Customer | undefined>(undefined);
+  const [invoiceModalInvoice, setInvoiceModalInvoice] = useState<Invoice | undefined>(undefined);
 
   // Form State for Add Customer Modal
   const [formData, setFormData] = useState<NewCustomerInput>({
@@ -52,17 +63,38 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
 
   useEffect(() => {
     getCustomers().then(setItems);
-    const handleUpdate = (e: Event) => {
+    getInvoices().then(setInvoices);
+
+    const handleCustomersUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Customer[]>;
       if (customEvent.detail) {
         setItems(customEvent.detail);
       }
     };
-    window.addEventListener("luxe_customers_updated", handleUpdate);
-    return () => window.removeEventListener("luxe_customers_updated", handleUpdate);
+
+    const handleInvoicesUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Invoice[]>;
+      if (customEvent.detail) {
+        setInvoices(customEvent.detail);
+      }
+    };
+
+    window.addEventListener("luxe_customers_updated", handleCustomersUpdate);
+    window.addEventListener("luxe_invoices_updated", handleInvoicesUpdate);
+
+    return () => {
+      window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
+      window.removeEventListener("luxe_invoices_updated", handleInvoicesUpdate);
+    };
   }, []);
 
   const selectedCustomer = items.find(c => c.id === selected);
+  const customerInvoices = selectedCustomer
+    ? invoices.filter(
+        inv =>
+          inv.customerId === selectedCustomer.id || inv.customerEmail === selectedCustomer.email
+      )
+    : [];
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -114,20 +146,34 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
     }
   };
 
-  const handleSendInvoice = async (customerId: string, projectId?: string) => {
-    const key = `${customerId}-${projectId || "main"}`;
-    setSendingInvoiceId(key);
+  const handleOpenInvoiceModalForCustomer = (customer: Customer, existing?: Invoice) => {
+    setInvoiceModalCustomer(customer);
+    setInvoiceModalInvoice(existing);
+    setShowInvoiceModal(true);
+  };
+
+  const handleResendInvoiceDirectly = async (invoiceId: string) => {
     try {
-      const res = await sendCustomerInvoice(customerId, projectId);
+      const res = await resendInvoice(invoiceId);
       if (onToast) {
-        onToast(`Invoice ${res.invoiceId} sent to ${res.recipient} (${formatMoney(res.amount)}).`);
+        onToast(`Invoice ${res.invoiceNumber} re-sent to ${res.customerEmail}.`);
       }
     } catch {
       if (onToast) {
-        onToast("Failed to send invoice.");
+        onToast("Failed to resend invoice.");
       }
-    } finally {
-      setSendingInvoiceId(null);
+    }
+  };
+
+  const handleDeleteDraftDirectly = async (invoiceId: string) => {
+    try {
+      await deleteInvoice(invoiceId);
+      if (onToast) {
+        onToast("Draft invoice deleted successfully.");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to delete draft.";
+      if (onToast) onToast(msg);
     }
   };
 
@@ -193,7 +239,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                 <th>Project</th>
                 <th>Value</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Invoicing</th>
                 <th />
               </tr>
             </thead>
@@ -206,7 +252,9 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                   amount: c.totalRevenue,
                 };
                 const isPending = p.status === "pending";
-                const isSending = sendingInvoiceId === `${c.id}-${p.id || "main"}`;
+                const matchingInvoice = invoices.find(
+                  inv => inv.customerId === c.id || inv.customerEmail === c.email
+                );
 
                 return (
                   <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
@@ -223,19 +271,46 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                       <span className={`status ${p.status}`}>{formatStatusLabel(p.status)}</span>
                     </td>
                     <td>
-                      {isPending && (
-                        <button
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleSendInvoice(c.id, p.id);
-                          }}
-                          disabled={isSending}
-                          className="inline-flex items-center gap-1.5 bg-[#fbf9f5] hover:bg-[#855e2e] text-[#855e2e] hover:text-white border border-[#ded5c8] hover:border-[#855e2e] px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all shadow-2xs cursor-pointer"
-                        >
-                          <FileText size={12} />
-                          <span>{isSending ? "Sending…" : "Send Invoice"}</span>
-                        </button>
+                      {matchingInvoice ? (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOpenInvoiceModalForCustomer(c, matchingInvoice);
+                            }}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all border ${
+                              matchingInvoice.status === "paid"
+                                ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]"
+                                : matchingInvoice.status === "sent"
+                                  ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
+                                  : "bg-[#fefce8] text-[#854d0e] border-[#fef08a]"
+                            }`}
+                          >
+                            <FileText size={11} />
+                            <span>
+                              {matchingInvoice.status === "draft"
+                                ? "Draft Invoice"
+                                : matchingInvoice.status === "sent"
+                                  ? "Sent Invoice"
+                                  : "Paid"}
+                            </span>
+                          </button>
+                        </div>
+                      ) : (
+                        isPending && (
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleOpenInvoiceModalForCustomer(c);
+                            }}
+                            className="inline-flex items-center gap-1.5 bg-[#fbf9f5] hover:bg-[#855e2e] text-[#855e2e] hover:text-white border border-[#ded5c8] hover:border-[#855e2e] px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all shadow-2xs cursor-pointer"
+                          >
+                            <Send size={11} />
+                            <span>Create Invoice</span>
+                          </button>
+                        )
                       )}
                     </td>
                     <td>
@@ -271,38 +346,106 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               <p className="drawer-company">{selectedCustomer.company}</p>
             )}
 
+            {/* Invoicing Section in Drawer */}
             <div className="drawer-block">
-              <span className="eyebrow">Projects & Invoicing</span>
-              {selectedCustomer.projects.map(project => {
-                const isPending = project.status === "pending";
-                const isSending = sendingInvoiceId === `${selectedCustomer.id}-${project.id}`;
+              <div className="flex items-center justify-between pb-1">
+                <span className="eyebrow">Invoices & Billing</span>
+                <button
+                  type="button"
+                  onClick={() => handleOpenInvoiceModalForCustomer(selectedCustomer)}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer"
+                >
+                  <Plus size={11} />
+                  <span>New Invoice</span>
+                </button>
+              </div>
 
-                return (
-                  <div className="drawer-project" key={project.id}>
-                    <div>
-                      <b>{project.name}</b>
-                      <small>{project.service}</small>
-                    </div>
-                    <div className="drawer-project-meta flex items-center gap-2.5">
-                      <strong>{formatMoney(project.amount)}</strong>
-                      <span className={`status ${project.status}`}>
-                        {formatStatusLabel(project.status)}
-                      </span>
-                      {isPending && (
+              {customerInvoices.length > 0 ? (
+                <div className="space-y-2 pt-2">
+                  {customerInvoices.map(inv => (
+                    <div
+                      key={inv.id}
+                      className="bg-[#faf8f5] border border-[#eee7dc] rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <b className="text-[#191c1d]">{inv.invoiceNumber}</b>
+                          <span
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+                              inv.status === "paid"
+                                ? "bg-[#ecfdf5] text-[#065f46]"
+                                : inv.status === "sent"
+                                  ? "bg-[#eff6ff] text-[#1e40af]"
+                                  : "bg-[#fefce8] text-[#854d0e]"
+                            }`}
+                          >
+                            {inv.status}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-[#6b7280] block mt-0.5">
+                          {formatMoney(inv.total)} · Due {inv.dueDate}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {/* Edit / View in Modal */}
                         <button
                           type="button"
-                          onClick={() => handleSendInvoice(selectedCustomer.id, project.id)}
-                          disabled={isSending}
-                          className="inline-flex items-center gap-1 bg-[#855e2e] hover:bg-[#6f4c22] text-white px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer shadow-2xs"
+                          onClick={() => handleOpenInvoiceModalForCustomer(selectedCustomer, inv)}
+                          className="px-2.5 py-1 rounded-lg bg-white border border-[#d1d5db] hover:bg-[#f3f4f6] text-[11px] font-semibold text-[#374151] cursor-pointer"
                         >
-                          <Send size={10} />
-                          <span>{isSending ? "Sending..." : "Send Invoice"}</span>
+                          {inv.status === "draft" ? "Edit" : "View"}
                         </button>
-                      )}
+
+                        {/* Resend button if sent */}
+                        {inv.status === "sent" && (
+                          <button
+                            type="button"
+                            onClick={() => handleResendInvoiceDirectly(inv.id)}
+                            title="Resend Invoice to client email"
+                            className="p-1.5 rounded-lg bg-white border border-[#d1d5db] hover:bg-[#eff6ff] text-[#1e40af] cursor-pointer"
+                          >
+                            <RefreshCw size={12} />
+                          </button>
+                        )}
+
+                        {/* Delete button: ONLY IF DRAFT */}
+                        {inv.status === "draft" && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteDraftDirectly(inv.id)}
+                            title="Delete unsent draft"
+                            className="p-1.5 rounded-lg bg-white border border-[#fecaca] hover:bg-[#fee2e2] text-[#dc2626] cursor-pointer"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        )}
+                      </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-[#8c827a] py-2 italic">No invoices generated yet.</div>
+              )}
+            </div>
+
+            {/* Projects list */}
+            <div className="drawer-block">
+              <span className="eyebrow">Projects</span>
+              {selectedCustomer.projects.map(project => (
+                <div className="drawer-project" key={project.id}>
+                  <div>
+                    <b>{project.name}</b>
+                    <small>{project.service}</small>
                   </div>
-                );
-              })}
+                  <div className="drawer-project-meta flex items-center gap-2.5">
+                    <strong>{formatMoney(project.amount)}</strong>
+                    <span className={`status ${project.status}`}>
+                      {formatStatusLabel(project.status)}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {selectedCustomer.notes && (
@@ -324,7 +467,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         </div>
       )}
 
-      {/* Add New Customer Modal (Matching Manage Gallery Modal Design) */}
+      {/* Add New Customer Modal */}
       {showAddModal && (
         <div
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
@@ -526,6 +669,35 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
             </form>
           </div>
         </div>
+      )}
+
+      {/* Invoice Editor & Live Preview Modal */}
+      {showInvoiceModal && (
+        <InvoiceModal
+          isOpen={showInvoiceModal}
+          onClose={() => {
+            setShowInvoiceModal(false);
+            setInvoiceModalCustomer(undefined);
+            setInvoiceModalInvoice(undefined);
+          }}
+          onToast={msg => {
+            if (onToast) onToast(msg);
+          }}
+          initialCustomer={invoiceModalCustomer}
+          existingInvoice={invoiceModalInvoice}
+          allCustomers={items}
+          onInvoiceSaved={saved => {
+            setInvoices(prev => {
+              const idx = prev.findIndex(i => i.id === saved.id);
+              if (idx >= 0) {
+                const copy = [...prev];
+                copy[idx] = saved;
+                return copy;
+              }
+              return [saved, ...prev];
+            });
+          }}
+        />
       )}
     </section>
   );
