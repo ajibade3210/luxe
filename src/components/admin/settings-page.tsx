@@ -516,7 +516,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
                     />
                   ) : (
                     <span className="font-sans font-bold text-3xl text-[#191c1d]">
-                      {name ? name.charAt(0) : "É"}
+                      {name ? name.charAt(0) : "Ś"}
                     </span>
                   )}
                   {isUploadingLogo && (
@@ -596,7 +596,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
           <label>
             Public profile slug & URL
             <div className="slug-input relative">
-              <span>Shopwus.com/</span>
+              <span>shopwus.com/</span>
               <input
                 aria-label="Public profile slug"
                 value={slug}
@@ -657,7 +657,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
 
           {/* Row 5: Philosophy / Bio (Full width) */}
           <label className="full">
-            Studio Philosophy / Description (The Élan Touch)
+            Studio Philosophy / Description (The Ślan Touch)
             <textarea value={about} onChange={e => setAbout(e.target.value)} />
           </label>
         </div>

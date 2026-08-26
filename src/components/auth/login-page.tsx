@@ -61,7 +61,7 @@ export function LoginPage() {
       <header className="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between z-10">
         <Link href="/" className="flex items-center gap-2.5 text-decoration-none group">
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-base italic font-bold">
-            É
+            Ś
           </div>
           <span className="font-bold text-base tracking-tight text-[#191c1d]">Shopwus</span>
         </Link>

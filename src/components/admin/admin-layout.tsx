@@ -23,7 +23,7 @@ export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 export function Brand() {
   return (
     <a href="/" className="brand">
-      <span className="brand-mark">É</span>
+      <span className="brand-mark">Ś</span>
       <span>Shopwus</span>
     </a>
   );

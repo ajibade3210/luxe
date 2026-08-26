@@ -212,7 +212,7 @@ export function SignupPage() {
               </div>
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1">
-                  Shopwus.com/
+                  shopwus.com/
                 </span>
                 <input
                   type="text"

@@ -192,7 +192,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     const url =
       typeof window !== "undefined"
         ? window.location.href
-        : `https://Shopwus.com/${profile.slug || slug}`;
+        : `https://shopwus.com/${profile.slug || slug}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
@@ -452,7 +452,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
               <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
             </span>
             <span className="text-[#c4c7c7]">·</span>
-            <span className="font-mono">Shopwus.com/{profile.slug || slug}</span>
+            <span className="font-mono">shopwus.com/{profile.slug || slug}</span>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={handleCopyLink}

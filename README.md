@@ -1,4 +1,4 @@
-# Shopwus & Élan Events
+# Shopwus
 
 A luxury studio management platform and client-facing digital showcase application built with Next.js 16, React 19, and Tailwind CSS.
 
