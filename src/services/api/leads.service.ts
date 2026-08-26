@@ -1,6 +1,7 @@
 import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { leads as defaultLeads } from "@/lib/mock-data";
-import type { Lead, LeadStatus } from "@/lib/types";
+import type { Customer, Lead, LeadStatus } from "@/lib/types";
+import { createCustomer } from "./customer.service";
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -71,6 +72,39 @@ export async function updateLeadStatus(id: string, status: LeadStatus): Promise<
     savePersistedLeads(currentLeads);
   }
   return lead;
+}
+
+/**
+ * 1-Click Convert Lead to Customer & Prepare Invoice
+ * Backend swap:
+ * `const res = await fetch(`/api/leads/${leadId}/convert`, { method: 'POST' }); return res.json();`
+ */
+export async function convertLeadToCustomer(
+  leadId: string
+): Promise<{ customer: Customer; lead: Lead }> {
+  await delay(250);
+
+  const leads = loadPersistedLeads();
+  const targetIndex = leads.findIndex(l => l.id === leadId);
+  if (targetIndex < 0) {
+    throw new Error(`Lead with ID ${leadId} not found.`);
+  }
+
+  const [targetLead] = leads.splice(targetIndex, 1);
+  targetLead.status = "converted";
+  savePersistedLeads(leads);
+
+  const customer = await createCustomer({
+    name: targetLead.name,
+    email: targetLead.email,
+    phone: targetLead.phone,
+    projectName: targetLead.service ? `${targetLead.service} Production` : "Studio Project",
+    service: targetLead.service || "Bespoke Styling",
+    amount: targetLead.budget || 25000,
+    status: "pending",
+  });
+
+  return { customer, lead: targetLead };
 }
 
 /**

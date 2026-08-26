@@ -137,8 +137,12 @@ function CreatePreviewCard() {
 
       <div className="card-body-content">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#191c1d] text-[#f4ece1] flex items-center justify-center font-serif text-lg font-bold shadow-sm">
-            Ś
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#191c1d] flex items-center justify-center shadow-xs shrink-0">
+            <img
+              src="https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png"
+              alt="Élan Events logo"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <div className="flex items-center gap-1.5">

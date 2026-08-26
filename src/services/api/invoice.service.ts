@@ -154,7 +154,15 @@ export async function getInvoicesByCustomer(customerId: string): Promise<Invoice
 export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
   await delay(200);
 
-  const existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+  let existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+
+  // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
+  if (existingIdx < 0 && input.customerId?.startsWith("l")) {
+    existingIdx = persistedInvoices.findIndex(
+      i => i.customerId === input.customerId || i.customerEmail === input.customerEmail
+    );
+  }
+
   const now = new Date().toISOString();
 
   if (existingIdx >= 0) {
@@ -212,7 +220,15 @@ export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
 export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
   await delay(300);
 
-  const existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+  let existingIdx = input.id ? persistedInvoices.findIndex(i => i.id === input.id) : -1;
+
+  // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
+  if (existingIdx < 0 && input.customerId?.startsWith("l")) {
+    existingIdx = persistedInvoices.findIndex(
+      i => i.customerId === input.customerId || i.customerEmail === input.customerEmail
+    );
+  }
+
   const now = new Date().toISOString();
 
   if (existingIdx >= 0) {
@@ -312,4 +328,168 @@ export async function deleteInvoice(id: string): Promise<{ success: boolean; id:
   persistedInvoices = persistedInvoices.filter(i => i.id !== id);
   notifyInvoicesUpdated();
   return { success: true, id };
+}
+
+/**
+ * 8. Generate Invoice PDF URL
+ * Backend generates the PDF and returns a hosted or blob URL.
+ * Backend swap:
+ * `const res = await fetch(`/api/invoices/${id}/pdf`); const data = await res.json(); return data.url;`
+ */
+export async function generateInvoicePdfUrl(id: string): Promise<string> {
+  await delay(300);
+  const target = persistedInvoices.find(i => i.id === id);
+  const invoiceNum = target ? target.invoiceNumber : "INV-2026";
+
+  if (typeof window === "undefined") {
+    return `https://shopwus.com/invoices/${invoiceNum}.pdf`;
+  }
+
+  // Create an interactive printable document blob URL
+  const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Invoice ${invoiceNum} - Élan Atelier</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #111827; margin: 40px; }
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #f3f4f6; padding-bottom: 20px; }
+    .title { font-size: 24px; font-weight: bold; }
+    .badge { color: #855e2e; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+    .meta { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 12px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+    .table th, .table td { text-align: left; padding: 10px; border-bottom: 1px solid #f3f4f6; font-size: 12px; }
+    .total-box { margin-top: 20px; text-align: right; font-size: 14px; font-weight: bold; }
+    .bank-box { margin-top: 30px; background: #fafaf9; padding: 16px; border-radius: 12px; font-size: 11px; border: 1px solid #eee7dc; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">Élan Atelier</div>
+      <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Luxury Event Scenography & Production</div>
+    </div>
+    <div style="text-align: right;">
+      <div class="badge">${target?.status || "INVOICE"}</div>
+      <div style="font-size: 16px; font-weight: bold; margin-top: 4px;">${invoiceNum}</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div><b>Billed by:</b><br/>Élan Atelier Limited<br/>Victoria Island, Lagos</div>
+    <div><b>Billed to:</b><br/>${target?.customerName || "Client"}<br/>${target?.billingAddress || ""}</div>
+    <div><b>Dates:</b><br/>Issue: ${target?.issueDate || ""}<br/>Due: ${target?.dueDate || ""}<br/>Terms: ${target?.paymentTerms || "Net 14"}</div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr style="color: #6b7280;">
+        <th>Item Description</th>
+        <th>QTY</th>
+        <th>Rate</th>
+        <th style="text-align: right;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${(target?.items || [])
+        .map(
+          item => `
+        <tr>
+          <td><b>${item.description}</b></td>
+          <td>${item.quantity}</td>
+          <td>$${item.unitPrice.toLocaleString()}</td>
+          <td style="text-align: right;">$${item.amount.toLocaleString()}</td>
+        </tr>
+      `
+        )
+        .join("")}
+    </tbody>
+  </table>
+  <div class="total-box">
+    <div>Total Due: $${(target?.total || 0).toLocaleString()}</div>
+  </div>
+  <div class="bank-box">
+    <b>Remittance Banking Details</b><br/>
+    Bank: Standard Chartered Bank · Account Name: Élan Events Atelier Ltd · Account Number: 0039281745
+  </div>
+  <script>window.print();</script>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  return URL.createObjectURL(blob);
+}
+
+/**
+ * 9. Trigger Direct PDF Download / Print View
+ */
+export async function downloadInvoicePdf(id: string): Promise<void> {
+  const url = await generateInvoicePdfUrl(id);
+  if (typeof window !== "undefined") {
+    const printWindow = window.open(url, "_blank");
+    if (!printWindow) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${id}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  }
+}
+
+/**
+ * 10. Generate WhatsApp Invoice Link with Remittance Info & Public View Link
+ */
+export function createWhatsAppInvoiceUrl(
+  invoice: Invoice,
+  studioPhone?: string,
+  studioName = "Élan Atelier"
+): string {
+  const defaultPhone = "+2348055966944";
+  const rawPhone = (invoice.customerId || studioPhone || defaultPhone).replace(/[^0-9]/g, "");
+  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
+
+  const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/invoices/${invoice.invoiceNumber}`;
+
+  const message = `✨ *Invoice ${invoice.invoiceNumber} — ${studioName}*
+━━━━━━━━━━━━━━━━━━━━━
+Dear *${invoice.customerName}*,
+
+Here are your invoice details for *${invoice.items[0]?.description || "Atelier Services"}*:
+
+💰 *Total Amount Due:* $${Number(invoice.total).toLocaleString()}
+📅 *Due Date:* ${invoice.dueDate}
+📄 *Payment Terms:* ${invoice.paymentTerms}
+
+🔗 *View / Download Invoice:*
+${publicUrl}
+
+🏦 *Remittance Banking Details:*
+• Bank Name: Standard Chartered Bank
+• Account Name: Élan Events Atelier Ltd
+• Account Number: 0039281745
+
+Please review and notify us once payment is remitted. Thank you for your partnership!
+━━━━━━━━━━━━━━━━━━━━━
+_Sent via ${studioName}_`;
+
+  return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * 11. Send Invoice Via Email Dispatch
+ * Backend swap:
+ * `const res = await fetch(`/api/invoices/${id}/send-email`, { method: 'POST' }); return res.json();`
+ */
+export async function sendInvoiceViaEmail(
+  id: string
+): Promise<{ success: boolean; recipient: string; invoiceNumber: string }> {
+  await delay(350);
+  const target = persistedInvoices.find(i => i.id === id);
+  if (!target) throw new Error(`Invoice ${id} not found.`);
+
+  return {
+    success: true,
+    recipient: target.customerEmail,
+    invoiceNumber: target.invoiceNumber,
+  };
 }

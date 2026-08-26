@@ -1,9 +1,23 @@
 "use client";
 
-import { ArrowLeft, FileText, Loader2, Plus, RefreshCw, Send, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Copy,
+  Download,
+  FileText,
+  Loader2,
+  MessageSquare,
+  Plus,
+  RefreshCw,
+  Send,
+  Trash2,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  createWhatsAppInvoiceUrl,
   deleteInvoice,
+  downloadInvoicePdf,
   type Invoice,
   type InvoiceInput,
   type InvoiceItem,
@@ -81,6 +95,8 @@ export function InvoiceModal({
   const [isSending, setIsSending] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Sync customer selection
   const handleCustomerChange = (cId: string) => {
@@ -182,7 +198,7 @@ export function InvoiceModal({
     }
   };
 
-  // Action: Send Invoice
+  // Action: Send Invoice (Email Dispatch)
   const handleSendInvoice = async () => {
     if (!customerName || !customerEmail) {
       onToast("Please provide both customer name and email.");
@@ -192,7 +208,7 @@ export function InvoiceModal({
     try {
       const sent = await sendInvoice(buildPayload());
       onToast(
-        `Invoice ${sent.invoiceNumber} sent to ${sent.customerEmail} (${formatMoney(sent.total)}).`
+        `Invoice ${sent.invoiceNumber} sent via email to ${sent.customerEmail} (${formatMoney(sent.total)}).`
       );
       if (onInvoiceSaved) onInvoiceSaved(sent);
       onClose();
@@ -200,6 +216,62 @@ export function InvoiceModal({
       onToast("Failed to send invoice.");
     } finally {
       setIsSending(false);
+    }
+  };
+
+  // Action: Send via WhatsApp
+  const handleSendWhatsApp = async () => {
+    if (!customerName) {
+      onToast("Please provide customer name.");
+      return;
+    }
+    try {
+      let activeInvoice: Invoice;
+      if (!existingInvoice || existingInvoice.status === "draft") {
+        activeInvoice = await sendInvoice(buildPayload());
+        if (onInvoiceSaved) onInvoiceSaved(activeInvoice);
+      } else {
+        activeInvoice = existingInvoice;
+      }
+      const waUrl = createWhatsAppInvoiceUrl(activeInvoice);
+      if (typeof window !== "undefined") {
+        window.open(waUrl, "_blank");
+      }
+      onToast(`WhatsApp dispatch ready for ${activeInvoice.customerName}.`);
+      onClose();
+    } catch {
+      onToast("Failed to prepare WhatsApp invoice dispatch.");
+    }
+  };
+
+  // Action: Download PDF
+  const handleDownloadPdf = async () => {
+    setIsDownloadingPdf(true);
+    try {
+      let targetId = existingInvoice?.id;
+      if (!targetId) {
+        const savedDraft = await saveInvoiceDraft(buildPayload());
+        targetId = savedDraft.id;
+        if (onInvoiceSaved) onInvoiceSaved(savedDraft);
+      }
+      await downloadInvoicePdf(targetId);
+      onToast("Invoice document generated for print/PDF download.");
+    } catch {
+      onToast("Failed to generate invoice PDF.");
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  // Action: Copy Public Invoice Link
+  const handleCopyLink = () => {
+    const invNum = existingInvoice?.invoiceNumber || "INV-2026-DRAFT";
+    const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/invoices/${invNum}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(publicUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+      onToast("Invoice public link copied to clipboard.");
     }
   };
 
@@ -270,7 +342,7 @@ export function InvoiceModal({
             </h1>
           </div>
 
-          {/* Top Actions */}
+          {/* Top Actions Bar */}
           <div className="flex items-center gap-2.5 flex-wrap">
             {/* Delete button: ONLY FOR UNSENT DRAFTS */}
             {isExistingDraft && (
@@ -285,42 +357,67 @@ export function InvoiceModal({
               </button>
             )}
 
+            {/* Download PDF button */}
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#374151] border border-[#d1d5db] px-3.5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+            >
+              {isDownloadingPdf ? (
+                <Loader2 size={13} className="animate-spin text-[#6b7280]" />
+              ) : (
+                <Download size={13} />
+              )}
+              <span>Download PDF</span>
+            </button>
+
             {/* Save as Draft button */}
             <button
               type="button"
               onClick={handleSaveDraft}
               disabled={isSavingDraft || isSending}
-              className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-3.5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
             >
               {isSavingDraft ? (
                 <>
-                  <Loader2 size={14} className="animate-spin text-[#6b7280]" />
+                  <Loader2 size={13} className="animate-spin text-[#6b7280]" />
                   <span>Saving…</span>
                 </>
               ) : (
                 <>
-                  <FileText size={14} />
+                  <FileText size={13} />
                   <span>Save as Draft</span>
                 </>
               )}
             </button>
 
-            {/* Send / Resend Invoice button */}
+            {/* WhatsApp Send Option */}
+            <button
+              type="button"
+              onClick={handleSendWhatsApp}
+              className="inline-flex items-center gap-1.5 bg-[#f0fdf4] hover:bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0] px-3.5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer"
+            >
+              <MessageSquare size={13} />
+              <span>WhatsApp</span>
+            </button>
+
+            {/* Send / Resend Invoice button (Email) */}
             {isAlreadySent ? (
               <button
                 type="button"
                 onClick={handleResendInvoice}
                 disabled={isResending}
-                className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {isResending ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={13} className="animate-spin" />
                     <span>Resending…</span>
                   </>
                 ) : (
                   <>
-                    <RefreshCw size={14} />
+                    <RefreshCw size={13} />
                     <span>Resend Invoice</span>
                   </>
                 )}
@@ -330,16 +427,16 @@ export function InvoiceModal({
                 type="button"
                 onClick={handleSendInvoice}
                 disabled={isSending || isSavingDraft}
-                className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {isSending ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={13} className="animate-spin" />
                     <span>Sending…</span>
                   </>
                 ) : (
                   <>
-                    <Send size={14} />
+                    <Send size={13} />
                     <span>Send Invoice</span>
                   </>
                 )}
@@ -363,7 +460,21 @@ export function InvoiceModal({
                   <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
                     Customer *
                   </label>
-                  {allCustomers.length > 0 ? (
+                  {customerName ? (
+                    <div className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-xs text-[#111827] flex items-center justify-between">
+                      <div className="min-w-0 pr-2 truncate">
+                        <span className="font-semibold text-[#111827]">{customerName}</span>
+                        {customerEmail && (
+                          <span className="text-[#6b7280] text-[11px] ml-1.5 font-normal">
+                            ({customerEmail})
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] uppercase font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded shrink-0">
+                        Client
+                      </span>
+                    </div>
+                  ) : allCustomers.length > 0 ? (
                     <select
                       value={customerId}
                       onChange={e => handleCustomerChange(e.target.value)}
@@ -407,30 +518,26 @@ export function InvoiceModal({
                     <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
                       Issue Date *
                     </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        required
-                        value={issueDate}
-                        onChange={e => setIssueDate(e.target.value)}
-                        className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
-                      />
-                    </div>
+                    <input
+                      type="date"
+                      required
+                      value={issueDate}
+                      onChange={e => setIssueDate(e.target.value)}
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                    />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
                       Due Date *
                     </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        required
-                        value={dueDate}
-                        onChange={e => setDueDate(e.target.value)}
-                        className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
-                      />
-                    </div>
+                    <input
+                      type="date"
+                      required
+                      value={dueDate}
+                      onChange={e => setDueDate(e.target.value)}
+                      className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+                    />
                   </div>
 
                   <div>
@@ -590,9 +697,28 @@ export function InvoiceModal({
 
             {/* Right Column (5 cols): Live Real-Time Stationery Preview */}
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-[11px] font-bold text-[#6b7280] uppercase tracking-wider block">
-                Preview
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#6b7280] uppercase tracking-wider">
+                  Live Preview
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer"
+                >
+                  {copiedLink ? (
+                    <>
+                      <Check size={12} className="text-[#16a34a]" />
+                      <span className="text-[#16a34a]">Link Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={12} />
+                      <span>Copy Invoice Link</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               {/* Stationery Card matching inspiration */}
               <div className="bg-white border border-[#e5e7eb] rounded-3xl p-6 sm:p-7 shadow-lg space-y-6 text-xs text-[#374151]">

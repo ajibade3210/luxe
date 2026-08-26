@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "Shopwus — Luxury Event Studio & Atelier Suite",
   description:
     "Shopwus brings your luxury event studio, clientele, and creative storytelling into one considered place.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
