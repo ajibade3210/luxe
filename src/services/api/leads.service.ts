@@ -5,21 +5,25 @@ import { createCustomer } from "./customer.service";
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
+let memoryLeads: Lead[] = [...defaultLeads];
+
 export function loadPersistedLeads(): Lead[] {
   if (typeof window !== "undefined") {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.leads);
       if (saved) {
-        return JSON.parse(saved);
+        memoryLeads = JSON.parse(saved);
+        return memoryLeads;
       }
     } catch {
-      // Fallback to mock data
+      // Fallback to memory
     }
   }
-  return [...defaultLeads];
+  return memoryLeads;
 }
 
 export function savePersistedLeads(data: Lead[]): void {
+  memoryLeads = [...data];
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem(STORAGE_KEYS.leads, JSON.stringify(data));
@@ -111,11 +115,17 @@ export async function convertLeadToCustomer(
   targetLead.status = "converted";
   savePersistedLeads(leads);
 
+  const projectName = targetLead.service
+    ? targetLead.service.toLowerCase().includes("production")
+      ? targetLead.service
+      : `${targetLead.service} Production`
+    : "Studio Project";
+
   const customer = await createCustomer({
     name: targetLead.name,
     email: targetLead.email,
     phone: targetLead.phone,
-    projectName: targetLead.service ? `${targetLead.service} Production` : "Studio Project",
+    projectName,
     service: targetLead.service || "Bespoke Styling",
     amount: targetLead.budget || 25000,
     status: "pending",

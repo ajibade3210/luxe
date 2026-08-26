@@ -57,7 +57,7 @@ export function StationeryCard({
         }`}
       >
         {/* FRONT FACE: Luxury Stationery Card */}
-        <div className="card-face card-front relative rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
+        <div className="card-face card-front rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div
@@ -155,7 +155,7 @@ export function StationeryCard({
         </div>
 
         {/* BACK FACE: Studio Details & Concierge Desk */}
-        <div className="card-face card-back relative rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
+        <div className="card-face card-back rounded-3xl p-6 sm:p-8 bg-[#faf6f0] border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div
