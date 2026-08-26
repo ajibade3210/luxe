@@ -7,6 +7,7 @@ export interface Lead {
   email: string;
   phone?: string;
   service: string;
+  services?: string[];
   eventDate: string;
   budget?: number;
   message: string;

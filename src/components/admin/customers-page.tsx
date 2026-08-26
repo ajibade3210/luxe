@@ -2,6 +2,7 @@
 
 import {
   Check,
+  ChevronLeft,
   ChevronRight,
   Download,
   FileText,
@@ -10,12 +11,14 @@ import {
   MessageSquare,
   Plus,
   RefreshCw,
+  Search,
   Send,
   Trash2,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
+  addProjectToCustomer,
   createCustomer,
   deleteInvoice,
   exportCustomersCSV,
@@ -41,9 +44,22 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
   const [items, setItems] = useState<Customer[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [isExporting, setIsExporting] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Add Project Modal State
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [isAddingProject, setIsAddingProject] = useState(false);
+  const [projectFormData, setProjectFormData] = useState({
+    name: "",
+    service: AVAILABLE_SERVICES[0],
+    amount: 35000,
+    status: "pending" as ProjectStatus,
+  });
 
   // Send Message Modal State
   const [showSendMessageModal, setShowSendMessageModal] = useState(false);
@@ -70,7 +86,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
   });
 
   useEffect(() => {
-    getCustomers().then(setItems);
+    getCustomers(searchQuery).then(setItems);
     getInvoices().then(setInvoices);
 
     const handleCustomersUpdate = (e: Event) => {
@@ -94,7 +110,17 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
       window.removeEventListener("luxe_customers_updated", handleCustomersUpdate);
       window.removeEventListener("luxe_invoices_updated", handleInvoicesUpdate);
     };
-  }, []);
+  }, [searchQuery]);
+
+  const handleSearch = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
+    getCustomers(val).then(setItems);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedItems = items.slice(startIndex, startIndex + pageSize);
 
   const selectedCustomer = items.find(c => c.id === selected);
   const customerInvoices = selectedCustomer
@@ -151,6 +177,35 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
       }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleAddProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
+    if (!projectFormData.name) {
+      if (onToast) onToast("Please enter a project scope name.");
+      return;
+    }
+
+    setIsAddingProject(true);
+    try {
+      const updatedCust = await addProjectToCustomer(selectedCustomer.id, projectFormData);
+      setItems(prev => prev.map(c => (c.id === updatedCust.id ? updatedCust : c)));
+      setShowAddProjectModal(false);
+      setProjectFormData({
+        name: "",
+        service: AVAILABLE_SERVICES[0],
+        amount: 35000,
+        status: "pending",
+      });
+      if (onToast) {
+        onToast(`New project "${projectFormData.name}" added to ${selectedCustomer.name}.`);
+      }
+    } catch {
+      if (onToast) onToast("Failed to add project.");
+    } finally {
+      setIsAddingProject(false);
     }
   };
 
@@ -267,7 +322,15 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
       <div className="table-card">
         <div className="table-head">
           <h2>All customers</h2>
-          <span>{items.length} records</span>
+          <div className="table-search-box">
+            <Search size={13} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => handleSearch(e.target.value)}
+              placeholder="Search..."
+            />
+          </div>
         </div>
         <div className="table-wrap">
           <table>
@@ -282,7 +345,7 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               </tr>
             </thead>
             <tbody>
-              {items.map(c => {
+              {paginatedItems.map(c => {
                 const p = c.projects[0] || {
                   name: "Atelier Project",
                   service: "Bespoke Styling",
@@ -294,6 +357,8 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                 );
                 const hasSent = cInvoices.some(i => i.status === "sent" || i.status === "paid");
                 const isPending = p.status === "pending";
+                const totalCustValue =
+                  c.totalRevenue || c.projects.reduce((acc, proj) => acc + (proj.amount || 0), 0);
 
                 return (
                   <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
@@ -305,12 +370,22 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                       </small>
                     </td>
                     <td>
-                      <b>{p.name}</b>
+                      <div className="flex items-center">
+                        <b className="truncate max-w-[170px]">{p.name}</b>
+                        {c.projects.length > 1 && (
+                          <span
+                            className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
+                            title={`${c.projects.length} connected projects / services`}
+                          >
+                            +{c.projects.length - 1}
+                          </span>
+                        )}
+                      </div>
                       <small>{p.service}</small>
                     </td>
                     <td>
                       <span className="font-mono font-bold text-[#191c1d]">
-                        {formatMoney(p.amount || c.totalRevenue || 0)}
+                        {formatMoney(totalCustValue)}
                       </span>
                     </td>
                     <td>
@@ -355,6 +430,71 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               })}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-[#f0e8dc] bg-[#fdfbf7] text-xs text-[#5c5f60] rounded-b-3xl">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing <b className="text-[#191c1d]">{items.length === 0 ? 0 : startIndex + 1}</b>–
+              <b className="text-[#191c1d]">{Math.min(startIndex + pageSize, items.length)}</b> of{" "}
+              <b className="text-[#191c1d]">{items.length}</b> records
+            </span>
+            <div className="hidden sm:flex items-center gap-1.5 ml-3 border-l border-[#ded7cb] pl-3">
+              <span className="text-[11px] text-[#8c827a]">Per page:</span>
+              <select
+                value={pageSize}
+                onChange={e => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-xs text-[#191c1d] focus:outline-none"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronLeft size={13} />
+              <span>Previous</span>
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    page === currentPage
+                      ? "bg-[#191c1d] text-white shadow-2xs"
+                      : "bg-white border border-[#ded7cb] text-[#5c5f60] hover:bg-[#faf8f5] hover:text-[#191c1d]"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <span>Next</span>
+              <ChevronRight size={13} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -465,21 +605,33 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
 
             {/* Projects list */}
             <div className="drawer-block">
-              <span className="eyebrow">Projects</span>
-              {selectedCustomer.projects.map(project => (
-                <div className="drawer-project" key={project.id}>
-                  <div>
-                    <b>{project.name}</b>
-                    <small>{project.service}</small>
+              <div className="flex items-center justify-between pb-1">
+                <span className="eyebrow">Projects ({selectedCustomer.projects.length})</span>
+                <button
+                  type="button"
+                  onClick={() => setShowAddProjectModal(true)}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer bg-[#faf7f2] hover:bg-[#f5eee3] px-2 py-0.5 rounded-md border border-[#ded5c8] transition-colors"
+                >
+                  <Plus size={11} />
+                  <span>Add Project</span>
+                </button>
+              </div>
+              <div className="space-y-2 pt-2">
+                {selectedCustomer.projects.map(project => (
+                  <div className="drawer-project" key={project.id}>
+                    <div>
+                      <b>{project.name}</b>
+                      <small>{project.service}</small>
+                    </div>
+                    <div className="drawer-project-meta flex items-center gap-2.5">
+                      <strong>{formatMoney(project.amount)}</strong>
+                      <span className={`status ${project.status}`}>
+                        {formatStatusLabel(project.status)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="drawer-project-meta flex items-center gap-2.5">
-                    <strong>{formatMoney(project.amount)}</strong>
-                    <span className={`status ${project.status}`}>
-                      {formatStatusLabel(project.status)}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {selectedCustomer.notes && (
@@ -501,6 +653,147 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               </button>
             </div>
           </aside>
+        </div>
+      )}
+
+      {/* Add Project to Customer Modal */}
+      {showAddProjectModal && selectedCustomer && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowAddProjectModal(false)}
+        >
+          <div
+            className="bg-white border border-[#eae3d7] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+                  Add Project / Scope · {selectedCustomer.name}
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
+                  New Project Scope
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddProjectModal(false)}
+                className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddProject} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                  Project / Service Name *
+                </label>
+                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+                  <input
+                    required
+                    value={projectFormData.name}
+                    onChange={e => setProjectFormData({ ...projectFormData, name: e.target.value })}
+                    placeholder="e.g. Floral Scenography & Styling"
+                    className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                  Service Category
+                </label>
+                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+                  <select
+                    value={projectFormData.service}
+                    onChange={e =>
+                      setProjectFormData({ ...projectFormData, service: e.target.value })
+                    }
+                    className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
+                  >
+                    {AVAILABLE_SERVICES.map(svc => (
+                      <option key={svc} value={svc}>
+                        {svc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                    Budget / Value ($)
+                  </label>
+                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+                    <input
+                      type="number"
+                      step="1000"
+                      min="0"
+                      value={projectFormData.amount}
+                      onChange={e =>
+                        setProjectFormData({
+                          ...projectFormData,
+                          amount: Number(e.target.value) || 0,
+                        })
+                      }
+                      className="w-full text-xs text-[#191c1d] font-mono focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                    Status
+                  </label>
+                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+                    <select
+                      value={projectFormData.status}
+                      onChange={e =>
+                        setProjectFormData({
+                          ...projectFormData,
+                          status: e.target.value as ProjectStatus,
+                        })
+                      }
+                      className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="active">Active</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#f0e8dc]">
+                <button
+                  type="button"
+                  onClick={() => setShowAddProjectModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAddingProject}
+                  className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {isAddingProject ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin" />
+                      <span>Saving…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check size={13} />
+                      <span>Add Project</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

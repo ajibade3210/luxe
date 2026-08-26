@@ -15,7 +15,10 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 5. Run `yarn format` and fix all lint issues.
 
 RULES:
-- Remember to make it easy to switch to API calls. for all States and Flows. (Until we start build the backend side)
+- Architect all state and data flows behind an abstraction layer (e.g. service/repository pattern) so mock data can be swapped for real API calls later with minimal refactoring.
+- Design layouts to be responsive across Mobile, Tablet, and Desktop breakpoints from the start.
+- Keep designs simple — avoid over-engineering or adding unrequested features.
+- Never assume or hallucinate requirements; ask clarifying questions when something isn't clear.
 - Do NOT wait to be asked. Do NOT skip because the change "looks small".
 - Keep the review practical. Do not over-engineer, suggest unnecessary improvements, or nitpick.
 - Breaking-change risk must be called out immediately and clearly. If a change could impact existing API contracts, payload shapes, database schema, background jobs, integrations, or expected behavior, say so up front and treat it as a high-priority warning.

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Download, FileText, UserCheck, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, FileText, Search, UserCheck, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   convertLeadToCustomer,
@@ -16,6 +16,9 @@ import { InvoiceModal } from "./invoices/invoice-modal";
 export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [items, setItems] = useState<Lead[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [isExporting, setIsExporting] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
 
@@ -25,7 +28,7 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
   const [invoiceModalInvoice, setInvoiceModalInvoice] = useState<Invoice | undefined>(undefined);
 
   useEffect(() => {
-    getLeads().then(setItems);
+    getLeads(searchQuery).then(setItems);
     const handleLeadsUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Lead[]>;
       if (customEvent.detail) {
@@ -34,7 +37,17 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
     };
     window.addEventListener("luxe_leads_updated", handleLeadsUpdate);
     return () => window.removeEventListener("luxe_leads_updated", handleLeadsUpdate);
-  }, []);
+  }, [searchQuery]);
+
+  const handleSearch = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
+    getLeads(val).then(setItems);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedItems = items.slice(startIndex, startIndex + pageSize);
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -144,27 +157,47 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
       <div className="table-card">
         <div className="table-head">
           <h2>Recent inquiries</h2>
-          <span>{items.length} records</span>
+          <div className="table-search-box">
+            <Search size={13} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => handleSearch(e.target.value)}
+              placeholder="Search..."
+            />
+          </div>
         </div>
         <div className="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Service</th>
+                <th>Service requested</th>
                 <th>Event date</th>
                 <th>Status</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {items.map(lead => (
+              {paginatedItems.map(lead => (
                 <tr key={lead.id} onClick={() => setSelected(lead.id)} className="cursor-pointer">
                   <td>
                     <b>{lead.name}</b>
                     <small>{lead.email}</small>
                   </td>
-                  <td>{lead.service}</td>
+                  <td>
+                    <div className="flex items-center">
+                      <span className="font-semibold text-[#191c1d]">{lead.service}</span>
+                      {lead.services && lead.services.length > 1 && (
+                        <span
+                          className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
+                          title={`${lead.services.length} requested services/scopes`}
+                        >
+                          +{lead.services.length - 1}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td>{formatDate(lead.eventDate)}</td>
                   <td>
                     <span className={`status ${lead.status}`}>
@@ -178,6 +211,71 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-[#f0e8dc] bg-[#fdfbf7] text-xs text-[#5c5f60] rounded-b-3xl">
+          <div className="flex items-center gap-2">
+            <span>
+              Showing <b className="text-[#191c1d]">{items.length === 0 ? 0 : startIndex + 1}</b>–
+              <b className="text-[#191c1d]">{Math.min(startIndex + pageSize, items.length)}</b> of{" "}
+              <b className="text-[#191c1d]">{items.length}</b> records
+            </span>
+            <div className="hidden sm:flex items-center gap-1.5 ml-3 border-l border-[#ded7cb] pl-3">
+              <span className="text-[11px] text-[#8c827a]">Per page:</span>
+              <select
+                value={pageSize}
+                onChange={e => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-xs text-[#191c1d] focus:outline-none"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronLeft size={13} />
+              <span>Previous</span>
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    page === currentPage
+                      ? "bg-[#191c1d] text-white shadow-2xs"
+                      : "bg-white border border-[#ded7cb] text-[#5c5f60] hover:bg-[#faf8f5] hover:text-[#191c1d]"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#ded7cb] bg-white text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <span>Next</span>
+              <ChevronRight size={13} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -196,7 +294,7 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
 
             <div className="detail-grid">
               <div>
-                <span className="eyebrow">Service</span>
+                <span className="eyebrow">Primary service</span>
                 <b>{selectedLead.service}</b>
               </div>
               <div>
@@ -212,6 +310,25 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
                 <b>{formatStatusLabel(selectedLead.status)}</b>
               </div>
             </div>
+
+            {/* Services Scope List if multiple */}
+            {selectedLead.services && selectedLead.services.length > 0 && (
+              <div className="drawer-block">
+                <span className="eyebrow">
+                  Requested Services & Scopes ({selectedLead.services.length})
+                </span>
+                <div className="flex flex-wrap gap-1.5 pt-1.5">
+                  {selectedLead.services.map(svc => (
+                    <span
+                      key={svc}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#faf8f5] border border-[#ded7cb] text-[#191c1d]"
+                    >
+                      {svc}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <blockquote>{selectedLead.message}</blockquote>
 

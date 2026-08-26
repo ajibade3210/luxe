@@ -51,12 +51,29 @@ export async function createLead(input: Omit<Lead, "id" | "createdAt" | "status"
 export const submitConsultationInquiry = createLead;
 
 /**
- * Fetches all leads.
- * Swappable with: `await fetch('/api/v1/leads').then(r => r.json())`
+ * Fetches all leads with optional search query.
+ * Swappable with: `await fetch('/api/v1/leads' + (query ? `?q=${encodeURIComponent(query)}` : '')).then(r => r.json())`
  */
-export async function getLeads(): Promise<Lead[]> {
+export async function getLeads(query?: string): Promise<Lead[]> {
   await delay(100);
-  return loadPersistedLeads();
+  const leads = loadPersistedLeads();
+  if (!query?.trim()) {
+    return leads;
+  }
+  const q = query.toLowerCase().trim();
+  return leads.filter(l => {
+    const matchesBasic =
+      l.name.toLowerCase().includes(q) ||
+      l.email.toLowerCase().includes(q) ||
+      l.phone?.toLowerCase().includes(q) ||
+      l.service?.toLowerCase().includes(q) ||
+      l.message?.toLowerCase().includes(q) ||
+      l.status.toLowerCase().includes(q);
+
+    const matchesServices = l.services?.some(s => s.toLowerCase().includes(q));
+
+    return matchesBasic || matchesServices;
+  });
 }
 
 /**

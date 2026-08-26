@@ -981,6 +981,36 @@ textarea:focus {
   color: var(--muted);
   font-size: 10px;
 }
+.table-search-box {
+  position: relative;
+  width: 220px;
+}
+.table-search-box svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8c827a;
+  pointer-events: none;
+}
+.table-card .table-head .table-search-box input {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 12px 6px 34px;
+  font-size: 12px;
+  color: #191c1d;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.table-card .table-head .table-search-box input:focus {
+  border-color: #191c1d;
+  box-shadow: none;
+}
+.table-card .table-head .table-search-box input::placeholder {
+  color: #9ca3af;
+}
 .table-wrap {
   overflow-x: auto;
 }

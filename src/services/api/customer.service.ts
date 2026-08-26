@@ -16,13 +16,70 @@ function notifyCustomersUpdated() {
 }
 
 /**
- * Fetch all customers
+ * Fetch all customers with optional search query
  * When connecting to real backend, easily swap with:
- * `const res = await fetch('/api/customers'); return res.json();`
+ * `const res = await fetch('/api/customers' + (query ? `?q=${encodeURIComponent(query)}` : '')); return res.json();`
  */
-export async function getCustomers(): Promise<Customer[]> {
+export async function getCustomers(query?: string): Promise<Customer[]> {
   await delay(100);
-  return currentCustomers;
+  if (!query?.trim()) {
+    return currentCustomers;
+  }
+  const q = query.toLowerCase().trim();
+  return currentCustomers.filter(c => {
+    const matchesBasic =
+      c.name.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.phone?.toLowerCase().includes(q) ||
+      c.company?.toLowerCase().includes(q) ||
+      c.notes?.toLowerCase().includes(q);
+
+    const matchesProject = c.projects.some(
+      p => p.name.toLowerCase().includes(q) || p.service.toLowerCase().includes(q)
+    );
+
+    return matchesBasic || matchesProject;
+  });
+}
+
+/**
+ * Add a new Project / Scope to an existing customer
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch(`/api/customers/${customerId}/projects`, { method: 'POST', body: JSON.stringify(input) }); return res.json();`
+ */
+export async function addProjectToCustomer(
+  customerId: string,
+  input: { name: string; service: string; amount: number; status?: ProjectStatus }
+): Promise<Customer> {
+  await delay(200);
+  const custIndex = currentCustomers.findIndex(c => c.id === customerId);
+  if (custIndex === -1) {
+    throw new Error("Customer not found");
+  }
+
+  const existing = currentCustomers[custIndex];
+  const newProject: Project = {
+    id: `p-${Date.now()}`,
+    customerId,
+    name: input.name,
+    service: input.service,
+    amount: input.amount,
+    status: input.status || "pending",
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedProjects = [...existing.projects, newProject];
+  const updatedRevenue = updatedProjects.reduce((acc, p) => acc + (p.amount || 0), 0);
+
+  const updatedCustomer: Customer = {
+    ...existing,
+    projects: updatedProjects,
+    totalRevenue: updatedRevenue,
+  };
+
+  currentCustomers[custIndex] = updatedCustomer;
+  notifyCustomersUpdated();
+  return updatedCustomer;
 }
 
 export async function getCustomer(id: string): Promise<Customer | undefined> {
