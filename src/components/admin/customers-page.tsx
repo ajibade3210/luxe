@@ -5,21 +5,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
-  FileText,
   Loader2,
   Mail,
   MessageSquare,
+  MoreHorizontal,
   Plus,
   RefreshCw,
   Search,
-  Send,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   addProjectToCustomer,
   createCustomer,
+  deleteCustomerProject,
   deleteInvoice,
   exportCustomersCSV,
   getCustomers,
@@ -27,9 +28,11 @@ import {
   type Invoice,
   type NewCustomerInput,
   resendInvoice,
+  updateCustomerProjectStatus,
 } from "@/lib/api";
 import type { Customer, ProjectStatus } from "@/lib/types";
 import { formatMoney, formatStatusLabel, Metric, PageTitle } from "./admin-layout";
+import { CustomerImportModal } from "./customers/customer-import-modal";
 import { InvoiceModal } from "./invoices/invoice-modal";
 
 const AVAILABLE_SERVICES = [
@@ -46,9 +49,11 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
   const [selected, setSelected] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Add Project Modal State
@@ -240,6 +245,37 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
     }
   };
 
+  // Delete project from customer
+  const handleDeleteProject = async (
+    customerId: string,
+    projectId: string,
+    projectName: string
+  ) => {
+    try {
+      const updated = await deleteCustomerProject(customerId, projectId);
+      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
+      if (onToast) onToast(`Project "${projectName}" removed.`);
+    } catch {
+      if (onToast) onToast("Failed to remove project.");
+    }
+  };
+
+  // Update project status
+  const handleUpdateProjectStatus = async (
+    customerId: string,
+    projectId: string,
+    status: ProjectStatus,
+    projectName: string
+  ) => {
+    try {
+      const updated = await updateCustomerProjectStatus(customerId, projectId, status);
+      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
+      if (onToast) onToast(`Project "${projectName}" marked as ${formatStatusLabel(status)}.`);
+    } catch {
+      if (onToast) onToast("Failed to update project status.");
+    }
+  };
+
   // Open Message Modal with custom greeting
   const handleOpenMessageModal = (customer: Customer) => {
     setMessageText(
@@ -284,6 +320,37 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         description="The people behind the remarkable moments."
         action={
           <div className="flex items-center gap-2.5">
+            {/* More Actions Menu Button & Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowMoreMenu(prev => !prev)}
+                className="inline-flex items-center justify-center w-9 h-9 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs"
+                title="More actions"
+              >
+                <MoreHorizontal size={15} />
+              </button>
+
+              {showMoreMenu && (
+                <>
+                  <div className="fixed inset-0 z-20" onClick={() => setShowMoreMenu(false)} />
+                  <div className="absolute right-0 top-full mt-1.5 w-44 bg-white border border-[#ded7cb] rounded-2xl shadow-xl z-30 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        setShowImportModal(true);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
+                    >
+                      <Upload size={14} className="text-[#855e2e]" />
+                      <span>Import Customers</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={handleExport}
@@ -339,7 +406,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                 <th>Customer</th>
                 <th>Project</th>
                 <th>Status</th>
-                <th>Invoicing</th>
                 <th />
               </tr>
             </thead>
@@ -351,11 +417,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                   amount: c.totalRevenue || 0,
                   status: "pending" as ProjectStatus,
                 };
-                const cInvoices = invoices.filter(
-                  inv => inv.customerId === c.id || inv.customerEmail === c.email
-                );
-                const hasSent = cInvoices.some(i => i.status === "sent" || i.status === "paid");
-                const isPending = p.status === "pending";
 
                 return (
                   <tr key={c.id} onClick={() => setSelected(c.id)} className="cursor-pointer">
@@ -382,37 +443,6 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                     </td>
                     <td>
                       <span className={`status ${p.status}`}>{formatStatusLabel(p.status)}</span>
-                    </td>
-                    <td>
-                      {cInvoices.length > 0 ? (
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#eff6ff] text-[#1e40af] border border-[#bfdbfe]">
-                          {cInvoices.length === 1 ? (
-                            <>
-                              <Check size={11} />
-                              <span>{hasSent ? "Invoice Sent" : "Draft Invoice"}</span>
-                            </>
-                          ) : (
-                            <>
-                              <FileText size={11} />
-                              <span>{cInvoices.length} Invoices</span>
-                            </>
-                          )}
-                        </div>
-                      ) : (
-                        isPending && (
-                          <button
-                            type="button"
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleOpenInvoiceModalForCustomer(c);
-                            }}
-                            className="inline-flex items-center gap-1.5 bg-[#fbf9f5] hover:bg-[#855e2e] text-[#855e2e] hover:text-white border border-[#ded5c8] hover:border-[#855e2e] px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all shadow-2xs cursor-pointer"
-                          >
-                            <Send size={11} />
-                            <span>Create Invoice</span>
-                          </button>
-                        )
-                      )}
                     </td>
                     <td>
                       <ChevronRight size={16} />
@@ -510,6 +540,26 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
             </p>
             {selectedCustomer.company && (
               <p className="drawer-company">{selectedCustomer.company}</p>
+            )}
+
+            {/* Top Send Message Action */}
+            <div className="pt-3 pb-1">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold w-full transition-all shadow-xs cursor-pointer"
+                onClick={() => handleOpenMessageModal(selectedCustomer)}
+              >
+                <MessageSquare size={14} />
+                <span>Send Message</span>
+              </button>
+            </div>
+
+            {/* Client notes (Above Invoices & Projects) */}
+            {selectedCustomer.notes && (
+              <div className="drawer-block">
+                <span className="eyebrow">Client notes</span>
+                <p>{selectedCustomer.notes}</p>
+              </div>
             )}
 
             {/* Invoicing Section in Drawer */}
@@ -610,39 +660,56 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
               </div>
               <div className="space-y-2 pt-2">
                 {selectedCustomer.projects.map(project => (
-                  <div className="drawer-project" key={project.id}>
-                    <div>
-                      <b>{project.name}</b>
-                      <small>{project.service}</small>
+                  <div
+                    className="drawer-project flex items-center justify-between gap-3"
+                    key={project.id}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <b className="truncate block">{project.name}</b>
+                      <small className="block truncate text-[#6b7280]">{project.service}</small>
                     </div>
-                    <div className="drawer-project-meta flex items-center gap-2.5">
+                    <div className="drawer-project-meta flex items-center gap-2 shrink-0">
                       <strong>{formatMoney(project.amount)}</strong>
-                      <span className={`status ${project.status}`}>
-                        {formatStatusLabel(project.status)}
-                      </span>
+                      <select
+                        value={project.status}
+                        onChange={e =>
+                          handleUpdateProjectStatus(
+                            selectedCustomer.id,
+                            project.id,
+                            e.target.value as ProjectStatus,
+                            project.name
+                          )
+                        }
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border cursor-pointer focus:outline-none transition-colors ${
+                          project.status === "active"
+                            ? "bg-[#ecfdf5] text-[#065f46] border-[#a7f3d0]"
+                            : project.status === "completed"
+                              ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe]"
+                              : project.status === "cancelled"
+                                ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca]"
+                                : "bg-[#fefce8] text-[#854d0e] border-[#fef08a]"
+                        }`}
+                        title="Click to switch project status"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDeleteProject(selectedCustomer.id, project.id, project.name)
+                        }
+                        title="Delete project"
+                        className="p-1.5 rounded-lg bg-white border border-[#fecaca] hover:bg-[#fee2e2] text-[#dc2626] transition-colors cursor-pointer ml-1"
+                      >
+                        <Trash2 size={12} />
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {selectedCustomer.notes && (
-              <div className="drawer-block">
-                <span className="eyebrow">Client notes</span>
-                <p>{selectedCustomer.notes}</p>
-              </div>
-            )}
-
-            {/* Drawer Actions: Send Message Button */}
-            <div className="drawer-actions">
-              <button
-                type="button"
-                className="dark-button bg-[#111827] hover:bg-black border-[#111827] w-full justify-center"
-                onClick={() => handleOpenMessageModal(selectedCustomer)}
-              >
-                <MessageSquare size={15} />
-                <span>Send Message</span>
-              </button>
             </div>
           </aside>
         </div>
@@ -1201,6 +1268,14 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
           </div>
         </div>
       )}
+
+      {/* Customer CSV Import Modal */}
+      <CustomerImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onToast={msg => onToast?.(msg)}
+        onImportSuccess={() => getCustomers(searchQuery).then(setItems)}
+      />
     </section>
   );
 }

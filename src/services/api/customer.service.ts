@@ -82,6 +82,65 @@ export async function addProjectToCustomer(
   return updatedCustomer;
 }
 
+/**
+ * Delete a Project from a customer
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch(`/api/customers/${customerId}/projects/${projectId}`, { method: 'DELETE' }); return res.json();`
+ */
+export async function deleteCustomerProject(
+  customerId: string,
+  projectId: string
+): Promise<Customer> {
+  await delay(200);
+  const custIndex = currentCustomers.findIndex(c => c.id === customerId);
+  if (custIndex === -1) {
+    throw new Error("Customer not found");
+  }
+
+  const existing = currentCustomers[custIndex];
+  const updatedProjects = existing.projects.filter(p => p.id !== projectId);
+  const updatedRevenue = updatedProjects.reduce((acc, p) => acc + (p.amount || 0), 0);
+
+  const updatedCustomer: Customer = {
+    ...existing,
+    projects: updatedProjects,
+    totalRevenue: updatedRevenue,
+  };
+
+  currentCustomers[custIndex] = updatedCustomer;
+  notifyCustomersUpdated();
+  return updatedCustomer;
+}
+
+/**
+ * Update a Project status for a customer
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch(`/api/customers/${customerId}/projects/${projectId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }); return res.json();`
+ */
+export async function updateCustomerProjectStatus(
+  customerId: string,
+  projectId: string,
+  status: ProjectStatus
+): Promise<Customer> {
+  await delay(150);
+  const custIndex = currentCustomers.findIndex(c => c.id === customerId);
+  if (custIndex === -1) {
+    throw new Error("Customer not found");
+  }
+
+  const existing = currentCustomers[custIndex];
+  const updatedProjects = existing.projects.map(p => (p.id === projectId ? { ...p, status } : p));
+
+  const updatedCustomer: Customer = {
+    ...existing,
+    projects: updatedProjects,
+  };
+
+  currentCustomers[custIndex] = updatedCustomer;
+  notifyCustomersUpdated();
+  return updatedCustomer;
+}
+
 export async function getCustomer(id: string): Promise<Customer | undefined> {
   await delay(120);
   return currentCustomers.find(c => c.id === id);
@@ -209,4 +268,81 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
   URL.revokeObjectURL(url);
 
   return { count: currentCustomers.length, filename };
+}
+
+export interface ImportCustomerRecord {
+  name: string;
+  phone?: string;
+  email: string;
+  notes?: string;
+}
+
+/**
+ * Import Customers from CSV / structured records (Accepts name, phone, email, notes)
+ * When connecting to real backend, easily swap with:
+ * `const res = await fetch('/api/customers/import', { method: 'POST', body: JSON.stringify(records) }); return res.json();`
+ */
+export async function importCustomers(
+  records: ImportCustomerRecord[]
+): Promise<{ imported: number; customers: Customer[] }> {
+  await delay(400);
+
+  const newCustomers: Customer[] = records.map((r, idx) => {
+    const id = `c-imp-${Date.now()}-${idx}`;
+    return {
+      id,
+      name: r.name.trim(),
+      email: r.email.trim(),
+      phone: r.phone?.trim() || "",
+      company: "",
+      notes: r.notes?.trim() || "Imported via bulk customer register",
+      totalRevenue: 0,
+      projects: [
+        {
+          id: `p-${Date.now()}-${idx}`,
+          customerId: id,
+          name: "General Client Account",
+          service: "Bespoke Event Production & Styling",
+          amount: 0,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        },
+      ],
+      createdAt: new Date().toISOString(),
+    };
+  });
+
+  currentCustomers = [...newCustomers, ...currentCustomers];
+  notifyCustomersUpdated();
+  return { imported: newCustomers.length, customers: newCustomers };
+}
+
+/**
+ * Download standard Customer CSV Import Template
+ */
+export function downloadCustomerCSVTemplate(): void {
+  if (typeof window === "undefined") return;
+  const headers = ["Name", "Phone", "Email", "Notes"];
+  const sampleRows = [
+    [
+      "Adeola Adeleke",
+      "+234 803 123 4567",
+      "adeola@example.com",
+      "VIP anniversary celebration client",
+    ],
+    ["Chinedu Obi", "+234 802 987 6543", "chinedu@example.com", "Executive corporate gala inquiry"],
+  ];
+  const csvContent = [
+    headers.join(","),
+    ...sampleRows.map(r => r.map(c => `"${c}"`).join(",")),
+  ].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "customer_import_template.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

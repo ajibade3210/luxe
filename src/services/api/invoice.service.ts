@@ -336,6 +336,61 @@ export async function deleteInvoice(id: string): Promise<{ success: boolean; id:
 }
 
 /**
+ * 8. Mark Invoice as Paid
+ * Transitions invoice to 'paid' status.
+ * Backend swap:
+ * `const res = await fetch(`/api/invoices/${id}/pay`, { method: 'POST' }); return res.json();`
+ */
+export async function markInvoiceAsPaid(id: string): Promise<Invoice> {
+  await delay(200);
+
+  const idx = persistedInvoices.findIndex(i => i.id === id);
+  if (idx < 0) {
+    throw new Error(`Invoice with id ${id} not found.`);
+  }
+
+  const now = new Date().toISOString();
+  const updated: Invoice = {
+    ...persistedInvoices[idx],
+    status: "paid",
+    updatedAt: now,
+  };
+
+  persistedInvoices[idx] = updated;
+  notifyInvoicesUpdated();
+  return updated;
+}
+
+/**
+ * 9. Mark Invoice as Unpaid
+ * Reverts invoice from 'paid' back to 'sent' or 'draft'.
+ * Backend swap:
+ * `const res = await fetch(`/api/invoices/${id}/unpay`, { method: 'POST' }); return res.json();`
+ */
+export async function markInvoiceAsUnpaid(id: string): Promise<Invoice> {
+  await delay(200);
+
+  const idx = persistedInvoices.findIndex(i => i.id === id);
+  if (idx < 0) {
+    throw new Error(`Invoice with id ${id} not found.`);
+  }
+
+  const now = new Date().toISOString();
+  const current = persistedInvoices[idx];
+  const targetStatus: InvoiceStatus = current.sentAt ? "sent" : "draft";
+
+  const updated: Invoice = {
+    ...current,
+    status: targetStatus,
+    updatedAt: now,
+  };
+
+  persistedInvoices[idx] = updated;
+  notifyInvoicesUpdated();
+  return updated;
+}
+
+/**
  * 8. Generate Invoice PDF URL
  * Backend generates the PDF and returns a hosted or blob URL.
  * Backend swap:

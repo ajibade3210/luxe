@@ -18,7 +18,7 @@ export function LeadsPage({ onToast }: { onToast: (s: string) => void }) {
   const [items, setItems] = useState<Lead[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
 
