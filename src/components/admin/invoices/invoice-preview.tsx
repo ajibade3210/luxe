@@ -1,0 +1,196 @@
+"use client";
+
+import { Check, Copy } from "lucide-react";
+import type { Invoice, InvoiceItem } from "@/lib/api";
+import type { CurrencyCode, PaymentTerms } from "@/lib/types";
+import { formatMoney } from "@/utils";
+
+interface InvoicePreviewProps {
+  existingInvoice?: Invoice;
+  customerName: string;
+  billingAddress: string;
+  issueDate: string;
+  dueDate: string;
+  paymentTerms: PaymentTerms;
+  currency: CurrencyCode;
+  items: InvoiceItem[];
+  subtotal: number;
+  discount: number;
+  taxRate: number;
+  taxAmount: number;
+  total: number;
+  notes: string;
+  copiedLink: boolean;
+  onCopyLink: () => void;
+}
+
+export function InvoicePreview({
+  existingInvoice,
+  customerName,
+  billingAddress,
+  issueDate,
+  dueDate,
+  paymentTerms,
+  currency,
+  items,
+  subtotal,
+  discount,
+  taxRate,
+  taxAmount,
+  total,
+  notes,
+  copiedLink,
+  onCopyLink,
+}: InvoicePreviewProps) {
+  return (
+    <div className="lg:col-span-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-bold text-[#6b7280] uppercase tracking-wider">
+          Live Preview
+        </span>
+        <button
+          type="button"
+          onClick={onCopyLink}
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer"
+        >
+          {copiedLink ? (
+            <>
+              <Check size={12} className="text-[#16a34a]" />
+              <span className="text-[#16a34a]">Link Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy size={12} />
+              <span>Copy Invoice Link</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Stationery Card */}
+      <div className="bg-white border border-[#e5e7eb] rounded-3xl p-6 sm:p-7 shadow-lg space-y-6 text-xs text-[#374151]">
+        {/* Logo & Header */}
+        <div className="flex items-center justify-between border-b border-[#f3f4f6] pb-4">
+          <div className="w-10 h-10 rounded-2xl bg-[#111827] text-white flex items-center justify-center font-serif font-bold text-base shadow-xs">
+            É
+          </div>
+          <div className="text-right">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+              {existingInvoice?.status?.toUpperCase() || "DRAFT"}
+            </span>
+            <span className="text-xs font-mono font-bold text-[#111827] block">
+              {existingInvoice?.invoiceNumber || "INV-2026-DRAFT"}
+            </span>
+          </div>
+        </div>
+
+        {/* Meta block */}
+        <div className="grid grid-cols-3 gap-2 text-[11px] border-b border-[#f3f4f6] pb-4">
+          <div>
+            <span className="text-[#9ca3af] block">Issue Date</span>
+            <b className="text-[#111827] block mt-0.5">{issueDate}</b>
+          </div>
+          <div>
+            <span className="text-[#9ca3af] block">Due Date</span>
+            <b className="text-[#111827] block mt-0.5">{dueDate}</b>
+          </div>
+          <div>
+            <span className="text-[#9ca3af] block">Payment Terms</span>
+            <b className="text-[#111827] block mt-0.5">{paymentTerms}</b>
+          </div>
+        </div>
+
+        {/* Billed By & Billed To */}
+        <div className="space-y-3 border-b border-[#f3f4f6] pb-4 text-[11px]">
+          <div>
+            <span className="text-[#9ca3af] block">Billed by:</span>
+            <b className="text-[#111827] block mt-0.5">Élan Atelier Limited</b>
+            <span className="text-[#6b7280] block text-[10px] mt-0.5">
+              Plot 14, Victoria Island Waterfront, Lagos, Nigeria
+            </span>
+          </div>
+
+          <div>
+            <span className="text-[#9ca3af] block">Billed to:</span>
+            <b className="text-[#111827] block mt-0.5">{customerName || "Customer Name"}</b>
+            <span className="text-[#6b7280] block text-[10px] mt-0.5">
+              {billingAddress || "Billing Address"}
+            </span>
+          </div>
+        </div>
+
+        {/* Itemized List */}
+        <div className="space-y-2 border-b border-[#f3f4f6] pb-4">
+          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#9ca3af] pb-1">
+            <span>Item</span>
+            <div className="flex items-center gap-6">
+              <span>QTY</span>
+              <span>Amount</span>
+            </div>
+          </div>
+
+          {items.map(item => (
+            <div key={item.id} className="flex items-center justify-between text-xs py-1">
+              <div className="min-w-0 pr-2">
+                <b className="text-[#111827] block truncate">{item.description}</b>
+                <span className="text-[10px] text-[#9ca3af] block">
+                  {formatMoney(item.unitPrice, currency)} each
+                </span>
+              </div>
+              <div className="flex items-center gap-6 shrink-0">
+                <span className="text-xs font-mono text-[#6b7280]">{item.quantity}</span>
+                <span className="text-xs font-mono font-bold text-[#111827]">
+                  {formatMoney(item.amount, currency)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Calculation Summary */}
+        <div className="space-y-1.5 text-xs border-b border-[#f3f4f6] pb-4">
+          <div className="flex justify-between text-[#6b7280]">
+            <span>Subtotal</span>
+            <span className="font-mono">{formatMoney(subtotal, currency)}</span>
+          </div>
+          {discount > 0 && (
+            <div className="flex justify-between text-[#16a34a]">
+              <span>Discount</span>
+              <span className="font-mono">-{formatMoney(discount, currency)}</span>
+            </div>
+          )}
+          {taxRate > 0 && (
+            <div className="flex justify-between text-[#6b7280]">
+              <span>Tax ({taxRate}%)</span>
+              <span className="font-mono">+{formatMoney(taxAmount, currency)}</span>
+            </div>
+          )}
+          <div className="flex justify-between text-sm font-bold text-[#111827] pt-1.5 border-t border-[#f3f4f6]">
+            <span>Total Due</span>
+            <span className="font-mono">{formatMoney(total, currency)}</span>
+          </div>
+        </div>
+
+        {/* Bank Details */}
+        <div className="bg-[#fafaf9] rounded-2xl p-3.5 border border-[#f3f4f6] space-y-1 text-[11px]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+            Remittance Banking Details
+          </span>
+          <div className="text-[#4b5563] text-[10px] space-y-0.5 pt-0.5">
+            <div>
+              Bank Name: <b className="text-[#111827]">Standard Chartered Bank</b>
+            </div>
+            <div>
+              Account Name: <b className="text-[#111827]">Élan Events Atelier Ltd</b>
+            </div>
+            <div>
+              Account Number: <b className="text-[#111827] font-mono">0039281745</b>
+            </div>
+          </div>
+        </div>
+
+        {notes && <div className="text-[10px] text-[#6b7280] italic">Note: {notes}</div>}
+      </div>
+    </div>
+  );
+}
