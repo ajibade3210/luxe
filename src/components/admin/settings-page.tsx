@@ -1,32 +1,10 @@
 "use client";
 
-import {
-  ArrowDown,
-  ArrowUp,
-  Check,
-  Clock3,
-  Copy,
-  ExternalLink,
-  GripVertical,
-  ImagePlus,
-  Info,
-  Loader2,
-  Mail,
-  MapPin,
-  MessageSquare,
-  Plus,
-  RefreshCw,
-  Save,
-  Star,
-  Trash2,
-  Upload,
-  X,
-} from "lucide-react";
+import { Copy, ExternalLink, Plus, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   checkSlugAvailability,
   getBusinessProfile,
-  isAuthenticated,
   publishChanges,
   updateBusinessProfile,
   uploadBusinessLogo,
@@ -41,60 +19,12 @@ import type {
   SocialChannel,
 } from "@/lib/types";
 
-function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      aria-label={on ? "Disconnect channel" : "Connect channel"}
-      className={`settings-toggle ${on ? "on" : ""}`}
-      onClick={onClick}
-    >
-      <span />
-    </button>
-  );
-}
-
-function Card({
-  number,
-  title,
-  description,
-  children,
-}: {
-  number: string;
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="settings-card">
-      <div className="settings-card-heading">
-        <div className="flex items-center">
-          <span className="step">{number}</span>
-          <h2>{title}</h2>
-          {description && (
-            <div className="relative group/info inline-flex items-center ml-1.5 self-center">
-              <button
-                type="button"
-                aria-label={description}
-                className="text-[#9ca3af] hover:text-[#0058be] transition-colors p-1 rounded-full hover:bg-[#f3f4f5] cursor-pointer"
-              >
-                <Info size={15} />
-              </button>
-              {/* Tooltip on hover */}
-              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 hidden group-hover/info:block z-30 pointer-events-none">
-                <div className="bg-[#191c1d] text-white text-[11px] font-normal leading-relaxed rounded py-1.5 px-3 whitespace-nowrap shadow-xl border border-[#333] relative">
-                  {description}
-                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-[#191c1d] rotate-45 border-b border-l border-[#333]" />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      {children}
-    </section>
-  );
-}
+import { AppearanceSection } from "./settings/appearance-section";
+import { ChannelsSection } from "./settings/channels-section";
+import { ContactSection } from "./settings/contact-section";
+import { IdentitySection } from "./settings/identity-section";
+import { PortfolioSection } from "./settings/portfolio-section";
+import { ServicesSection } from "./settings/services-section";
 
 export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void }) {
   // Main settings state
@@ -183,7 +113,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     initialMockProfile.buttonRadius || "Subtle"
   );
 
-  // Gallery Management Modals & Reordering State
+  // Gallery Drag & Drop Reordering State
   const [showManageGalleryModal, setShowManageGalleryModal] = useState(false);
   const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
   const [dragOverProjectIndex, setDragOverProjectIndex] = useState<number | null>(null);
@@ -199,118 +129,114 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const claim = params.get("claim");
-      if (claim && !isAuthenticated()) {
-        window.location.href = `/signup?claim=${encodeURIComponent(claim)}`;
-        return;
+      if (claim) {
+        setSlug(claim);
+        setName(
+          claim
+            .split("-")
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ") + " Atelier"
+        );
       }
     }
 
-    getBusinessProfile().then(p => {
-      setName(p.businessName);
-      setSlug(p.slug);
-      setTagline(
-        p.tagline || "We design unforgettable weddings, corporate events, and private celebrations."
-      );
-      setLocation(p.location);
-      setWebsite(p.website);
-      setEmail(p.email);
-      setAbout(p.description);
-      if (p.logoUrl) setLogoUrl(p.logoUrl);
-      setServices((p.services as ServiceItem[]) || []);
-      setPortfolio(p.portfolio || []);
-      setChannels(p.socialChannels || []);
-      setGoogleReviewsLink(p.googleReviewsLink || "");
-      setHours(p.operatingHours || "Mon–Fri");
-      setTimeFrom(p.timeFrom || "09:00 AM");
-      setTimeTo(p.timeTo || "06:00 PM");
-      setByAppointmentOnly(p.byAppointmentOnly ?? true);
-      setWhatsAppNumber(p.whatsAppNumber || "+234 800 ELAN VIP");
-      setEmailAddress(p.emailAddress || "hello@elanevents.com");
-      setPhysicalAddress(p.physicalAddress || "Victoria Island, Lagos, Nigeria");
-      if (p.colors) setColors(p.colors);
-      if (p.buttonRadius) setRadius(p.buttonRadius);
+    getBusinessProfile().then(data => {
+      setName(data.businessName);
+      setSlug(data.slug);
+      setTagline(data.tagline || "");
+      setLocation(data.location || "");
+      setWebsite(data.website || "");
+      setEmail(data.email || "");
+      setAbout(data.description || "");
+      setLogoUrl(data.logoUrl || "");
+      if (data.services) {
+        setServices(data.services);
+      }
+      if (data.portfolio) setPortfolio(data.portfolio);
+      if (data.socialChannels) setChannels(data.socialChannels);
+      if (data.googleReviewsLink) setGoogleReviewsLink(data.googleReviewsLink);
+      if (data.operatingHours) setHours(data.operatingHours);
+      if (data.timeFrom) setTimeFrom(data.timeFrom);
+      if (data.timeTo) setTimeTo(data.timeTo);
+      if (data.byAppointmentOnly !== undefined) {
+        setByAppointmentOnly(data.byAppointmentOnly);
+      }
+      if (data.whatsAppNumber) setWhatsAppNumber(data.whatsAppNumber);
+      if (data.emailAddress) setEmailAddress(data.emailAddress);
+      if (data.physicalAddress) setPhysicalAddress(data.physicalAddress);
+      if (data.colors) setColors(data.colors);
+      if (data.buttonRadius) setRadius(data.buttonRadius);
     });
   }, []);
 
-  // Live slug uniqueness validation simulation
+  // Slug Availability Debounced Check
   useEffect(() => {
     if (!slug) {
       setSlugStatus("idle");
       return;
     }
     setSlugStatus("checking");
-    const timer = setTimeout(async () => {
-      try {
-        const res = await checkSlugAvailability(slug);
-        setSlugStatus(res.available ? "available" : "taken");
-      } catch {
-        setSlugStatus("available");
-      }
-    }, 400);
-    return () => clearTimeout(timer);
+    const t = setTimeout(async () => {
+      const res = await checkSlugAvailability(slug);
+      setSlugStatus(res.available ? "available" : "taken");
+    }, 300);
+    return () => clearTimeout(t);
   }, [slug]);
 
-  const toggleChannel = (id: string) => {
-    setChannels(prev => prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)));
-  };
-
-  const updateChannelHandle = (id: string, val: string) => {
-    setChannels(prev =>
-      prev.map(c =>
-        c.id === id
-          ? {
-              ...c,
-              handle: val,
-              url: val.startsWith("http") ? val : `https://${val}`,
-            }
-          : c
-      )
-    );
-  };
-
+  // Handlers
   const addService = () => {
-    const trimmed = newServiceInput.trim();
-    if (!trimmed) return;
-    const exists = services.some(s => s.name.toLowerCase() === trimmed.toLowerCase());
-    if (!exists) {
-      const item: ServiceItem = {
-        id: `svc-${Date.now()}`,
-        name: trimmed,
-        category: newServiceCategory || "Bespoke",
-        description: newServiceDesc.trim(),
-      };
-      setServices(prev => [...prev, item]);
-      setNewServiceInput("");
-      setNewServiceCategory("Bespoke");
-      setNewServiceDesc("");
-      setShowAddService(false);
-      onToast(`Service "${trimmed}" added`);
-    }
+    if (!newServiceInput.trim()) return;
+    const newSvc: ServiceItem = {
+      id: `svc-${Date.now()}`,
+      name: newServiceInput.trim(),
+      category: newServiceCategory || "Bespoke",
+      description: newServiceDesc.trim(),
+    };
+    setServices(prev => [...prev, newSvc]);
+    setNewServiceInput("");
+    setNewServiceDesc("");
+    setShowAddService(false);
+    onToast(`Added service "${newSvc.name}"`);
   };
 
   const removeService = (id: string) => {
     setServices(prev => prev.filter(s => s.id !== id));
+    onToast("Service removed");
   };
 
   const updateService = (id: string, patch: Partial<ServiceItem>) => {
     setServices(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)));
   };
 
+  const toggleChannel = (id: string) => {
+    setChannels(prev => prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)));
+    onToast("Channel status toggled");
+  };
+
+  const updateChannelHandle = (id: string, handle: string) => {
+    setChannels(prev => prev.map(c => (c.id === id ? { ...c, handle } : c)));
+  };
+
+  const removeProject = (id: string) => {
+    setPortfolio(prev => prev.filter(p => p.id !== id));
+    onToast("Project removed from gallery");
+  };
+
   const handleAddProject = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.title) return;
-    const project: PortfolioProject = {
-      id: `proj-${Date.now()}`,
-      title: newProject.title || "New Showcase Project",
-      category: newProject.category || "Luxury Celebration",
+    const proj: PortfolioProject = {
+      id: `p-${Date.now()}`,
+      title: newProject.title || "Untitled Project",
+      category: newProject.category || "Luxury Event",
       location: newProject.location || "Lagos, Nigeria",
-      description: newProject.description || "Bespoke event planning and execution.",
+      description: newProject.description || "",
       image:
         newProject.image ||
         "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
-      stats: newProject.stats || "Curated Design",
+      stats: newProject.stats || "Bespoke Production",
     };
-    setPortfolio([project, ...portfolio]);
+    setPortfolio(prev => [proj, ...prev]);
     setShowAddProjectModal(false);
     setNewProject({
       title: "",
@@ -321,12 +247,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
       stats: "250 Guests · Bespoke Styling",
     });
-    onToast(`Project "${project.title}" added to portfolio`);
-  };
-
-  const removeProject = (id: string) => {
-    setPortfolio(portfolio.filter(p => p.id !== id));
-    onToast("Project removed from portfolio");
+    onToast(`Added project "${proj.title}" to gallery`);
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,7 +284,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
     }
   };
 
-  // Gallery Drag & Drop Reordering Handlers
   const handleDragStart = (index: number) => {
     setDraggedProjectIndex(index);
   };
@@ -483,695 +403,109 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
         </div>
       </div>
 
-      {/* Card 01: Business Profile */}
-      <Card
-        number="01"
-        title="Business profile"
-        description="The foundation of your public customer-facing presence."
-      >
-        <div className="form-grid">
-          {/* Logo Upload Section - Structured, Balanced & Luxury Polished */}
-          <div className="full bg-white border border-[#e5e7eb] rounded-lg p-6 mb-5 shadow-2xs">
-            {/* Header */}
-            <div className="border-b border-[#e5e7eb] pb-3.5 mb-5">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
-                Business Brand Logo
-              </span>
-              <span className="text-xs text-[#6b7280]">
-                Your official studio crest displayed on onboarding cards, concierge header, and
-                footer
-              </span>
-            </div>
+      {/* Modular Section 01: Identity & Brand Logo */}
+      <IdentitySection
+        name={name}
+        setName={setName}
+        slug={slug}
+        setSlug={setSlug}
+        slugStatus={slugStatus}
+        tagline={tagline}
+        setTagline={setTagline}
+        location={location}
+        setLocation={setLocation}
+        website={website}
+        setWebsite={setWebsite}
+        email={email}
+        setEmail={setEmail}
+        about={about}
+        setAbout={setAbout}
+        logoUrl={logoUrl}
+        setLogoUrl={setLogoUrl}
+        isUploadingLogo={isUploadingLogo}
+        handleLogoUpload={handleLogoUpload}
+        onToast={onToast}
+      />
 
-            {/* Body */}
-            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-center">
-              {/* Logo Preview Column */}
-              <div className="flex flex-col items-center gap-2">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
-                  {logoUrl ? (
-                    <img
-                      src={logoUrl}
-                      alt="Business Logo Preview"
-                      className="w-full h-full object-contain rounded-md"
-                    />
-                  ) : (
-                    <span className="font-sans font-bold text-3xl text-[#191c1d]">
-                      {name ? name.charAt(0) : "Ś"}
-                    </span>
-                  )}
-                  {isUploadingLogo && (
-                    <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                      <Loader2 size={22} className="animate-spin text-[#0058be]" />
-                    </div>
-                  )}
-                </div>
-                <span className="text-[10px] text-[#6b7280] font-medium tracking-wider uppercase">
-                  PNG · SVG · JPG
-                </span>
-              </div>
+      {/* Modular Section 02: Services & Offerings */}
+      <ServicesSection
+        services={services}
+        editingServiceId={editingServiceId}
+        setEditingServiceId={setEditingServiceId}
+        updateService={updateService}
+        removeService={removeService}
+        showAddService={showAddService}
+        setShowAddService={setShowAddService}
+        newServiceInput={newServiceInput}
+        setNewServiceInput={setNewServiceInput}
+        newServiceCategory={newServiceCategory}
+        setNewServiceCategory={setNewServiceCategory}
+        newServiceDesc={newServiceDesc}
+        setNewServiceDesc={setNewServiceDesc}
+        addService={addService}
+      />
 
-              {/* Upload Actions & URL Column */}
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h4 className="text-sm font-semibold text-[#191c1d]">Studio Brand Crest</h4>
-                    <p className="text-xs text-[#6b7280] mt-0.5">
-                      Upload a new logo to automatically generate a CDN URL and update all live
-                      touchpoints.
-                    </p>
-                  </div>
-                  <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-xs shrink-0">
-                    <Upload size={14} />
-                    <span>{isUploadingLogo ? "Uploading to CDN..." : "Upload New Logo"}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      disabled={isUploadingLogo}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
+      {/* Modular Section 03: Portfolio Gallery & Modals */}
+      <PortfolioSection
+        portfolio={portfolio}
+        showAddProjectModal={showAddProjectModal}
+        setShowAddProjectModal={setShowAddProjectModal}
+        showManageGalleryModal={showManageGalleryModal}
+        setShowManageGalleryModal={setShowManageGalleryModal}
+        newProject={newProject}
+        setNewProject={setNewProject}
+        isUploadingProjectImage={isUploadingProjectImage}
+        handleProjectImageUpload={handleProjectImageUpload}
+        handleAddProject={handleAddProject}
+        removeProject={removeProject}
+        moveProject={moveProject}
+        draggedProjectIndex={draggedProjectIndex}
+        dragOverProjectIndex={dragOverProjectIndex}
+        handleDragStart={handleDragStart}
+        handleDragEnter={handleDragEnter}
+        handleDragEnd={handleDragEnd}
+        onToast={onToast}
+      />
 
-                {/* Integrated CDN URL Bar */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-medium text-[#6b7280] block">
-                    Generated CDN Asset URL
-                  </span>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      value={logoUrl}
-                      onChange={e => setLogoUrl(e.target.value)}
-                      placeholder="https://cdn.accessa.ng/..."
-                      className="w-full text-xs font-mono bg-[#f8f9fa] border border-[#e5e7eb] rounded-md pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
-                    />
-                    {logoUrl && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (navigator.clipboard) {
-                            navigator.clipboard.writeText(logoUrl);
-                            onToast("CDN Logo URL copied to clipboard!");
-                          }
-                        }}
-                        className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e7e8e9] bg-[#f3f4f5] px-3 py-1.5 rounded inline-flex items-center gap-1 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
-                      >
-                        <Copy size={12} />
-                        <span>Copy URL</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Modular Section 04 & 05: Reputation & Social Channels */}
+      <ChannelsSection
+        googleReviewsLink={googleReviewsLink}
+        setGoogleReviewsLink={setGoogleReviewsLink}
+        isSyncingReviews={isSyncingReviews}
+        handleSyncReviews={handleSyncReviews}
+        channels={channels}
+        updateChannelHandle={updateChannelHandle}
+        toggleChannel={toggleChannel}
+        onToast={onToast}
+      />
 
-          {/* Row 1: Name & Slug */}
-          <label>
-            Business name
-            <input value={name} onChange={e => setName(e.target.value)} />
-          </label>
+      {/* Modular Section 06: Contact & Operating Hours */}
+      <ContactSection
+        hours={hours}
+        setHours={setHours}
+        timeFrom={timeFrom}
+        setTimeFrom={setTimeFrom}
+        timeTo={timeTo}
+        setTimeTo={setTimeTo}
+        byAppointmentOnly={byAppointmentOnly}
+        setByAppointmentOnly={setByAppointmentOnly}
+        whatsAppNumber={whatsAppNumber}
+        setWhatsAppNumber={setWhatsAppNumber}
+        emailAddress={emailAddress}
+        setEmailAddress={setEmailAddress}
+        physicalAddress={physicalAddress}
+        setPhysicalAddress={setPhysicalAddress}
+      />
 
-          <label>
-            Public profile slug & URL
-            <div className="slug-input relative">
-              <span>shopwus.com/</span>
-              <input
-                aria-label="Public profile slug"
-                value={slug}
-                onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs">
-                {slugStatus === "checking" && (
-                  <Loader2 size={14} className="animate-spin text-[#78716c]" />
-                )}
-                {slugStatus === "available" && (
-                  <span className="text-[#2c6e49] flex items-center gap-1 font-medium text-[11px]">
-                    <Check size={13} /> Available
-                  </span>
-                )}
-                {slugStatus === "taken" && (
-                  <span className="text-[#b84c24] flex items-center gap-1 font-medium text-[11px]">
-                    <X size={13} /> Taken
-                  </span>
-                )}
-              </div>
-            </div>
-            <small className="field-hint">
-              Routes directly to your live onboarding and studio profile page.
-            </small>
-          </label>
+      {/* Modular Section 07: Appearance & Branding */}
+      <AppearanceSection
+        colors={colors}
+        setColors={setColors}
+        radius={radius}
+        setRadius={setRadius}
+      />
 
-          {/* Row 2: Tagline (Full width) */}
-          <label className="full">
-            Hero Tagline / Headline
-            <input value={tagline} onChange={e => setTagline(e.target.value)} />
-          </label>
-
-          {/* Row 3: Location & Website */}
-          <label>
-            Location / Region
-            <input value={location} onChange={e => setLocation(e.target.value)} />
-          </label>
-
-          <label>
-            Website
-            <input value={website} onChange={e => setWebsite(e.target.value)} />
-          </label>
-
-          {/* Row 4: Studio Email & WhatsApp Concierge */}
-          <label>
-            Studio Email
-            <input value={email} onChange={e => setEmail(e.target.value)} />
-          </label>
-
-          <label>
-            WhatsApp Concierge Line
-            <input
-              value={whatsAppNumber}
-              onChange={e => setWhatsAppNumber(e.target.value)}
-              placeholder="+234 800 ELAN VIP"
-            />
-          </label>
-
-          {/* Row 5: Philosophy / Bio (Full width) */}
-          <label className="full">
-            Studio Philosophy / Description (The Ślan Touch)
-            <textarea value={about} onChange={e => setAbout(e.target.value)} />
-          </label>
-        </div>
-      </Card>
-
-      {/* Card 02: Services & Offerings */}
-      <Card
-        number="02"
-        title="Services & offerings"
-        description="Make your expertise easy to understand for prospective couples and clients."
-      >
-        <div className="space-y-3">
-          {/* Service rows */}
-          {services.map((service, _i) => (
-            <div
-              key={service.id ?? service.name ?? _i}
-              className="border border-[#e5e7eb] rounded-lg bg-white"
-            >
-              {editingServiceId === service.id ? (
-                /* Inline edit form */
-                <div className="p-4 space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label className="block">
-                      <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                        Service Name
-                      </span>
-                      <input
-                        value={service.name}
-                        onChange={e => updateService(service.id, { name: e.target.value })}
-                        className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                        Category
-                      </span>
-                      <input
-                        value={service.category}
-                        onChange={e =>
-                          updateService(service.id, {
-                            category: e.target.value,
-                          })
-                        }
-                        list="category-options"
-                        className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                      />
-                      <datalist id="category-options">
-                        {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
-                          <option key={c} value={c} />
-                        ))}
-                      </datalist>
-                    </label>
-                  </div>
-                  <label className="block">
-                    <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                      Description
-                    </span>
-                    <textarea
-                      rows={2}
-                      value={service.description}
-                      onChange={e =>
-                        updateService(service.id, {
-                          description: e.target.value,
-                        })
-                      }
-                      className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
-                    />
-                  </label>
-                  <div className="flex gap-2 justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setEditingServiceId(null)}
-                      className="outline-button text-xs py-1.5 px-3"
-                    >
-                      Done
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* Collapsed view */
-                <div className="flex items-center justify-between gap-3 px-4 py-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-[#191c1d] truncate">
-                        {service.name}
-                      </span>
-                      <span className="text-[10px] font-medium text-[#0058be] bg-[#f0f6ff] border border-[#dbeafe] px-2 py-0.5 rounded-full shrink-0">
-                        {service.category}
-                      </span>
-                    </div>
-                    {service.description && (
-                      <p className="text-[11px] text-[#6b7280] mt-0.5 line-clamp-1">
-                        {service.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setEditingServiceId(service.id)}
-                      className="text-[#9ca3af] hover:text-[#0058be] p-1.5 rounded hover:bg-[#f3f4f5] transition-colors cursor-pointer text-xs"
-                      title="Edit service"
-                    >
-                      ✎
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removeService(service.id)}
-                      aria-label={`Remove ${service.name}`}
-                      className="text-[#9ca3af] hover:text-[#ba1a1a] p-1.5 rounded hover:bg-[#fef2f2] transition-colors cursor-pointer"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Add service form */}
-          {showAddService ? (
-            <div className="border border-[#0058be] rounded-lg bg-white p-4 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                    Service Name
-                  </span>
-                  <input
-                    type="text"
-                    autoFocus
-                    placeholder="e.g. Luxury Weddings"
-                    value={newServiceInput}
-                    onChange={e => setNewServiceInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === "Enter") addService();
-                      if (e.key === "Escape") setShowAddService(false);
-                    }}
-                    className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                    Category
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="e.g. Bespoke"
-                    value={newServiceCategory}
-                    onChange={e => setNewServiceCategory(e.target.value)}
-                    list="new-category-options"
-                    className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                  />
-                  <datalist id="new-category-options">
-                    {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
-                      <option key={c} value={c} />
-                    ))}
-                  </datalist>
-                </label>
-              </div>
-              <label className="block">
-                <span className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wide block mb-1">
-                  Description
-                </span>
-                <textarea
-                  rows={2}
-                  placeholder="Brief description of this service..."
-                  value={newServiceDesc}
-                  onChange={e => setNewServiceDesc(e.target.value)}
-                  className="w-full border border-[#e5e7eb] rounded px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
-                />
-              </label>
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowAddService(false)}
-                  className="outline-button text-xs py-1.5 px-3"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={addService}
-                  className="dark-button text-xs py-1.5 px-4"
-                >
-                  Add Service
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowAddService(true)}
-              className="add-service cursor-pointer w-full"
-            >
-              <Plus size={14} /> Add service
-            </button>
-          )}
-        </div>
-      </Card>
-
-      {/* Card 03: Portfolio Gallery */}
-      <Card
-        number="03"
-        title="Portfolio Gallery"
-        description="Keep your 'Best Work' fresh to attract high-end clientele."
-      >
-        <div className="space-y-4">
-          <div className="button-row">
-            <button
-              type="button"
-              onClick={() => setShowAddProjectModal(true)}
-              className="dark-button"
-            >
-              <Upload size={15} /> Upload new project
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowManageGalleryModal(true)}
-              className="outline-button"
-            >
-              <ImagePlus size={15} /> Manage gallery ({portfolio.length})
-            </button>
-          </div>
-
-          {/* Current Projects List */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            {portfolio.map(proj => (
-              <div
-                key={proj.id}
-                className="border border-[#eae3d8] rounded-xl p-3 bg-[#faf8f5] flex items-center justify-between gap-2"
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <img
-                    src={proj.image}
-                    alt={proj.title}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
-                  />
-                  <div className="truncate">
-                    <strong className="text-xs block text-[#1c1917] truncate">{proj.title}</strong>
-                    <span className="text-[10px] text-[#78716c]">{proj.category}</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeProject(proj.id)}
-                  className="text-[#a89e92] hover:text-[#b84c24] p-1 cursor-pointer"
-                  title="Remove project"
-                >
-                  <Trash2 size={13} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Card>
-
-      {/* Card 04: Reputation Management */}
-      <Card
-        number="04"
-        title="Reputation Management"
-        description="Connect your Google Business Profile to showcase authenticated client reviews."
-      >
-        <div className="space-y-4">
-          {/* Google Business Integration Box */}
-          <div className="border border-[#e5e7eb] rounded-lg p-4 sm:p-5 bg-white space-y-4">
-            {/* Top Status Row */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-[#e5e7eb]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-xs font-bold text-[#191c1d]">Google Business Profile</h4>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-                      Live Sync Active
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#6b7280] mt-0.5">
-                    <div className="flex text-[#eab308]">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={11} fill="currentColor" />
-                      ))}
-                    </div>
-                    <span className="font-semibold text-[#191c1d]">5.0</span>
-                    <span>·</span>
-                    <span>48 Verified 5-Star Reviews</span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSyncReviews}
-                disabled={isSyncingReviews}
-                className="outline-button text-xs py-1.5 px-3"
-              >
-                <RefreshCw
-                  size={13}
-                  className={isSyncingReviews ? "animate-spin text-[#0058be]" : ""}
-                />
-                {isSyncingReviews ? "Syncing Reviews..." : "Sync Now"}
-              </button>
-            </div>
-
-            {/* URL Link Input */}
-            <div>
-              <label className="block text-[#1f2937] font-medium text-xs mb-1.5">
-                Google Business Profile URL
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  value={googleReviewsLink}
-                  onChange={e => setGoogleReviewsLink(e.target.value)}
-                  placeholder="https://business.google.com/..."
-                  className="flex-1 bg-white border border-[#e5e7eb] rounded px-3.5 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                />
-                <button
-                  type="button"
-                  onClick={() => onToast("Google business link saved")}
-                  className="dark-button text-xs px-4"
-                >
-                  Save Link
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Card 05: Social Channels Management */}
-      <Card
-        number="05"
-        title="Social Channels Management"
-        description="Manage where clients can find you online across all 10 platforms."
-      >
-        <div className="social-grid">
-          {channels.map(channel => (
-            <div className="social-tile" key={channel.id}>
-              <div className="flex-1 min-w-0">
-                <b>{channel.label}</b>
-                <input
-                  value={channel.handle}
-                  onChange={e => updateChannelHandle(channel.id, e.target.value)}
-                  placeholder={`Enter ${channel.label} link or handle`}
-                />
-              </div>
-              <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Card 06: Business Details */}
-      <Card
-        number="06"
-        title="Business Details"
-        description="Detailed operational and contact information rendered in the stationery card."
-      >
-        <div className="details-columns">
-          <div>
-            <span className="eyebrow">Operating hours</span>
-            <div className="hour-tabs">
-              {["Mon–Fri", "Mon–Sat", "Everyday"].map(item => (
-                <button
-                  type="button"
-                  className={hours === item ? "selected" : ""}
-                  onClick={() => setHours(item)}
-                  key={item}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-            <div className="time-row">
-              <span className="flex-1">
-                From
-                <input
-                  type="text"
-                  value={timeFrom}
-                  onChange={e => setTimeFrom(e.target.value)}
-                  className="font-bold text-xs border-0 p-0 bg-transparent text-[#1c1917] outline-none"
-                />
-              </span>
-              <Clock3 />
-              <span className="flex-1">
-                To
-                <input
-                  type="text"
-                  value={timeTo}
-                  onChange={e => setTimeTo(e.target.value)}
-                  className="font-bold text-xs border-0 p-0 bg-transparent text-[#1c1917] outline-none"
-                />
-              </span>
-              <Clock3 />
-            </div>
-            <label className="switch-label mt-3 flex items-center gap-2 cursor-pointer">
-              <Toggle
-                on={byAppointmentOnly}
-                onClick={() => setByAppointmentOnly(!byAppointmentOnly)}
-              />
-              <span>By appointment only</span>
-            </label>
-          </div>
-
-          <div className="contact-stack">
-            <span className="eyebrow">Contact details</span>
-            <div>
-              <MessageSquare />
-              <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">WhatsApp number</span>
-                <input
-                  value={whatsAppNumber}
-                  onChange={e => setWhatsAppNumber(e.target.value)}
-                  className="text-xs font-medium border-0 p-0 bg-transparent text-[#1c1917] outline-none w-full"
-                />
-              </div>
-            </div>
-            <div>
-              <Mail />
-              <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">Email address</span>
-                <input
-                  value={emailAddress}
-                  onChange={e => setEmailAddress(e.target.value)}
-                  className="text-xs font-medium border-0 p-0 bg-transparent text-[#1c1917] outline-none w-full"
-                />
-              </div>
-            </div>
-            <div>
-              <MapPin />
-              <div className="w-full">
-                <span className="text-[10px] text-[#78716c]">Physical address</span>
-                <input
-                  value={physicalAddress}
-                  onChange={e => setPhysicalAddress(e.target.value)}
-                  className="text-xs font-medium border-0 p-0 bg-transparent text-[#1c1917] outline-none w-full"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Card 07: Appearance & Branding */}
-      <Card
-        number="07"
-        title="Appearance & Branding"
-        description="Customize palette colors and button corner radii to match your studio aesthetic."
-      >
-        <span className="eyebrow">Colors (VibeCoder Lumina Palette)</span>
-        <div className="color-row">
-          {(
-            [
-              ["Primary (Core Brand)", "primary"],
-              ["Secondary (Electric Blue)", "secondary"],
-              ["Button Action Color", "button"],
-              ["Text Color (Main)", "text"],
-            ] as const
-          ).map(([label, key]) => (
-            <label className="color-control" key={key}>
-              <span>{label}</span>
-              <div className="color-input-row">
-                <input
-                  aria-label={`${label} color`}
-                  type="color"
-                  value={colors[key]}
-                  onChange={e => setColors({ ...colors, [key]: e.target.value })}
-                />
-                <code className="font-mono">{colors[key].toUpperCase()}</code>
-              </div>
-            </label>
-          ))}
-        </div>
-
-        <div className="radius-choice">
-          <span className="eyebrow">Button corner radius</span>
-          <div className="radius-options" role="radiogroup" aria-label="Button corner radius">
-            {(["Square", "Subtle", "Rounded", "Pill"] as ButtonRadiusType[]).map(item => (
-              <label className="radius-option" key={item}>
-                <input
-                  type="radio"
-                  name="button-radius"
-                  value={item}
-                  checked={radius === item}
-                  onChange={() => setRadius(item)}
-                />
-                <span className="radio-dot" aria-hidden="true" />
-                {item}
-              </label>
-            ))}
-          </div>
-        </div>
-      </Card>
-
+      {/* Action Footer */}
       <div className="settings-footer">
         <button
           type="button"
@@ -1189,348 +523,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast: (s: string) => void
           {saving ? "Saving…" : "Save all changes"} <Save size={15} />
         </button>
       </div>
-
-      {/* Add Project Modal */}
-      {showAddProjectModal && (
-        <div className="fixed inset-0 z-50 bg-[#191c1d]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e5e7eb] rounded-lg max-w-lg w-full p-8 shadow-2xl relative">
-            <button
-              onClick={() => setShowAddProjectModal(false)}
-              className="absolute top-6 right-6 text-[#6b7280] hover:text-[#191c1d] p-1 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="mb-6">
-              <span className="text-[10px] uppercase tracking-[0.18em] text-[#0058be] font-semibold">
-                Portfolio Showcase
-              </span>
-              <h3 className="font-sans text-2xl text-[#191c1d] font-bold mt-1">
-                Upload New Project
-              </h3>
-            </div>
-
-            <form onSubmit={handleAddProject} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-[#1f2937] font-medium mb-1">Project Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Zara & Kene's Coastal Nuptials"
-                  value={newProject.title}
-                  onChange={e => setNewProject({ ...newProject, title: e.target.value })}
-                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">Category</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Luxury Wedding"
-                    value={newProject.category}
-                    onChange={e => setNewProject({ ...newProject, category: e.target.value })}
-                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">Location</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Victoria Island, Lagos"
-                    value={newProject.location}
-                    onChange={e => setNewProject({ ...newProject, location: e.target.value })}
-                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[#1f2937] font-medium mb-1.5">
-                  Project Cover Photo
-                </label>
-                {newProject.image ? (
-                  <div className="space-y-2">
-                    <div className="relative rounded-lg overflow-hidden border border-[#e5e7eb] bg-[#f3f4f5] group aspect-[16/9] max-h-48 w-full flex items-center justify-center">
-                      <img
-                        src={newProject.image}
-                        alt="Project Cover Preview"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <label className="cursor-pointer bg-white text-[#191c1d] hover:bg-[#f3f4f5] px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1.5 shadow-sm transition-colors">
-                          {isUploadingProjectImage ? (
-                            <>
-                              <Loader2 size={12} className="animate-spin" /> Uploading...
-                            </>
-                          ) : (
-                            <>
-                              <Upload size={12} /> Change Photo
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            disabled={isUploadingProjectImage}
-                            onChange={handleProjectImageUpload}
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => setNewProject({ ...newProject, image: "" })}
-                          className="bg-[#ba1a1a] text-white hover:bg-[#93000a] px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={12} /> Remove
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* CDN URL Bar */}
-                    <div className="flex items-center gap-2 bg-[#f8f9fa] border border-[#e5e7eb] rounded p-1.5 text-[11px]">
-                      <span className="text-[#6b7280] font-medium shrink-0 pl-1">URL:</span>
-                      <span className="font-mono text-[#191c1d] truncate flex-1 select-all">
-                        {newProject.image}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (navigator.clipboard && newProject.image) {
-                            navigator.clipboard.writeText(newProject.image);
-                            onToast("Image URL copied to clipboard");
-                          }
-                        }}
-                        className="shrink-0 text-[#6b7280] hover:text-[#0058be] p-1 cursor-pointer transition-colors"
-                        title="Copy image URL"
-                      >
-                        <Copy size={13} />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="cursor-pointer block border-2 border-dashed border-[#e5e7eb] hover:border-[#0058be] bg-[#f8f9fa] hover:bg-[#f0f6ff]/30 rounded-lg p-6 text-center transition-all group">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      disabled={isUploadingProjectImage}
-                      onChange={handleProjectImageUpload}
-                    />
-                    <div className="w-10 h-10 rounded-full bg-white border border-[#e5e7eb] group-hover:border-[#0058be] text-[#0058be] flex items-center justify-center mx-auto mb-2 shadow-2xs group-hover:scale-105 transition-all">
-                      {isUploadingProjectImage ? (
-                        <Loader2 size={18} className="animate-spin" />
-                      ) : (
-                        <Upload size={18} />
-                      )}
-                    </div>
-                    <span className="block text-xs font-semibold text-[#191c1d] group-hover:text-[#0058be] transition-colors">
-                      {isUploadingProjectImage
-                        ? "Uploading to CDN..."
-                        : "Click to upload project cover picture"}
-                    </span>
-                    <span className="block text-[11px] text-[#6b7280] mt-0.5">
-                      PNG, JPG, or WebP (max 10MB) · Hosted on CDN
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-[#1f2937] font-medium mb-1">
-                  Project Narrative / Scope
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="A brief editorial summary of this project..."
-                  value={newProject.description}
-                  onChange={e =>
-                    setNewProject({
-                      ...newProject,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full bg-white border border-[#e5e7eb] rounded p-3 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowAddProjectModal(false)}
-                  className="outline-button flex-1 py-2.5 text-xs font-medium justify-center"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="dark-button flex-1 py-2.5 text-xs font-medium justify-center"
-                >
-                  <Plus size={14} /> Add Project
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Manage Gallery Arrangement Modal */}
-      {showManageGalleryModal && (
-        <div className="fixed inset-0 z-50 bg-[#191c1d]/40 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white border border-[#e5e7eb] rounded-lg max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] flex flex-col">
-            {/* Modal Header */}
-            <div className="flex items-start justify-between pb-4 border-b border-[#e5e7eb]">
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.18em] text-[#0058be] font-semibold">
-                  Gallery Showcase · {portfolio.length} Projects
-                </span>
-                <h3 className="font-sans text-2xl text-[#191c1d] font-bold mt-0.5">
-                  Manage Gallery Arrangement
-                </h3>
-                <p className="text-xs text-[#6b7280] mt-1">
-                  Drag items or use the arrows to reorder how projects appear in &quot;Our Best
-                  Work&quot; on your public site.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowManageGalleryModal(false)}
-                className="text-[#6b7280] hover:text-[#191c1d] p-1.5 rounded-md hover:bg-[#f3f4f5] cursor-pointer transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Reorderable Items List */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-2.5 pr-1">
-              {portfolio.length === 0 ? (
-                <div className="text-center py-12 border-2 border-dashed border-[#e5e7eb] rounded-lg">
-                  <ImagePlus size={32} className="mx-auto text-[#9ca3af] mb-2" />
-                  <p className="text-sm font-medium text-[#191c1d]">No gallery projects yet</p>
-                  <p className="text-xs text-[#6b7280] mt-1">
-                    Upload your first showcase project to get started.
-                  </p>
-                </div>
-              ) : (
-                portfolio.map((proj, idx) => {
-                  const isDragging = draggedProjectIndex === idx;
-                  const isDragOver = dragOverProjectIndex === idx && draggedProjectIndex !== idx;
-                  return (
-                    <div
-                      key={proj.id}
-                      draggable
-                      onDragStart={() => handleDragStart(idx)}
-                      onDragEnter={() => handleDragEnter(idx)}
-                      onDragOver={e => e.preventDefault()}
-                      onDragEnd={handleDragEnd}
-                      className={`group flex items-center gap-3.5 p-3 rounded-lg border transition-all duration-150 cursor-grab active:cursor-grabbing ${
-                        isDragging
-                          ? "opacity-40 border-dashed border-[#0058be] bg-[#f0f6ff]"
-                          : isDragOver
-                            ? "border-[#0058be] ring-2 ring-[#0058be]/20 bg-[#f8faff]"
-                            : "border-[#e5e7eb] bg-white hover:border-[#cbd5e1] hover:shadow-xs"
-                      }`}
-                    >
-                      {/* Drag Handle */}
-                      <div className="text-[#9ca3af] group-hover:text-[#191c1d] p-1 cursor-grab">
-                        <GripVertical size={16} />
-                      </div>
-
-                      {/* Position Index Badge */}
-                      <div className="shrink-0 flex flex-col items-center">
-                        <span className="font-mono text-xs font-semibold text-[#191c1d] px-2 py-0.5 bg-[#f3f4f5] rounded border border-[#e5e7eb]">
-                          #{String(idx + 1).padStart(2, "0")}
-                        </span>
-                        {idx === 0 && (
-                          <span className="text-[9px] font-medium text-[#0058be] uppercase tracking-wider mt-1">
-                            Cover
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Picture Preview Thumbnail */}
-                      <div className="w-14 h-14 rounded border border-[#e5e7eb] overflow-hidden shrink-0 bg-[#f3f4f5]">
-                        <img
-                          src={proj.image}
-                          alt={proj.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* Project Details */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-xs font-semibold text-[#191c1d] truncate">
-                          {proj.title}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#6b7280]">
-                          <span className="truncate">{proj.category}</span>
-                          <span>·</span>
-                          <span className="truncate">{proj.location}</span>
-                        </div>
-                      </div>
-
-                      {/* Quick Arrow Up / Down Actions */}
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => moveProject(idx, "up")}
-                          className="p-1.5 rounded hover:bg-[#f3f4f5] text-[#6b7280] hover:text-[#191c1d] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                          title="Move Up"
-                        >
-                          <ArrowUp size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === portfolio.length - 1}
-                          onClick={() => moveProject(idx, "down")}
-                          className="p-1.5 rounded hover:bg-[#f3f4f5] text-[#6b7280] hover:text-[#191c1d] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                          title="Move Down"
-                        >
-                          <ArrowDown size={14} />
-                        </button>
-                      </div>
-
-                      {/* Delete Button */}
-                      <button
-                        type="button"
-                        onClick={() => removeProject(proj.id)}
-                        className="p-1.5 rounded text-[#9ca3af] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 cursor-pointer transition-colors shrink-0"
-                        title="Remove from gallery"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-
-            {/* Footer Controls */}
-            <div className="pt-4 border-t border-[#e5e7eb] flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowManageGalleryModal(false);
-                  setShowAddProjectModal(true);
-                }}
-                className="outline-button text-xs"
-              >
-                <Upload size={13} /> Add Another Project
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  setShowManageGalleryModal(false);
-                  await saveAll();
-                }}
-                className="dark-button text-xs"
-              >
-                <Check size={14} /> Save & Apply Arrangement
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
