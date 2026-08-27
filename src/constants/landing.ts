@@ -1,12 +1,4 @@
-import {
-  CreditCard,
-  Crown,
-  FileSpreadsheet,
-  Layers,
-  Smartphone,
-  type Sparkles,
-  Users,
-} from "lucide-react";
+import { CreditCard, Crown, Send, type Sparkles, Star, TrendingUp, Users } from "lucide-react";
 
 export interface FeatureItem {
   id: string;
@@ -19,81 +11,81 @@ export interface FeatureItem {
 
 export const LANDING_FEATURES: readonly FeatureItem[] = [
   {
-    id: "feat-flagship",
-    icon: Crown,
-    badge: "Digital Atelier",
-    title: "Bespoke Digital Flagship & 3D Stationery Cards",
+    id: "feat-broadcast",
+    icon: Send,
+    badge: "Client Outreach",
+    title: "Broadcast Messaging & Easy Follow-Up",
     description:
-      "Showcase your studio with a considered digital home. Features an interactive 3D stationery card, verified social badges, and curated portfolio galleries.",
+      "Send announcements, updates, and promotions directly to active clients via WhatsApp or Email in bulk, and follow up in one click.",
     highlights: [
-      "Pure CSS 3D stationery card flipping",
-      "Dynamic verified social channels sync",
-      "Custom palette & typography controls",
+      "WhatsApp & Email bulk broadcasting",
+      "Automatic active customer filtering",
+      "1-click direct chat follow-ups",
     ],
   },
   {
-    id: "feat-crm",
+    id: "feat-leads",
     icon: Users,
-    badge: "Client Relations",
-    title: "High-Ticket CRM & Lead Orchestration",
+    badge: "Leads",
+    title: "Lead Tracking & Pipeline",
     description:
-      "Capture and qualify VIP inquiries seamlessly. Track budgets, event dates, and multi-service scopes with one-click conversion into active client retainers.",
+      "Capture consultation inquiries with event dates and budgets, then convert qualified leads into paying clients instantly.",
     highlights: [
-      "Discreet inquiry intake & qualification",
-      "Multi-service scope bundling",
-      "Seamless lead-to-customer conversion",
+      "Automated inquiry intake form",
+      "Budget size & event date tracking",
+      "1-click lead to customer conversion",
     ],
   },
   {
     id: "feat-invoicing",
     icon: CreditCard,
-    badge: "Financial Engine",
-    title: "Executive Invoicing & Multi-Currency Billing",
+    badge: "Invoicing",
+    title: "Instant Invoice Generation",
     description:
-      "Generate itemized, print-ready luxury invoices. Support for NGN, USD, GBP, and EUR with automated tax, discounts, and payment lifecycle tracking.",
+      "Create professional, itemized invoices in seconds with multi-currency support (NGN, USD, GBP, EUR), discounts, tax, and PDF exports.",
     highlights: [
       "Multi-currency support (NGN, USD, GBP, EUR)",
-      "Itemized service lines & retainer schedules",
-      "Instant status tracking (Draft, Sent, Paid)",
+      "Itemized services & discount controls",
+      "Live status tracking (Draft, Sent, Paid)",
     ],
   },
   {
-    id: "feat-companion",
-    icon: Smartphone,
-    badge: "On-Site Production",
-    title: "Live Run-of-Show & Mobile Companion",
+    id: "feat-sales",
+    icon: TrendingUp,
+    badge: "Sales Tracking",
+    title: "Sales & Revenue Analytics",
     description:
-      "Keep your production team synchronized on event day. Real-time show-calling, timeline cueing, and instantaneous approvals right from iPhone and iPad.",
+      "Get clear visibility into total earnings, average project values, and top-booked services without messy spreadsheets.",
     highlights: [
-      "Instant QR-code device pairing",
-      "Real-time schedule cueing & show-calls",
-      "Live multi-user status synchronization",
+      "Real-time gross sales & earnings metrics",
+      "Top-performing service breakdown",
+      "Paid vs unpaid revenue tracking",
     ],
   },
   {
-    id: "feat-portal",
-    icon: Layers,
-    badge: "Client Experience",
-    title: "Discreet VIP Client Portals",
+    id: "feat-reviews",
+    icon: Star,
+    badge: "Google Reviews",
+    title: "Google Review Prompts & Socials",
     description:
-      "Give high-net-worth clients a private digital portal to review service deliverables, approve moodboards, and track milestone progression.",
+      "Collect 5-star Google reviews effortlessly with 1-click review prompts and display verified social media channels.",
     highlights: [
-      "Dedicated client consultation dashboards",
-      "Transparent milestone progression",
-      "Discreet, white-glove communication flow",
+      "1-click Google review request prompt",
+      "Verified social channel links",
+      "Client review showcase",
     ],
   },
   {
-    id: "feat-analytics",
-    icon: FileSpreadsheet,
-    badge: "Studio Intelligence",
-    title: "Studio Revenue & Portfolio Analytics",
+    id: "feat-profile",
+    icon: Crown,
+    badge: "Studio Storefront",
+    title: "Custom 3D Digital Studio Profile",
     description:
-      "Gain deep clarity into atelier performance. Track gross event volume, average booking values, and category revenue distribution at a glance.",
+      "A personalized public link featuring your brand colors, 3D stationery card, curated services, portfolio, and auto-quote popup.",
     highlights: [
-      "Real-time gross revenue tracking",
-      "Service category performance metrics",
-      "Exportable ledgers for audit compliance",
+      "Interactive 3D business card",
+      "Custom theme & color palettes",
+      "1-minute auto quote inquiry popup",
     ],
   },
 ] as const;

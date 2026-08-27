@@ -9,11 +9,11 @@ export function FeaturesSection() {
       <div className="features-container">
         {/* Section Header */}
         <div className="features-header">
-          <span className="features-eyebrow">Platform Capabilities</span>
-          <h2 id="features-title">Everything required to orchestrate remarkable luxury events.</h2>
+          <span className="features-eyebrow">Features</span>
+          <h2 id="features-title">Everything you need to run your event business.</h2>
           <p className="features-subtitle">
-            Engineered exclusively for luxury wedding ateliers, corporate gala architects, and
-            private estate scenographers.
+            No clutter or complex setup. Simple, powerful tools built specifically for creatives,
+            online vendors, and event businesses.
           </p>
         </div>
 

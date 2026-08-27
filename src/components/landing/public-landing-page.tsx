@@ -37,15 +37,16 @@ export function PublicLandingPage() {
 
       <section className="hero">
         <div className="hero-copy">
-          <span className="eyebrow">Shop With Us</span>
+          <span className="eyebrow">Shop With Us · Easy Business Platform</span>
           <h1>
-            Make space for
+            Your digital shop for
             <br />
-            <em>the remarkable.</em>
+            <em>events & weddings.</em>
           </h1>
           <p>
-            Shopwus brings your luxury event studio, clientele, and creative storytelling into one
-            considered place.
+            Shopwus (<em>Shop With Us</em>) helps creatives, online vendors, and businesses
+            turn visitors into paying clients. Share your 3D card, get booking requests on WhatsApp,
+            send invoices in seconds, and follow up with clients easily.
           </p>
           <div className="hero-ctas">
             <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">

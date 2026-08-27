@@ -3,9 +3,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Shopwus — Luxury Event Studio & Atelier Suite",
+  title: "Shopwus — Shop With Us | Event & Wedding Studio Platform",
   description:
-    "Shopwus brings your luxury event studio, clientele, and creative storytelling into one considered place.",
+    "Shopwus (Shop With Us) is the simple website and business tool for creatives, online vendors, and event businesses.",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
