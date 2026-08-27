@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, MessageSquare, UserCheck, X } from "lucide-react";
-import type { Lead } from "@/lib/types";
+import type { Lead } from "@/types";
 import { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
 interface LeadDetailDrawerProps {

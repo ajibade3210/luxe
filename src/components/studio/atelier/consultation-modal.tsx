@@ -1,5 +1,5 @@
 import { Send, X } from "lucide-react";
-import type { BusinessProfile, ServiceItem } from "@/lib/types";
+import type { BusinessProfile, ServiceItem } from "@/types";
 
 interface ConsultationModalProps {
   isOpen: boolean;

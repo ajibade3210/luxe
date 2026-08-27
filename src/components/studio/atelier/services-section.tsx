@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import type { BusinessProfile, ServiceItem } from "@/lib/types";
+import type { BusinessProfile, ServiceItem } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
 interface ServicesSectionProps {

@@ -1,5 +1,5 @@
 import { SOCIAL_PREFIX_MAP } from "@/constants";
-import type { BusinessProfile, SocialChannel } from "@/lib/types";
+import type { BusinessProfile, SocialChannel } from "@/types";
 import { getSocialChannelStyle } from "./social-badge";
 
 interface StudioSocialSectionProps {

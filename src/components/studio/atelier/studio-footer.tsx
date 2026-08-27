@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BusinessProfile } from "@/lib/types";
+import type { BusinessProfile } from "@/types";
 
 const HOME_ROUTE = "/";
 

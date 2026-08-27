@@ -1,4 +1,4 @@
-import type { ButtonRadiusType, ColorScheme } from "@/lib/types";
+import type { ButtonRadiusType, ColorScheme } from "@/types";
 import { Card } from "./card";
 
 interface AppearanceSectionProps {

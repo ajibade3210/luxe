@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { Customer } from "@/lib/types";
+import type { Customer } from "@/types";
 
 interface CustomerTableProps {
   items: Customer[];

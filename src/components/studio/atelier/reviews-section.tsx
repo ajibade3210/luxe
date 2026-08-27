@@ -1,5 +1,5 @@
 import { ArrowUpRight, Star } from "lucide-react";
-import type { ReviewItem } from "@/lib/types";
+import type { ReviewItem } from "@/types";
 
 interface StudioReviewsSectionProps {
   reviews: ReviewItem[];

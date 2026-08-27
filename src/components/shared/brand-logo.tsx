@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { APP_CONFIG } from "@/constants";
 import { cn } from "@/utils";
@@ -59,9 +60,11 @@ export function BrandLogo({
           monogramClassName
         )}
       >
-        <img
+        <Image
           src="/shopwus-logo.png"
           alt={`${name} logo`}
+          width={64}
+          height={64}
           className="w-full h-full object-contain"
         />
       </div>

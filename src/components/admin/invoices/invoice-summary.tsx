@@ -1,6 +1,6 @@
 "use client";
 
-import type { CurrencyCode } from "@/lib/types";
+import type { CurrencyCode } from "@/types";
 import { CURRENCY_SYMBOLS, formatMoney } from "@/utils";
 
 interface InvoiceSummaryProps {

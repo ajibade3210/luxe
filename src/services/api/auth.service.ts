@@ -1,18 +1,10 @@
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { currentUser } from "@/lib/mock-data";
-import type { User } from "@/lib/types";
+import type { User, UserSession } from "@/types";
+
+export type { UserSession };
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
-
-export interface UserSession {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  studioName?: string;
-  studioSlug?: string;
-  avatarUrl?: string;
-}
 
 export async function getCurrentUser(): Promise<User> {
   await delay(80);

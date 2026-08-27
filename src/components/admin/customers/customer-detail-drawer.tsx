@@ -2,7 +2,7 @@
 
 import { MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
 import type { Invoice } from "@/lib/api";
-import type { Customer, ServiceStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
 interface CustomerDetailDrawerProps {

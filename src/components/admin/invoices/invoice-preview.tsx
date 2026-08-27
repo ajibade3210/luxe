@@ -2,7 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import type { Invoice, InvoiceItem } from "@/lib/api";
-import type { CurrencyCode, PaymentTerms } from "@/lib/types";
+import type { CurrencyCode, PaymentTerms } from "@/types";
 import { formatMoney } from "@/utils";
 
 interface InvoicePreviewProps {

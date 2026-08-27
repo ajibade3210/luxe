@@ -8,7 +8,7 @@ import {
   Share2,
   ShieldCheck,
 } from "lucide-react";
-import type { BusinessProfile } from "@/lib/types";
+import type { BusinessProfile } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
 interface StudioHighlightsCardProps {

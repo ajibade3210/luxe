@@ -2,7 +2,7 @@
 
 import { useInvoiceForm } from "@/hooks/use-invoice-form";
 import type { Invoice } from "@/lib/api";
-import type { Customer } from "@/lib/types";
+import type { Customer } from "@/types";
 import { InvoiceFormFields } from "./invoice-form-fields";
 import { InvoiceModalHeader } from "./invoice-modal-header";
 import { InvoicePreview } from "./invoice-preview";

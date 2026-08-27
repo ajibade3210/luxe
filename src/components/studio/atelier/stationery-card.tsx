@@ -1,5 +1,6 @@
 import { Check, RotateCw } from "lucide-react";
-import type { BusinessProfile } from "@/lib/types";
+import Image from "next/image";
+import type { BusinessProfile } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
 interface StationeryCardProps {
@@ -7,18 +8,18 @@ interface StationeryCardProps {
   slug?: string;
   isFlipped: boolean;
   setIsFlipped: (v: boolean) => void;
-  setQuoteModalOpen: (v: boolean) => void;
-  handleCopyLink: () => void;
+  setQuoteModalOpen?: (v: boolean) => void;
+  handleCopyLink?: () => void;
   primaryColor: string;
   secondaryColor: string;
-  buttonColor: string;
+  buttonColor?: string;
   textColor?: string;
   cardBgColor?: string;
   monogram: string;
   averageRating?: string | number;
   totalReviews?: number;
-  whatsAppLink: string;
-  radiusClass: string;
+  whatsAppLink?: string;
+  radiusClass?: string;
 }
 
 export function StationeryCard({
@@ -42,45 +43,42 @@ export function StationeryCard({
   const isDark = isDarkColor(cardBgColor);
 
   return (
-    <div
-      onClick={() => setIsFlipped(!isFlipped)}
-      className="card-flip-container cursor-pointer select-none"
-    >
+    <div className="card-flip-container relative w-full max-w-[480px] min-h-[560px] mx-auto select-none cursor-pointer">
       <div
-        className={`card-flip-inner transition-transform duration-700 ${
-          isFlipped ? "is-flipped" : ""
-        }`}
+        className={`card-flip-inner w-full min-h-[560px] transition-transform duration-700 ${isFlipped ? "is-flipped" : ""}`}
       >
-        {/* FRONT FACE: Luxury Minimalist Stationery Card */}
+        {/* FRONT FACE: Center Monogram / Logo Only */}
         <div
           style={{ backgroundColor: cardBgColor }}
-          className={`card-face card-front rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center relative overflow-hidden transition-colors ${
+          className={`card-face card-front rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden transition-colors ${
             isDark
               ? "border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
               : "border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
           }`}
         >
-          {/* Top Bar with Flip Button */}
-          <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10">
+          {/* Top Row: Flip Button top right */}
+          <div className="flex justify-end items-center">
             <button
               type="button"
               onClick={e => {
                 e.stopPropagation();
-                setIsFlipped(true);
+                setIsFlipped(!isFlipped);
               }}
-              className={`inline-flex items-center gap-1 text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer shadow-2xs ${
-                isDark
-                  ? "text-white/90 bg-white/10 hover:bg-white/20 border-white/20"
-                  : "text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#efe8de] border-[#d6c7b7]"
-              }`}
+              style={{
+                backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "#f4eee6",
+                color: isDark ? "#ffffff" : "#1c1917",
+                borderColor: isDark ? "rgba(255,255,255,0.15)" : "#e8dfd3",
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-medium transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+              aria-label="Flip stationery card"
             >
               <RotateCw size={12} />
-              <span className="font-medium text-[11px]">Flip Card</span>
+              <span>Flip Card</span>
             </button>
           </div>
 
-          {/* Centered Identity: Logo and Business Name */}
-          <div className="flex flex-col items-center justify-center text-center space-y-4">
+          {/* Centered Business Identity */}
+          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4">
             <div
               style={{
                 backgroundColor: secondaryColor,
@@ -90,9 +88,11 @@ export function StationeryCard({
               className="w-52 h-52 sm:w-60 sm:h-60 rounded-full border-2 flex items-center justify-center font-serif text-7xl sm:text-8xl font-normal overflow-hidden shadow-sm shrink-0"
             >
               {profile.logoUrl ? (
-                <img
+                <Image
                   src={profile.logoUrl}
                   alt={profile.businessName}
+                  width={240}
+                  height={240}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
@@ -131,9 +131,11 @@ export function StationeryCard({
                 className="w-10 h-10 rounded-full border flex items-center justify-center font-serif text-lg font-normal overflow-hidden shadow-2xs shrink-0"
               >
                 {profile.logoUrl ? (
-                  <img
+                  <Image
                     src={profile.logoUrl}
                     alt={profile.businessName}
+                    width={40}
+                    height={40}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (

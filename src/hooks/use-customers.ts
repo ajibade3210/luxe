@@ -16,7 +16,7 @@ import {
   toggleCustomerActiveStatus,
   updateCustomerServiceStatus,
 } from "@/lib/api";
-import type { Customer, ServiceStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/types";
 
 export const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",

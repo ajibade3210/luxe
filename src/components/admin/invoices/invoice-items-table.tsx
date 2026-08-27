@@ -2,7 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import type { InvoiceItem } from "@/lib/api";
-import type { CurrencyCode } from "@/lib/types";
+import type { CurrencyCode } from "@/types";
 import { formatMoney } from "@/utils";
 
 interface InvoiceItemsTableProps {

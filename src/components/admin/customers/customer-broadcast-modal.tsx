@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { BroadcastChannel, Customer } from "@/lib/types";
 import {
   BROADCAST_LIMITS,
   createEmailBroadcastMailto,
@@ -18,6 +17,7 @@ import {
   createWhatsAppDirectUrl,
   sendBroadcast,
 } from "@/services/api/broadcast.service";
+import type { BroadcastChannel, Customer } from "@/types";
 
 interface CustomerBroadcastModalProps {
   isOpen: boolean;

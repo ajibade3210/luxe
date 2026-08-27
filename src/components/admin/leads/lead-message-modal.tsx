@@ -3,7 +3,7 @@
 import { Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Lead } from "@/lib/types";
+import type { Lead } from "@/types";
 
 interface LeadMessageModalProps {
   isOpen: boolean;

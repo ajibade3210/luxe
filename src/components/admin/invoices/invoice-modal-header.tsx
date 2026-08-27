@@ -16,7 +16,7 @@ import {
 
 import { useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Invoice } from "@/lib/types";
+import type { Invoice } from "@/types";
 
 interface InvoiceModalHeaderProps {
   existingInvoice?: Invoice;

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import type { PortfolioProject } from "@/lib/types";
+import Image from "next/image";
+import type { PortfolioProject } from "@/types";
 
 interface StudioPortfolioSectionProps {
   portfolio: PortfolioProject[];
@@ -36,10 +37,12 @@ export function StudioPortfolioSection({
             className="group bg-white border border-[#e8dfd3] rounded-3xl overflow-hidden shadow-2xs hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-[#faf6f0]">
-              <img
+              <Image
                 src={proj.image}
                 alt={proj.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-xs text-[#1c1917] text-[10px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full shadow-xs">
                 {proj.category}

@@ -4,7 +4,7 @@ import { Download, MessageSquare, MoreHorizontal, Plus, Upload } from "lucide-re
 import { useState } from "react";
 import { useCustomers } from "@/hooks/use-customers";
 import type { Invoice } from "@/lib/api";
-import type { Customer } from "@/lib/types";
+import type { Customer } from "@/types";
 import { formatMoney, Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { CustomerAddModal } from "./customers/customer-add-modal";
 import { CustomerBroadcastModal } from "./customers/customer-broadcast-modal";

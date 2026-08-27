@@ -6,31 +6,17 @@
 
 import { CUSTOM_EVENTS } from "@/constants";
 import { InvoiceInputSchema } from "@/lib/schemas";
-import type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms } from "@/lib/types";
+import type {
+  CurrencyCode,
+  Invoice,
+  InvoiceInput,
+  InvoiceItem,
+  InvoiceStatus,
+  PaymentTerms,
+} from "@/types";
 import { CURRENCY_SYMBOLS } from "@/utils";
 
-export type { CurrencyCode, Invoice, InvoiceItem, InvoiceStatus, PaymentTerms };
-
-export interface InvoiceInput {
-  id?: string;
-  invoiceNumber?: string;
-  customerId: string;
-  customerName: string;
-  customerEmail: string;
-  billingAddress: string;
-  issueDate: string;
-  dueDate: string;
-  paymentTerms: PaymentTerms;
-  currency?: CurrencyCode;
-  items: InvoiceItem[];
-  subtotal: number;
-  discount: number;
-  taxRate: number;
-  taxAmount: number;
-  total: number;
-  notes: string;
-  status?: InvoiceStatus;
-}
+export type { CurrencyCode, Invoice, InvoiceInput, InvoiceItem, InvoiceStatus, PaymentTerms };
 
 const INITIAL_INVOICES: Invoice[] = [
   {

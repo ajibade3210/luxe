@@ -1,5 +1,6 @@
 import { ArrowRight, X } from "lucide-react";
-import type { PortfolioProject } from "@/lib/types";
+import Image from "next/image";
+import type { PortfolioProject } from "@/types";
 
 interface ProjectModalProps {
   project: PortfolioProject | null;
@@ -34,8 +35,14 @@ export function ProjectModal({ project, onClose, onInquire, primaryColor }: Proj
           </h3>
         </div>
 
-        <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-[#faf6f0]">
-          <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+        <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-[#faf6f0]">
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover"
+          />
         </div>
 
         <p className="text-sm text-[#524b45] leading-relaxed">{project.description}</p>

@@ -1,15 +1,7 @@
-import { CreditCard, Crown, Send, type Sparkles, TrendingUp, Users } from "lucide-react";
+import { CreditCard, Crown, Send, TrendingUp, Users } from "lucide-react";
+import type { BillingPeriod, FeatureItem, PricingPlan } from "@/types";
 
-export interface FeatureItem {
-  id: string;
-  icon: typeof Sparkles;
-  badge: string;
-  title: string;
-  description: string;
-  highlights: string[];
-  iconBg: string;
-  iconColor: string;
-}
+export type { BillingPeriod, FeatureItem, PricingPlan };
 
 export const LANDING_FEATURES: readonly FeatureItem[] = [
   {
@@ -88,26 +80,6 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
     iconColor: "#16a34a",
   },
 ] as const;
-
-export type BillingPeriod = "monthly" | "biannual" | "annual";
-
-export interface PricingPlan {
-  id: string;
-  name: string;
-  tagline: string;
-  badge?: string;
-  isPopular?: boolean;
-  isFreeTrial?: boolean;
-  accentColor: string;
-  buttonColor: string;
-  buttonTextColor: string;
-  monthlyPrice: number;
-  biannualPrice: number;
-  annualPrice: number;
-  features: string[];
-  ctaLabel: string;
-  termsNote: string;
-}
 
 export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
   {

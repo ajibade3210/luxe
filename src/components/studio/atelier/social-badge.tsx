@@ -1,4 +1,4 @@
-import type { SocialChannelType } from "@/lib/types";
+import type { SocialChannelType } from "@/types";
 
 export function getSocialChannelStyle(type: SocialChannelType) {
   switch (type) {

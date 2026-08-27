@@ -16,7 +16,7 @@ import { BrandLogo } from "@/components/shared/brand-logo";
 import { CUSTOM_EVENTS } from "@/constants";
 import { isAuthenticated } from "@/lib/api";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/lib/types";
+import type { OrganizationPreview } from "@/types";
 
 interface NotFoundViewProps {
   slug?: string;

@@ -1,7 +1,7 @@
 import { RefreshCw, Star } from "lucide-react";
 import { getSocialChannelStyle } from "@/components/studio/atelier/social-badge";
 import { SOCIAL_PREFIX_MAP } from "@/constants";
-import type { SocialChannel } from "@/lib/types";
+import type { SocialChannel } from "@/types";
 import { sanitizeHandle } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";

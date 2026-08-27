@@ -12,7 +12,7 @@ import {
   submitReview,
 } from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
-import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/lib/types";
+import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 import { ConsultationModal } from "./atelier/consultation-modal";
 import { StudioPortfolioSection } from "./atelier/portfolio-section";

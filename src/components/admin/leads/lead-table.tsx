@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { Lead } from "@/lib/types";
+import type { Lead } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
 
 interface LeadTableProps {

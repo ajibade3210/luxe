@@ -3,7 +3,7 @@
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/lib/types";
+import type { OrganizationPreview } from "@/types";
 
 interface HeroRotatingCardProps {
   organizations?: OrganizationPreview[];

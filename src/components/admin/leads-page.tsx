@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 import { useState } from "react";
 import { useLeads } from "@/hooks/use-leads";
 import { getInvoices, type Invoice } from "@/lib/api";
-import type { Customer, Lead } from "@/lib/types";
+import type { Customer, Lead } from "@/types";
 import { Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { InvoiceModal } from "./invoices/invoice-modal";
 import { LeadDetailDrawer } from "./leads/lead-detail-drawer";

@@ -1,7 +1,7 @@
 import { Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Customer } from "@/lib/types";
+import type { Customer } from "@/types";
 
 interface CustomerMessageModalProps {
   isOpen: boolean;

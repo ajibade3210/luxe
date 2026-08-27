@@ -1,7 +1,6 @@
-"use client";
-
+import Image from "next/image";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/lib/types";
+import type { OrganizationPreview } from "@/types";
 
 interface LogoRowProps {
   organizations: OrganizationPreview[];
@@ -21,7 +20,13 @@ function LogoRow({ organizations, reverse = false }: LogoRowProps) {
             title={`${org.name} — ${org.eyebrow}`}
             aria-label={`View ${org.name} studio showcase`}
           >
-            <img src={org.logoUrl} alt={`${org.name} logo`} loading="lazy" />
+            <Image
+              src={org.logoUrl}
+              alt={`${org.name} logo`}
+              width={120}
+              height={40}
+              className="object-contain"
+            />
           </a>
         ))}
       </div>

@@ -20,7 +20,7 @@ import { BrandLogo } from "@/components/shared/brand-logo";
 import { CUSTOM_EVENTS } from "@/constants";
 import { getCustomers, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
-import type { Customer, Lead } from "@/lib/types";
+import type { Customer, Lead } from "@/types";
 
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 

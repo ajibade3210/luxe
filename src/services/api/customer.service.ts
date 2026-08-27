@@ -1,7 +1,16 @@
 import { CUSTOM_EVENTS } from "@/constants";
 import { activities, customers as initialCustomers } from "@/lib/mock-data";
 import { AddServiceInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
-import type { Customer, CustomerService, ServiceStatus } from "@/lib/types";
+import type {
+  AddServiceInput,
+  Customer,
+  CustomerService,
+  ImportCustomerRecord,
+  NewCustomerInput,
+  ServiceStatus,
+} from "@/types";
+
+export type { AddServiceInput, ImportCustomerRecord, NewCustomerInput };
 
 let currentCustomers: Customer[] = [...initialCustomers];
 
@@ -51,7 +60,7 @@ export async function getCustomers(query?: string): Promise<Customer[]> {
  */
 export async function addServiceToCustomer(
   customerId: string,
-  input: { name: string; service: string; amount: number; status?: ServiceStatus }
+  input: AddServiceInput
 ): Promise<Customer> {
   const validatedInput = AddServiceInputSchema.parse(input);
   await delay(200);
@@ -180,19 +189,6 @@ export async function getCustomerActivity(id: string) {
   return activities.filter(a => a.customerId === id);
 }
 
-export interface NewCustomerInput {
-  businessId?: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  company?: string;
-  serviceName?: string;
-  service?: string;
-  amount?: number;
-  status?: ServiceStatus;
-  isActive?: boolean;
-}
-
 /**
  * Create a new customer in the studio directory
  * When connecting to real backend, easily swap with:
@@ -309,13 +305,6 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
   URL.revokeObjectURL(url);
 
   return { count: currentCustomers.length, filename };
-}
-
-export interface ImportCustomerRecord {
-  name: string;
-  phone?: string;
-  email: string;
-  notes?: string;
 }
 
 /**

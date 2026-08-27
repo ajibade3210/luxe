@@ -10,7 +10,7 @@ import type {
   ServiceItem,
   SocialChannel,
   User,
-} from "./types";
+} from "@/types";
 
 export const currentUser: User = {
   id: "u1",

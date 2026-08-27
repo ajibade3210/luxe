@@ -3,7 +3,7 @@
 import { Check, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
-import type { Customer, ServiceStatus } from "@/lib/types";
+import type { Customer, ServiceStatus } from "@/types";
 
 interface CustomerServiceModalProps {
   isOpen: boolean;

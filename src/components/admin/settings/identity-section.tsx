@@ -1,5 +1,5 @@
 import { Copy, Loader2, Upload } from "lucide-react";
-import type { CurrencyCode } from "@/lib/types";
+import type { CurrencyCode } from "@/types";
 import { Card } from "./card";
 
 interface IdentitySectionProps {

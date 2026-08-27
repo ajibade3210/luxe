@@ -1,5 +1,5 @@
 import { CUSTOM_EVENTS } from "@/constants";
-import type { BroadcastPayload, BroadcastResult, Customer } from "@/lib/types";
+import type { BroadcastPayload, BroadcastResult, Customer } from "@/types";
 import { getCustomers } from "./customer.service";
 
 export const BROADCAST_LIMITS = {

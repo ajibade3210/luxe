@@ -1,8 +1,10 @@
 import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { leads as defaultLeads } from "@/lib/mock-data";
 import { CreateLeadInputSchema } from "@/lib/schemas";
-import type { Customer, Lead, LeadStatus } from "@/lib/types";
+import type { CreateLeadInput, Customer, Lead, LeadStatus } from "@/types";
 import { createCustomer } from "./customer.service";
+
+export type { CreateLeadInput };
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -42,7 +44,7 @@ export function savePersistedLeads(data: Lead[]): void {
  * Creates a new consultation inquiry lead.
  * Swappable with: `await fetch('/api/v1/leads', { method: 'POST', body: JSON.stringify(input) })`
  */
-export async function createLead(input: Omit<Lead, "id" | "createdAt" | "status">): Promise<Lead> {
+export async function createLead(input: CreateLeadInput): Promise<Lead> {
   const validatedInput = CreateLeadInputSchema.parse(input);
   await delay(300);
   const currentLeads = loadPersistedLeads();

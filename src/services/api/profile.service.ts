@@ -1,6 +1,6 @@
 import { CUSTOM_EVENTS, PROFILE_VERSION, RESERVED_SLUGS, STORAGE_KEYS } from "@/constants";
 import { businessProfile as defaultProfile, featuredOrganizations } from "@/lib/mock-data";
-import type { BusinessProfile, ReviewItem, ServiceItem } from "@/lib/types";
+import type { BusinessProfile, ReviewItem, ServiceItem } from "@/types";
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -22,6 +22,11 @@ export function normalizeServices(raw: (string | ServiceItem)[] | undefined): Se
   });
 }
 
+let memoryProfile: BusinessProfile = {
+  ...defaultProfile,
+  services: normalizeServices(defaultProfile.services as (string | ServiceItem)[]),
+};
+
 export function loadPersistedProfile(): BusinessProfile {
   if (typeof window !== "undefined") {
     try {
@@ -33,8 +38,10 @@ export function loadPersistedProfile(): BusinessProfile {
         if (parsed.services) {
           parsed.services = normalizeServices(parsed.services);
         }
-        Object.assign(defaultProfile, parsed);
-      } else if (storedVersion < PROFILE_VERSION) {
+        memoryProfile = { ...memoryProfile, ...parsed };
+        return memoryProfile;
+      }
+      if (storedVersion < PROFILE_VERSION) {
         localStorage.removeItem(STORAGE_KEYS.profile);
         localStorage.setItem(STORAGE_KEYS.profileVersion, String(PROFILE_VERSION));
       }
@@ -42,11 +49,11 @@ export function loadPersistedProfile(): BusinessProfile {
       // Fallback
     }
   }
-  defaultProfile.services = normalizeServices(defaultProfile.services as (string | ServiceItem)[]);
-  return defaultProfile;
+  return memoryProfile;
 }
 
 export function savePersistedProfile(profile: BusinessProfile) {
+  memoryProfile = { ...profile };
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
@@ -109,39 +116,44 @@ export async function updateBusinessProfile(
 ): Promise<BusinessProfile> {
   await delay(300);
   const current = loadPersistedProfile();
-  Object.assign(current, input, { updatedAt: new Date().toISOString() });
-  savePersistedProfile(current);
-  return current;
+  const updated: BusinessProfile = {
+    ...current,
+    ...input,
+    updatedAt: new Date().toISOString(),
+  };
+  savePersistedProfile(updated);
+  return updated;
 }
 
 export async function publishChanges() {
   await delay(400);
   const current = loadPersistedProfile();
-  current.updatedAt = new Date().toISOString();
-  savePersistedProfile(current);
-  return { publishedAt: current.updatedAt };
+  const updated: BusinessProfile = {
+    ...current,
+    updatedAt: new Date().toISOString(),
+  };
+  savePersistedProfile(updated);
+  return { publishedAt: updated.updatedAt };
 }
 
 export async function connectSocialChannel(id: string) {
   await delay(200);
   const current = loadPersistedProfile();
-  const channel = current.socialChannels.find(c => c.id === id);
-  if (channel) {
-    channel.connected = true;
-    savePersistedProfile(current);
-  }
-  return channel;
+  const updatedChannels = current.socialChannels.map(c =>
+    c.id === id ? { ...c, connected: true } : c
+  );
+  savePersistedProfile({ ...current, socialChannels: updatedChannels });
+  return updatedChannels.find(c => c.id === id);
 }
 
 export async function disconnectSocialChannel(id: string) {
   await delay(200);
   const current = loadPersistedProfile();
-  const channel = current.socialChannels.find(c => c.id === id);
-  if (channel) {
-    channel.connected = false;
-    savePersistedProfile(current);
-  }
-  return channel;
+  const updatedChannels = current.socialChannels.map(c =>
+    c.id === id ? { ...c, connected: false } : c
+  );
+  savePersistedProfile({ ...current, socialChannels: updatedChannels });
+  return updatedChannels.find(c => c.id === id);
 }
 
 export async function submitReview(input: Omit<ReviewItem, "id" | "date">): Promise<ReviewItem> {
@@ -152,11 +164,7 @@ export async function submitReview(input: Omit<ReviewItem, "id" | "date">): Prom
     date: "Just now",
   };
   const current = loadPersistedProfile();
-  if (current.reviews) {
-    current.reviews.unshift(newReview);
-  } else {
-    current.reviews = [newReview];
-  }
-  savePersistedProfile(current);
+  const updatedReviews = [newReview, ...(current.reviews ?? [])];
+  savePersistedProfile({ ...current, reviews: updatedReviews });
   return newReview;
 }

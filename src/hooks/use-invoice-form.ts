@@ -15,7 +15,7 @@ import {
   saveInvoiceDraft,
   sendInvoice,
 } from "@/lib/api";
-import type { CurrencyCode, Customer } from "@/lib/types";
+import type { CurrencyCode, Customer } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
 export const PAYMENT_TERMS_OPTIONS: PaymentTerms[] = [

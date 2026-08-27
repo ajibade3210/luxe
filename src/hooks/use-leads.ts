@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CUSTOM_EVENTS } from "@/constants";
 import { convertLeadToCustomer, exportLeadsCSV, getLeads, updateLeadStatus } from "@/lib/api";
-import type { Lead } from "@/lib/types";
+import type { Lead } from "@/types";
 
 export function useLeads(notify?: (message: string) => void) {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);

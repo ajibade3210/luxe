@@ -10,7 +10,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import type { PortfolioProject } from "@/lib/types";
+import type { PortfolioProject } from "@/types";
 import { Card } from "./card";
 
 interface PortfolioSectionProps {

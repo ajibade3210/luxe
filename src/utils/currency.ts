@@ -1,4 +1,6 @@
-export type CurrencyCode = "NGN" | "USD" | "GBP" | "EUR";
+import type { CurrencyCode, FormatMoneyOptions } from "@/types";
+
+export type { CurrencyCode, FormatMoneyOptions };
 
 export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   NGN: "₦",
@@ -18,10 +20,6 @@ const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
   GBP: "en-GB",
   EUR: "en-IE",
 };
-
-export interface FormatMoneyOptions {
-  decimals?: number;
-}
 
 export const formatMoney = (
   n: number,

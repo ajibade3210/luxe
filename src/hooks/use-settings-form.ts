@@ -17,7 +17,7 @@ import type {
   PortfolioProject,
   ServiceItem,
   SocialChannel,
-} from "@/lib/types";
+} from "@/types";
 
 export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
   // Main settings state

@@ -1,7 +1,7 @@
 "use client";
 
 import { PAYMENT_TERMS_OPTIONS } from "@/hooks/use-invoice-form";
-import type { CurrencyCode, Customer, InvoiceItem, PaymentTerms } from "@/lib/types";
+import type { CurrencyCode, Customer, InvoiceItem, PaymentTerms } from "@/types";
 import { InvoiceItemsTable } from "./invoice-items-table";
 import { InvoiceSummary } from "./invoice-summary";
 

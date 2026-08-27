@@ -19,8 +19,18 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 
 # CORE RULES
 
+- **STRICT ARCHITECTURAL PLACEMENT:** Moving forward, EVERYTHING in the codebase MUST be defined strictly in its appropriate designated section without exception:
+  - Types & Models $\rightarrow$ `src/types/{domain}.ts` (exported via `src/types/index.ts`)
+  - Validation Schemas $\rightarrow$ `src/lib/schemas/{domain}.schema.ts`
+  - Services & Business Logic $\rightarrow$ `src/services/api/{domain}.service.ts`
+  - Custom Hooks $\rightarrow$ `src/hooks/{domain-hook}.ts`
+  - Constants & Static Config $\rightarrow$ `src/constants/{domain}.ts`
+  - Decomposed UI Components $\rightarrow$ `src/components/{domain}/`
+  - Pure Stateless Utilities $\rightarrow$ `src/utils/{utility}.ts`
+  Never mix concerns, declare shared domain interfaces inline, or place code in arbitrary folders.
 - **STRICT SCOPE ENFORCEMENT:** NEVER introduce, create, or add any unrequested features, elements, icons, components, sections, or UI decorations unless the user explicitly asked for them. Limit all implementation strictly to the exact user directive without making assumptions or adding unsolicited extras.
-- **ZERO `any` POLICY (Strict TypeScript):** `any` is strictly prohibited anywhere in the codebase. Always use explicit types from `@/lib/types` or local interfaces. For unknown payloads, use `unknown` with explicit narrowing. All function signatures, props, callbacks, and state must have complete, explicit types.
+- **DOMAIN-SEGMENTED TYPES (`src/types/`):** All domain entities, DTOs, request payloads, and shared models MUST be defined in their designated domain file under `src/types/` (e.g. `customer.ts`, `invoice.ts`, `lead.ts`, `analytics.ts`, `broadcast.ts`, `profile.ts`, `auth.ts`, `common.ts`, `landing.ts`) and exported via `src/types/index.ts`. Never dump arbitrary types into monolithic files or declare shared domain interfaces inline in UI components.
+- **ZERO `any` POLICY (Strict TypeScript):** `any` is strictly prohibited anywhere in the codebase. Always use explicit types from `@/types` or local component prop interfaces. For unknown payloads, use `unknown` with explicit narrowing. All function signatures, props, callbacks, and state must have complete, explicit types.
 - **SERVICE/REPOSITORY ABSTRACTION:** Architect all state and data flows behind an abstraction layer under `src/services/api/` (e.g. `invoice.service.ts`, `leads.service.ts`, `customer.service.ts`) so mock data can be swapped for real API calls later with zero UI refactoring.
 - **RESPONSIVE DESIGN:** Design layouts to be responsive across Mobile (320px+), Tablet (768px+), and Desktop (1024px+) breakpoints from the start.
 - **KEEP DESIGNS SIMPLE:** Avoid over-engineering or adding unrequested features.
@@ -32,12 +42,18 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 
 ---
 
-# CODEBASE CONVENTIONS & COMPONENT STRUCTURE
+# CODEBASE CONVENTIONS & SECTION PLACEMENT
 
-### 1. Component Decomposition
-- Keep components focused and manageable (~200–250 lines max per file).
-- Decompose complex views into domain subfolders (e.g. `src/components/admin/invoices/`, `src/components/admin/leads/`, `src/components/studio/atelier/`).
-- Extract complex component state and event logic into custom hooks under `src/hooks/` (e.g. `useInvoiceForm`, `useLeads`, `useCustomerForm`).
+Everything in the codebase must live strictly in its appropriate architectural section:
+
+### 1. File & Directory Organization
+- **Types (`src/types/`):** Domain interfaces, DTOs, and union types grouped by domain (`customer.ts`, `invoice.ts`, `lead.ts`, etc.) and re-exported from `src/types/index.ts`.
+- **Validation Schemas (`src/lib/schemas/`):** Zod parsing and validation schemas organized by domain (`customer.schema.ts`, `invoice.schema.ts`, `lead.schema.ts`).
+- **Services & Data Layer (`src/services/api/`):** Business logic, CRUD operations, telemetry, and external API integrations (`customer.service.ts`, `invoice.service.ts`, etc.).
+- **State & Custom Hooks (`src/hooks/`):** Component event orchestration and reusable state hooks (`useInvoiceForm.ts`, `useLeads.ts`, `useCustomerForm.ts`).
+- **Constants & Configuration (`src/constants/`):** App configurations, navigation definitions, and immutable constants.
+- **Components (`src/components/`):** Decomposed UI organized by domain subfolders (`admin/`, `landing/`, `studio/`, `shared/`, `ui/`). Keep components focused (~200–250 lines max).
+- **Utilities (`src/utils/`):** Pure, stateless helper functions (`currency.ts`, `helpers.ts`).
 
 ### 2. Service Layer Standards
 - UI components must never perform direct mock data mutations or local storage updates inline; always delegate through service methods.

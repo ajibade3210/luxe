@@ -1,5 +1,5 @@
 import { Edit3, Plus, Trash2 } from "lucide-react";
-import type { ServiceItem } from "@/lib/types";
+import type { ServiceItem } from "@/types";
 import { Card } from "./card";
 
 interface ServicesSectionProps {
