@@ -160,7 +160,7 @@ export const BUSINESS_TYPE_SERVICES_SECTION_TITLE = {
 /** Section heading and navigation label for the gallery/portfolio. */
 export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
   service: "Portfolio",
-  sales: "Lookbook",
+  sales: "Collection",
   retail: "Gallery",
   ecommerce: "Showcase",
 } as const;

@@ -105,7 +105,7 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
       {/* Top Header Bar */}
       <div className="pb-6 border-b border-[#e5e7eb]">
         <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#111827] tracking-tight">
-          Studio Settings & Customization
+          Studio Settings
         </h1>
         <p className="text-xs sm:text-sm text-[#6b7280] mt-2 leading-relaxed">
           Configure your brand identity, services, portfolio, verified social badges, and visual

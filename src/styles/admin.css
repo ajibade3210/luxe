@@ -214,6 +214,9 @@
   margin-bottom: 42px;
   border: 1px solid var(--line);
   background: var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .metric {
@@ -239,6 +242,9 @@
 .table-card {
   border: 1px solid var(--line);
   background: var(--paper);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .table-head {
