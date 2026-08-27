@@ -1,10 +1,25 @@
-import type { BusinessProfile } from "@/lib/types";
+import { SOCIAL_PREFIX_MAP } from "@/constants";
+import type { BusinessProfile, SocialChannel } from "@/lib/types";
 import { getSocialChannelStyle } from "./social-badge";
 
 interface StudioSocialSectionProps {
   profile: BusinessProfile;
   primaryColor?: string;
   radiusClass?: string;
+}
+
+function resolveChannelUrl(channel: SocialChannel): string {
+  if (channel.url?.startsWith("http")) return channel.url;
+  const handle = channel.handle?.trim() || "";
+  if (!handle) return "#";
+  if (handle.startsWith("http://") || handle.startsWith("https://")) return handle;
+  if (channel.type === "whatsapp") {
+    const cleanNumber = handle.replace(/\D/g, "");
+    return `https://wa.me/${cleanNumber || "2348055966944"}`;
+  }
+  const prefix = SOCIAL_PREFIX_MAP[channel.type] || "";
+  const cleanPrefix = prefix.replace(/^https?:\/\//i, "");
+  return `https://${cleanPrefix}${handle.replace(/^@/, "")}`;
 }
 
 export function StudioSocialSection({ profile }: StudioSocialSectionProps) {
@@ -30,10 +45,11 @@ export function StudioSocialSection({ profile }: StudioSocialSectionProps) {
       >
         {activeChannels.map(channel => {
           const style = getSocialChannelStyle(channel.type);
+          const channelUrl = resolveChannelUrl(channel);
           return (
             <a
               key={channel.id}
-              href={channel.url || "#"}
+              href={channelUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{

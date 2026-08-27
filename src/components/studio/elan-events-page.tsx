@@ -187,9 +187,9 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
 
   // Check if WhatsApp is enabled in connected channels and has a valid number
   const whatsAppChannel = profile.socialChannels?.find(c => c.type === "whatsapp");
+  const whatsAppPhone = whatsAppChannel?.handle || profile.whatsAppNumber || profile.phone;
   const isWhatsAppEnabled =
-    (whatsAppChannel ? whatsAppChannel.connected : true) &&
-    Boolean((profile.whatsAppNumber || profile.phone)?.trim());
+    (whatsAppChannel ? whatsAppChannel.connected : true) && Boolean(whatsAppPhone?.trim());
 
   // Computed review stats
   const averageRating = useMemo(() => {
@@ -229,7 +229,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
       });
 
       const whatsappUrl = createWhatsAppConsultationUrl({
-        studioPhone: profile.whatsAppNumber || profile.phone,
+        studioPhone: whatsAppPhone || profile.phone,
         studioName: profile.businessName || "Élan Events",
         clientName: quoteForm.name,
         clientPhone: quoteForm.phone,
@@ -290,10 +290,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
 
   const monogram = profile.businessName ? profile.businessName[0].toUpperCase() : "Ś";
 
-  const cleanPhone = (profile.whatsAppNumber || profile.phone || "+234 800 ELAN VIP").replace(
-    /[^0-9]/g,
-    ""
-  );
+  const cleanPhone = (whatsAppPhone || profile.phone || "+234 800 ELAN VIP").replace(/[^0-9]/g, "");
   const whatsAppLink = `https://wa.me/${cleanPhone || "2348055966944"}`;
 
   if (isNotFound) {

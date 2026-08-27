@@ -56,30 +56,30 @@ export function IdentitySection({
       title="Business profile"
       description="The foundation of your public customer-facing presence."
     >
-      <div className="form-grid">
+      <div className="space-y-7">
         {/* Logo Upload Section */}
-        <div className="full bg-white border border-[#e5e7eb] rounded-lg p-6 mb-5 shadow-2xs">
-          <div className="border-b border-[#e5e7eb] pb-3.5 mb-5">
+        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-xl p-6 sm:p-7 shadow-2xs space-y-6">
+          <div className="border-b border-[#e5e7eb] pb-4">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
               Business Brand Logo
             </span>
-            <span className="text-xs text-[#6b7280]">
+            <span className="text-xs text-[#6b7280] mt-1 block leading-relaxed">
               Your official studio crest displayed on onboarding cards, concierge header, and footer
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-lg border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 sm:gap-8 items-center">
+            <div className="flex flex-col items-center gap-2.5">
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-[#e5e7eb] bg-white p-2.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Business Logo Preview"
-                    className="w-full h-full object-contain rounded-md"
+                    className="w-full h-full object-contain rounded-lg"
                   />
                 ) : (
                   <span className="font-sans font-bold text-3xl text-[#191c1d]">
-                    {name ? name.charAt(0) : "Ś"}
+                    {name ? name.charAt(0) : "É"}
                   </span>
                 )}
                 {isUploadingLogo && (
@@ -93,16 +93,16 @@ export function IdentitySection({
               </span>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <h4 className="text-sm font-semibold text-[#191c1d]">Studio Brand Crest</h4>
-                  <p className="text-xs text-[#6b7280] mt-0.5">
+                  <h4 className="text-sm font-bold text-[#191c1d]">Studio Brand Crest</h4>
+                  <p className="text-xs text-[#6b7280] mt-1 leading-relaxed">
                     Upload a new logo to automatically generate a CDN URL and update all live
                     touchpoints.
                   </p>
                 </div>
-                <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2 rounded-md text-xs font-medium transition-all shadow-xs shrink-0">
+                <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0">
                   <Upload size={14} />
                   <span>{isUploadingLogo ? "Uploading..." : "Replace Logo"}</span>
                   <input
@@ -115,8 +115,8 @@ export function IdentitySection({
                 </label>
               </div>
 
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-medium text-[#6b7280] block">
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-[#4b5563] block">
                   Generated CDN Asset URL
                 </span>
                 <div className="relative flex items-center">
@@ -125,7 +125,7 @@ export function IdentitySection({
                     value={logoUrl}
                     onChange={e => setLogoUrl(e.target.value)}
                     placeholder="https://cdn.accessa.ng/..."
-                    className="w-full text-xs font-mono bg-[#f8f9fa] border border-[#e5e7eb] rounded-md pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
+                    className="w-full text-xs font-mono bg-white border border-[#d1d5db] rounded-lg pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
                   />
                   {logoUrl && (
                     <button
@@ -136,7 +136,7 @@ export function IdentitySection({
                           onToast("CDN Logo URL copied to clipboard!");
                         }
                       }}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e7e8e9] bg-[#f3f4f5] px-3 py-1.5 rounded inline-flex items-center gap-1 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e5e7eb] bg-[#f3f4f6] px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
                     >
                       <Copy size={12} />
                       <span>Copy URL</span>
@@ -148,88 +148,133 @@ export function IdentitySection({
           </div>
         </div>
 
-        {/* Row 1: Name & Slug */}
-        <label>
-          Business name
-          <input value={name} onChange={e => setName(e.target.value)} />
-        </label>
-
-        <label>
-          Claim handle / custom slug
-          <div className="relative">
+        {/* Form Fields Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          {/* Row 1: Name & Slug */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Business name
+            </label>
             <input
-              value={slug}
-              onChange={e =>
-                setSlug(
-                  e.target.value
-                    .toLowerCase()
-                    .replace(/[^a-z0-9-]/g, "-")
-                    .replace(/-+/g, "-")
-                )
-              }
-              placeholder="e.g. elan-events"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
             />
-            {slugStatus === "checking" && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8c827a]">
-                checking...
-              </span>
-            )}
-            {slugStatus === "available" && slug && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#16a34a] font-medium bg-[#f0fdf4] px-2 py-0.5 rounded">
-                available
-              </span>
-            )}
-            {slugStatus === "taken" && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#ba1a1a] font-medium bg-[#fef2f2] px-2 py-0.5 rounded">
-                reserved / unavailable
-              </span>
-            )}
           </div>
-        </label>
 
-        {/* Row 2: Tagline & Location */}
-        <label className="full">
-          Tagline & core positioning
-          <input
-            value={tagline}
-            onChange={e => setTagline(e.target.value)}
-            placeholder="e.g. Bespoke luxury wedding design and creative direction"
-          />
-        </label>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Claim handle / custom slug
+            </label>
+            <div className="relative">
+              <input
+                value={slug}
+                onChange={e =>
+                  setSlug(
+                    e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9-]/g, "-")
+                      .replace(/-+/g, "-")
+                  )
+                }
+                placeholder="e.g. elan-events"
+                className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs pr-24"
+              />
+              {slugStatus === "checking" && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8c827a]">
+                  checking...
+                </span>
+              )}
+              {slugStatus === "available" && slug && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#16a34a] font-medium bg-[#f0fdf4] px-2 py-0.5 rounded">
+                  available
+                </span>
+              )}
+              {slugStatus === "taken" && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#ba1a1a] font-medium bg-[#fef2f2] px-2 py-0.5 rounded">
+                  reserved / unavailable
+                </span>
+              )}
+            </div>
+          </div>
 
-        <label>
-          Operating location
-          <input value={location} onChange={e => setLocation(e.target.value)} />
-        </label>
+          {/* Row 2: Tagline */}
+          <div className="md:col-span-2 space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Tagline & core positioning
+            </label>
+            <input
+              value={tagline}
+              onChange={e => setTagline(e.target.value)}
+              placeholder="e.g. Bespoke luxury wedding design and creative direction"
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+            />
+          </div>
 
-        <label>
-          Website
-          <input value={website} onChange={e => setWebsite(e.target.value)} />
-        </label>
+          {/* Row 3: Location & Website */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Operating location
+            </label>
+            <input
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+            />
+          </div>
 
-        <label>
-          Primary contact email
-          <input value={email} onChange={e => setEmail(e.target.value)} />
-        </label>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Website
+            </label>
+            <input
+              value={website}
+              onChange={e => setWebsite(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+            />
+          </div>
 
-        <label>
-          Default Studio Currency
-          <select
-            value={currency}
-            onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
-            className="w-full bg-white border border-[#ded7cb] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none font-semibold"
-          >
-            <option value="NGN">NGN (₦) — Nigerian Naira (Default)</option>
-            <option value="USD">USD ($) — US Dollar</option>
-            <option value="GBP">GBP (£) — British Pound</option>
-            <option value="EUR">EUR (€) — Euro</option>
-          </select>
-        </label>
+          {/* Row 4: Email & Currency */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Primary contact email
+            </label>
+            <input
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+            />
+          </div>
 
-        <label className="full">
-          About your studio & signature approach
-          <textarea rows={4} value={about} onChange={e => setAbout(e.target.value)} />
-        </label>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Default Studio Currency
+            </label>
+            <select
+              value={currency}
+              onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
+              className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none font-medium shadow-2xs"
+            >
+              <option value="NGN">NGN (₦) — Nigerian Naira (Default)</option>
+              <option value="USD">USD ($) — US Dollar</option>
+              <option value="GBP">GBP (£) — British Pound</option>
+              <option value="EUR">EUR (€) — Euro</option>
+            </select>
+          </div>
+
+          {/* Row 5: About textarea */}
+          <div className="md:col-span-2 space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              About your studio & signature approach
+            </label>
+            <textarea
+              rows={4}
+              value={about}
+              onChange={e => setAbout(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-3 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs leading-relaxed"
+            />
+          </div>
+        </div>
       </div>
     </Card>
   );

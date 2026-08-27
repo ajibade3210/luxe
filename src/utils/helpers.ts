@@ -14,3 +14,85 @@ export const slugify = (text: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, "-")
     .replace(/-+/g, "-");
+
+export function sanitizeHandle(value: string, prefix = ""): string {
+  if (!value) return "";
+  let v = value.trim();
+  v = v.replace(/^https?:\/\//i, "");
+  if (prefix) {
+    const rawPrefix = prefix.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+    if (v.toLowerCase().startsWith(rawPrefix.toLowerCase())) {
+      v = v.slice(rawPrefix.length).replace(/^\/?/, "");
+    }
+  }
+  v = v.replace(
+    /^(www\.)?(instagram\.com|facebook\.com|linkedin\.com\/in|linkedin\.com\/company|linkedin\.com|tiktok\.com\/@|tiktok\.com|x\.com|twitter\.com|youtube\.com\/@|youtube\.com\/c|youtube\.com|threads\.net\/@|threads\.net|threads\.com\/@|threads\.com|pinterest\.com|wa\.me)\/?/i,
+    ""
+  );
+  if (prefix === "linkedin.com/in/" && v.startsWith("company/")) {
+    v = v.replace(/^company\//, "");
+  }
+  if (prefix === "youtube.com/@" && v.startsWith("c/")) {
+    v = v.replace(/^c\//, "");
+  }
+  if (v.startsWith("@") && (prefix.endsWith("@") || prefix.endsWith("/"))) {
+    v = v.slice(1);
+  }
+  return v;
+}
+
+export function isValidTimeFormat(val: string): boolean {
+  if (!val) return false;
+  const trimmed = val.trim().toUpperCase();
+  return /^(0?[1-9]|1[0-2]):[0-5][0-9]\s*(AM|PM)$/.test(trimmed);
+}
+
+export function normalizeTimeInput(val: string, fallback: string): string {
+  if (!val) return fallback;
+  const trimmed = val.trim().toUpperCase();
+
+  // Standard 12-hour: e.g. "09:00 AM", "9:00 AM", "9:00AM", "9 AM", "9PM"
+  const match12 = trimmed.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
+  if (match12) {
+    const hours = parseInt(match12[1], 10);
+    const mins = match12[2] ? parseInt(match12[2], 10) : 0;
+    const meridiem = match12[3];
+    if (hours >= 1 && hours <= 12 && mins >= 0 && mins <= 59) {
+      const paddedHours = hours.toString().padStart(2, "0");
+      const paddedMins = mins.toString().padStart(2, "0");
+      return `${paddedHours}:${paddedMins} ${meridiem}`;
+    }
+  }
+
+  // 24-hour: e.g. "18:00", "09:00", "9:00"
+  const match24 = trimmed.match(/^(\d{1,2}):(\d{2})$/);
+  if (match24) {
+    let hours = parseInt(match24[1], 10);
+    const mins = parseInt(match24[2], 10);
+    if (hours >= 0 && hours <= 23 && mins >= 0 && mins <= 59) {
+      const meridiem = hours >= 12 ? "PM" : "AM";
+      if (hours > 12) hours -= 12;
+      if (hours === 0) hours = 12;
+      const paddedHours = hours.toString().padStart(2, "0");
+      const paddedMins = mins.toString().padStart(2, "0");
+      return `${paddedHours}:${paddedMins} ${meridiem}`;
+    }
+  }
+
+  // Single hour digit: e.g. "9", "18"
+  const matchNum = trimmed.match(/^(\d{1,2})$/);
+  if (matchNum) {
+    const hours = parseInt(matchNum[1], 10);
+    if (hours >= 1 && hours <= 12) {
+      const meridiem = hours >= 8 && hours <= 11 ? "AM" : "PM";
+      const paddedHours = hours.toString().padStart(2, "0");
+      return `${paddedHours}:00 ${meridiem}`;
+    }
+    if (hours >= 13 && hours <= 23) {
+      const paddedHours = (hours - 12).toString().padStart(2, "0");
+      return `${paddedHours}:00 PM`;
+    }
+  }
+
+  return fallback;
+}

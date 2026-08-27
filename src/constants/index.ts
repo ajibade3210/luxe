@@ -51,4 +51,17 @@ export const API_ENDPOINTS = {
   auth: "/api/auth",
 } as const;
 
+export const SOCIAL_PREFIX_MAP: Record<string, string> = {
+  instagram: "instagram.com/",
+  facebook: "facebook.com/",
+  linkedin: "linkedin.com/in/",
+  tiktok: "tiktok.com/@",
+  x: "x.com/",
+  youtube: "youtube.com/@",
+  whatsapp: "wa.me/",
+  threads: "threads.com/",
+  pinterest: "pinterest.com/",
+  website: "https://",
+} as const;
+
 export * from "./landing";

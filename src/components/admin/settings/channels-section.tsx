@@ -1,5 +1,8 @@
 import { RefreshCw, Star } from "lucide-react";
+import { getSocialChannelStyle } from "@/components/studio/atelier/social-badge";
+import { SOCIAL_PREFIX_MAP } from "@/constants";
 import type { SocialChannel } from "@/lib/types";
+import { sanitizeHandle } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
@@ -26,16 +29,16 @@ export function ChannelsSection({
 }: ChannelsSectionProps) {
   return (
     <>
-      {/* Card 04: Reputation Management */}
+      {/* Card 04: Review Management */}
       <Card
-        title="Reputation Management"
+        title="Review Management"
         description="Connect your Google Business Profile to showcase authenticated client reviews."
       >
         <div className="space-y-4">
-          <div className="border border-[#e5e7eb] rounded-lg p-4 sm:p-5 bg-white space-y-4">
+          <div className="border border-[#e5e7eb] rounded-xl p-4 sm:p-5 bg-white space-y-4 shadow-2xs">
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-[#e5e7eb]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0 shadow-2xs">
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
@@ -57,19 +60,19 @@ export function ChannelsSection({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-xs font-bold text-[#191c1d]">Google Business Profile</h4>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
+                    <h4 className="text-sm font-bold text-[#191c1d]">Google Business Profile</h4>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                       Live Sync Active
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#6b7280] mt-0.5">
+                  <div className="flex items-center gap-2 text-xs text-[#6b7280] mt-0.5">
                     <div className="flex text-[#eab308]">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={11} fill="currentColor" />
                       ))}
                     </div>
-                    <span className="font-semibold text-[#191c1d]">5.0</span>
+                    <span className="font-bold text-[#191c1d]">5.0</span>
                     <span>·</span>
                     <span>48 Verified 5-Star Reviews</span>
                   </div>
@@ -80,18 +83,18 @@ export function ChannelsSection({
                 type="button"
                 onClick={handleSyncReviews}
                 disabled={isSyncingReviews}
-                className="outline-button text-xs py-1.5 px-3"
+                className="outline-button text-xs py-1.5 px-3 rounded-lg font-medium"
               >
                 <RefreshCw
-                  size={13}
+                  size={12}
                   className={isSyncingReviews ? "animate-spin text-[#0058be]" : ""}
                 />
-                {isSyncingReviews ? "Syncing Reviews..." : "Sync Now"}
+                <span>{isSyncingReviews ? "Syncing..." : "Sync Now"}</span>
               </button>
             </div>
 
-            <div>
-              <label className="block text-[#1f2937] font-medium text-xs mb-1.5">
+            <div className="space-y-1.5">
+              <label className="block text-[#374151] font-semibold text-xs tracking-wide">
                 Google Business Profile URL
               </label>
               <div className="flex gap-2">
@@ -100,12 +103,12 @@ export function ChannelsSection({
                   value={googleReviewsLink}
                   onChange={e => setGoogleReviewsLink(e.target.value)}
                   placeholder="https://business.google.com/..."
-                  className="flex-1 bg-white border border-[#e5e7eb] rounded px-3.5 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                  className="flex-1 bg-white border border-[#d1d5db] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] shadow-2xs"
                 />
                 <button
                   type="button"
                   onClick={() => onToast("Google business link saved")}
-                  className="dark-button text-xs px-4"
+                  className="dark-button text-xs px-4 py-2 rounded-lg font-semibold shrink-0"
                 >
                   Save Link
                 </button>
@@ -121,20 +124,45 @@ export function ChannelsSection({
         title="Social Channels Management"
         description="Manage where clients can find you online across all 10 platforms."
       >
-        <div className="social-grid">
-          {channels.map(channel => (
-            <div className="social-tile" key={channel.id}>
-              <div className="flex-1 min-w-0">
-                <b>{channel.label}</b>
-                <input
-                  value={channel.handle}
-                  onChange={e => updateChannelHandle(channel.id, e.target.value)}
-                  placeholder={`Enter ${channel.label} link or handle`}
-                />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {channels.map(channel => {
+            const style = getSocialChannelStyle(channel.type);
+            const prefix = SOCIAL_PREFIX_MAP[channel.type] || `${channel.type}.com/`;
+            const displayHandle = sanitizeHandle(channel.handle, prefix);
+            return (
+              <div
+                className="p-2.5 sm:p-3 rounded-xl border border-[#e5e7eb] bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
+                key={channel.id}
+              >
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <div
+                    style={{
+                      backgroundColor: style.bg,
+                      borderColor: style.border,
+                      color: style.color,
+                    }}
+                    className="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 shadow-2xs"
+                  >
+                    <span className="scale-75 flex items-center justify-center">{style.icon}</span>
+                  </div>
+                  <div className="flex items-center gap-1 flex-1 min-w-0 bg-[#f9fafb] border border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white rounded-lg px-2.5 py-1.5 transition-colors shadow-2xs">
+                    <span className="text-xs text-[#9ca3af] font-medium select-none shrink-0 font-mono">
+                      {prefix}
+                    </span>
+                    <input
+                      value={displayHandle}
+                      onChange={e =>
+                        updateChannelHandle(channel.id, sanitizeHandle(e.target.value, prefix))
+                      }
+                      placeholder="handle"
+                      className="w-full !text-xs text-[#191c1d] !border-0 !p-0 !outline-none placeholder:text-[#9ca3af] !bg-transparent font-medium !min-h-0 !h-auto !rounded-none"
+                    />
+                  </div>
+                </div>
+                <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
               </div>
-              <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
     </>

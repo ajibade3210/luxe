@@ -59,12 +59,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
     setTimeTo,
     byAppointmentOnly,
     setByAppointmentOnly,
-    whatsAppNumber,
-    setWhatsAppNumber,
-    emailAddress,
-    setEmailAddress,
-    physicalAddress,
-    setPhysicalAddress,
     logoUrl,
     setLogoUrl,
     isUploadingLogo,
@@ -98,25 +92,25 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
   } = useSettingsForm({ notify });
 
   return (
-    <div className="space-y-6">
+    <div className="w-full px-6 py-8 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-10 pb-24">
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e7eb] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#111827] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#111827] tracking-tight">
             Studio Settings & Customization
           </h1>
-          <p className="text-xs sm:text-sm text-[#6b7280] mt-1">
+          <p className="text-xs sm:text-sm text-[#6b7280] mt-2 leading-relaxed">
             Configure your brand identity, services, portfolio, verified social badges, and visual
             aesthetic.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
           >
             <Save size={14} />
             <span>{saving ? "Saving..." : "Save Draft"}</span>
@@ -126,7 +120,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
             type="button"
             onClick={handlePublish}
             disabled={saving}
-            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
             <ExternalLink size={14} />
             <span>Publish Live</span>
@@ -135,7 +129,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
       </div>
 
       {/* Main Settings Sections Grid */}
-      <div className="space-y-8">
+      <div className="space-y-10">
         <IdentitySection
           name={name}
           setName={setName}
@@ -158,6 +152,17 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
           setLogoUrl={setLogoUrl}
           isUploadingLogo={isUploadingLogo}
           handleLogoUpload={handleLogoUpload}
+          onToast={notify}
+        />
+
+        <ChannelsSection
+          googleReviewsLink={googleReviewsLink}
+          setGoogleReviewsLink={setGoogleReviewsLink}
+          isSyncingReviews={isSyncingReviews}
+          handleSyncReviews={handleSyncReviews}
+          channels={channels}
+          updateChannelHandle={updateChannelHandle}
+          toggleChannel={toggleChannel}
           onToast={notify}
         />
 
@@ -199,17 +204,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
           onToast={notify}
         />
 
-        <ChannelsSection
-          googleReviewsLink={googleReviewsLink}
-          setGoogleReviewsLink={setGoogleReviewsLink}
-          isSyncingReviews={isSyncingReviews}
-          handleSyncReviews={handleSyncReviews}
-          channels={channels}
-          updateChannelHandle={updateChannelHandle}
-          toggleChannel={toggleChannel}
-          onToast={notify}
-        />
-
         <ContactSection
           hours={hours}
           setHours={setHours}
@@ -219,12 +213,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
           setTimeTo={setTimeTo}
           byAppointmentOnly={byAppointmentOnly}
           setByAppointmentOnly={setByAppointmentOnly}
-          whatsAppNumber={whatsAppNumber}
-          setWhatsAppNumber={setWhatsAppNumber}
-          emailAddress={emailAddress}
-          setEmailAddress={setEmailAddress}
-          physicalAddress={physicalAddress}
-          setPhysicalAddress={setPhysicalAddress}
         />
 
         <AppearanceSection

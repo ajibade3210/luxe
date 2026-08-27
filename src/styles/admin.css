@@ -434,9 +434,9 @@ td:last-child {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 32px;
+  gap: 24px 32px;
   max-width: 100%;
-  margin-bottom: 25px;
+  margin-bottom: 28px;
 }
 
 .form-grid .full {
@@ -483,11 +483,11 @@ td:last-child {
 }
 
 .settings-card {
-  margin-bottom: 28px;
-  padding: 30px 28px;
-  border-radius: 8px;
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-container-lowest);
+  margin-bottom: 32px;
+  padding: 32px 32px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: box-shadow 0.2s ease;
 }
@@ -501,9 +501,8 @@ td:last-child {
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
 }
 
 .settings-card-heading > div {
@@ -513,10 +512,10 @@ td:last-child {
 }
 
 .settings-card-heading h2 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--on-surface);
+  color: #111827;
 }
 
 .settings-card-heading p,

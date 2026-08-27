@@ -107,9 +107,9 @@ export function StudioHighlightsCard({
 
   // Check if WhatsApp is enabled in settings (connected toggle and valid phone number)
   const whatsAppChannel = profile.socialChannels?.find(c => c.type === "whatsapp");
+  const whatsAppPhone = whatsAppChannel?.handle || profile.whatsAppNumber || profile.phone;
   const isWhatsAppEnabled =
-    (whatsAppChannel ? whatsAppChannel.connected : true) &&
-    Boolean((profile.whatsAppNumber || profile.phone)?.trim());
+    (whatsAppChannel ? whatsAppChannel.connected : true) && Boolean(whatsAppPhone?.trim());
 
   return (
     <div
@@ -192,7 +192,7 @@ export function StudioHighlightsCard({
                 <Phone size={14} style={{ color: primaryColor }} /> WhatsApp Line:
               </span>
               <span className="font-mono font-semibold text-[#1c1917] text-right">
-                {profile.whatsAppNumber || profile.phone}
+                {whatsAppPhone}
               </span>
             </div>
           )}

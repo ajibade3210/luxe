@@ -60,49 +60,53 @@ export function PortfolioSection({
         title="Portfolio showcase"
         description="High-resolution visuals that highlight your aesthetic standard and client transformations."
       >
-        <div className="space-y-4">
-          <div className="button-row">
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-3.5">
             <button
               type="button"
               onClick={() => setShowAddProjectModal(true)}
-              className="dark-button"
+              className="dark-button text-xs py-2.5 px-4 rounded-xl flex-1 justify-center"
             >
               <Upload size={15} /> Upload new project
             </button>
             <button
               type="button"
               onClick={() => setShowManageGalleryModal(true)}
-              className="outline-button"
+              className="outline-button text-xs py-2.5 px-4 rounded-xl flex-1 justify-center"
             >
               <ImagePlus size={15} /> Manage gallery ({portfolio.length})
             </button>
           </div>
 
           {/* Current Projects List */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
             {portfolio.map(proj => (
               <div
                 key={proj.id}
-                className="border border-[#eae3d8] rounded-xl p-3 bg-[#faf8f5] flex items-center justify-between gap-2"
+                className="border border-[#e5e7eb] rounded-xl p-3.5 bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
               >
-                <div className="flex items-center gap-3 overflow-hidden">
+                <div className="flex items-center gap-3 overflow-hidden min-w-0">
                   <img
                     src={proj.image}
                     alt={proj.title}
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    className="w-11 h-11 rounded-lg object-cover shrink-0 border border-[#e5e7eb]"
                   />
-                  <div className="truncate">
-                    <strong className="text-xs block text-[#1c1917] truncate">{proj.title}</strong>
-                    <span className="text-[10px] text-[#78716c]">{proj.category}</span>
+                  <div className="truncate min-w-0">
+                    <strong className="text-xs font-bold block text-[#111827] truncate">
+                      {proj.title}
+                    </strong>
+                    <span className="text-[10px] text-[#6b7280] font-medium block mt-0.5">
+                      {proj.category}
+                    </span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => removeProject(proj.id)}
-                  className="text-[#a89e92] hover:text-[#b84c24] p-1 cursor-pointer"
+                  className="text-[#9ca3af] hover:text-[#dc2626] p-1.5 rounded transition-colors cursor-pointer shrink-0"
                   title="Remove project"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             ))}
