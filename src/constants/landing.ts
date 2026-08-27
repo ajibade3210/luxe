@@ -14,39 +14,39 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
     id: "feat-broadcast",
     icon: Send,
     badge: "Client Outreach",
-    title: "Broadcast Messaging & Easy Follow-Up",
+    title: "Broadcast Messages & Quick Follow-Up",
     description:
-      "Send announcements, updates, and promotions directly to active clients via WhatsApp or Email in bulk, and follow up in one click.",
+      "Send bulk announcements and offers directly via WhatsApp or Email, and follow up in one click.",
     highlights: [
-      "WhatsApp & Email bulk broadcasting",
-      "Automatic active customer filtering",
+      "Bulk WhatsApp & Email broadcasting",
+      "Automatic active client filtering",
       "1-click direct chat follow-ups",
     ],
   },
   {
     id: "feat-leads",
     icon: Users,
-    badge: "Leads",
-    title: "Lead Tracking & Pipeline",
+    badge: "CRM & Leads",
+    title: "Lead Tracker & Sales Pipeline",
     description:
-      "Capture consultation inquiries with event dates and budgets, then convert qualified leads into paying clients instantly.",
+      "Capture customer inquiries and budgets, then convert warm leads into paying clients in seconds.",
     highlights: [
       "Automated inquiry intake form",
-      "Budget size & event date tracking",
-      "1-click lead to customer conversion",
+      "Budget & timeline tracking",
+      "1-click lead-to-customer conversion",
     ],
   },
   {
     id: "feat-invoicing",
     icon: CreditCard,
     badge: "Invoicing",
-    title: "Instant Invoice Generation",
+    title: "Instant Professional Invoices",
     description:
-      "Create professional, itemized invoices in seconds with multi-currency support (NGN, USD, GBP, EUR), discounts, tax, and PDF exports.",
+      "Create clean, itemized invoices with multi-currency support, custom discounts, and instant PDF receipts.",
     highlights: [
       "Multi-currency support (NGN, USD, GBP, EUR)",
       "Itemized services & discount controls",
-      "Live status tracking (Draft, Sent, Paid)",
+      "Live payment tracking (Draft, Sent, Paid)",
     ],
   },
   {
@@ -55,37 +55,37 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
     badge: "Sales Tracking",
     title: "Sales & Revenue Analytics",
     description:
-      "Get clear visibility into total earnings, average project values, and top-booked services without messy spreadsheets.",
+      "Track your earnings, top-selling services, and outstanding balances in real time without spreadsheets.",
     highlights: [
-      "Real-time gross sales & earnings metrics",
+      "Real-time gross revenue & metrics",
       "Top-performing service breakdown",
-      "Paid vs unpaid revenue tracking",
+      "Paid vs. pending balance tracking",
     ],
   },
   {
     id: "feat-reviews",
     icon: Star,
-    badge: "Google Reviews",
-    title: "Google Review Prompts & Socials",
+    badge: "Social Proof",
+    title: "5-Star Reviews & Verified Socials",
     description:
-      "Collect 5-star Google reviews effortlessly with 1-click review prompts and display verified social media channels.",
+      "Build instant trust with 1-click Google review request prompts and verified social media badges.",
     highlights: [
-      "1-click Google review request prompt",
-      "Verified social channel links",
-      "Client review showcase",
+      "1-click Google review request prompts",
+      "Verified social media badges",
+      "Client testimonial showcase",
     ],
   },
   {
     id: "feat-profile",
     icon: Crown,
-    badge: "Studio Storefront",
-    title: "Custom 3D Digital Studio Profile",
+    badge: "Mini Storefront",
+    title: "Mini Storefront & 3D Business Card",
     description:
-      "A personalized public link featuring your brand colors, 3D stationery card, curated services, portfolio, and auto-quote popup.",
+      "A branded public storefront featuring your custom theme, interactive 3D business card, and instant quotes.",
     highlights: [
       "Interactive 3D business card",
-      "Custom theme & color palettes",
-      "1-minute auto quote inquiry popup",
+      "Custom brand themes & colors",
+      "Instant quote & inquiry intake",
     ],
   },
 ] as const;
