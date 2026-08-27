@@ -172,10 +172,17 @@ em {
   padding: 50px 40px 60px;
 }
 
+.section-intro {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 52px;
+}
+
 .section-intro h2 {
-  margin-top: 16px;
-  font-size: 54px;
-  line-height: 1;
+  font-size: clamp(34px, 4.5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
 }
 
 .legacy-footer {

@@ -352,10 +352,8 @@ export function WorkflowSection() {
   return (
     <section className="workflow" id="workflow">
       <div className="section-intro">
-        <h2>
-          Everything in its
-          <br />
-          <em>right place.</em>
+        <h2 id="workflow-title">
+          Everything in its <em>right place.</em>
         </h2>
       </div>
 
