@@ -14,7 +14,7 @@ const COLOR_FIELDS = [
   { label: "Button Action", key: "button", defaultHex: "#000000" },
   { label: "Page Background", key: "pageBackground", defaultHex: "#FAF8F5" },
   { label: "Card Surface", key: "cardBackground", defaultHex: "#FAF6F0" },
-  { label: "Main Text", key: "text", defaultHex: "#191C1D" },
+  { label: "Headings & Text", key: "text", defaultHex: "#191C1D" },
 ] as const;
 
 interface ThemePreset {

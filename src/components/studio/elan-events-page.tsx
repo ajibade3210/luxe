@@ -13,6 +13,7 @@ import {
 } from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
 import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/lib/types";
+import { isDarkColor } from "@/utils/helpers";
 import { ConsultationModal } from "./atelier/consultation-modal";
 import { StudioPortfolioSection } from "./atelier/portfolio-section";
 import { ProjectModal } from "./atelier/project-modal";
@@ -318,6 +319,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
         secondaryColor={secondaryColor}
         buttonColor={buttonColor}
         textColor={textColor}
+        pageBgColor={pageBgColor}
         monogram={monogram}
         radiusClass={radiusClass}
       />
@@ -340,6 +342,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
                   primaryColor={primaryColor}
                   secondaryColor={secondaryColor}
                   buttonColor={buttonColor}
+                  textColor={textColor}
                   cardBgColor={cardBgColor}
                   monogram={monogram}
                   averageRating={averageRating}
@@ -372,6 +375,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
         <StudioSocialSection
           profile={profile}
           primaryColor={primaryColor}
+          textColor={textColor}
           radiusClass={radiusClass}
         />
 
@@ -382,6 +386,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
           setQuoteModalOpen={setQuoteModalOpen}
           primaryColor={primaryColor}
           buttonColor={buttonColor}
+          textColor={textColor}
           radiusClass={radiusClass}
         />
 
@@ -393,6 +398,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
           primaryColor={primaryColor}
           secondaryColor={secondaryColor}
           buttonColor={buttonColor}
+          textColor={textColor}
           radiusClass={radiusClass}
         />
 
@@ -405,53 +411,72 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
           googleReviewsLink={profile.googleReviewsLink}
           primaryColor={primaryColor}
           buttonColor={buttonColor}
+          textColor={textColor}
           radiusClass={radiusClass}
         />
 
         {/* CTA BANNER */}
-        <section
-          style={{ backgroundColor: cardBgColor }}
-          className="border border-[#ebd8ca] rounded-3xl p-8 sm:p-14 text-center space-y-6"
-        >
-          <div className="max-w-2xl mx-auto space-y-3">
-            <span
-              style={{ color: primaryColor }}
-              className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
+        {(() => {
+          const isCardDark = isDarkColor(cardBgColor);
+          return (
+            <section
+              style={{ backgroundColor: cardBgColor }}
+              className={`rounded-3xl p-8 sm:p-14 text-center space-y-6 border transition-colors ${
+                isCardDark
+                  ? "border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+                  : "border-[#ebd8ca] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+              }`}
             >
-              Begin Your Journey
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1917] font-normal">
-              Ready to Create Something Extraordinary?
-            </h2>
-            <p className="text-xs sm:text-sm text-[#78716c] leading-relaxed">
-              Tell us what you&apos;re planning and we&apos;ll get back to you to schedule an
-              initial consultation with our creative directors.
-            </p>
-          </div>
+              <div className="max-w-2xl mx-auto space-y-3">
+                <span
+                  style={{ color: primaryColor }}
+                  className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
+                >
+                  Begin Your Journey
+                </span>
+                <h2
+                  style={{ color: textColor }}
+                  className="font-serif text-3xl sm:text-4xl font-normal"
+                >
+                  Ready to Create Something Extraordinary?
+                </h2>
+                <p
+                  className={`text-xs sm:text-sm leading-relaxed ${
+                    isCardDark ? "text-white/70" : "text-[#78716c]"
+                  }`}
+                >
+                  Tell us what you&apos;re planning and we&apos;ll get back to you to schedule an
+                  initial consultation with our creative directors.
+                </p>
+              </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <button
-              onClick={() => setQuoteModalOpen(true)}
-              style={{ backgroundColor: buttonColor }}
-              className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
-            >
-              <span>Get a Quote</span>
-              <ArrowRight size={15} />
-            </button>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setQuoteModalOpen(true)}
+                  style={{ backgroundColor: buttonColor }}
+                  className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
+                >
+                  <span>Get a Quote</span>
+                  <ArrowRight size={15} />
+                </button>
 
-            {isWhatsAppEnabled && (
-              <a
-                href={whatsAppLink}
-                target="_blank"
-                rel="noreferrer"
-                className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
-              >
-                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
-                <span>WhatsApp Us</span>
-              </a>
-            )}
-          </div>
-        </section>
+                {isWhatsAppEnabled && (
+                  <a
+                    href={whatsAppLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: "#1c1917" }}
+                    className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
+                  >
+                    <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
+                    <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
+                  </a>
+                )}
+              </div>
+            </section>
+          );
+        })()}
       </main>
 
       {/* Studio Bottom Footer */}

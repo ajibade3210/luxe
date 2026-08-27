@@ -96,3 +96,23 @@ export function normalizeTimeInput(val: string, fallback: string): string {
 
   return fallback;
 }
+
+export function isDarkColor(hex?: string): boolean {
+  if (!hex) return false;
+  const clean = hex.replace("#", "").trim();
+  if (clean.length !== 6 && clean.length !== 3) return false;
+  const fullHex =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map(c => c + c)
+          .join("")
+      : clean;
+  const r = parseInt(fullHex.substring(0, 2), 16);
+  const g = parseInt(fullHex.substring(2, 4), 16);
+  const b = parseInt(fullHex.substring(4, 6), 16);
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return false;
+  // Perceived brightness formula (YIQ)
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq < 135;
+}

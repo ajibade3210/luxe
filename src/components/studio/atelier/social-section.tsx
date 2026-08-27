@@ -5,6 +5,7 @@ import { getSocialChannelStyle } from "./social-badge";
 interface StudioSocialSectionProps {
   profile: BusinessProfile;
   primaryColor?: string;
+  textColor?: string;
   radiusClass?: string;
 }
 
@@ -22,7 +23,7 @@ function resolveChannelUrl(channel: SocialChannel): string {
   return `https://${cleanPrefix}${handle.replace(/^@/, "")}`;
 }
 
-export function StudioSocialSection({ profile }: StudioSocialSectionProps) {
+export function StudioSocialSection({ profile, textColor }: StudioSocialSectionProps) {
   const activeChannels = profile.socialChannels?.filter(c => c.connected) || [];
 
   if (activeChannels.length === 0) {
@@ -32,7 +33,7 @@ export function StudioSocialSection({ profile }: StudioSocialSectionProps) {
   return (
     <section id="social" className="scroll-mt-24">
       <div className="mb-6">
-        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">
+        <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
           Social Channels
         </h2>
       </div>

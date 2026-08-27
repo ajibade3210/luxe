@@ -7,6 +7,7 @@ interface StudioPortfolioSectionProps {
   setQuoteModalOpen: (v: boolean) => void;
   primaryColor: string;
   buttonColor: string;
+  textColor?: string;
   radiusClass: string;
 }
 
@@ -16,12 +17,15 @@ export function StudioPortfolioSection({
   setQuoteModalOpen: _setQuoteModalOpen,
   primaryColor,
   buttonColor: _buttonColor,
+  textColor,
   radiusClass: _radiusClass,
 }: StudioPortfolioSectionProps) {
   return (
     <section id="portfolio" className="scroll-mt-24">
       <div className="mb-8">
-        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Portfolio</h2>
+        <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
+          Portfolio
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

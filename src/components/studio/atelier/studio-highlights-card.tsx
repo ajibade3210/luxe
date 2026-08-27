@@ -9,6 +9,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import type { BusinessProfile } from "@/lib/types";
+import { isDarkColor } from "@/utils/helpers";
 
 interface StudioHighlightsCardProps {
   profile: BusinessProfile;
@@ -35,6 +36,8 @@ export function StudioHighlightsCard({
   cardBgColor = "#faf6f0",
   radiusClass,
 }: StudioHighlightsCardProps) {
+  const isDark = isDarkColor(cardBgColor);
+
   // Compute live open/closed operational status
   const getStoreStatus = () => {
     if (profile.byAppointmentOnly) {
@@ -114,26 +117,52 @@ export function StudioHighlightsCard({
   return (
     <div
       style={{ backgroundColor: cardBgColor }}
-      className="border border-[#e8dfd3] rounded-3xl p-6 sm:p-8 shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between max-w-[480px] w-full h-[580px]"
+      className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-between max-w-[480px] w-full h-[580px] transition-colors ${
+        isDark
+          ? "border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+          : "border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+      }`}
     >
       {/* Top Bar: Verification and Patron Metrics */}
       <div className="flex items-center justify-between">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">
-          <ShieldCheck size={14} className="text-[#0058be]" />
-          <span className="text-[11px] font-semibold text-[#1c1917] tracking-wide">
+        <div
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-2xs ${
+            isDark
+              ? "bg-white/10 border border-white/15 text-white"
+              : "bg-white border border-[#e2d5c5]"
+          }`}
+        >
+          <ShieldCheck size={14} className={isDark ? "text-cyan-400" : "text-[#0058be]"} />
+          <span
+            className={`text-[11px] font-semibold tracking-wide ${
+              isDark ? "text-white" : "text-[#1c1917]"
+            }`}
+          >
             Verified Atelier
           </span>
         </div>
 
         {hasSubstantialCustomers ? (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#e2d5c5] shadow-2xs">
+          <div
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-2xs ${
+              isDark
+                ? "bg-white/10 border border-white/15 text-white"
+                : "bg-white border border-[#e2d5c5]"
+            }`}
+          >
             <CheckCircle2 size={13} style={{ color: primaryColor }} />
-            <span className="text-[11px] font-semibold text-[#1c1917]">
+            <span
+              className={`text-[11px] font-semibold ${isDark ? "text-white" : "text-[#1c1917]"}`}
+            >
               {totalCustomers}+ Clients Served
             </span>
           </div>
         ) : (
-          <span className="font-mono text-[10px] text-[#8c8278] uppercase tracking-wider">
+          <span
+            className={`font-mono text-[10px] uppercase tracking-wider ${
+              isDark ? "text-white/70" : "text-[#8c8278]"
+            }`}
+          >
             ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
           </span>
         )}
@@ -226,6 +255,7 @@ export function StudioHighlightsCard({
               href={whatsAppLink}
               target="_blank"
               rel="noreferrer"
+              style={{ color: "#1c1917" }}
               className={`bg-white hover:bg-[#faf6f0] text-[#1c1917] border border-[#d6c7b7] text-xs font-bold uppercase tracking-wider py-3.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs ${radiusClass}`}
             >
               <svg
@@ -235,7 +265,7 @@ export function StudioHighlightsCard({
               >
                 <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.49 0-2.95-.4-4.22-1.16l-.3-.18-3.13.82.83-3.05-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.28-8.24 2.21 0 4.29.86 5.85 2.43a8.188 8.188 0 0 1 2.41 5.81c0 4.55-3.7 8.26-8.26 8.26zm4.53-6.19c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.66.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.12.17 1.77 2.71 4.3 3.79.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z" />
               </svg>
-              <span>WhatsApp Us</span>
+              <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
             </a>
           )}
         </div>

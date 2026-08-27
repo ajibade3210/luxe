@@ -18,6 +18,7 @@ interface ServicesSectionProps {
   primaryColor: string;
   secondaryColor: string;
   buttonColor: string;
+  textColor?: string;
   radiusClass: string;
 }
 
@@ -28,6 +29,7 @@ export function StudioServicesSection({
   primaryColor,
   secondaryColor,
   buttonColor: _buttonColor,
+  textColor,
   radiusClass: _radiusClass,
 }: ServicesSectionProps) {
   const services = (profile.services as ServiceItem[]) || [];
@@ -35,7 +37,9 @@ export function StudioServicesSection({
   return (
     <section id="services" className="scroll-mt-24">
       <div className="mb-8">
-        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Services</h2>
+        <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
+          Services
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

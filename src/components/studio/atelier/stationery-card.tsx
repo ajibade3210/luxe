@@ -1,5 +1,6 @@
 import { Check, RotateCw } from "lucide-react";
 import type { BusinessProfile } from "@/lib/types";
+import { isDarkColor } from "@/utils/helpers";
 
 interface StationeryCardProps {
   profile: BusinessProfile;
@@ -11,6 +12,7 @@ interface StationeryCardProps {
   primaryColor: string;
   secondaryColor: string;
   buttonColor: string;
+  textColor?: string;
   cardBgColor?: string;
   monogram: string;
   averageRating?: string | number;
@@ -29,6 +31,7 @@ export function StationeryCard({
   primaryColor,
   secondaryColor,
   buttonColor: _buttonColor,
+  textColor,
   cardBgColor = "#faf6f0",
   monogram,
   averageRating: _averageRating,
@@ -36,6 +39,8 @@ export function StationeryCard({
   whatsAppLink: _whatsAppLink,
   radiusClass: _radiusClass,
 }: StationeryCardProps) {
+  const isDark = isDarkColor(cardBgColor);
+
   return (
     <div
       onClick={() => setIsFlipped(!isFlipped)}
@@ -49,7 +54,11 @@ export function StationeryCard({
         {/* FRONT FACE: Luxury Minimalist Stationery Card */}
         <div
           style={{ backgroundColor: cardBgColor }}
-          className="card-face card-front rounded-3xl p-6 sm:p-8 border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col items-center justify-center relative overflow-hidden"
+          className={`card-face card-front rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center relative overflow-hidden transition-colors ${
+            isDark
+              ? "border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+              : "border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+          }`}
         >
           {/* Top Bar with Flip Button */}
           <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10">
@@ -59,7 +68,11 @@ export function StationeryCard({
                 e.stopPropagation();
                 setIsFlipped(true);
               }}
-              className="inline-flex items-center gap-1 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#efe8de] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs"
+              className={`inline-flex items-center gap-1 text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer shadow-2xs ${
+                isDark
+                  ? "text-white/90 bg-white/10 hover:bg-white/20 border-white/20"
+                  : "text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#efe8de] border-[#d6c7b7]"
+              }`}
             >
               <RotateCw size={12} />
               <span className="font-medium text-[11px]">Flip Card</span>
@@ -88,7 +101,10 @@ export function StationeryCard({
             </div>
 
             <div className="space-y-1.5 max-w-sm">
-              <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal leading-tight">
+              <h2
+                style={{ color: textColor }}
+                className="font-serif text-2xl sm:text-3xl font-normal leading-tight"
+              >
                 {profile.businessName}
               </h2>
             </div>
@@ -98,7 +114,11 @@ export function StationeryCard({
         {/* BACK FACE: Studio Vision & Atelier Statement */}
         <div
           style={{ backgroundColor: cardBgColor }}
-          className="card-face card-back rounded-3xl p-6 sm:p-8 border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)] flex flex-col justify-between overflow-hidden"
+          className={`card-face card-back rounded-3xl p-6 sm:p-8 flex flex-col justify-between overflow-hidden transition-colors ${
+            isDark
+              ? "border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+              : "border border-[#e8dfd3] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+          }`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -121,10 +141,17 @@ export function StationeryCard({
                 )}
               </div>
               <div>
-                <div className="text-base font-serif font-semibold text-[#1c1917] leading-tight">
+                <div
+                  style={{ color: textColor }}
+                  className="text-base font-serif font-semibold leading-tight"
+                >
                   {profile.businessName}
                 </div>
-                <div className="text-[10px] text-[#8c8278] uppercase tracking-[0.14em] font-medium mt-0.5">
+                <div
+                  className={`text-[10px] uppercase tracking-[0.14em] font-medium mt-0.5 ${
+                    isDark ? "text-white/60" : "text-[#8c8278]"
+                  }`}
+                >
                   Studio Philosophy
                 </div>
               </div>
@@ -136,7 +163,11 @@ export function StationeryCard({
                 e.stopPropagation();
                 setIsFlipped(false);
               }}
-              className="inline-flex items-center gap-1.5 text-xs text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#faf6f0] px-3.5 py-1.5 rounded-full border border-[#d6c7b7] transition-all cursor-pointer shadow-2xs active:scale-95 z-20"
+              className={`inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full border transition-all cursor-pointer shadow-2xs active:scale-95 z-20 ${
+                isDark
+                  ? "text-white/90 bg-white/10 hover:bg-white/20 border-white/20"
+                  : "text-[#5c544d] hover:text-[#1c1917] bg-transparent hover:bg-[#faf6f0] border-[#d6c7b7]"
+              }`}
             >
               <RotateCw size={12} />
               <span className="font-medium text-[11px]">Return to Front</span>
@@ -144,15 +175,29 @@ export function StationeryCard({
           </div>
 
           {/* Philosophy Statement */}
-          <div className="my-auto py-6 px-4 border-l-2 border-[#d6c7b7]">
-            <p className="text-sm sm:text-base text-[#1c1917] font-serif italic leading-relaxed">
+          <div
+            className={`my-auto py-6 px-4 border-l-2 ${
+              isDark ? "border-white/30" : "border-[#d6c7b7]"
+            }`}
+          >
+            <p
+              className={`text-sm sm:text-base font-serif italic leading-relaxed ${
+                isDark ? "text-white/90" : "text-[#1c1917]"
+              }`}
+            >
               &ldquo;{profile.description}&rdquo;
             </p>
           </div>
 
           {/* Verification Banner */}
-          <div className="bg-white border border-[#ebd8ca] rounded-2xl px-5 py-3 flex items-center justify-between text-xs shadow-2xs">
-            <div className="flex items-center gap-2 font-semibold text-[#1c1917]">
+          <div
+            className={`rounded-2xl px-5 py-3 flex items-center justify-between text-xs shadow-2xs ${
+              isDark
+                ? "bg-white/10 border border-white/15 text-white"
+                : "bg-white border border-[#ebd8ca] text-[#1c1917]"
+            }`}
+          >
+            <div className="flex items-center gap-2 font-semibold">
               <div
                 style={{ backgroundColor: primaryColor }}
                 className="w-4.5 h-4.5 rounded-full flex items-center justify-center text-white text-[10px]"
@@ -161,7 +206,11 @@ export function StationeryCard({
               </div>
               <span>Verified Shopwus Studio</span>
             </div>
-            <span className="font-mono text-[11px] text-[#78716c] uppercase">
+            <span
+              className={`font-mono text-[11px] uppercase ${
+                isDark ? "text-white/70" : "text-[#78716c]"
+              }`}
+            >
               ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
             </span>
           </div>

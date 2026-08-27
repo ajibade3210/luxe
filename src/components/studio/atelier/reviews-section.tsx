@@ -9,6 +9,7 @@ interface StudioReviewsSectionProps {
   googleReviewsLink?: string;
   primaryColor: string;
   buttonColor: string;
+  textColor?: string;
   radiusClass: string;
 }
 
@@ -20,6 +21,7 @@ export function StudioReviewsSection({
   googleReviewsLink,
   primaryColor: _primaryColor,
   buttonColor: _buttonColor,
+  textColor,
   radiusClass: _radiusClass,
 }: StudioReviewsSectionProps) {
   const googleLink = googleReviewsLink || "https://www.google.com/search?q=Elan+Events+reviews";
@@ -27,7 +29,9 @@ export function StudioReviewsSection({
   return (
     <section id="reviews" className="scroll-mt-24">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal">Reviews</h2>
+        <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
+          Reviews
+        </h2>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
           <a

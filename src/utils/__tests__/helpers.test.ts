@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isDarkColor,
   isValidTimeFormat,
   normalizeTimeInput,
   sanitizeHandle,
@@ -67,6 +68,18 @@ describe("helper utilities", () => {
       expect(normalizeTimeInput("18:00", "06:00 PM")).toBe("06:00 PM");
       expect(normalizeTimeInput("6pm", "06:00 PM")).toBe("06:00 PM");
       expect(normalizeTimeInput("invalid", "09:00 AM")).toBe("09:00 AM");
+    });
+  });
+
+  describe("isDarkColor", () => {
+    it("correctly identifies dark and light hex colors", () => {
+      expect(isDarkColor("#10172A")).toBe(true);
+      expect(isDarkColor("#000000")).toBe(true);
+      expect(isDarkColor("#0E0E10")).toBe(true);
+      expect(isDarkColor("#FFFFFF")).toBe(false);
+      expect(isDarkColor("#FAF6F0")).toBe(false);
+      expect(isDarkColor("#F8FAFC")).toBe(false);
+      expect(isDarkColor("")).toBe(false);
     });
   });
 });

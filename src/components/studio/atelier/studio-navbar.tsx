@@ -1,5 +1,6 @@
 import { Menu, Share2, Sparkles, X } from "lucide-react";
 import type { BusinessProfile } from "@/lib/types";
+import { isDarkColor } from "@/utils/helpers";
 
 interface StudioNavbarProps {
   profile: BusinessProfile;
@@ -15,6 +16,7 @@ interface StudioNavbarProps {
   secondaryColor: string;
   buttonColor: string;
   textColor: string;
+  pageBgColor?: string;
   monogram: string;
   radiusClass: string;
 }
@@ -33,34 +35,51 @@ export function StudioNavbar({
   secondaryColor,
   buttonColor,
   textColor,
+  pageBgColor = "#faf8f5",
   monogram,
   radiusClass,
 }: StudioNavbarProps) {
+  const isDarkPage = isDarkColor(pageBgColor);
+
   return (
     <>
       {/* Top Banner / Breadcrumb - Only visible when coming from Studio Settings / Admin */}
       {isFromSettings && (
-        <div className="bg-[#edeeef] border-b border-[#e1e3e4] px-4 py-2 text-xs text-[#6b7280] flex items-center justify-between">
+        <div
+          className={`border-b px-4 py-2 text-xs flex items-center justify-between transition-colors ${
+            isDarkPage
+              ? "bg-[#0c1222] border-white/10 text-white/70"
+              : "bg-[#edeeef] border-[#e1e3e4] text-[#6b7280]"
+          }`}
+        >
           <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
             <span
               style={{ color: primaryColor }}
-              className="inline-flex items-center gap-1 font-medium text-[#191c1d]"
+              className={`inline-flex items-center gap-1 font-medium ${
+                isDarkPage ? "text-white" : "text-[#191c1d]"
+              }`}
             >
-              <Sparkles size={13} className="text-[#0058be]" /> Studio Admin Preview
+              <Sparkles size={13} className={isDarkPage ? "text-cyan-400" : "text-[#0058be]"} />{" "}
+              Studio Admin Preview
             </span>
-            <span className="text-[#c4c7c7]">·</span>
+            <span className={isDarkPage ? "text-white/30" : "text-[#c4c7c7]"}>·</span>
             <span className="font-mono">shopwus.com/{profile.slug || slug}</span>
             <div className="ml-auto flex items-center gap-3">
               <button
+                type="button"
                 onClick={handleCopyLink}
                 style={{ color: textColor }}
-                className="inline-flex items-center gap-1 hover:text-[#0058be] font-medium transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 hover:opacity-80 font-medium transition-colors cursor-pointer"
               >
                 <Share2 size={12} /> Share profile
               </button>
               <a
                 href="/settings"
-                className="text-[#6b7280] hover:text-[#191c1d] font-medium transition-colors hidden sm:inline"
+                className={`font-medium transition-colors hidden sm:inline ${
+                  isDarkPage
+                    ? "text-white/70 hover:text-white"
+                    : "text-[#6b7280] hover:text-[#191c1d]"
+                }`}
               >
                 Return to Studio Settings →
               </a>
@@ -73,7 +92,9 @@ export function StudioNavbar({
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? "bg-white/90 backdrop-blur-md shadow-[0_4px_24px_rgba(40,30,20,0.06)] border-b border-[#ece7de] py-3"
+            ? isDarkPage
+              ? "bg-[#080D1A]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
+              : "bg-white/90 backdrop-blur-md shadow-[0_4px_24px_rgba(40,30,20,0.06)] border-b border-[#ece7de] py-3"
             : "bg-transparent py-5"
         }`}
       >
@@ -104,21 +125,26 @@ export function StudioNavbar({
             </div>
             <span
               className="font-serif text-xl sm:text-2xl tracking-tight font-normal"
-              style={{ color: textColor }}
+              style={{ color: isDarkPage && isDarkColor(textColor) ? "#F8FAFC" : textColor }}
             >
               {profile.businessName}
             </span>
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#68625c]">
+          <nav
+            className={`hidden md:flex items-center gap-8 text-sm font-medium ${
+              isDarkPage ? "text-white/80" : "text-[#68625c]"
+            }`}
+          >
             {profile.socialChannels?.some(c => c.connected) && (
               <a
                 href="#social"
                 style={{
-                  color: activeSection === "social" ? primaryColor : undefined,
+                  color:
+                    activeSection === "social" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
                 }}
-                className="transition-colors hover:opacity-80"
+                className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
               >
                 Socials
               </a>
@@ -126,27 +152,30 @@ export function StudioNavbar({
             <a
               href="#portfolio"
               style={{
-                color: activeSection === "portfolio" ? primaryColor : undefined,
+                color:
+                  activeSection === "portfolio" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
               }}
-              className="transition-colors hover:opacity-80"
+              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
             >
               Portfolio
             </a>
             <a
               href="#services"
               style={{
-                color: activeSection === "services" ? primaryColor : undefined,
+                color:
+                  activeSection === "services" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
               }}
-              className="transition-colors hover:opacity-80"
+              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
             >
               Services
             </a>
             <a
               href="#reviews"
               style={{
-                color: activeSection === "reviews" ? primaryColor : undefined,
+                color:
+                  activeSection === "reviews" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
               }}
-              className="transition-colors hover:opacity-80"
+              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
             >
               Reviews
             </a>
@@ -155,6 +184,7 @@ export function StudioNavbar({
           {/* Primary CTA */}
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={() => setQuoteModalOpen(true)}
               style={{ backgroundColor: buttonColor }}
               className={`text-white text-xs font-medium px-5 py-2.5 shadow-2xs hover:shadow-xs transition-all cursor-pointer hidden sm:block ${radiusClass}`}
@@ -164,8 +194,13 @@ export function StudioNavbar({
 
             {/* Mobile Hamburger */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#78716c] hover:text-[#1c1917] md:hidden cursor-pointer"
+              className={`p-2 cursor-pointer md:hidden ${
+                isDarkPage
+                  ? "text-white/80 hover:text-white"
+                  : "text-[#78716c] hover:text-[#1c1917]"
+              }`}
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -175,13 +210,21 @@ export function StudioNavbar({
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#faf8f5] border-b border-[#e8dfd3] px-6 py-5 space-y-4 animate-fadeIn">
-            <nav className="flex flex-col gap-3.5 text-sm font-medium text-[#68625c]">
+          <div
+            className={`md:hidden border-b px-6 py-5 space-y-4 animate-fadeIn ${
+              isDarkPage
+                ? "bg-[#0A0F1D] border-white/10 text-white"
+                : "bg-[#faf8f5] border-[#e8dfd3]"
+            }`}
+          >
+            <nav
+              className={`flex flex-col gap-3.5 text-sm font-medium ${isDarkPage ? "text-white/80" : "text-[#68625c]"}`}
+            >
               {profile.socialChannels?.some(c => c.connected) && (
                 <a
                   href="#social"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-[#1c1917]"
+                  className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
                 >
                   Social Networks
                 </a>
@@ -189,26 +232,27 @@ export function StudioNavbar({
               <a
                 href="#portfolio"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-[#1c1917]"
+                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
               >
                 Portfolio
               </a>
               <a
                 href="#services"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-[#1c1917]"
+                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
               >
                 Services
               </a>
               <a
                 href="#reviews"
                 onClick={() => setMobileMenuOpen(false)}
-                className="hover:text-[#1c1917]"
+                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
               >
                 Reviews
               </a>
             </nav>
             <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 setQuoteModalOpen(true);
