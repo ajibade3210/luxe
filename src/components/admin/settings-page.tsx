@@ -94,38 +94,14 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
   return (
     <div className="w-full px-6 py-8 sm:px-8 sm:py-8 lg:px-10 lg:py-10 space-y-10 pb-24">
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#111827] tracking-tight">
-            Studio Settings & Customization
-          </h1>
-          <p className="text-xs sm:text-sm text-[#6b7280] mt-2 leading-relaxed">
-            Configure your brand identity, services, portfolio, verified social badges, and visual
-            aesthetic.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
-          >
-            <Save size={14} />
-            <span>{saving ? "Saving..." : "Save Draft"}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handlePublish}
-            disabled={saving}
-            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
-          >
-            <ExternalLink size={14} />
-            <span>Publish Live</span>
-          </button>
-        </div>
+      <div className="pb-6 border-b border-[#e5e7eb]">
+        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#111827] tracking-tight">
+          Studio Settings & Customization
+        </h1>
+        <p className="text-xs sm:text-sm text-[#6b7280] mt-2 leading-relaxed">
+          Configure your brand identity, services, portfolio, verified social badges, and visual
+          aesthetic.
+        </p>
       </div>
 
       {/* Main Settings Sections Grid */}
@@ -221,6 +197,34 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
           radius={radius}
           setRadius={setRadius}
         />
+      </div>
+
+      {/* Bottom Action Bar */}
+      <div className="pt-6 border-t border-[#e5e7eb] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <p className="text-xs text-[#6b7280]">
+          Changes will be saved as a draft by default until published live.
+        </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            <Save size={14} />
+            <span>{saving ? "Saving..." : "Save Draft"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handlePublish}
+            disabled={saving}
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+          >
+            <ExternalLink size={14} />
+            <span>Publish Live</span>
+          </button>
+        </div>
       </div>
     </div>
   );

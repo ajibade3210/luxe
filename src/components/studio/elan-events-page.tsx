@@ -182,6 +182,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
   const secondaryColor = profile.colors?.secondary || "#0058BE";
   const buttonColor = profile.colors?.button || "#000000";
   const textColor = profile.colors?.text || "#191C1D";
+  const pageBgColor = profile.colors?.pageBackground || "#faf8f5";
   const cardBgColor = profile.colors?.cardBackground || "#faf6f0";
   const radiusClass = getRadiusClass(profile.buttonRadius);
 
@@ -299,8 +300,8 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
 
   return (
     <div
-      className="min-h-screen font-sans antialiased text-[#191c1d] selection:bg-[#ecdac9] selection:text-[#191c1d] flex flex-col justify-between"
-      style={{ backgroundColor: "#faf8f5" }}
+      className="min-h-screen font-sans antialiased selection:bg-[#ecdac9] selection:text-[#191c1d] flex flex-col justify-between"
+      style={{ backgroundColor: pageBgColor, color: textColor }}
     >
       {/* Floating Studio Navbar */}
       <StudioNavbar

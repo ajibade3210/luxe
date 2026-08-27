@@ -100,6 +100,7 @@ export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
       primary: "#000000",
       secondary: "#0058BE",
       button: "#000000",
+      pageBackground: "#FAF8F5",
       cardBackground: "#FAF6F0",
       text: "#191C1D",
     }

@@ -12,6 +12,7 @@ const COLOR_FIELDS = [
   { label: "Primary Brand", key: "primary", defaultHex: "#000000" },
   { label: "Secondary Accent", key: "secondary", defaultHex: "#0058BE" },
   { label: "Button Action", key: "button", defaultHex: "#000000" },
+  { label: "Page Background", key: "pageBackground", defaultHex: "#FAF8F5" },
   { label: "Card Surface", key: "cardBackground", defaultHex: "#FAF6F0" },
   { label: "Main Text", key: "text", defaultHex: "#191C1D" },
 ] as const;
@@ -28,6 +29,7 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#18181B",
       secondary: "#F4E0BE",
       button: "#18181B",
+      pageBackground: "#FAF8F5",
       cardBackground: "#FAF6F0",
       text: "#18181B",
     },
@@ -38,7 +40,8 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#0A25C9",
       secondary: "#FF6B35",
       button: "#0A25C9",
-      cardBackground: "#F0F4FF",
+      pageBackground: "#F5F8FF",
+      cardBackground: "#FFFFFF",
       text: "#0D153A",
     },
   },
@@ -48,7 +51,8 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#0F382A",
       secondary: "#F9D5D3",
       button: "#0F382A",
-      cardBackground: "#F2F7F4",
+      pageBackground: "#F7FAF8",
+      cardBackground: "#FFFFFF",
       text: "#0A261C",
     },
   },
@@ -58,7 +62,8 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#3B1443",
       secondary: "#D4E157",
       button: "#3B1443",
-      cardBackground: "#FAF3FB",
+      pageBackground: "#FCF8FD",
+      cardBackground: "#FFFFFF",
       text: "#280C2E",
     },
   },
@@ -68,7 +73,8 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#B84A28",
       secondary: "#0F766E",
       button: "#B84A28",
-      cardBackground: "#FDF5ED",
+      pageBackground: "#FAF6F2",
+      cardBackground: "#FFFFFF",
       text: "#38160D",
     },
   },
@@ -78,8 +84,42 @@ const THEME_PRESETS: ThemePreset[] = [
       primary: "#090A0F",
       secondary: "#E11D48",
       button: "#E11D48",
-      cardBackground: "#F8FAFC",
+      pageBackground: "#F1F5F9",
+      cardBackground: "#FFFFFF",
       text: "#090A0F",
+    },
+  },
+  {
+    name: "Obsidian & Gilded Gold",
+    colors: {
+      primary: "#D4AF37",
+      secondary: "#FFFFFF",
+      button: "#D4AF37",
+      pageBackground: "#0E0E10",
+      cardBackground: "#1A1A1E",
+      text: "#F4F4F5",
+    },
+  },
+  {
+    name: "Midnight Velvet & Cyan",
+    colors: {
+      primary: "#00F0FF",
+      secondary: "#A855F7",
+      button: "#00F0FF",
+      pageBackground: "#080D1A",
+      cardBackground: "#10172A",
+      text: "#F8FAFC",
+    },
+  },
+  {
+    name: "Espresso Noir & Bronze",
+    colors: {
+      primary: "#E58A3C",
+      secondary: "#FDE68A",
+      button: "#E58A3C",
+      pageBackground: "#150F0C",
+      cardBackground: "#241B16",
+      text: "#FAF5EF",
     },
   },
 ];
@@ -133,6 +173,8 @@ export function AppearanceSection({
                 colors.primary?.toUpperCase() === preset.colors.primary.toUpperCase() &&
                 colors.secondary?.toUpperCase() === preset.colors.secondary.toUpperCase() &&
                 colors.button?.toUpperCase() === preset.colors.button.toUpperCase() &&
+                (colors.pageBackground || "#FAF8F5").toUpperCase() ===
+                  (preset.colors.pageBackground || "#FAF8F5").toUpperCase() &&
                 (colors.cardBackground || "#FAF6F0").toUpperCase() ===
                   (preset.colors.cardBackground || "#FAF6F0").toUpperCase() &&
                 colors.text?.toUpperCase() === preset.colors.text.toUpperCase();
@@ -161,22 +203,27 @@ export function AppearanceSection({
                   <div className="flex items-center -space-x-1.5 shrink-0 pl-2">
                     <span
                       style={{ backgroundColor: preset.colors.primary }}
-                      className="w-4 h-4 rounded-full border border-white/40 shadow-2xs"
+                      className="w-4 h-4 rounded-full border border-white/50 shadow-2xs"
                       title={`Primary: ${preset.colors.primary}`}
                     />
                     <span
                       style={{ backgroundColor: preset.colors.secondary }}
-                      className="w-4 h-4 rounded-full border border-white/40 shadow-2xs"
+                      className="w-4 h-4 rounded-full border border-white/50 shadow-2xs"
                       title={`Secondary: ${preset.colors.secondary}`}
                     />
                     <span
+                      style={{ backgroundColor: preset.colors.pageBackground }}
+                      className="w-4 h-4 rounded-full border border-white/50 shadow-2xs"
+                      title={`Page: ${preset.colors.pageBackground}`}
+                    />
+                    <span
                       style={{ backgroundColor: preset.colors.cardBackground }}
-                      className="w-4 h-4 rounded-full border border-white/40 shadow-2xs"
-                      title={`Surface: ${preset.colors.cardBackground}`}
+                      className="w-4 h-4 rounded-full border border-white/50 shadow-2xs"
+                      title={`Card: ${preset.colors.cardBackground}`}
                     />
                     <span
                       style={{ backgroundColor: preset.colors.button }}
-                      className="w-4 h-4 rounded-full border border-white/40 shadow-2xs"
+                      className="w-4 h-4 rounded-full border border-white/50 shadow-2xs"
                       title={`Button: ${preset.colors.button}`}
                     />
                   </div>
@@ -191,7 +238,7 @@ export function AppearanceSection({
           <span className="text-xs font-semibold text-[#374151] uppercase tracking-wider block mb-3">
             Custom Color Palette
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
             {COLOR_FIELDS.map(({ label, key, defaultHex }) => {
               const currentValue = colors[key] ?? defaultHex;
               const pickerValue = sanitizeHexForPicker(currentValue, defaultHex);
