@@ -4,15 +4,7 @@
  * Designed for effortless 1-line swap to real REST/GraphQL endpoints.
  */
 
-import type {
-  AnalyticsOverview,
-  ChartData,
-  MetricSummary,
-  Timeframe,
-  TrendingServiceItem,
-} from "@/types";
-
-export type { AnalyticsOverview, ChartData, MetricSummary, Timeframe, TrendingServiceItem };
+import type { AnalyticsOverview, Timeframe } from "@/types";
 
 const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
   daily: {

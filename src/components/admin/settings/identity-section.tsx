@@ -1,31 +1,6 @@
 import { Copy, Loader2, Upload } from "lucide-react";
-import type { CurrencyCode } from "@/types";
+import type { CurrencyCode, IdentitySectionProps } from "@/types";
 import { Card } from "./card";
-
-interface IdentitySectionProps {
-  name: string;
-  setName: (v: string) => void;
-  slug: string;
-  setSlug: (v: string) => void;
-  slugStatus: "checking" | "available" | "taken" | "idle";
-  tagline: string;
-  setTagline: (v: string) => void;
-  location: string;
-  setLocation: (v: string) => void;
-  website: string;
-  setWebsite: (v: string) => void;
-  email: string;
-  setEmail: (v: string) => void;
-  currency?: CurrencyCode;
-  setCurrency?: (v: CurrencyCode) => void;
-  about: string;
-  setAbout: (v: string) => void;
-  logoUrl: string;
-  setLogoUrl: (v: string) => void;
-  isUploadingLogo: boolean;
-  handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onToast: (msg: string) => void;
-}
 
 export function IdentitySection({
   name,

@@ -1,13 +1,6 @@
 import { ArrowRight, X } from "lucide-react";
 import Image from "next/image";
-import type { PortfolioProject } from "@/types";
-
-interface ProjectModalProps {
-  project: PortfolioProject | null;
-  onClose: () => void;
-  onInquire: () => void;
-  primaryColor: string;
-}
+import type { ProjectModalProps } from "@/types";
 
 export function ProjectModal({ project, onClose, onInquire, primaryColor }: ProjectModalProps) {
   if (!project) return null;

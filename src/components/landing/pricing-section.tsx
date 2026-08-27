@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { type BillingPeriod, LANDING_PRICING_PLANS, type PricingPlan } from "@/constants";
+import { LANDING_PRICING_PLANS } from "@/constants";
+import type { BillingPeriod, PricingPlan } from "@/types";
 
 export function PricingSection() {
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");

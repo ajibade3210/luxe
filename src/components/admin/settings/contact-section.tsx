@@ -1,17 +1,7 @@
+import type { ContactSectionProps } from "@/types";
 import { isValidTimeFormat, normalizeTimeInput } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
-
-interface ContactSectionProps {
-  hours: string;
-  setHours: (v: string) => void;
-  timeFrom: string;
-  setTimeFrom: (v: string) => void;
-  timeTo: string;
-  setTimeTo: (v: string) => void;
-  byAppointmentOnly: boolean;
-  setByAppointmentOnly: (v: boolean) => void;
-}
 
 const SCHEDULE_ROW_1 = ["Mon–Fri", "Mon–Sat", "Daily"] as const;
 const SCHEDULE_ROW_2 = ["Tue–Sat", "Weekends Only"] as const;

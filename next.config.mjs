@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "cdn.accessa.ng",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.logosystem.co",
+      },
     ],
   },
 };

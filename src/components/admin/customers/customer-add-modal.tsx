@@ -4,14 +4,7 @@ import { AlertCircle, Check, Loader2, X } from "lucide-react";
 
 import { useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
-import type { NewCustomerInput } from "@/lib/api";
-
-interface CustomerAddModalProps {
-  isOpen: boolean;
-  isSubmitting: boolean;
-  onClose: () => void;
-  onSubmit: (data: NewCustomerInput) => Promise<boolean>;
-}
+import type { CustomerAddModalProps, NewCustomerInput } from "@/types";
 
 export function CustomerAddModal({
   isOpen,

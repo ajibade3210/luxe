@@ -10,8 +10,6 @@ import type {
   ServiceStatus,
 } from "@/types";
 
-export type { AddServiceInput, ImportCustomerRecord, NewCustomerInput };
-
 let currentCustomers: Customer[] = [...initialCustomers];
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));

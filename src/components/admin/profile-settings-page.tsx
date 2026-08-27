@@ -4,9 +4,10 @@ import { ArrowRight, Check, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GoogleIcon } from "@/components/shared/icons";
 import { getCurrentUser, updateBusinessProfile } from "@/lib/api";
+import type { ProfileSettingsPageProps } from "@/types";
 import { useAdminToast } from "./admin-layout";
 
-export function ProfileSettingsPage({ onToast }: { onToast?: (message: string) => void }) {
+export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
   const [name, setName] = useState("");

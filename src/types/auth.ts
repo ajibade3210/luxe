@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 // User and authentication types
 export interface User {
   id: string;
@@ -21,4 +23,10 @@ export interface UserSession {
   studioName?: string;
   studioSlug?: string;
   avatarUrl?: string;
+}
+
+export interface AuthHeaderProps {
+  rightAction?: ReactNode;
+  mode?: "login" | "signup";
+  claimSlug?: string;
 }

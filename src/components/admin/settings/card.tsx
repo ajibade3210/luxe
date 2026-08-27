@@ -1,17 +1,10 @@
 import { Info } from "lucide-react";
-import type { ReactNode } from "react";
+import type { CardProps } from "@/types";
 
-interface CardProps {
-  number?: string;
-  title: string;
-  description?: string;
-  children: ReactNode;
-}
-
-export function Card({ title, description, children }: CardProps) {
+export function Card({ title, description, action, children }: CardProps) {
   return (
     <section className="settings-card">
-      <div className="settings-card-heading">
+      <div className="settings-card-heading flex items-center justify-between gap-3">
         <div className="flex items-center">
           <h2>{title}</h2>
           {description && (
@@ -33,6 +26,7 @@ export function Card({ title, description, children }: CardProps) {
             </div>
           )}
         </div>
+        {action && <div className="shrink-0">{action}</div>}
       </div>
       {children}
     </section>

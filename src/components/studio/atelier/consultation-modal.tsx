@@ -1,36 +1,5 @@
 import { Send, X } from "lucide-react";
-import type { BusinessProfile, ServiceItem } from "@/types";
-
-interface ConsultationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  profile: BusinessProfile;
-  quoteForm: {
-    name: string;
-    email: string;
-    phone: string;
-    service: string;
-    eventDate: string;
-    budget: string;
-    message: string;
-  };
-  setQuoteForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      email: string;
-      phone: string;
-      service: string;
-      eventDate: string;
-      budget: string;
-      message: string;
-    }>
-  >;
-  quoteSubmitting: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  primaryColor: string;
-  buttonColor: string;
-  radiusClass: string;
-}
+import type { ConsultationModalProps, ServiceItem } from "@/types";
 
 export function ConsultationModal({
   isOpen,
@@ -99,7 +68,7 @@ export function ConsultationModal({
             </div>
 
             <div>
-              <label className="block text-[#1f2937] font-medium mb-1">Phone / WhatsApp</label>
+              <label className="block text-[#1f2937] font-medium mb-1">WhatsApp</label>
               <input
                 type="tel"
                 placeholder="+234 800 000 0000"
@@ -112,7 +81,7 @@ export function ConsultationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[#1f2937] font-medium mb-1">Service Required</label>
+              <label className="block text-[#1f2937] font-medium mb-1">Service Needed</label>
               <select
                 value={quoteForm.service}
                 onChange={e => setQuoteForm({ ...quoteForm, service: e.target.value })}
@@ -138,9 +107,7 @@ export function ConsultationModal({
           </div>
 
           <div>
-            <label className="block text-[#1f2937] font-medium mb-1">
-              Project / Order Vision & Details
-            </label>
+            <label className="block text-[#1f2937] font-medium mb-1">Order Details</label>
             <textarea
               rows={3}
               placeholder="Share details about your requirements, timeline, quantity, or aesthetic preferences..."

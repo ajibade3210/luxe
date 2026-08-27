@@ -1,26 +1,12 @@
 import { Edit3, Plus, Trash2 } from "lucide-react";
-import type { ServiceItem } from "@/types";
+import type { ServicesSectionProps } from "@/types";
 import { Card } from "./card";
-
-interface ServicesSectionProps {
-  services: ServiceItem[];
-  editingServiceId: string | null;
-  setEditingServiceId: (id: string | null) => void;
-  updateService: (id: string, patch: Partial<ServiceItem>) => void;
-  removeService: (id: string) => void;
-  showAddService: boolean;
-  setShowAddService: (v: boolean) => void;
-  newServiceInput: string;
-  setNewServiceInput: (v: string) => void;
-  newServiceCategory: string;
-  setNewServiceCategory: (v: string) => void;
-  newServiceDesc: string;
-  setNewServiceDesc: (v: string) => void;
-  addService: () => void;
-}
+import { Toggle } from "./toggle";
 
 export function ServicesSection({
   services,
+  showServices,
+  setShowServices,
   editingServiceId,
   setEditingServiceId,
   updateService,
@@ -39,8 +25,23 @@ export function ServicesSection({
     <Card
       title="Services & offerings"
       description="Make your expertise easy to understand for prospective couples and clients."
+      action={
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#6b7280]">Show on page</span>
+          <Toggle
+            on={showServices}
+            onClick={() => setShowServices(!showServices)}
+            ariaLabel="Toggle services section visibility"
+          />
+        </div>
+      }
     >
       <div className="space-y-3.5">
+        {!showServices && (
+          <div className="bg-[#fef3c7] text-[#92400e] text-xs px-3 py-2 rounded-lg border border-[#fde68a]">
+            This section is currently hidden on your public studio page.
+          </div>
+        )}
         {/* Compact 2-Column Grid of Service Offerings */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
           {services.map((service, _i) => {

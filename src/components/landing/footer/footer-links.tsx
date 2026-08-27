@@ -1,22 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-
-export interface FooterNavLink {
-  label: string;
-  href: string;
-  external?: boolean;
-  badge?: string;
-}
-
-export interface FooterNavSubsection {
-  title: string;
-  links: FooterNavLink[];
-}
-
-export interface FooterNavSection {
-  title: string;
-  links: FooterNavLink[];
-  subsections?: FooterNavSubsection[];
-}
+import type { FooterNavSection } from "@/types";
 
 export const NAVIGATION_SECTIONS: FooterNavSection[] = [
   {

@@ -1,29 +1,8 @@
 "use client";
 
 import { MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
-import type { Invoice } from "@/lib/api";
-import type { Customer, ServiceStatus } from "@/types";
+import type { CustomerDetailDrawerProps, ServiceStatus } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
-
-interface CustomerDetailDrawerProps {
-  customer: Customer | null;
-  customerInvoices: Invoice[];
-  onClose: () => void;
-  onToggleStatus: (customerId: string, isActive: boolean) => void;
-  onOpenMessageModal: (customer: Customer) => void;
-  onOpenInvoiceModal: (customer: Customer, invoice?: Invoice) => void;
-  onOpenAddServiceModal: () => void;
-  onConfirmResendInvoice: (invoice: Invoice) => void;
-  onDeleteDraftInvoice: (invoiceId: string) => void;
-  onDeleteService: (customerId: string, serviceId: string, serviceName: string) => void;
-  onUpdateServiceStatus: (
-    customerId: string,
-    serviceId: string,
-    status: ServiceStatus,
-    serviceName: string,
-    statusLabel: string
-  ) => void;
-}
 
 export function CustomerDetailDrawer({
   customer,

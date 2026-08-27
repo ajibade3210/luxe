@@ -2,21 +2,18 @@
 
 import { Check, Copy, ExternalLink, Eye, Globe, ShoppingBag, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  type AnalyticsOverview,
-  getAnalytics,
-  getBusinessProfile,
-  type Timeframe,
-} from "@/lib/api";
+import { APP_CONFIG } from "@/constants";
+import { getAnalytics, getBusinessProfile } from "@/lib/api";
 import { businessProfile as initialMockProfile } from "@/lib/mock-data";
+import type { AnalyticsOverview, AnalyticsPageProps, Timeframe } from "@/types";
 import { formatMoney, useAdminToast } from "./admin-layout";
 
-export function AnalyticsPage({ onToast }: { onToast?: (message: string) => void }) {
+export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
   const [data, setData] = useState<AnalyticsOverview | null>(null);
-  const [slug, setSlug] = useState(initialMockProfile.slug || "elan-events");
+  const [slug, setSlug] = useState(initialMockProfile.slug || APP_CONFIG.defaultSlug);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {

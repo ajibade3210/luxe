@@ -1,28 +1,5 @@
 import { Star, X } from "lucide-react";
-
-interface ReviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  reviewForm: {
-    author: string;
-    eventType: string;
-    rating: number;
-    comment: string;
-  };
-  setReviewForm: React.Dispatch<
-    React.SetStateAction<{
-      author: string;
-      eventType: string;
-      rating: number;
-      comment: string;
-    }>
-  >;
-  reviewSubmitting: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  primaryColor: string;
-  buttonColor: string;
-  radiusClass: string;
-}
+import type { ReviewModalProps } from "@/types";
 
 export function ReviewModal({
   isOpen,

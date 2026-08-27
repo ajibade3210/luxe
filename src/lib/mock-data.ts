@@ -291,6 +291,9 @@ export const businessProfile: BusinessProfile = {
   },
   buttonRadius: "Subtle",
   currency: "NGN",
+  showServices: true,
+  showPortfolio: true,
+  showReviews: true,
   updatedAt: "2026-08-25T12:00:00Z",
 };
 

@@ -1,17 +1,8 @@
 "use client";
 
 import { FileText, MessageSquare, UserCheck, X } from "lucide-react";
-import type { Lead } from "@/types";
+import type { LeadDetailDrawerProps } from "@/types";
 import { formatDate, formatMoney, formatStatusLabel } from "@/utils";
-
-interface LeadDetailDrawerProps {
-  lead: Lead | null;
-  isConverting: boolean;
-  onClose: () => void;
-  onOpenMessageModal: (lead: Lead) => void;
-  onConvertToCustomer: (leadId: string) => void;
-  onIssueInvoice: (lead: Lead) => void;
-}
 
 export function LeadDetailDrawer({
   lead,

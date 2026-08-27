@@ -33,6 +33,15 @@ export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
   const [currency, setCurrency] = useState<CurrencyCode>(initialMockProfile.currency || "NGN");
   const [about, setAbout] = useState(initialMockProfile.description);
 
+  // Section Visibility Toggles
+  const [showServices, setShowServices] = useState<boolean>(
+    initialMockProfile.showServices ?? true
+  );
+  const [showPortfolio, setShowPortfolio] = useState<boolean>(
+    initialMockProfile.showPortfolio ?? true
+  );
+  const [showReviews, setShowReviews] = useState<boolean>(initialMockProfile.showReviews ?? true);
+
   // Services
   const [services, setServices] = useState<ServiceItem[]>(
     (initialMockProfile.services as ServiceItem[]) || []
@@ -161,6 +170,9 @@ export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
       if (data.whatsAppNumber) setWhatsAppNumber(data.whatsAppNumber);
       if (data.emailAddress) setEmailAddress(data.emailAddress);
       if (data.physicalAddress) setPhysicalAddress(data.physicalAddress);
+      if (data.showServices !== undefined) setShowServices(data.showServices);
+      if (data.showPortfolio !== undefined) setShowPortfolio(data.showPortfolio);
+      if (data.showReviews !== undefined) setShowReviews(data.showReviews);
       if (data.colors) setColors(data.colors);
       if (data.buttonRadius) setRadius(data.buttonRadius);
     });
@@ -360,6 +372,9 @@ export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
         whatsAppNumber,
         emailAddress,
         physicalAddress,
+        showServices,
+        showPortfolio,
+        showReviews,
         colors,
         buttonRadius: radius,
       });
@@ -401,6 +416,12 @@ export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
     setCurrency,
     about,
     setAbout,
+    showServices,
+    setShowServices,
+    showPortfolio,
+    setShowPortfolio,
+    showReviews,
+    setShowReviews,
     services,
     showAddService,
     setShowAddService,

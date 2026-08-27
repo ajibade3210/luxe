@@ -3,7 +3,7 @@
 import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import { AUTO_QUOTE_MODAL_DELAY_MS, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
+import { APP_CONFIG, AUTO_QUOTE_MODAL_DELAY_MS, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
@@ -12,7 +12,13 @@ import {
   submitReview,
 } from "@/lib/api";
 import { businessProfile as defaultProfile } from "@/lib/mock-data";
-import type { BusinessProfile, ButtonRadiusType, PortfolioProject, ServiceItem } from "@/types";
+import type {
+  BusinessProfile,
+  ButtonRadiusType,
+  ElanEventsPageProps,
+  PortfolioProject,
+  ServiceItem,
+} from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 import { ConsultationModal } from "./atelier/consultation-modal";
 import { StudioPortfolioSection } from "./atelier/portfolio-section";
@@ -27,12 +33,10 @@ import { StudioHighlightsCard } from "./atelier/studio-highlights-card";
 import { StudioNavbar } from "./atelier/studio-navbar";
 import { NotFoundView } from "./not-found-view";
 
-interface ElanEventsPageProps {
-  initialProfile?: BusinessProfile;
-  slug?: string;
-}
-
-export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEventsPageProps) {
+export function ElanEventsPage({
+  initialProfile,
+  slug = APP_CONFIG.defaultSlug,
+}: ElanEventsPageProps) {
   // Live dynamic profile state
   const [profile, setProfile] = useState<BusinessProfile>(initialProfile || defaultProfile);
   const [isNotFound, setIsNotFound] = useState(false);
@@ -320,8 +324,12 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
 
   const monogram = profile.businessName ? profile.businessName[0].toUpperCase() : "Ś";
 
-  const cleanPhone = (whatsAppPhone || profile.phone || "+234 800 ELAN VIP").replace(/[^0-9]/g, "");
-  const whatsAppLink = `https://wa.me/${cleanPhone || "2348055966944"}`;
+  const defaultStudioPhoneClean = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
+  const cleanPhone = (whatsAppPhone || profile.phone || APP_CONFIG.defaultStudioPhone).replace(
+    /[^0-9]/g,
+    ""
+  );
+  const whatsAppLink = `https://wa.me/${cleanPhone || defaultStudioPhoneClean}`;
 
   if (isNotFound) {
     return <NotFoundView slug={slug} />;
@@ -400,48 +408,56 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
         </section>
 
         {/* SECTION: Connected Social Networks & Verified Channels */}
-        <StudioSocialSection
-          profile={profile}
-          primaryColor={primaryColor}
-          textColor={textColor}
-          radiusClass={radiusClass}
-        />
+        {profile.socialChannels?.some(c => c.connected) && (
+          <StudioSocialSection
+            profile={profile}
+            primaryColor={primaryColor}
+            textColor={textColor}
+            radiusClass={radiusClass}
+          />
+        )}
 
         {/* SECTION: Portfolio Gallery */}
-        <StudioPortfolioSection
-          portfolio={profile.portfolio || []}
-          setSelectedProject={setSelectedProject}
-          setQuoteModalOpen={setQuoteModalOpen}
-          primaryColor={primaryColor}
-          buttonColor={buttonColor}
-          textColor={textColor}
-          radiusClass={radiusClass}
-        />
+        {profile.showPortfolio !== false && profile.portfolio && profile.portfolio.length > 0 && (
+          <StudioPortfolioSection
+            portfolio={profile.portfolio}
+            setSelectedProject={setSelectedProject}
+            setQuoteModalOpen={setQuoteModalOpen}
+            primaryColor={primaryColor}
+            buttonColor={buttonColor}
+            textColor={textColor}
+            radiusClass={radiusClass}
+          />
+        )}
 
         {/* SECTION: Curated Services */}
-        <StudioServicesSection
-          profile={profile}
-          setQuoteModalOpen={setQuoteModalOpen}
-          setQuoteForm={setQuoteForm}
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
-          buttonColor={buttonColor}
-          textColor={textColor}
-          radiusClass={radiusClass}
-        />
+        {profile.showServices !== false && profile.services && profile.services.length > 0 && (
+          <StudioServicesSection
+            profile={profile}
+            setQuoteModalOpen={setQuoteModalOpen}
+            setQuoteForm={setQuoteForm}
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            buttonColor={buttonColor}
+            textColor={textColor}
+            radiusClass={radiusClass}
+          />
+        )}
 
         {/* SECTION: Authenticated Client Reviews */}
-        <StudioReviewsSection
-          reviews={profile.reviews || []}
-          averageRating={averageRating}
-          totalReviews={totalReviews}
-          setReviewModalOpen={setReviewModalOpen}
-          googleReviewsLink={profile.googleReviewsLink}
-          primaryColor={primaryColor}
-          buttonColor={buttonColor}
-          textColor={textColor}
-          radiusClass={radiusClass}
-        />
+        {profile.showReviews !== false && profile.reviews && profile.reviews.length > 0 && (
+          <StudioReviewsSection
+            reviews={profile.reviews}
+            averageRating={averageRating}
+            totalReviews={totalReviews}
+            setReviewModalOpen={setReviewModalOpen}
+            googleReviewsLink={profile.googleReviewsLink}
+            primaryColor={primaryColor}
+            buttonColor={buttonColor}
+            textColor={textColor}
+            radiusClass={radiusClass}
+          />
+        )}
 
         {/* CTA BANNER */}
         <section

@@ -1,18 +1,7 @@
 "use client";
 
-import type { CurrencyCode } from "@/types";
+import type { InvoiceSummaryProps } from "@/types";
 import { CURRENCY_SYMBOLS, formatMoney } from "@/utils";
-
-interface InvoiceSummaryProps {
-  discount: number;
-  taxRate: number;
-  total: number;
-  currency: CurrencyCode;
-  notes: string;
-  onDiscountChange: (val: number) => void;
-  onTaxRateChange: (val: number) => void;
-  onNotesChange: (val: string) => void;
-}
 
 export function InvoiceSummary({
   discount,

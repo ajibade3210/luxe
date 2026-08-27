@@ -41,3 +41,42 @@ export interface PricingPlan {
   ctaLabel: string;
   termsNote: string;
 }
+
+export interface FooterNavLink {
+  label: string;
+  href: string;
+  external?: boolean;
+  badge?: string;
+}
+
+export interface FooterNavSubsection {
+  title: string;
+  links: FooterNavLink[];
+}
+
+export interface FooterNavSection {
+  title: string;
+  links: FooterNavLink[];
+  subsections?: FooterNavSubsection[];
+}
+
+export interface AiPrompt {
+  label: string;
+  icon: string;
+  question: string;
+  answer: string;
+}
+
+export interface HeroRotatingCardProps {
+  organizations?: OrganizationPreview[];
+  intervalMs?: number;
+}
+
+export interface LogoRowProps {
+  organizations: OrganizationPreview[];
+  reverse?: boolean;
+}
+
+export interface NotFoundViewProps {
+  slug?: string;
+}

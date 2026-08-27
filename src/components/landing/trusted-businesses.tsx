@@ -1,11 +1,6 @@
 import Image from "next/image";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/types";
-
-interface LogoRowProps {
-  organizations: OrganizationPreview[];
-  reverse?: boolean;
-}
+import type { LogoRowProps } from "@/types";
 
 function LogoRow({ organizations, reverse = false }: LogoRowProps) {
   const items = [...organizations, ...organizations, ...organizations];

@@ -3,15 +3,7 @@
 import { Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Lead } from "@/types";
-
-interface LeadMessageModalProps {
-  isOpen: boolean;
-  lead: Lead | null;
-  onClose: () => void;
-  onSendWhatsApp: (lead: Lead, phone: string, text: string) => void;
-  onSendEmail: (lead: Lead, email: string, name: string, text: string) => void;
-}
+import type { LeadMessageModalProps } from "@/types";
 
 export function LeadMessageModal({
   isOpen,

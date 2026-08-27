@@ -1,17 +1,5 @@
 import { ArrowUpRight, Star } from "lucide-react";
-import type { ReviewItem } from "@/types";
-
-interface StudioReviewsSectionProps {
-  reviews: ReviewItem[];
-  averageRating: string | number;
-  totalReviews: number;
-  setReviewModalOpen: (v: boolean) => void;
-  googleReviewsLink?: string;
-  primaryColor: string;
-  buttonColor: string;
-  textColor?: string;
-  radiusClass: string;
-}
+import type { StudioReviewsSectionProps } from "@/types";
 
 export function StudioReviewsSection({
   reviews,

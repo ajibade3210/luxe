@@ -1,25 +1,16 @@
 import { RefreshCw, Star } from "lucide-react";
 import { getSocialChannelStyle } from "@/components/studio/atelier/social-badge";
 import { SOCIAL_PREFIX_MAP } from "@/constants";
-import type { SocialChannel } from "@/types";
+import type { ChannelsSectionProps } from "@/types";
 import { sanitizeHandle } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
-interface ChannelsSectionProps {
-  googleReviewsLink: string;
-  setGoogleReviewsLink: (v: string) => void;
-  isSyncingReviews: boolean;
-  handleSyncReviews: () => void;
-  channels: SocialChannel[];
-  updateChannelHandle: (id: string, handle: string) => void;
-  toggleChannel: (id: string) => void;
-  onToast: (msg: string) => void;
-}
-
 export function ChannelsSection({
   googleReviewsLink,
   setGoogleReviewsLink,
+  showReviews,
+  setShowReviews,
   isSyncingReviews,
   handleSyncReviews,
   channels,
@@ -33,8 +24,23 @@ export function ChannelsSection({
       <Card
         title="Review Management"
         description="Connect your Google Business Profile to showcase authenticated client reviews."
+        action={
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6b7280]">Show on page</span>
+            <Toggle
+              on={showReviews}
+              onClick={() => setShowReviews(!showReviews)}
+              ariaLabel="Toggle reviews section visibility"
+            />
+          </div>
+        }
       >
         <div className="space-y-4">
+          {!showReviews && (
+            <div className="bg-[#fef3c7] text-[#92400e] text-xs px-3 py-2 rounded-lg border border-[#fde68a]">
+              This section is currently hidden on your public studio page.
+            </div>
+          )}
           <div className="border border-[#e5e7eb] rounded-xl p-4 sm:p-5 bg-white space-y-4 shadow-2xs">
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-[#e5e7eb]">
               <div className="flex items-center gap-3">

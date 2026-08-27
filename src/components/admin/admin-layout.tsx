@@ -17,16 +17,20 @@ import {
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { CUSTOM_EVENTS } from "@/constants";
+import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
 import { getCustomers, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
-import type { Customer, Lead } from "@/types";
+import type {
+  AdminHeaderProps,
+  AdminLayoutProps,
+  AdminSidebarProps,
+  AdminToastContextType,
+  Customer,
+  Lead,
+  ToastProps,
+} from "@/types";
 
 export { formatDate, formatMoney, formatStatusLabel } from "@/utils";
-
-interface AdminToastContextType {
-  showToast: (message: string) => void;
-}
 
 const AdminToastContext = createContext<AdminToastContextType>({
   showToast: () => {},
@@ -40,7 +44,7 @@ export function Brand() {
   return <BrandLogo className="brand" href="/" />;
 }
 
-export function Toast({ message, onClose }: { message: string; onClose: () => void }) {
+export function Toast({ message, onClose }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -101,16 +105,8 @@ export function PageTitle({
   );
 }
 
-export function Sidebar({
-  path,
-  open,
-  onClose,
-}: {
-  path: string;
-  open: boolean;
-  onClose: () => void;
-}) {
-  const slug = businessProfile.slug || "elan-events";
+export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
+  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
   const [leadCount, setLeadCount] = useState(5);
   const [customerCount, setCustomerCount] = useState(3);
 
@@ -200,9 +196,9 @@ export function Sidebar({
   );
 }
 
-export function Header({ onMenu, onToast }: { onMenu: () => void; onToast: (s: string) => void }) {
+export function Header({ onMenu, onToast }: AdminHeaderProps) {
   const [busy, setBusy] = useState(false);
-  const slug = businessProfile.slug || "elan-events";
+  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
   return (
     <header className="admin-header">
       <button className="mobile-menu" onClick={onMenu}>
@@ -243,15 +239,7 @@ export function Header({ onMenu, onToast }: { onMenu: () => void; onToast: (s: s
   );
 }
 
-export function AdminLayout({
-  children,
-  path,
-  onToast,
-}: {
-  children: React.ReactNode;
-  path?: string;
-  onToast?: (s: string) => void;
-}) {
+export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
   const [open, setOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const pathname = usePathname();

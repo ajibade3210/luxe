@@ -2,14 +2,8 @@
 
 import { AlertCircle, Check, Download, FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
 import { useState } from "react";
-import { downloadCustomerCSVTemplate, type ImportCustomerRecord, importCustomers } from "@/lib/api";
-
-interface CustomerImportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onToast: (msg: string) => void;
-  onImportSuccess?: () => void;
-}
+import { downloadCustomerCSVTemplate, importCustomers } from "@/lib/api";
+import type { CustomerImportModalProps, ImportCustomerRecord } from "@/types";
 
 export function CustomerImportModal({
   isOpen,

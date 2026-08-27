@@ -3,8 +3,7 @@
 import { Download, MessageSquare, MoreHorizontal, Plus, Upload } from "lucide-react";
 import { useState } from "react";
 import { useCustomers } from "@/hooks/use-customers";
-import type { Invoice } from "@/lib/api";
-import type { Customer } from "@/types";
+import type { Customer, CustomersPageProps, Invoice } from "@/types";
 import { formatMoney, Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { CustomerAddModal } from "./customers/customer-add-modal";
 import { CustomerBroadcastModal } from "./customers/customer-broadcast-modal";
@@ -16,7 +15,7 @@ import { CustomerServiceModal } from "./customers/customer-service-modal";
 import { CustomerTable } from "./customers/customer-table";
 import { InvoiceModal } from "./invoices/invoice-modal";
 
-export function CustomersPage({ onToast }: { onToast?: (message: string) => void }) {
+export function CustomersPage({ onToast }: CustomersPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
 

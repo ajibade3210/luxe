@@ -2,6 +2,7 @@
 
 import { ChevronUp, Smartphone } from "lucide-react";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { APP_CONFIG } from "@/constants";
 import { businessProfile } from "@/lib/mock-data";
 
 const QR_CODE_IMAGE_SRC =
@@ -10,7 +11,7 @@ const QR_CODE_IMAGE_SRC =
 const FOOTER_NAV_LINKS = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#workflow" },
-  { label: "Studio Demo", href: `/${businessProfile.slug || "elan-events"}` },
+  { label: "Studio Demo", href: `/${businessProfile.slug || APP_CONFIG.defaultSlug}` },
   { label: "Sign up", href: "/signup" },
   { label: "Enter Studio", href: "/login" },
 ] as const;

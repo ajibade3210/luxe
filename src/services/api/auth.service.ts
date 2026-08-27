@@ -1,8 +1,6 @@
-import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
+import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { currentUser } from "@/lib/mock-data";
 import type { User, UserSession } from "@/types";
-
-export type { UserSession };
 
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -35,7 +33,7 @@ export function createSession(user: Partial<UserSession>): UserSession {
     email: user.email || "director@elanatelier.com",
     role: user.role || "Studio Director",
     studioName: user.studioName || "Élan Events",
-    studioSlug: user.studioSlug || "elan-events",
+    studioSlug: user.studioSlug || APP_CONFIG.defaultSlug,
     avatarUrl:
       user.avatarUrl ||
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
@@ -65,7 +63,7 @@ export async function signInWithGoogle(options?: { claimSlug?: string }): Promis
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ")} Atelier`
     : "Élan Events";
-  const studioSlug = claim || "elan-events";
+  const studioSlug = claim || APP_CONFIG.defaultSlug;
 
   return createSession({
     name: "Amelia Bell",

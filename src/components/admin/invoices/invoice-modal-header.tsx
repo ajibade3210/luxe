@@ -16,29 +16,7 @@ import {
 
 import { useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Invoice } from "@/types";
-
-interface InvoiceModalHeaderProps {
-  existingInvoice?: Invoice;
-  isSavingDraft: boolean;
-  isSending: boolean;
-  isResending: boolean;
-  isDownloadingPdf: boolean;
-  isMarkingPaid: boolean;
-  isMarkingUnpaid: boolean;
-  isDeleting: boolean;
-  copiedLink: boolean;
-  onClose: () => void;
-  onSaveDraft: () => void;
-  onSendInvoice: () => void;
-  onResendInvoice: () => void;
-  onDownloadPdf: () => void;
-  onSendWhatsApp: () => void;
-  onCopyLink: () => void;
-  onMarkAsPaid: () => void;
-  onMarkAsUnpaid: () => void;
-  onDeleteInvoice: () => void;
-}
+import type { InvoiceModalHeaderProps } from "@/types";
 
 export function InvoiceModalHeader({
   existingInvoice,

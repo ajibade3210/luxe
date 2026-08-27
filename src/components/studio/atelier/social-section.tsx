@@ -1,13 +1,6 @@
-import { SOCIAL_PREFIX_MAP } from "@/constants";
-import type { BusinessProfile, SocialChannel } from "@/types";
+import { APP_CONFIG, SOCIAL_PREFIX_MAP } from "@/constants";
+import type { SocialChannel, StudioSocialSectionProps } from "@/types";
 import { getSocialChannelStyle } from "./social-badge";
-
-interface StudioSocialSectionProps {
-  profile: BusinessProfile;
-  primaryColor?: string;
-  textColor?: string;
-  radiusClass?: string;
-}
 
 function resolveChannelUrl(channel: SocialChannel): string {
   if (channel.url?.startsWith("http")) return channel.url;
@@ -16,7 +9,8 @@ function resolveChannelUrl(channel: SocialChannel): string {
   if (handle.startsWith("http://") || handle.startsWith("https://")) return handle;
   if (channel.type === "whatsapp") {
     const cleanNumber = handle.replace(/\D/g, "");
-    return `https://wa.me/${cleanNumber || "2348055966944"}`;
+    const defaultPhone = APP_CONFIG.defaultStudioPhone.replace(/\D/g, "");
+    return `https://wa.me/${cleanNumber || defaultPhone}`;
   }
   const prefix = SOCIAL_PREFIX_MAP[channel.type] || "";
   const cleanPrefix = prefix.replace(/^https?:\/\//i, "");

@@ -1,14 +1,7 @@
 import { Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import type { Customer } from "@/types";
-
-interface CustomerMessageModalProps {
-  isOpen: boolean;
-  customer: Customer | null;
-  onClose: () => void;
-  onToast?: (message: string) => void;
-}
+import type { CustomerMessageModalProps } from "@/types";
 
 export function CustomerMessageModal({
   isOpen,

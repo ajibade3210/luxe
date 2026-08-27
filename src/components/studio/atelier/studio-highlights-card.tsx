@@ -8,21 +8,8 @@ import {
   Share2,
   ShieldCheck,
 } from "lucide-react";
-import type { BusinessProfile } from "@/types";
+import type { StudioHighlightsCardProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
-
-interface StudioHighlightsCardProps {
-  profile: BusinessProfile;
-  totalCustomers?: number;
-  setQuoteModalOpen: (v: boolean) => void;
-  handleCopyLink: () => void;
-  whatsAppLink: string;
-  primaryColor: string;
-  secondaryColor: string;
-  buttonColor: string;
-  cardBgColor?: string;
-  radiusClass: string;
-}
 
 export function StudioHighlightsCard({
   profile,

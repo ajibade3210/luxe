@@ -4,8 +4,6 @@ import { CreateLeadInputSchema } from "@/lib/schemas";
 import type { CreateLeadInput, Customer, Lead, LeadStatus } from "@/types";
 import { createCustomer } from "./customer.service";
 
-export type { CreateLeadInput };
-
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
 let memoryLeads: Lead[] = [...defaultLeads];
@@ -135,7 +133,7 @@ export async function convertLeadToCustomer(
     phone: targetLead.phone,
     serviceName,
     service: targetLead.service || "Bespoke Styling",
-    amount: targetLead.budget || 25000,
+    amount: targetLead.budget || APP_CONFIG.defaultLeadBudget,
     status: "pending",
   });
 
@@ -156,11 +154,11 @@ export function createWhatsAppConsultationUrl(params: {
   budget?: number | string;
   message?: string;
 }): string {
-  const defaultPhone = APP_CONFIG.defaultStudioPhone;
+  const defaultPhone = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
   const appName = APP_CONFIG.name;
 
   const rawPhone = (params.studioPhone || defaultPhone).replace(/[^0-9]/g, "");
-  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
+  const targetPhone = rawPhone.length >= 7 ? rawPhone : defaultPhone;
 
   const budgetDisplay = params.budget
     ? `₦${Number(params.budget).toLocaleString()}`

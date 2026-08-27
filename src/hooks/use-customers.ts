@@ -10,13 +10,11 @@ import {
   exportCustomersCSV,
   getCustomers,
   getInvoices,
-  type Invoice,
-  type NewCustomerInput,
   resendInvoice,
   toggleCustomerActiveStatus,
   updateCustomerServiceStatus,
 } from "@/lib/api";
-import type { Customer, ServiceStatus } from "@/types";
+import type { Customer, Invoice, NewCustomerInput, ServiceStatus } from "@/types";
 
 export const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",

@@ -1,27 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import type { BusinessProfile, ServiceItem } from "@/types";
+import type { StudioServicesSectionProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
-
-interface ServicesSectionProps {
-  profile: BusinessProfile;
-  setQuoteModalOpen: (v: boolean) => void;
-  setQuoteForm: React.Dispatch<
-    React.SetStateAction<{
-      name: string;
-      email: string;
-      phone: string;
-      service: string;
-      eventDate: string;
-      budget: string;
-      message: string;
-    }>
-  >;
-  primaryColor: string;
-  secondaryColor: string;
-  buttonColor: string;
-  textColor?: string;
-  radiusClass: string;
-}
 
 export function StudioServicesSection({
   profile,
@@ -32,8 +11,8 @@ export function StudioServicesSection({
   buttonColor: _buttonColor,
   textColor,
   radiusClass: _radiusClass,
-}: ServicesSectionProps) {
-  const services = (profile.services as ServiceItem[]) || [];
+}: StudioServicesSectionProps) {
+  const services = profile.services || [];
 
   return (
     <section id="services" className="scroll-mt-24">

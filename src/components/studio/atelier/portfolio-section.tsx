@@ -1,16 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import type { PortfolioProject } from "@/types";
-
-interface StudioPortfolioSectionProps {
-  portfolio: PortfolioProject[];
-  setSelectedProject: (p: PortfolioProject | null) => void;
-  setQuoteModalOpen: (v: boolean) => void;
-  primaryColor: string;
-  buttonColor: string;
-  textColor?: string;
-  radiusClass: string;
-}
+import type { StudioPortfolioSectionProps } from "@/types";
 
 export function StudioPortfolioSection({
   portfolio,

@@ -4,19 +4,10 @@
  * Every action includes a 1-line swap for real REST/GraphQL backend APIs.
  */
 
-import { CUSTOM_EVENTS } from "@/constants";
+import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
 import { InvoiceInputSchema } from "@/lib/schemas";
-import type {
-  CurrencyCode,
-  Invoice,
-  InvoiceInput,
-  InvoiceItem,
-  InvoiceStatus,
-  PaymentTerms,
-} from "@/types";
+import type { Invoice, InvoiceInput, InvoiceStatus } from "@/types";
 import { CURRENCY_SYMBOLS } from "@/utils";
-
-export type { CurrencyCode, Invoice, InvoiceInput, InvoiceItem, InvoiceStatus, PaymentTerms };
 
 const INITIAL_INVOICES: Invoice[] = [
   {
@@ -523,12 +514,12 @@ export function createWhatsAppInvoiceUrl(
   studioPhone?: string,
   studioName = "Élan Atelier"
 ): string {
-  const defaultPhone = "+2348055966944";
+  const defaultPhone = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
   const rawPhone = (invoice.customerId || studioPhone || defaultPhone).replace(/[^0-9]/g, "");
-  const targetPhone = rawPhone.length >= 7 ? rawPhone : "2348055966944";
+  const targetPhone = rawPhone.length >= 7 ? rawPhone : defaultPhone;
   const sym = CURRENCY_SYMBOLS[invoice.currency || "NGN"] || "₦";
 
-  const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/invoices/${invoice.invoiceNumber}`;
+  const publicUrl = `${typeof window !== "undefined" ? window.location.origin : APP_CONFIG.baseUrl}/invoices/${invoice.invoiceNumber}`;
 
   const message = `✨ *Invoice ${invoice.invoiceNumber} — ${studioName}*
 ━━━━━━━━━━━━━━━━━━━━━

@@ -2,16 +2,17 @@
 
 import { Download } from "lucide-react";
 import { useState } from "react";
+import { APP_CONFIG } from "@/constants";
 import { useLeads } from "@/hooks/use-leads";
-import { getInvoices, type Invoice } from "@/lib/api";
-import type { Customer, Lead } from "@/types";
+import { getInvoices } from "@/lib/api";
+import type { Customer, Invoice, Lead, LeadsPageProps } from "@/types";
 import { Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { InvoiceModal } from "./invoices/invoice-modal";
 import { LeadDetailDrawer } from "./leads/lead-detail-drawer";
 import { LeadMessageModal } from "./leads/lead-message-modal";
 import { LeadTable } from "./leads/lead-table";
 
-export function LeadsPage({ onToast }: { onToast?: (s: string) => void }) {
+export function LeadsPage({ onToast }: LeadsPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
 
@@ -53,14 +54,14 @@ export function LeadsPage({ onToast }: { onToast?: (s: string) => void }) {
       email: lead.email,
       phone: lead.phone || "",
       company: "",
-      totalRevenue: lead.budget || 25000,
+      totalRevenue: lead.budget || APP_CONFIG.defaultLeadBudget,
       services: [
         {
           id: `svc-${Date.now()}`,
           customerId: lead.id,
           name: lead.service ? `${lead.service} Production` : "Bespoke Service",
           service: lead.service || "Bespoke Styling",
-          amount: lead.budget || 25000,
+          amount: lead.budget || APP_CONFIG.defaultLeadBudget,
           status: "pending",
           createdAt: new Date().toISOString(),
         },

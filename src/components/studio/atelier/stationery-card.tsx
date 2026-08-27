@@ -1,26 +1,7 @@
 import { Check, RotateCw } from "lucide-react";
 import Image from "next/image";
-import type { BusinessProfile } from "@/types";
+import type { StationeryCardProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
-
-interface StationeryCardProps {
-  profile: BusinessProfile;
-  slug?: string;
-  isFlipped: boolean;
-  setIsFlipped: (v: boolean) => void;
-  setQuoteModalOpen?: (v: boolean) => void;
-  handleCopyLink?: () => void;
-  primaryColor: string;
-  secondaryColor: string;
-  buttonColor?: string;
-  textColor?: string;
-  cardBgColor?: string;
-  monogram: string;
-  averageRating?: string | number;
-  totalReviews?: number;
-  whatsAppLink?: string;
-  radiusClass?: string;
-}
 
 export function StationeryCard({
   profile,

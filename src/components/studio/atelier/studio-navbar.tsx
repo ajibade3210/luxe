@@ -1,25 +1,6 @@
 import { Menu, Share2, X } from "lucide-react";
-import type { BusinessProfile } from "@/types";
+import type { StudioNavbarProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
-
-interface StudioNavbarProps {
-  profile: BusinessProfile;
-  slug: string;
-  isFromSettings: boolean;
-  isScrolled: boolean;
-  activeSection: string;
-  mobileMenuOpen: boolean;
-  setMobileMenuOpen: (v: boolean) => void;
-  setQuoteModalOpen: (v: boolean) => void;
-  handleCopyLink: () => void;
-  primaryColor: string;
-  secondaryColor: string;
-  buttonColor: string;
-  textColor: string;
-  pageBgColor?: string;
-  monogram: string;
-  radiusClass: string;
-}
 
 export function StudioNavbar({
   profile,
@@ -40,6 +21,13 @@ export function StudioNavbar({
   radiusClass,
 }: StudioNavbarProps) {
   const isDarkPage = isDarkColor(pageBgColor);
+  const hasSocials = profile.socialChannels?.some(c => c.connected);
+  const hasPortfolio =
+    profile.showPortfolio !== false && Boolean(profile.portfolio && profile.portfolio.length > 0);
+  const hasServices =
+    profile.showServices !== false && Boolean(profile.services && profile.services.length > 0);
+  const hasReviews =
+    profile.showReviews !== false && Boolean(profile.reviews && profile.reviews.length > 0);
 
   return (
     <>
@@ -87,44 +75,46 @@ export function StudioNavbar({
         </div>
       )}
 
-      {/* Navigation Header */}
+      {/* Main Sticky Navbar */}
       <header
+        style={{
+          backgroundColor: isScrolled
+            ? isDarkPage
+              ? "rgba(10, 15, 29, 0.92)"
+              : "rgba(250, 248, 245, 0.92)"
+            : "transparent",
+        }}
         className={`sticky top-0 z-40 transition-all duration-300 ${
           isScrolled
             ? isDarkPage
-              ? "bg-[#080D1A]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]"
-              : "bg-white/90 backdrop-blur-md shadow-[0_4px_24px_rgba(40,30,20,0.06)] border-b border-[#ece7de] py-3"
-            : "bg-transparent py-5"
+              ? "backdrop-blur-md shadow-lg border-b border-white/10"
+              : "backdrop-blur-md shadow-xs border-b border-[#e8dfd3]"
+            : "border-b border-transparent"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 flex items-center justify-between">
-          {/* Brand Logo */}
-          <a
-            href={`/${profile.slug || slug}`}
-            className="group flex items-center gap-3 text-decoration-none"
-          >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105 overflow-hidden shadow-2xs shrink-0">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <a href="#" className="flex items-center gap-3 group">
+            <div
+              style={{
+                backgroundColor: secondaryColor,
+                color: primaryColor,
+                borderColor: primaryColor,
+              }}
+              className="w-10 h-10 rounded-full border flex items-center justify-center font-serif text-lg font-normal transition-transform group-hover:scale-105 shadow-2xs overflow-hidden shrink-0"
+            >
               {profile.logoUrl ? (
                 <img
                   src={profile.logoUrl}
                   alt={profile.businessName}
-                  className="w-full h-full rounded-full object-cover"
+                  className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <div
-                  style={{
-                    backgroundColor: secondaryColor,
-                    color: primaryColor,
-                  }}
-                  className="w-full h-full rounded-full border flex items-center justify-center font-serif"
-                >
-                  {monogram}
-                </div>
+                monogram
               )}
             </div>
             <span
-              className="font-serif text-xl sm:text-2xl tracking-tight font-normal"
-              style={{ color: isDarkPage && isDarkColor(textColor) ? "#F8FAFC" : textColor }}
+              style={{ color: textColor }}
+              className="font-serif text-xl font-medium tracking-tight group-hover:opacity-80 transition-opacity"
             >
               {profile.businessName}
             </span>
@@ -136,7 +126,7 @@ export function StudioNavbar({
               isDarkPage ? "text-white/80" : "text-[#68625c]"
             }`}
           >
-            {profile.socialChannels?.some(c => c.connected) && (
+            {hasSocials && (
               <a
                 href="#social"
                 style={{
@@ -148,36 +138,50 @@ export function StudioNavbar({
                 Socials
               </a>
             )}
-            <a
-              href="#portfolio"
-              style={{
-                color:
-                  activeSection === "portfolio" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
-              }}
-              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
-            >
-              Portfolio
-            </a>
-            <a
-              href="#services"
-              style={{
-                color:
-                  activeSection === "services" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
-              }}
-              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
-            >
-              Services
-            </a>
-            <a
-              href="#reviews"
-              style={{
-                color:
-                  activeSection === "reviews" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
-              }}
-              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
-            >
-              Reviews
-            </a>
+            {hasPortfolio && (
+              <a
+                href="#portfolio"
+                style={{
+                  color:
+                    activeSection === "portfolio"
+                      ? primaryColor
+                      : isDarkPage
+                        ? "#F8FAFC"
+                        : undefined,
+                }}
+                className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
+              >
+                Portfolio
+              </a>
+            )}
+            {hasServices && (
+              <a
+                href="#services"
+                style={{
+                  color:
+                    activeSection === "services"
+                      ? primaryColor
+                      : isDarkPage
+                        ? "#F8FAFC"
+                        : undefined,
+                }}
+                className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
+              >
+                Services
+              </a>
+            )}
+            {hasReviews && (
+              <a
+                href="#reviews"
+                style={{
+                  color:
+                    activeSection === "reviews" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
+                }}
+                className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
+              >
+                Reviews
+              </a>
+            )}
           </nav>
 
           {/* Primary CTA */}
@@ -219,7 +223,7 @@ export function StudioNavbar({
             <nav
               className={`flex flex-col gap-3.5 text-sm font-medium ${isDarkPage ? "text-white/80" : "text-[#68625c]"}`}
             >
-              {profile.socialChannels?.some(c => c.connected) && (
+              {hasSocials && (
                 <a
                   href="#social"
                   onClick={() => setMobileMenuOpen(false)}
@@ -228,27 +232,33 @@ export function StudioNavbar({
                   Social Networks
                 </a>
               )}
-              <a
-                href="#portfolio"
-                onClick={() => setMobileMenuOpen(false)}
-                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
-              >
-                Portfolio
-              </a>
-              <a
-                href="#services"
-                onClick={() => setMobileMenuOpen(false)}
-                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
-              >
-                Services
-              </a>
-              <a
-                href="#reviews"
-                onClick={() => setMobileMenuOpen(false)}
-                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
-              >
-                Reviews
-              </a>
+              {hasPortfolio && (
+                <a
+                  href="#portfolio"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
+                >
+                  Portfolio
+                </a>
+              )}
+              {hasServices && (
+                <a
+                  href="#services"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
+                >
+                  Services
+                </a>
+              )}
+              {hasReviews && (
+                <a
+                  href="#reviews"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
+                >
+                  Reviews
+                </a>
+              )}
             </nav>
             <button
               type="button"

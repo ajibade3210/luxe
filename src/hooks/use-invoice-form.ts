@@ -5,17 +5,20 @@ import {
   createWhatsAppInvoiceUrl,
   deleteInvoice,
   downloadInvoicePdf,
-  type Invoice,
-  type InvoiceInput,
-  type InvoiceItem,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
-  type PaymentTerms,
   resendInvoice,
   saveInvoiceDraft,
   sendInvoice,
 } from "@/lib/api";
-import type { CurrencyCode, Customer } from "@/types";
+import type {
+  CurrencyCode,
+  Customer,
+  Invoice,
+  InvoiceInput,
+  InvoiceItem,
+  PaymentTerms,
+} from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
 export const PAYMENT_TERMS_OPTIONS: PaymentTerms[] = [

@@ -17,14 +17,7 @@ import {
   createWhatsAppDirectUrl,
   sendBroadcast,
 } from "@/services/api/broadcast.service";
-import type { BroadcastChannel, Customer } from "@/types";
-
-interface CustomerBroadcastModalProps {
-  isOpen: boolean;
-  selectedCustomers: Customer[];
-  onClose: () => void;
-  onToast?: (message: string) => void;
-}
+import type { BroadcastChannel, CustomerBroadcastModalProps } from "@/types";
 
 export function CustomerBroadcastModal({
   isOpen,

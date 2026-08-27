@@ -1,28 +1,8 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import type { Invoice, InvoiceItem } from "@/lib/api";
-import type { CurrencyCode, PaymentTerms } from "@/types";
+import type { InvoicePreviewProps } from "@/types";
 import { formatMoney } from "@/utils";
-
-interface InvoicePreviewProps {
-  existingInvoice?: Invoice;
-  customerName: string;
-  billingAddress: string;
-  issueDate: string;
-  dueDate: string;
-  paymentTerms: PaymentTerms;
-  currency: CurrencyCode;
-  items: InvoiceItem[];
-  subtotal: number;
-  discount: number;
-  taxRate: number;
-  taxAmount: number;
-  total: number;
-  notes: string;
-  copiedLink: boolean;
-  onCopyLink: () => void;
-}
 
 export function InvoicePreview({
   existingInvoice,

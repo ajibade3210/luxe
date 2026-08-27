@@ -1,17 +1,8 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
-import type { InvoiceItem } from "@/lib/api";
-import type { CurrencyCode } from "@/types";
+import type { InvoiceItemsTableProps } from "@/types";
 import { formatMoney } from "@/utils";
-
-interface InvoiceItemsTableProps {
-  items: InvoiceItem[];
-  currency: CurrencyCode;
-  onItemChange: (id: string, field: keyof InvoiceItem, value: string | number) => void;
-  onAddItem: () => void;
-  onRemoveItem: (id: string) => void;
-}
 
 export function InvoiceItemsTable({
   items,

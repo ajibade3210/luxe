@@ -1,3 +1,5 @@
+import type { Invoice } from "./invoice";
+
 // Customer and service tracking types
 export type ServiceStatus = "active" | "completed" | "pending" | "cancelled";
 
@@ -62,4 +64,88 @@ export interface ImportCustomerRecord {
   phone?: string;
   email: string;
   notes?: string;
+}
+
+export interface CustomerTableProps {
+  items: Customer[];
+  paginatedItems: Customer[];
+  searchQuery: string;
+  onSearch: (query: string) => void;
+  onSelectCustomer: (id: string) => void;
+  selectedCustomerIds: string[];
+  onToggleSelect: (id: string) => void;
+  onSelectAllActive: () => void;
+  onClearSelection: () => void;
+  onOpenBroadcast: () => void;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  startIndex: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+}
+
+export interface CustomerAddModalProps {
+  isOpen: boolean;
+  isSubmitting: boolean;
+  onClose: () => void;
+  onSubmit: (data: NewCustomerInput) => Promise<boolean>;
+}
+
+export interface CustomerServiceModalProps {
+  isOpen: boolean;
+  customer: Customer | null;
+  onClose: () => void;
+  onSubmit: (
+    customerId: string,
+    customerName: string,
+    data: { name: string; service: string; amount: number; status: ServiceStatus }
+  ) => Promise<boolean>;
+}
+
+export interface CustomerMessageModalProps {
+  isOpen: boolean;
+  customer: Customer | null;
+  onClose: () => void;
+  onToast?: (message: string) => void;
+}
+
+export interface CustomerDetailDrawerProps {
+  customer: Customer | null;
+  customerInvoices: Invoice[];
+  onClose: () => void;
+  onToggleStatus: (customerId: string, isActive: boolean) => void;
+  onOpenMessageModal: (customer: Customer) => void;
+  onOpenInvoiceModal: (customer: Customer, invoice?: Invoice) => void;
+  onOpenAddServiceModal: () => void;
+  onConfirmResendInvoice: (invoice: Invoice) => void;
+  onDeleteDraftInvoice: (invoiceId: string) => void;
+  onDeleteService: (customerId: string, serviceId: string, serviceName: string) => void;
+  onUpdateServiceStatus: (
+    customerId: string,
+    serviceId: string,
+    status: ServiceStatus,
+    serviceName: string,
+    statusLabel: string
+  ) => void;
+}
+
+export interface CustomerResendInvoiceModalProps {
+  invoice: Invoice | null;
+  onClose: () => void;
+  onConfirm: (invoiceId: string) => Promise<boolean>;
+}
+
+export interface CustomerImportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onToast: (msg: string) => void;
+  onImportSuccess?: () => void;
+}
+
+export interface CustomerBroadcastModalProps {
+  isOpen: boolean;
+  selectedCustomers: Customer[];
+  onClose: () => void;
+  onToast?: (message: string) => void;
 }

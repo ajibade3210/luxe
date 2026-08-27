@@ -2,19 +2,9 @@
 
 import { Check, Loader2, X } from "lucide-react";
 import { useState } from "react";
+import { APP_CONFIG } from "@/constants";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
-import type { Customer, ServiceStatus } from "@/types";
-
-interface CustomerServiceModalProps {
-  isOpen: boolean;
-  customer: Customer | null;
-  onClose: () => void;
-  onSubmit: (
-    customerId: string,
-    customerName: string,
-    data: { name: string; service: string; amount: number; status: ServiceStatus }
-  ) => Promise<boolean>;
-}
+import type { CustomerServiceModalProps, ServiceStatus } from "@/types";
 
 export function CustomerServiceModal({
   isOpen,
@@ -26,7 +16,7 @@ export function CustomerServiceModal({
   const [formData, setFormData] = useState({
     name: "",
     categories: [AVAILABLE_SERVICES[0] as string],
-    amount: 35000,
+    amount: APP_CONFIG.defaultServiceAmount as number,
     status: "pending" as ServiceStatus,
   });
 
@@ -57,7 +47,7 @@ export function CustomerServiceModal({
         setFormData({
           name: "",
           categories: [AVAILABLE_SERVICES[0] as string],
-          amount: 35000,
+          amount: APP_CONFIG.defaultServiceAmount,
           status: "pending",
         });
         onClose();

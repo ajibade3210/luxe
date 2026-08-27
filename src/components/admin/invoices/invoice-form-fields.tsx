@@ -1,39 +1,9 @@
 "use client";
 
 import { PAYMENT_TERMS_OPTIONS } from "@/hooks/use-invoice-form";
-import type { CurrencyCode, Customer, InvoiceItem, PaymentTerms } from "@/types";
+import type { CurrencyCode, InvoiceFormFieldsProps, PaymentTerms } from "@/types";
 import { InvoiceItemsTable } from "./invoice-items-table";
 import { InvoiceSummary } from "./invoice-summary";
-
-interface InvoiceFormFieldsProps {
-  customerId: string;
-  customerName: string;
-  customerEmail: string;
-  billingAddress: string;
-  issueDate: string;
-  dueDate: string;
-  paymentTerms: PaymentTerms;
-  currency: CurrencyCode;
-  items: InvoiceItem[];
-  discount: number;
-  taxRate: number;
-  total: number;
-  notes: string;
-  allCustomers: Customer[];
-  setCustomerName: (v: string) => void;
-  setBillingAddress: (v: string) => void;
-  setIssueDate: (v: string) => void;
-  setDueDate: (v: string) => void;
-  setPaymentTerms: (v: PaymentTerms) => void;
-  setCurrency: (v: CurrencyCode) => void;
-  setDiscount: (v: number) => void;
-  setTaxRate: (v: number) => void;
-  setNotes: (v: string) => void;
-  handleCustomerChange: (id: string) => void;
-  handleItemChange: (id: string, field: keyof InvoiceItem, val: string | number) => void;
-  handleAddItem: () => void;
-  handleRemoveItem: (id: string) => void;
-}
 
 export function InvoiceFormFields({
   customerId,

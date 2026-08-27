@@ -1,14 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
-import type { BusinessProfile } from "@/types";
+import type { StudioFooterProps } from "@/types";
 
 const HOME_ROUTE = "/";
-
-interface StudioFooterProps {
-  profile: BusinessProfile;
-  primaryColor: string;
-  secondaryColor: string;
-  monogram: string;
-}
 
 export function StudioFooter({
   profile,
@@ -16,6 +10,14 @@ export function StudioFooter({
   secondaryColor,
   monogram,
 }: StudioFooterProps) {
+  const hasSocials = profile.socialChannels?.some(c => c.connected);
+  const hasPortfolio =
+    profile.showPortfolio !== false && Boolean(profile.portfolio && profile.portfolio.length > 0);
+  const hasServices =
+    profile.showServices !== false && Boolean(profile.services && profile.services.length > 0);
+  const hasReviews =
+    profile.showReviews !== false && Boolean(profile.reviews && profile.reviews.length > 0);
+
   return (
     <footer className="bg-[#faf8f5] border-t border-[#e8dfd3] mt-24 py-14 text-xs text-[#78716c]">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 space-y-8">
@@ -30,9 +32,11 @@ export function StudioFooter({
               className="w-8 h-8 rounded-full border flex items-center justify-center font-serif text-base overflow-hidden shadow-2xs shrink-0"
             >
               {profile.logoUrl ? (
-                <img
+                <Image
                   src={profile.logoUrl}
                   alt={profile.businessName}
+                  width={32}
+                  height={32}
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
@@ -50,18 +54,26 @@ export function StudioFooter({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-[#635c55]">
-            <a href="#social" className="hover:text-[#b84c24] transition-colors">
-              Socials
-            </a>
-            <a href="#portfolio" className="hover:text-[#b84c24] transition-colors">
-              Portfolio
-            </a>
-            <a href="#services" className="hover:text-[#b84c24] transition-colors">
-              Services
-            </a>
-            <a href="#reviews" className="hover:text-[#b84c24] transition-colors">
-              Reviews
-            </a>
+            {hasSocials && (
+              <a href="#social" className="hover:text-[#b84c24] transition-colors">
+                Socials
+              </a>
+            )}
+            {hasPortfolio && (
+              <a href="#portfolio" className="hover:text-[#b84c24] transition-colors">
+                Portfolio
+              </a>
+            )}
+            {hasServices && (
+              <a href="#services" className="hover:text-[#b84c24] transition-colors">
+                Services
+              </a>
+            )}
+            {hasReviews && (
+              <a href="#reviews" className="hover:text-[#b84c24] transition-colors">
+                Reviews
+              </a>
+            )}
             <a href="/login" className="hover:text-[#b84c24] transition-colors">
               Studio Login
             </a>

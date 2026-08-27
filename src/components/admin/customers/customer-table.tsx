@@ -1,26 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { Customer } from "@/types";
-
-interface CustomerTableProps {
-  items: Customer[];
-  paginatedItems: Customer[];
-  searchQuery: string;
-  onSearch: (query: string) => void;
-  onSelectCustomer: (id: string) => void;
-  selectedCustomerIds: string[];
-  onToggleSelect: (id: string) => void;
-  onSelectAllActive: () => void;
-  onClearSelection: () => void;
-  onOpenBroadcast: () => void;
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-  startIndex: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
-}
+import type { CustomerTableProps } from "@/types";
 
 export function CustomerTable({
   items,

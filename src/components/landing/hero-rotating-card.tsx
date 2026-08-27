@@ -3,12 +3,7 @@
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/types";
-
-interface HeroRotatingCardProps {
-  organizations?: OrganizationPreview[];
-  intervalMs?: number;
-}
+import type { HeroRotatingCardProps } from "@/types";
 
 export function HeroRotatingCard({
   organizations = featuredOrganizations,

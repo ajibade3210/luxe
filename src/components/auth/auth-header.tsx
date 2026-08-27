@@ -1,12 +1,6 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-
-interface AuthHeaderProps {
-  rightAction?: ReactNode;
-  mode?: "login" | "signup";
-  claimSlug?: string;
-}
+import type { AuthHeaderProps } from "@/types";
 
 export function AuthHeader({ rightAction, mode, claimSlug }: AuthHeaderProps) {
   return (

@@ -1,21 +1,10 @@
 "use client";
 
 import { useInvoiceForm } from "@/hooks/use-invoice-form";
-import type { Invoice } from "@/lib/api";
-import type { Customer } from "@/types";
+import type { InvoiceModalProps } from "@/types";
 import { InvoiceFormFields } from "./invoice-form-fields";
 import { InvoiceModalHeader } from "./invoice-modal-header";
 import { InvoicePreview } from "./invoice-preview";
-
-interface InvoiceModalProps {
-  initialCustomer?: Customer;
-  existingInvoice?: Invoice;
-  allCustomers?: Customer[];
-  isOpen: boolean;
-  onClose: () => void;
-  onToast: (msg: string) => void;
-  onInvoiceSaved?: (invoice: Invoice) => void;
-}
 
 export function InvoiceModal({
   initialCustomer,

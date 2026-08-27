@@ -1,14 +1,8 @@
 "use client";
 
 import { RefreshCw, X } from "lucide-react";
-import type { Invoice } from "@/lib/api";
+import type { CustomerResendInvoiceModalProps } from "@/types";
 import { formatMoney } from "@/utils";
-
-interface CustomerResendInvoiceModalProps {
-  invoice: Invoice | null;
-  onClose: () => void;
-  onConfirm: (invoiceId: string) => Promise<boolean>;
-}
 
 export function CustomerResendInvoiceModal({
   invoice,

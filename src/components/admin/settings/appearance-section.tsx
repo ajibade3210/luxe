@@ -1,12 +1,5 @@
-import type { ButtonRadiusType, ColorScheme } from "@/types";
+import type { AppearanceSectionProps, ButtonRadiusType, ColorScheme, ThemePreset } from "@/types";
 import { Card } from "./card";
-
-interface AppearanceSectionProps {
-  colors: ColorScheme;
-  setColors: (c: ColorScheme) => void;
-  radius: ButtonRadiusType;
-  setRadius: (r: ButtonRadiusType) => void;
-}
 
 const COLOR_FIELDS = [
   { label: "Primary Brand", key: "primary", defaultHex: "#000000" },
@@ -16,11 +9,6 @@ const COLOR_FIELDS = [
   { label: "Card Surface", key: "cardBackground", defaultHex: "#FAF6F0" },
   { label: "Headings & Text", key: "text", defaultHex: "#191C1D" },
 ] as const;
-
-interface ThemePreset {
-  name: string;
-  colors: ColorScheme;
-}
 
 const THEME_PRESETS: ThemePreset[] = [
   {

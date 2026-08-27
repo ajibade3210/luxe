@@ -10,32 +10,15 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import type { PortfolioProject } from "@/types";
+import Image from "next/image";
+import type { PortfolioSectionProps } from "@/types";
 import { Card } from "./card";
-
-interface PortfolioSectionProps {
-  portfolio: PortfolioProject[];
-  showAddProjectModal: boolean;
-  setShowAddProjectModal: (v: boolean) => void;
-  showManageGalleryModal: boolean;
-  setShowManageGalleryModal: (v: boolean) => void;
-  newProject: Partial<PortfolioProject>;
-  setNewProject: React.Dispatch<React.SetStateAction<Partial<PortfolioProject>>>;
-  isUploadingProjectImage: boolean;
-  handleProjectImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleAddProject: (e: React.FormEvent) => void;
-  removeProject: (id: string) => void;
-  moveProject: (index: number, direction: "up" | "down") => void;
-  draggedProjectIndex: number | null;
-  dragOverProjectIndex: number | null;
-  handleDragStart: (index: number) => void;
-  handleDragEnter: (index: number) => void;
-  handleDragEnd: () => void;
-  onToast: (msg: string) => void;
-}
+import { Toggle } from "./toggle";
 
 export function PortfolioSection({
   portfolio,
+  showPortfolio,
+  setShowPortfolio,
   showAddProjectModal,
   setShowAddProjectModal,
   showManageGalleryModal,
@@ -59,8 +42,23 @@ export function PortfolioSection({
       <Card
         title="Portfolio showcase"
         description="High-resolution visuals that highlight your aesthetic standard and client transformations."
+        action={
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6b7280]">Show on page</span>
+            <Toggle
+              on={showPortfolio}
+              onClick={() => setShowPortfolio(!showPortfolio)}
+              ariaLabel="Toggle portfolio section visibility"
+            />
+          </div>
+        }
       >
         <div className="space-y-6">
+          {!showPortfolio && (
+            <div className="bg-[#fef3c7] text-[#92400e] text-xs px-3 py-2 rounded-lg border border-[#fde68a]">
+              This section is currently hidden on your public studio page.
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-3.5">
             <button
               type="button"
@@ -86,11 +84,15 @@ export function PortfolioSection({
                 className="border border-[#e5e7eb] rounded-xl p-3.5 bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
               >
                 <div className="flex items-center gap-3 overflow-hidden min-w-0">
-                  <img
-                    src={proj.image}
-                    alt={proj.title}
-                    className="w-11 h-11 rounded-lg object-cover shrink-0 border border-[#e5e7eb]"
-                  />
+                  <div className="relative w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-[#e5e7eb]">
+                    <Image
+                      src={proj.image}
+                      alt={proj.title}
+                      fill
+                      sizes="44px"
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="truncate min-w-0">
                     <strong className="text-xs font-bold block text-[#111827] truncate">
                       {proj.title}
@@ -174,10 +176,12 @@ export function PortfolioSection({
                 {newProject.image ? (
                   <div className="space-y-2">
                     <div className="relative rounded-lg overflow-hidden border border-[#e5e7eb] bg-[#f3f4f5] group aspect-[16/9] max-h-48 w-full flex items-center justify-center">
-                      <img
+                      <Image
                         src={newProject.image}
                         alt="Project Cover Preview"
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        className="object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <label className="cursor-pointer bg-white text-[#191c1d] hover:bg-[#f3f4f5] px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1.5 shadow-sm transition-colors">
@@ -355,10 +359,12 @@ export function PortfolioSection({
                         #{idx + 1}
                       </div>
                       <div className="relative w-14 h-14 rounded-md overflow-hidden bg-[#f3f4f5] border border-[#e5e7eb] shrink-0">
-                        <img
+                        <Image
                           src={proj.image}
                           alt={proj.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="56px"
+                          className="object-cover"
                         />
                         {idx === 0 && (
                           <span className="absolute bottom-0 inset-x-0 bg-[#0058be] text-white text-[8px] font-bold uppercase tracking-wider text-center py-0.5">

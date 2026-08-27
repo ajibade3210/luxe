@@ -1,24 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { APP_CONFIG } from "@/constants";
+import type { BrandLogoProps } from "@/types";
 import { cn } from "@/utils";
 
-interface BrandLogoProps {
-  monogram?: string;
-  name?: string;
-  subtitle?: string;
-  size?: "sm" | "md" | "lg";
-  theme?: "dark" | "light" | "custom";
-  href?: string;
-  className?: string;
-  monogramClassName?: string;
-  textClassName?: string;
-}
-
 export function BrandLogo({
+  monogram: _monogram = "Ś",
   name = APP_CONFIG.name,
   subtitle,
   size = "md",
+  theme: _theme = "dark",
   href = "/",
   className,
   monogramClassName,
@@ -26,22 +17,25 @@ export function BrandLogo({
 }: BrandLogoProps) {
   const sizeClasses = {
     sm: {
-      box: "w-9 h-9",
+      box: "w-7 h-7 min-w-[28px] min-h-[28px]",
+      imageSize: 28,
       text: "text-base font-bold",
       sub: "text-[10px]",
       gap: "gap-2.5",
     },
     md: {
-      box: "w-12 h-12",
+      box: "w-8 h-8 min-w-[32px] min-h-[32px]",
+      imageSize: 32,
       text: "text-lg font-bold tracking-tight",
       sub: "text-[11px]",
-      gap: "gap-3",
+      gap: "gap-2.5",
     },
     lg: {
-      box: "w-16 h-16",
+      box: "w-10 h-10 min-w-[40px] min-h-[40px]",
+      imageSize: 40,
       text: "text-2xl font-bold tracking-tight",
       sub: "text-xs",
-      gap: "gap-3.5",
+      gap: "gap-3",
     },
   }[size];
 
@@ -55,23 +49,24 @@ export function BrandLogo({
     >
       <div
         className={cn(
-          "flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0",
+          "flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0 rounded-lg shadow-2xs relative bg-[#111827]",
           sizeClasses.box,
           monogramClassName
         )}
       >
         <Image
-          src="/shopwus-logo.png"
+          src="/icon.png"
           alt={`${name} logo`}
-          width={64}
-          height={64}
-          className="w-full h-full object-contain"
+          width={sizeClasses.imageSize}
+          height={sizeClasses.imageSize}
+          className="w-full h-full object-contain rounded-lg"
+          priority
         />
       </div>
       <div className="flex flex-col">
         <span
           className={cn(
-            "text-[#191c1d] group-hover:text-[#855e2e] transition-colors leading-tight",
+            "text-[#191c1d] group-hover:text-[#855e2e] transition-colors leading-tight font-bold tracking-tight",
             sizeClasses.text,
             textClassName
           )}
@@ -94,7 +89,7 @@ export function BrandLogo({
       <Link
         href={href}
         aria-label={`${name} Homepage`}
-        className="text-decoration-none inline-flex"
+        className="text-decoration-none inline-flex items-center"
       >
         {content}
       </Link>

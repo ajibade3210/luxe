@@ -1,14 +1,6 @@
-"use client";
-
 import { Sparkles, X, Zap } from "lucide-react";
 import { useState } from "react";
-
-interface AiPrompt {
-  label: string;
-  icon: string;
-  question: string;
-  answer: string;
-}
+import type { AiPrompt } from "@/types";
 
 const AI_PROMPTS: AiPrompt[] = [
   {

@@ -16,11 +16,7 @@ import { BrandLogo } from "@/components/shared/brand-logo";
 import { CUSTOM_EVENTS } from "@/constants";
 import { isAuthenticated } from "@/lib/api";
 import { featuredOrganizations } from "@/lib/mock-data";
-import type { OrganizationPreview } from "@/types";
-
-interface NotFoundViewProps {
-  slug?: string;
-}
+import type { NotFoundViewProps, OrganizationPreview } from "@/types";
 
 // Simple similarity search for smart recommendation
 function findClosestMatch(query: string, list: OrganizationPreview[]): OrganizationPreview | null {

@@ -1,7 +1,9 @@
 "use client";
 
 import { ExternalLink, Save } from "lucide-react";
+import { APP_CONFIG } from "@/constants";
 import { useSettingsForm } from "@/hooks/use-settings-form";
+import type { EnhancedSettingsPageProps } from "@/types";
 import { useAdminToast } from "./admin-layout";
 import { AppearanceSection } from "./settings/appearance-section";
 import { ChannelsSection } from "./settings/channels-section";
@@ -10,7 +12,7 @@ import { IdentitySection } from "./settings/identity-section";
 import { PortfolioSection } from "./settings/portfolio-section";
 import { ServicesSection } from "./settings/services-section";
 
-export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => void }) {
+export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
 
@@ -31,6 +33,12 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
     setCurrency,
     about,
     setAbout,
+    showServices,
+    setShowServices,
+    showPortfolio,
+    setShowPortfolio,
+    showReviews,
+    setShowReviews,
     services,
     showAddService,
     setShowAddService,
@@ -88,7 +96,6 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
     handleDragEnd,
     handleSyncReviews,
     handleSave,
-    handlePublish,
   } = useSettingsForm({ notify });
 
   return (
@@ -134,6 +141,8 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
         <ChannelsSection
           googleReviewsLink={googleReviewsLink}
           setGoogleReviewsLink={setGoogleReviewsLink}
+          showReviews={showReviews}
+          setShowReviews={setShowReviews}
           isSyncingReviews={isSyncingReviews}
           handleSyncReviews={handleSyncReviews}
           channels={channels}
@@ -144,6 +153,8 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
 
         <ServicesSection
           services={services}
+          showServices={showServices}
+          setShowServices={setShowServices}
           editingServiceId={editingServiceId}
           setEditingServiceId={setEditingServiceId}
           updateService={updateService}
@@ -161,6 +172,8 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
 
         <PortfolioSection
           portfolio={portfolio}
+          showPortfolio={showPortfolio}
+          setShowPortfolio={setShowPortfolio}
           showAddProjectModal={showAddProjectModal}
           setShowAddProjectModal={setShowAddProjectModal}
           showManageGalleryModal={showManageGalleryModal}
@@ -202,7 +215,7 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
       {/* Bottom Action Bar */}
       <div className="pt-6 border-t border-[#e5e7eb] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <p className="text-xs text-[#6b7280]">
-          Changes will be saved as a draft by default until published live.
+          Changes will immediately update your studio profile and public showcase.
         </p>
         <div className="flex items-center gap-3">
           <button
@@ -212,18 +225,18 @@ export function EnhancedSettingsPage({ onToast }: { onToast?: (s: string) => voi
             className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
             <Save size={14} />
-            <span>{saving ? "Saving..." : "Save Draft"}</span>
+            <span>{saving ? "Saving..." : "Save Changes"}</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handlePublish}
-            disabled={saving}
-            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+          <a
+            href={`/${slug || APP_CONFIG.defaultSlug}`}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
           >
             <ExternalLink size={14} />
-            <span>Publish Live</span>
-          </button>
+            <span>View Live Studio</span>
+          </a>
         </div>
       </div>
     </div>

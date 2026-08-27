@@ -8,12 +8,13 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { TrustedBusinesses } from "@/components/landing/trusted-businesses";
 import { WorkflowSection } from "@/components/landing/workflow-section";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { APP_CONFIG } from "@/constants";
 import { useScroll } from "@/hooks";
 import { businessProfile } from "@/lib/mock-data";
 
 export function PublicLandingPage() {
   const isScrolled = useScroll(20);
-  const slug = businessProfile.slug || "elan-events";
+  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
 
   return (
     <main className="public">

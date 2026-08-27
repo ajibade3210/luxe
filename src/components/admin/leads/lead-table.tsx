@@ -1,22 +1,8 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { Lead } from "@/types";
+import type { LeadTableProps } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
-
-interface LeadTableProps {
-  items: Lead[];
-  paginatedItems: Lead[];
-  searchQuery: string;
-  onSearch: (query: string) => void;
-  onSelectLead: (id: string) => void;
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-  startIndex: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
-}
 
 export function LeadTable({
   items,

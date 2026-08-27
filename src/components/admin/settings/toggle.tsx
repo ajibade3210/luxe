@@ -1,8 +1,4 @@
-interface ToggleProps {
-  on: boolean;
-  onClick: () => void;
-  ariaLabel?: string;
-}
+import type { ToggleProps } from "@/types";
 
 export function Toggle({ on, onClick, ariaLabel = "Toggle setting" }: ToggleProps) {
   return (

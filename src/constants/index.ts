@@ -7,6 +7,8 @@ export const APP_CONFIG = {
   name: process.env.NEXT_PUBLIC_APP_NAME || "Shopwus",
   defaultStudioPhone: process.env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE || "+2348055966944",
   defaultSlug: "elan-events",
+  defaultLeadBudget: 25_000,
+  defaultServiceAmount: 35_000,
   siteDomain: process.env.NEXT_PUBLIC_SITE_DOMAIN || "shopwus.com",
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 } as const;
