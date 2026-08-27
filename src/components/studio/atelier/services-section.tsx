@@ -1,5 +1,9 @@
 import { ArrowRight } from "lucide-react";
-import { BUSINESS_TYPE_SERVICE_ACTION, DEFAULT_BUSINESS_TYPE } from "@/constants";
+import {
+  BUSINESS_TYPE_SERVICE_ACTION,
+  BUSINESS_TYPE_SERVICES_SECTION_TITLE,
+  DEFAULT_BUSINESS_TYPE,
+} from "@/constants";
 import type { StudioServicesSectionProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
@@ -19,7 +23,7 @@ export function StudioServicesSection({
     <section id="services" className="scroll-mt-24">
       <div className="mb-8">
         <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
-          Services
+          {BUSINESS_TYPE_SERVICES_SECTION_TITLE[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}
         </h2>
       </div>
 

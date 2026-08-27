@@ -3,6 +3,8 @@
  * Single Source of Truth for storage keys, default configs, and routing rules.
  */
 
+import type { BusinessType } from "@/types";
+
 export const APP_CONFIG = {
   name: process.env.NEXT_PUBLIC_APP_NAME || "Shopwus",
   defaultStudioPhone: process.env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE || "+2348055966944",
@@ -84,7 +86,7 @@ export const BUSINESS_TYPE_CTA_MAP = {
 } as const;
 
 /** Human-readable one-word labels for BusinessType selectors in Settings. */
-export const BUSINESS_TYPE_LABELS: Record<string, string> = {
+export const BUSINESS_TYPE_LABELS: Record<BusinessType, string> = {
   service: "Service",
   sales: "Sales",
   retail: "Retail",
@@ -145,6 +147,22 @@ export const BUSINESS_TYPE_SERVICE_ACTION = {
   sales: "Order",
   retail: "Buy",
   ecommerce: "Order",
+} as const;
+
+/** Section heading and navigation label for the services/products catalog. */
+export const BUSINESS_TYPE_SERVICES_SECTION_TITLE = {
+  service: "Services",
+  sales: "Products",
+  retail: "Products",
+  ecommerce: "Products",
+} as const;
+
+/** Section heading and navigation label for the gallery/portfolio. */
+export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
+  service: "Portfolio",
+  sales: "Lookbook",
+  retail: "Gallery",
+  ecommerce: "Showcase",
 } as const;
 
 export * from "./landing";

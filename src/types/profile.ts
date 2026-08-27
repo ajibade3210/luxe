@@ -264,6 +264,7 @@ export interface StudioPortfolioSectionProps {
   portfolio: PortfolioProject[];
   setSelectedProject: (p: PortfolioProject | null) => void;
   setQuoteModalOpen: (v: boolean) => void;
+  businessType?: BusinessType;
   primaryColor: string;
   buttonColor: string;
   textColor?: string;

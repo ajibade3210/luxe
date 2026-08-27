@@ -1,11 +1,13 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE, DEFAULT_BUSINESS_TYPE } from "@/constants";
 import type { StudioPortfolioSectionProps } from "@/types";
 
 export function StudioPortfolioSection({
   portfolio,
   setSelectedProject,
   setQuoteModalOpen: _setQuoteModalOpen,
+  businessType,
   primaryColor,
   buttonColor: _buttonColor,
   textColor,
@@ -15,7 +17,7 @@ export function StudioPortfolioSection({
     <section id="portfolio" className="scroll-mt-24">
       <div className="mb-8">
         <h2 style={{ color: textColor }} className="font-serif text-2xl sm:text-3xl font-normal">
-          Portfolio
+          {BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE[businessType ?? DEFAULT_BUSINESS_TYPE]}
         </h2>
       </div>
 

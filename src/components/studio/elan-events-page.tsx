@@ -430,6 +430,7 @@ export function ElanEventsPage({
             portfolio={profile.portfolio}
             setSelectedProject={setSelectedProject}
             setQuoteModalOpen={setQuoteModalOpen}
+            businessType={profile.businessType}
             primaryColor={primaryColor}
             buttonColor={buttonColor}
             textColor={textColor}

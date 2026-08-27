@@ -1,5 +1,10 @@
 import { Menu, Share2, X } from "lucide-react";
-import { BUSINESS_TYPE_CTA_MAP, DEFAULT_BUSINESS_TYPE } from "@/constants";
+import {
+  BUSINESS_TYPE_CTA_MAP,
+  BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE,
+  BUSINESS_TYPE_SERVICES_SECTION_TITLE,
+  DEFAULT_BUSINESS_TYPE,
+} from "@/constants";
 import type { StudioNavbarProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
@@ -152,7 +157,11 @@ export function StudioNavbar({
                 }}
                 className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
               >
-                Portfolio
+                {
+                  BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE[
+                    profile.businessType ?? DEFAULT_BUSINESS_TYPE
+                  ]
+                }
               </a>
             )}
             {hasServices && (
@@ -168,7 +177,11 @@ export function StudioNavbar({
                 }}
                 className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
               >
-                Services
+                {
+                  BUSINESS_TYPE_SERVICES_SECTION_TITLE[
+                    profile.businessType ?? DEFAULT_BUSINESS_TYPE
+                  ]
+                }
               </a>
             )}
             {hasReviews && (
@@ -239,7 +252,11 @@ export function StudioNavbar({
                   onClick={() => setMobileMenuOpen(false)}
                   className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
                 >
-                  Portfolio
+                  {
+                    BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE[
+                      profile.businessType ?? DEFAULT_BUSINESS_TYPE
+                    ]
+                  }
                 </a>
               )}
               {hasServices && (
@@ -248,7 +265,11 @@ export function StudioNavbar({
                   onClick={() => setMobileMenuOpen(false)}
                   className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
                 >
-                  Services
+                  {
+                    BUSINESS_TYPE_SERVICES_SECTION_TITLE[
+                      profile.businessType ?? DEFAULT_BUSINESS_TYPE
+                    ]
+                  }
                 </a>
               )}
               {hasReviews && (
