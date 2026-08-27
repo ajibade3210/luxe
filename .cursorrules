@@ -1,6 +1,6 @@
-# SHOPWUS AI AGENT INSTRUCTIONS
+# AI AGENT RULES & ARCHITECTURAL DIRECTIVES
 
-All instructions, coding standards, and architectural conventions defined in `AGENTS.md` apply to all AI interactions in this repository.
+Always adhere strictly to the rules and conventions defined in `AGENTS.md`.
 
 ## MANDATORY: Check When Done — NEVER SKIP THIS
 AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
@@ -11,3 +11,9 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 5. End with a one-line statement confirming whether anything important is missing (e.g. "Nothing important appears to be missing.").
 6. Run formatting and lint checks (`pnpm check`), type checking (`pnpm type-check`), and unit tests (`pnpm test`).
 7. If everything is fine, say so explicitly: "Nothing important appears to be missing."
+
+## CORE ARCHITECTURAL RULES
+- **COMPONENT INTERFACES IN TYPE SECTION:** Never declare inline interfaces in components. Always place them in `src/types/{domain}.ts` and re-export in `src/types/index.ts`.
+- **ZERO ANY POLICY:** `any` is strictly prohibited. Use explicit types or `unknown` narrowing.
+- **SERVICE/REPOSITORY ABSTRACTION:** State and data flows must be abstracted behind `src/services/api/`.
+- **NO UNREQUESTED FEATURES:** Limit implementation strictly to the exact user directive.

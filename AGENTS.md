@@ -20,6 +20,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 
 # CORE RULES
 
+- **DESIGN SYSTEM COMPLIANCE & CONSISTENCY:** Whatever we design must fit and strictly stick to our design system (tokens, components, typography, button variants, and spacing). If any requested change or new element deviates from our design system, you MUST warn the user before implementing.
 - **COMPONENT INTERFACES IN TYPE SECTION:** Check for components with interface declarations and move the interface to the type section (`src/types/{domain}.ts`). No component prop interfaces or hook options should be declared inline in component files.
 - **STRICT ARCHITECTURAL PLACEMENT:** Moving forward, EVERYTHING in the codebase MUST be defined strictly in its appropriate designated section without exception:
   - Types & Models $\rightarrow$ `src/types/{domain}.ts` (exported via `src/types/index.ts`)
