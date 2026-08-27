@@ -17,9 +17,10 @@ import type {
   PortfolioProject,
   ServiceItem,
   SocialChannel,
+  UseSettingsFormOptions,
 } from "@/types";
 
-export function useSettingsForm({ notify }: { notify: (msg: string) => void }) {
+export function useSettingsForm({ notify }: UseSettingsFormOptions) {
   // Main settings state
   const [name, setName] = useState(initialMockProfile.businessName);
   const [slug, setSlug] = useState(initialMockProfile.slug);

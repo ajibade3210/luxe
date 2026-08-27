@@ -79,3 +79,25 @@ export interface EnhancedSettingsPageProps {
 export interface ProfileSettingsPageProps {
   onToast?: (message: string) => void;
 }
+
+export interface IconProps {
+  className?: string;
+}
+
+export interface MetricProps {
+  label: string;
+  value: string;
+  detail?: string;
+}
+
+export interface PageTitleProps {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  children?: ReactNode;
+}
+
+export interface UseSettingsFormOptions {
+  notify: (msg: string) => void;
+}

@@ -11,12 +11,13 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
+import type { AnimatedWorkflowConnectorProps, MobileVerticalConnectorProps } from "@/types";
 
 /**
  * Reusable Animated Connector SVG
  * Draws a dashed baseline circuit path connecting 3 pillar nodes with a smooth traveling pulse highlight.
  */
-export function AnimatedWorkflowConnector({ className = "" }: { className?: string }) {
+export function AnimatedWorkflowConnector({ className = "" }: AnimatedWorkflowConnectorProps) {
   return (
     <div className={`workflow-connector-container ${className}`} aria-hidden="true">
       {/* Desktop Horizontal Connector SVG */}
@@ -83,7 +84,7 @@ export function AnimatedWorkflowConnector({ className = "" }: { className?: stri
 /**
  * Mobile Vertical Connector for Stacked Cards
  */
-function MobileVerticalConnector({ stepNumber }: { stepNumber: number }) {
+function MobileVerticalConnector({ stepNumber }: MobileVerticalConnectorProps) {
   return (
     <div className="mobile-connector-wrapper md:hidden" aria-hidden="true">
       <svg

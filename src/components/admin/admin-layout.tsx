@@ -27,6 +27,8 @@ import type {
   AdminToastContextType,
   Customer,
   Lead,
+  MetricProps,
+  PageTitleProps,
   ToastProps,
 } from "@/types";
 
@@ -62,15 +64,7 @@ export function Toast({ message, onClose }: ToastProps) {
   );
 }
 
-export function Metric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail?: string;
-}) {
+export function Metric({ label, value, detail }: MetricProps) {
   return (
     <div className="metric">
       <span className="eyebrow">{label}</span>
@@ -80,19 +74,7 @@ export function Metric({
   );
 }
 
-export function PageTitle({
-  eyebrow,
-  title,
-  description,
-  action,
-  children,
-}: {
-  eyebrow?: string;
-  title: string;
-  description?: string;
-  action?: React.ReactNode;
-  children?: React.ReactNode;
-}) {
+export function PageTitle({ eyebrow, title, description, action, children }: PageTitleProps) {
   return (
     <div className="page-title">
       <div>

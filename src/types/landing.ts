@@ -80,3 +80,11 @@ export interface LogoRowProps {
 export interface NotFoundViewProps {
   slug?: string;
 }
+
+export interface AnimatedWorkflowConnectorProps {
+  className?: string;
+}
+
+export interface MobileVerticalConnectorProps {
+  stepNumber: number;
+}
