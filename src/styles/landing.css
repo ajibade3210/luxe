@@ -614,6 +614,11 @@ em {
   align-items: stretch;
 }
 
+.spotify-grid.two-plans-grid {
+  grid-template-columns: repeat(2, minmax(0, 380px));
+  justify-content: center;
+}
+
 .spotify-pricing-card {
   position: relative;
   background: #ffffff;

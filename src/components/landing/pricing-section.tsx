@@ -1,6 +1,5 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import { type BillingPeriod, LANDING_PRICING_PLANS, type PricingPlan } from "@/constants";
 
@@ -11,8 +10,8 @@ export function PricingSection() {
     if (plan.isFreeTrial) {
       return {
         priceMain: "Free",
-        periodText: "for 3 months",
-        subtext: "₦0 for 3 months, then ₦1,600 / month",
+        periodText: "for 14 days",
+        subtext: "₦0 for 14 days, then ₦1,600 / month",
       };
     }
 
@@ -41,6 +40,10 @@ export function PricingSection() {
       subtext: `₦${perMonth.toLocaleString()} / mo equivalent · 2 months free`,
     };
   };
+
+  const displayedPlans = LANDING_PRICING_PLANS.filter(
+    plan => billingPeriod === "monthly" || !plan.isFreeTrial
+  );
 
   return (
     <section className="pricing-section" id="pricing" aria-labelledby="pricing-title">
@@ -83,8 +86,10 @@ export function PricingSection() {
         </div>
 
         {/* Spotify-Style Pricing Cards Grid */}
-        <div className="pricing-grid spotify-grid">
-          {LANDING_PRICING_PLANS.map(plan => {
+        <div
+          className={`pricing-grid spotify-grid ${displayedPlans.length === 2 ? "two-plans-grid" : ""}`}
+        >
+          {displayedPlans.map(plan => {
             const priceInfo = getPriceDetails(plan);
 
             return (
@@ -97,7 +102,6 @@ export function PricingSection() {
                   {/* Top Badge */}
                   <div className="spotify-card-badge-row">
                     <span className="spotify-brand-pill">
-                      <Sparkles size={11} />
                       <span>{plan.badge || "Shopwus"}</span>
                     </span>
                   </div>
@@ -129,7 +133,7 @@ export function PricingSection() {
                 {/* Bottom CTA & Footnote */}
                 <div className="card-bottom-actions">
                   <a
-                    href="/signup"
+                    href={`/signup?plan=${plan.id.replace("plan-", "")}&cycle=${billingPeriod}`}
                     className="spotify-pill-cta"
                     style={{
                       backgroundColor: plan.buttonColor,

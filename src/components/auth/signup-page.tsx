@@ -16,11 +16,20 @@ export function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(true);
 
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedCycle, setSelectedCycle] = useState("");
+
   // Read URL query params on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const claim = params.get("claim") || "";
+      const planParam = params.get("plan") || "";
+      const cycleParam = params.get("cycle") || "";
+
+      if (planParam) setSelectedPlan(planParam);
+      if (cycleParam) setSelectedCycle(cycleParam);
+
       if (claim) {
         const clean = claim.toLowerCase().replace(/[^a-z0-9-]/g, "");
         setClaimSlug(clean);
@@ -98,9 +107,19 @@ export function SignupPage() {
                   <span className="font-semibold text-[#6f4c22]">/{claimSlug}</span>
                 </span>
               </div>
+            ) : selectedPlan ? (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-5">
+                <span>
+                  Selected Tier:{" "}
+                  <span className="font-semibold capitalize text-[#6f4c22]">
+                    {selectedPlan === "trial" ? "14-Day Free Trial" : selectedPlan}
+                  </span>
+                  {selectedCycle && selectedPlan !== "trial" ? ` (${selectedCycle})` : ""}
+                </span>
+              </div>
             ) : (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-5">
-                <span>Create Your Atelier</span>
+                <span>Create Your Digital Shop</span>
               </div>
             )}
 
