@@ -1,2 +1,2 @@
 export { BrandLogo } from "./brand-logo";
-export { GoogleIcon } from "./icons";
+export { GoogleIcon, WhatsAppIcon } from "./icons";

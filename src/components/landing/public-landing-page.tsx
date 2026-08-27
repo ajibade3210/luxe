@@ -1,7 +1,9 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { FeaturesSection } from "@/components/landing/features-section";
 import { HeroRotatingCard } from "@/components/landing/hero-rotating-card";
+import { PricingSection } from "@/components/landing/pricing-section";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { TrustedBusinesses } from "@/components/landing/trusted-businesses";
 import { WorkflowSection } from "@/components/landing/workflow-section";
@@ -20,6 +22,7 @@ export function PublicLandingPage() {
           <nav>
             <a href="#features">Features</a>
             <a href="#workflow">How it works</a>
+            <a href="#pricing">Pricing</a>
             <a href={`/${slug}`}>Studio Demo</a>
           </nav>
         </div>
@@ -55,7 +58,9 @@ export function PublicLandingPage() {
       </section>
 
       <TrustedBusinesses />
+      <FeaturesSection />
       <WorkflowSection />
+      <PricingSection />
       <SiteFooter />
     </main>
   );

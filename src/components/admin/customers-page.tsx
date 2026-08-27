@@ -1,12 +1,13 @@
 "use client";
 
-import { Download, MoreHorizontal, Plus, Upload } from "lucide-react";
+import { Download, MessageSquare, MoreHorizontal, Plus, Upload } from "lucide-react";
 import { useState } from "react";
 import { useCustomers } from "@/hooks/use-customers";
 import type { Invoice } from "@/lib/api";
 import type { Customer } from "@/lib/types";
 import { formatMoney, Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { CustomerAddModal } from "./customers/customer-add-modal";
+import { CustomerBroadcastModal } from "./customers/customer-broadcast-modal";
 import { CustomerDetailDrawer } from "./customers/customer-detail-drawer";
 import { CustomerImportModal } from "./customers/customer-import-modal";
 import { CustomerMessageModal } from "./customers/customer-message-modal";
@@ -48,12 +49,51 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
     handleDeleteDraftInvoice,
   } = useCustomers(notify);
 
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
   const [showSendMessageModal, setShowSendMessageModal] = useState(false);
   const [confirmResendInvoice, setConfirmResendInvoice] = useState<Invoice | null>(null);
+
+  // Selection helpers
+  const activeCustomers = items.filter(c => c.isActive);
+
+  const handleToggleSelectCustomer = (id: string) => {
+    setSelectedCustomerIds(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllActiveCustomers = () => {
+    const allActiveSelected =
+      activeCustomers.length > 0 && activeCustomers.every(c => selectedCustomerIds.includes(c.id));
+
+    if (allActiveSelected) {
+      setSelectedCustomerIds([]);
+    } else {
+      setSelectedCustomerIds(activeCustomers.map(c => c.id));
+    }
+  };
+
+  const handleClearCustomerSelection = () => {
+    setSelectedCustomerIds([]);
+  };
+
+  const handleOpenBroadcastModal = () => {
+    if (selectedCustomerIds.length === 0) {
+      // Default to all active customers if none explicitly checked
+      setSelectedCustomerIds(activeCustomers.map(c => c.id));
+    }
+    setShowBroadcastModal(true);
+  };
+
+  // Customers targeted by broadcast
+  const broadcastTargetCustomers = items.filter(
+    c => selectedCustomerIds.includes(c.id) && c.isActive
+  );
 
   // Invoice Modal State
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -74,6 +114,15 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         description="The people behind the remarkable moments."
         action={
           <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
+            >
+              <Plus size={14} />
+              <span>Add Customer</span>
+            </button>
+
             {/* More Actions Menu Button & Dropdown */}
             <div className="relative">
               <button
@@ -93,6 +142,18 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                       type="button"
                       onClick={() => {
                         setShowMoreMenu(false);
+                        handleOpenBroadcastModal();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
+                    >
+                      <MessageSquare size={14} className="text-[#855e2e]" />
+                      <span>Broadcast</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowMoreMenu(false);
                         setShowImportModal(true);
                       }}
                       className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
@@ -100,29 +161,26 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
                       <Upload size={14} className="text-[#855e2e]" />
                       <span>Import</span>
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        handleExport();
+                      }}
+                      disabled={isExporting}
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left disabled:opacity-50"
+                    >
+                      <Download
+                        size={14}
+                        className={`text-[#855e2e] ${isExporting ? "animate-bounce" : ""}`}
+                      />
+                      <span>{isExporting ? "Exporting..." : "Export"}</span>
+                    </button>
                   </div>
                 </>
               )}
             </div>
-
-            <button
-              type="button"
-              onClick={handleExport}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
-            >
-              <Download size={14} className={isExporting ? "animate-bounce" : ""} />
-              <span>{isExporting ? "Exporting..." : "Export"}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
-            >
-              <Plus size={14} />
-              <span>Add Customer</span>
-            </button>
           </div>
         }
       />
@@ -147,6 +205,11 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         searchQuery={searchQuery}
         onSearch={handleSearch}
         onSelectCustomer={setSelectedCustomerId}
+        selectedCustomerIds={selectedCustomerIds}
+        onToggleSelect={handleToggleSelectCustomer}
+        onSelectAllActive={handleSelectAllActiveCustomers}
+        onClearSelection={handleClearCustomerSelection}
+        onOpenBroadcast={handleOpenBroadcastModal}
         currentPage={currentPage}
         totalPages={totalPages}
         pageSize={pageSize}
@@ -174,6 +237,13 @@ export function CustomersPage({ onToast }: { onToast?: (message: string) => void
         isSubmitting={isSubmitting}
         onClose={() => setShowAddModal(false)}
         onSubmit={handleCreateCustomer}
+      />
+
+      <CustomerBroadcastModal
+        isOpen={showBroadcastModal}
+        selectedCustomers={broadcastTargetCustomers}
+        onClose={() => setShowBroadcastModal(false)}
+        onToast={notify}
       />
 
       <CustomerServiceModal

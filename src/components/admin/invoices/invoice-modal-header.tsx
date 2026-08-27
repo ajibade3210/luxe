@@ -7,14 +7,15 @@ import {
   Download,
   FileText,
   Loader2,
-  MessageSquare,
   MoreHorizontal,
   RefreshCw,
   RotateCcw,
   Send,
   Trash2,
 } from "lucide-react";
+
 import { useState } from "react";
+import { WhatsAppIcon } from "@/components/shared";
 import type { Invoice } from "@/lib/types";
 
 interface InvoiceModalHeaderProps {
@@ -112,46 +113,6 @@ export function InvoiceModalHeader({
           </button>
         )}
 
-        {isAlreadySent ? (
-          <button
-            type="button"
-            onClick={onResendInvoice}
-            disabled={isResending}
-            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
-          >
-            {isResending ? (
-              <>
-                <Loader2 size={13} className="animate-spin" />
-                <span>Resending…</span>
-              </>
-            ) : (
-              <>
-                <RefreshCw size={13} />
-                <span>Resend Invoice</span>
-              </>
-            )}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={onSendInvoice}
-            disabled={isSending || isSavingDraft}
-            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
-          >
-            {isSending ? (
-              <>
-                <Loader2 size={13} className="animate-spin" />
-                <span>Sending…</span>
-              </>
-            ) : (
-              <>
-                <Send size={13} />
-                <span>Send Invoice</span>
-              </>
-            )}
-          </button>
-        )}
-
         <div className="relative">
           <button
             type="button"
@@ -165,7 +126,58 @@ export function InvoiceModalHeader({
           {showMoreMenu && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowMoreMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-[#e5e7eb] rounded-2xl shadow-xl z-50 p-1.5 space-y-0.5 text-xs animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 top-full mt-2 w-58 bg-white border border-[#e5e7eb] rounded-2xl shadow-xl z-50 p-2 space-y-1 text-sm animate-in fade-in zoom-in-95 duration-100">
+                {/* Send / Resend via Email */}
+                {isAlreadySent ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      onResendInvoice();
+                    }}
+                    disabled={isResending}
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#eff6ff] text-[#1e40af] flex items-center gap-3 font-medium cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    {isResending ? (
+                      <Loader2 size={15} className="animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <RefreshCw size={15} />
+                    )}
+                    <span>{isResending ? "Resending via Email..." : "Resend via Email"}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      onSendInvoice();
+                    }}
+                    disabled={isSending || isSavingDraft}
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#eff6ff] text-[#1e40af] flex items-center gap-3 font-medium cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    {isSending ? (
+                      <Loader2 size={15} className="animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <Send size={15} />
+                    )}
+                    <span>{isSending ? "Sending via Email..." : "Send via Email"}</span>
+                  </button>
+                )}
+
+                {/* Send via WhatsApp */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowMoreMenu(false);
+                    onSendWhatsApp();
+                  }}
+                  className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#f0fdf4] text-[#15803d] flex items-center gap-3 font-medium cursor-pointer transition-colors"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
+                  <span>Send via WhatsApp</span>
+                </button>
+
+                {/* Download PDF */}
                 <button
                   type="button"
                   onClick={() => {
@@ -173,22 +185,10 @@ export function InvoiceModalHeader({
                     onDownloadPdf();
                   }}
                   disabled={isDownloadingPdf}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#faf7f2] text-[#374151] hover:text-[#111827] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
+                  className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#faf7f2] text-[#374151] hover:text-[#111827] flex items-center gap-3 font-medium cursor-pointer transition-colors"
                 >
-                  <Download size={13} />
+                  <Download size={15} />
                   <span>{isDownloadingPdf ? "Preparing PDF..." : "Download PDF"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowMoreMenu(false);
-                    onSendWhatsApp();
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#f0fdf4] text-[#15803d] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
-                >
-                  <MessageSquare size={13} />
-                  <span>Send via WhatsApp</span>
                 </button>
 
                 {existingInvoice && (
@@ -198,9 +198,9 @@ export function InvoiceModalHeader({
                       setShowMoreMenu(false);
                       onCopyLink();
                     }}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#faf7f2] text-[#374151] hover:text-[#111827] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#faf7f2] text-[#374151] hover:text-[#111827] flex items-center gap-3 font-medium cursor-pointer transition-colors"
                   >
-                    <Copy size={13} />
+                    <Copy size={15} />
                     <span>{copiedLink ? "Copied!" : "Copy Invoice Link"}</span>
                   </button>
                 )}
@@ -213,9 +213,9 @@ export function InvoiceModalHeader({
                       onMarkAsPaid();
                     }}
                     disabled={isMarkingPaid}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#ecfdf5] text-[#065f46] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#ecfdf5] text-[#065f46] flex items-center gap-3 font-medium cursor-pointer transition-colors"
                   >
-                    <Check size={13} />
+                    <Check size={15} />
                     <span>{isMarkingPaid ? "Marking Paid..." : "Mark as Paid"}</span>
                   </button>
                 )}
@@ -228,9 +228,9 @@ export function InvoiceModalHeader({
                       onMarkAsUnpaid();
                     }}
                     disabled={isMarkingUnpaid}
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#fefce8] text-[#854d0e] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
+                    className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#fefce8] text-[#854d0e] flex items-center gap-3 font-medium cursor-pointer transition-colors"
                   >
-                    <RotateCcw size={13} />
+                    <RotateCcw size={15} />
                     <span>{isMarkingUnpaid ? "Reverting..." : "Mark as Unpaid"}</span>
                   </button>
                 )}
@@ -245,9 +245,9 @@ export function InvoiceModalHeader({
                         onDeleteInvoice();
                       }}
                       disabled={isDeleting}
-                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#fef2f2] text-[#dc2626] flex items-center gap-2.5 font-medium cursor-pointer transition-colors"
+                      className="w-full text-left px-3.5 py-2.5 rounded-xl hover:bg-[#fef2f2] text-[#dc2626] flex items-center gap-3 font-medium cursor-pointer transition-colors"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={15} />
                       <span>{isDeleting ? "Deleting..." : "Delete Draft"}</span>
                     </button>
                   </>

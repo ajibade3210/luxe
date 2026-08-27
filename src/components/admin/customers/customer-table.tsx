@@ -9,6 +9,11 @@ interface CustomerTableProps {
   searchQuery: string;
   onSearch: (query: string) => void;
   onSelectCustomer: (id: string) => void;
+  selectedCustomerIds: string[];
+  onToggleSelect: (id: string) => void;
+  onSelectAllActive: () => void;
+  onClearSelection: () => void;
+  onOpenBroadcast: () => void;
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -23,6 +28,11 @@ export function CustomerTable({
   searchQuery,
   onSearch,
   onSelectCustomer,
+  selectedCustomerIds,
+  onToggleSelect,
+  onSelectAllActive,
+  onClearSelection,
+  onOpenBroadcast,
   currentPage,
   totalPages,
   pageSize,
@@ -30,24 +40,69 @@ export function CustomerTable({
   onPageChange,
   onPageSizeChange,
 }: CustomerTableProps) {
+  const activeItems = items.filter(c => c.isActive);
+  const isAllActiveSelected =
+    activeItems.length > 0 && activeItems.every(c => selectedCustomerIds.includes(c.id));
+
   return (
     <div className="table-card">
       <div className="table-head">
-        <h2>All customers</h2>
-        <div className="table-search-box">
-          <Search size={13} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => onSearch(e.target.value)}
-            placeholder="Search..."
-          />
+        <div className="flex items-center gap-3">
+          <h2>All customers</h2>
+          {selectedCustomerIds.length > 0 && (
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#faf7f2] text-[#855e2e] border border-[#e8ded1]">
+              {selectedCustomerIds.length} selected
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          {selectedCustomerIds.length > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onOpenBroadcast}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+              >
+                <span>Broadcast ({selectedCustomerIds.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onClearSelection}
+                className="px-2.5 py-1.5 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
+          <div className="table-search-box">
+            <Search size={13} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => onSearch(e.target.value)}
+              placeholder="Search..."
+            />
+          </div>
         </div>
       </div>
+
       <div className="table-wrap">
         <table>
           <thead>
             <tr>
+              <th className="w-10">
+                <input
+                  type="checkbox"
+                  checked={isAllActiveSelected}
+                  onChange={onSelectAllActive}
+                  title="Select all active customers"
+                  aria-label="Select all active customers"
+                  className="rounded border-[#ded7cb] text-[#855e2e] focus:ring-[#855e2e] cursor-pointer"
+                />
+              </th>
               <th>Customer</th>
               <th>Service</th>
               <th>Status</th>
@@ -56,12 +111,28 @@ export function CustomerTable({
           </thead>
           <tbody>
             {paginatedItems.map(c => {
+              const isSelected = selectedCustomerIds.includes(c.id);
               const servicesList = c.services || [];
               const hasServices = servicesList.length > 0;
               const s = hasServices ? servicesList[0] : null;
 
               return (
-                <tr key={c.id} onClick={() => onSelectCustomer(c.id)} className="cursor-pointer">
+                <tr
+                  key={c.id}
+                  onClick={() => onSelectCustomer(c.id)}
+                  className={`cursor-pointer transition-colors ${
+                    isSelected ? "bg-[#faf7f2]/60" : ""
+                  }`}
+                >
+                  <td onClick={e => e.stopPropagation()} className="w-10">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect(c.id)}
+                      aria-label={`Select customer ${c.name}`}
+                      className="rounded border-[#ded7cb] text-[#855e2e] focus:ring-[#855e2e] cursor-pointer"
+                    />
+                  </td>
                   <td>
                     <b>{c.name}</b>
                     <small>
@@ -110,7 +181,7 @@ export function CustomerTable({
             })}
             {paginatedItems.length === 0 && (
               <tr>
-                <td colSpan={4} className="text-center py-8 text-[#8c827a] text-xs italic">
+                <td colSpan={5} className="text-center py-8 text-[#8c827a] text-xs italic">
                   No customer records found.
                 </td>
               </tr>

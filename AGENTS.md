@@ -57,12 +57,23 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 ### 2. Verified Social Channels System
 - Configured in Admin Settings (`socialChannels: SocialChannel[]` with `.connected` toggle).
 - Rendered in public studio views (`social-section.tsx`) using `getSocialChannelStyle(channel.type)` from `social-badge.tsx` for verified brand SVGs, background colors, borders, and direct external URLs.
-- Dynamically auto-spread across the container width based on active connected count.
-
 ### 3. Currency & Financial Formatting
 - Always use `formatCurrency(amount, currencyCode)` from `src/utils/currency.ts` to ensure uniform currency formatting across invoices, analytics, and leads.
 
-### 4. Verification Workflow Before Responding
+### 4. Landing Page Core Architecture (`src/components/landing/`)
+- **Features Capabilities (`features-section.tsx`):** 6-pillar luxury capability grid showcasing Digital Atelier 3D Cards, CRM Lead Orchestration, Executive Invoicing, Live Run-of-Show Companion, VIP Client Portals, and Revenue Analytics with responsive 3/2/1-column breakpoints.
+- **Pricing & Membership Engine (`pricing-section.tsx`):** Interactive Monthly / Annual billing toggle (with 20% annual savings calculation) and 3 tailored studio tiers: *Studio Atelier* ($49/$39), *Maison Flagship* ($129/$99, featured/popular), and *Haute Production* ($299/$239).
+- **Public Navigation & Anchor Routing:** Synchronized section anchors (`#features`, `#workflow`, `#pricing`, `/${slug}`) in `public-landing-page.tsx`.
+
+### 5. Bulk Customer Broadcast System (`src/services/api/broadcast.service.ts`, `customer-broadcast-modal.tsx`)
+- **Active Customer Scope:** "Select All Active" filters exclusively for active customers (`isActive === true`), automatically omitting inactive accounts from mass broadcasts.
+- **Channel Character Capping:** Enforces strict anti-spam limits (500 chars for WhatsApp & Both, 2,000 chars for Email) with real-time countdown meters and optional media/image URL attachments.
+- **Multi-Channel Dispatch Engine:** Supports WhatsApp Forwarding Intent (`https://api.whatsapp.com/send?text=...`), individual 1-click WhatsApp dispatches (`https://wa.me/...`), discreet Email BCC (`mailto:?bcc=...`), and mock backend async service logging.
+
+### 6. Verification Workflow Before Responding
 1. `pnpm check` (Biome linting & formatting).
 2. `pnpm type-check` (`tsc --noEmit` with 0 type errors and zero `any`).
 3. `pnpm test` (Vitest unit test suite).
+
+
+

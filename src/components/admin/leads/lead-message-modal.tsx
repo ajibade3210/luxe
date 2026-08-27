@@ -1,7 +1,8 @@
 "use client";
 
-import { Mail, MessageSquare, X } from "lucide-react";
+import { Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { WhatsAppIcon } from "@/components/shared";
 import type { Lead } from "@/lib/types";
 
 interface LeadMessageModalProps {
@@ -72,7 +73,7 @@ export function LeadMessageModal({
                 : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb]"
             }`}
           >
-            <MessageSquare size={12} />
+            <WhatsAppIcon className="w-3.5 h-3.5" />
             <span>{lead.phone ? lead.phone : "No Phone (WhatsApp unavailable)"}</span>
           </span>
 
@@ -119,7 +120,7 @@ export function LeadMessageModal({
                 : "Phone number required for WhatsApp"
             }
           >
-            <MessageSquare size={14} />
+            <WhatsAppIcon className="w-4 h-4 text-white" />
             <span>Send WhatsApp</span>
           </button>
 

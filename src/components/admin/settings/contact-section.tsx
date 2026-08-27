@@ -1,4 +1,5 @@
-import { Clock3, Mail, MapPin, MessageSquare } from "lucide-react";
+import { Clock3, Mail, MapPin } from "lucide-react";
+import { WhatsAppIcon } from "@/components/shared";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
@@ -37,45 +38,36 @@ export function ContactSection({
 }: ContactSectionProps) {
   return (
     <Card
-      title="Business Details"
-      description="Detailed operational and contact information rendered in the stationery card."
+      title="Contact & Location"
+      description="Public operational coordinates displayed on your flagship atelier."
     >
-      <div className="details-columns">
-        <div>
+      <div className="contact-grid">
+        <div className="hours-block">
           <span className="eyebrow">Operating hours</span>
-          <div className="hour-tabs">
-            {["Mon–Fri", "Mon–Sat", "Everyday"].map(item => (
-              <button
-                type="button"
-                className={hours === item ? "selected" : ""}
-                onClick={() => setHours(item)}
-                key={item}
-              >
-                {item}
-              </button>
-            ))}
+          <div className="hours-input-wrapper">
+            <Clock3 />
+            <input
+              type="text"
+              value={hours}
+              onChange={e => setHours(e.target.value)}
+              placeholder="e.g. Monday – Saturday"
+              className="text-xs font-medium border-0 p-0 bg-transparent text-[#1c1917] outline-none w-full"
+            />
           </div>
-          <div className="time-row">
-            <span className="flex-1">
-              From
-              <input
-                type="text"
-                value={timeFrom}
-                onChange={e => setTimeFrom(e.target.value)}
-                className="font-bold text-xs border-0 p-0 bg-transparent text-[#1c1917] outline-none"
-              />
-            </span>
-            <Clock3 />
-            <span className="flex-1">
-              To
-              <input
-                type="text"
-                value={timeTo}
-                onChange={e => setTimeTo(e.target.value)}
-                className="font-bold text-xs border-0 p-0 bg-transparent text-[#1c1917] outline-none"
-              />
-            </span>
-            <Clock3 />
+          <div className="time-select-row">
+            <input
+              type="text"
+              value={timeFrom}
+              onChange={e => setTimeFrom(e.target.value)}
+              className="text-xs font-medium border border-[#e7e5e4] rounded-lg px-2 py-1 bg-white text-[#1c1917] outline-none"
+            />
+            <span className="text-xs text-[#a8a29e]">to</span>
+            <input
+              type="text"
+              value={timeTo}
+              onChange={e => setTimeTo(e.target.value)}
+              className="text-xs font-medium border border-[#e7e5e4] rounded-lg px-2 py-1 bg-white text-[#1c1917] outline-none"
+            />
           </div>
           <label className="switch-label mt-3 flex items-center gap-2 cursor-pointer">
             <Toggle
@@ -89,7 +81,7 @@ export function ContactSection({
         <div className="contact-stack">
           <span className="eyebrow">Contact details</span>
           <div>
-            <MessageSquare />
+            <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
             <div className="w-full">
               <span className="text-[10px] text-[#78716c]">WhatsApp number</span>
               <input
@@ -99,6 +91,7 @@ export function ContactSection({
               />
             </div>
           </div>
+
           <div>
             <Mail />
             <div className="w-full">
