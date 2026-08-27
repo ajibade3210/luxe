@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import type { BusinessProfile, ServiceItem } from "@/lib/types";
+import { isDarkColor } from "@/utils/helpers";
 
 interface ServicesSectionProps {
   profile: BusinessProfile;
@@ -27,7 +28,7 @@ export function StudioServicesSection({
   setQuoteModalOpen,
   setQuoteForm,
   primaryColor,
-  secondaryColor,
+  secondaryColor: _secondaryColor,
   buttonColor: _buttonColor,
   textColor,
   radiusClass: _radiusClass,
@@ -49,14 +50,14 @@ export function StudioServicesSection({
             className="bg-white border border-[#e8dfd3] rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md transition-all group"
           >
             <div>
-              <div className="mb-3">
+              <div className="mb-3.5">
                 <span
                   style={{
-                    backgroundColor: secondaryColor,
-                    color: primaryColor,
-                    borderColor: `${primaryColor}30`,
+                    backgroundColor: `${primaryColor}14`,
+                    color: isDarkColor(primaryColor) ? primaryColor : "#1c1917",
+                    borderColor: `${primaryColor}28`,
                   }}
-                  className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full border inline-block"
+                  className="text-[10px] font-semibold uppercase tracking-[0.14em] px-3 py-1 rounded-full border inline-block shadow-2xs"
                 >
                   {service.category || "Bespoke"}
                 </span>

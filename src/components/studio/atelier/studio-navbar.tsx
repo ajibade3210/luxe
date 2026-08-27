@@ -1,4 +1,4 @@
-import { Menu, Share2, Sparkles, X } from "lucide-react";
+import { Menu, Share2, X } from "lucide-react";
 import type { BusinessProfile } from "@/lib/types";
 import { isDarkColor } from "@/utils/helpers";
 
