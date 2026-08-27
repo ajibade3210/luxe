@@ -36,19 +36,35 @@ export function IdentitySection({
     >
       <div className="space-y-7">
         {/* Logo Upload Section */}
-        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-xl p-6 sm:p-7 shadow-2xs space-y-6">
-          <div className="border-b border-[#e5e7eb] pb-4">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
-              Business Brand Logo
-            </span>
-            <span className="text-xs text-[#6b7280] mt-1 block leading-relaxed">
-              Your official studio crest displayed on onboarding cards, concierge header, and footer
-            </span>
+        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-xl p-5 sm:p-6 shadow-2xs space-y-5">
+          <div className="border-b border-[#e5e7eb] pb-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
+                Business Brand Logo
+              </span>
+              <span className="text-xs text-[#6b7280] mt-0.5 block leading-relaxed">
+                Your official studio crest displayed on onboarding cards, concierge header, and
+                footer
+              </span>
+            </div>
+            <label className="cursor-pointer inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white px-4 py-2.5 rounded-lg text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
+              <Upload size={14} className="text-white" />
+              <span className="text-white">
+                {isUploadingLogo ? "Uploading..." : "Replace Logo"}
+              </span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                className="hidden"
+                onChange={handleLogoUpload}
+                disabled={isUploadingLogo}
+              />
+            </label>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 sm:gap-8 items-center">
-            <div className="flex flex-col items-center gap-2.5">
-              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl border border-[#e5e7eb] bg-white p-2.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5 sm:gap-6 items-center">
+            <div className="flex flex-col items-center gap-2">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
@@ -56,13 +72,13 @@ export function IdentitySection({
                     className="w-full h-full object-contain rounded-lg"
                   />
                 ) : (
-                  <span className="font-sans font-bold text-3xl text-[#191c1d]">
+                  <span className="font-sans font-bold text-2xl text-[#191c1d]">
                     {name ? name.charAt(0) : "É"}
                   </span>
                 )}
                 {isUploadingLogo && (
                   <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                    <Loader2 size={22} className="animate-spin text-[#0058be]" />
+                    <Loader2 size={20} className="animate-spin text-[#0058be]" />
                   </div>
                 )}
               </div>
@@ -71,29 +87,16 @@ export function IdentitySection({
               </span>
             </div>
 
-            <div className="space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h4 className="text-sm font-bold text-[#191c1d]">Studio Brand Crest</h4>
-                  <p className="text-xs text-[#6b7280] mt-1 leading-relaxed">
-                    Upload a new logo to automatically generate a CDN URL and update all live
-                    touchpoints.
-                  </p>
-                </div>
-                <label className="cursor-pointer inline-flex items-center gap-2 bg-[#000000] hover:bg-[#262626] text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0">
-                  <Upload size={14} />
-                  <span>{isUploadingLogo ? "Uploading..." : "Replace Logo"}</span>
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                    className="hidden"
-                    onChange={handleLogoUpload}
-                    disabled={isUploadingLogo}
-                  />
-                </label>
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-xs font-bold text-[#111827]">Studio Brand Crest</h4>
+                <p className="text-xs text-[#6b7280] mt-0.5 leading-relaxed">
+                  Upload a new logo to automatically generate a CDN URL and update all live
+                  touchpoints.
+                </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <span className="text-xs font-semibold text-[#4b5563] block">
                   Generated CDN Asset URL
                 </span>
@@ -103,7 +106,7 @@ export function IdentitySection({
                     value={logoUrl}
                     onChange={e => setLogoUrl(e.target.value)}
                     placeholder="https://cdn.accessa.ng/..."
-                    className="w-full text-xs font-mono bg-white border border-[#d1d5db] rounded-lg pl-3.5 pr-28 py-2.5 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
+                    className="w-full text-xs font-mono bg-white border border-[#d1d5db] rounded-lg pl-3.5 pr-28 py-2 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
                   />
                   {logoUrl && (
                     <button
@@ -114,7 +117,7 @@ export function IdentitySection({
                           onToast("CDN Logo URL copied to clipboard!");
                         }
                       }}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e5e7eb] bg-[#f3f4f6] px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e5e7eb] bg-[#f3f4f6] px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
                     >
                       <Copy size={12} />
                       <span>Copy URL</span>
@@ -127,7 +130,7 @@ export function IdentitySection({
         </div>
 
         {/* Form Fields Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* Row 1: Name & Slug */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
@@ -176,10 +179,10 @@ export function IdentitySection({
             </div>
           </div>
 
-          {/* Row 2: Tagline */}
+          {/* Row 2: Core Value */}
           <div className="md:col-span-2 space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Tagline & core positioning
+              Core value
             </label>
             <input
               value={tagline}
@@ -189,10 +192,10 @@ export function IdentitySection({
             />
           </div>
 
-          {/* Row 3: Location & Website */}
+          {/* Row 3: Location & Email */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Operating location
+              Location
             </label>
             <input
               value={location}
@@ -203,23 +206,23 @@ export function IdentitySection({
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Website
-            </label>
-            <input
-              value={website}
-              onChange={e => setWebsite(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
-            />
-          </div>
-
-          {/* Row 4: Email & Currency */}
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               Primary contact email
             </label>
             <input
               value={email}
               onChange={e => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+            />
+          </div>
+
+          {/* Row 4: Website & Currency */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Website
+            </label>
+            <input
+              value={website}
+              onChange={e => setWebsite(e.target.value)}
               className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
             />
           </div>
@@ -233,20 +236,20 @@ export function IdentitySection({
               onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
               className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none font-medium shadow-2xs"
             >
-              <option value="NGN">NGN (₦) — Nigerian Naira (Default)</option>
-              <option value="USD">USD ($) — US Dollar</option>
-              <option value="GBP">GBP (£) — British Pound</option>
-              <option value="EUR">EUR (€) — Euro</option>
+              <option value="NGN">₦ NGN</option>
+              <option value="USD">$ USD</option>
+              <option value="GBP">£ GBP</option>
+              <option value="EUR">€ EUR</option>
             </select>
           </div>
 
-          {/* Row 5: Business Type Selection Grid */}
-          <div className="md:col-span-2 space-y-2">
+          {/* Row 5: Business Type Button Group */}
+          <div className="md:col-span-2 space-y-2.5">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               Business Type
             </label>
             <div
-              className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3"
+              className="flex flex-wrap items-center gap-2"
               role="radiogroup"
               aria-label="Business Type"
             >
@@ -257,20 +260,20 @@ export function IdentitySection({
                     key={type}
                     type="button"
                     onClick={() => setBusinessType(type)}
-                    className={`flex items-center justify-center py-2.5 px-3 rounded-xl border text-center transition-all cursor-pointer shadow-2xs ${
+                    className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all cursor-pointer shadow-2xs ${
                       isSelected
-                        ? "border-[#0058be] bg-[#f0f7ff] text-[#0058be] font-bold ring-1.5 ring-[#0058be]/30 shadow-xs"
-                        : "border-[#e5e7eb] bg-white text-[#374151] font-medium hover:border-[#d1d5db] hover:bg-[#fafaf9]"
+                        ? "border-[#111827] bg-[#111827] text-white shadow-xs font-semibold"
+                        : "border-[#e5e7eb] bg-white text-[#4b5563] hover:border-[#d1d5db] hover:bg-[#fafaf9]"
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">{BUSINESS_TYPE_LABELS[type]}</span>
+                    {BUSINESS_TYPE_LABELS[type]}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Row 5: About textarea */}
+          {/* Row 6: About textarea */}
           <div className="md:col-span-2 space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               About your studio & signature approach
