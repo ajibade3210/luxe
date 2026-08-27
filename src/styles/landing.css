@@ -83,9 +83,9 @@
   justify-content: space-between;
   gap: 80px;
   max-width: 1160px;
-  min-height: 625px;
+  min-height: 540px;
   margin: auto;
-  padding: 140px 40px 110px;
+  padding: 110px 40px 50px;
 }
 
 .hero-copy {
@@ -169,7 +169,7 @@ em {
 .workflow {
   max-width: 1160px;
   margin: auto;
-  padding: 105px 40px 125px;
+  padding: 50px 40px 60px;
 }
 
 .section-intro h2 {
@@ -277,13 +277,13 @@ em {
 
 .trusted-businesses {
   overflow: hidden;
-  padding: 105px 0 115px;
+  padding: 40px 0 50px;
   background: var(--background);
 }
 
 .trusted-heading {
   max-width: 1160px;
-  margin: 0 auto 42px;
+  margin: 0 auto 28px;
   padding: 0 40px;
   text-align: center;
 }

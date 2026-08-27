@@ -5,7 +5,7 @@
   background: #fbf9f6;
   border-top: 1px solid #eae3d7;
   color: var(--on-surface);
-  padding: 80px max(24px, calc((100vw - 1280px) / 2)) 32px;
+  padding: 60px max(24px, calc((100vw - 1280px) / 2)) 32px;
   position: relative;
   overflow: hidden;
 }
@@ -16,9 +16,9 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 48px;
-  padding-bottom: 64px;
+  padding-bottom: 40px;
   border-bottom: 1px solid #eae3d7;
-  margin-bottom: 64px;
+  margin-bottom: 44px;
 }
 
 .footer-hero-copy h2 {
