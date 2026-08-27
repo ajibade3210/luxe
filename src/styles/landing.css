@@ -167,7 +167,6 @@ em {
 }
 
 .workflow {
-  border-top: 1px solid var(--line);
   max-width: 1160px;
   margin: auto;
   padding: 105px 40px 125px;
@@ -278,7 +277,6 @@ em {
 
 .trusted-businesses {
   overflow: hidden;
-  border-top: 1px solid var(--line);
   padding: 105px 0 115px;
   background: var(--background);
 }

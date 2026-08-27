@@ -34,7 +34,7 @@ export function PublicLandingPage() {
 
       <section className="hero">
         <div className="hero-copy">
-          <span className="eyebrow">For the exceptionally intentional</span>
+          <span className="eyebrow">Shop With Us</span>
           <h1>
             Make space for
             <br />

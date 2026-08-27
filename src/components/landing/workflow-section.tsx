@@ -352,7 +352,6 @@ export function WorkflowSection() {
   return (
     <section className="workflow" id="workflow">
       <div className="section-intro">
-        <span className="eyebrow">A better way to build</span>
         <h2>
           Everything in its
           <br />

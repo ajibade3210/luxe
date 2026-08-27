@@ -49,7 +49,6 @@ export function TrustedBusinesses() {
   return (
     <section className="trusted-businesses" aria-labelledby="trusted-businesses-title">
       <div className="trusted-heading">
-        <span className="eyebrow">A growing community</span>
         <h2 id="trusted-businesses-title">Trusted by businesses like yours.</h2>
       </div>
       <div className="marquee-viewport">
