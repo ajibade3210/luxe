@@ -59,7 +59,6 @@ export function StudioNavbar({
                 isDarkPage ? "text-white" : "text-[#191c1d]"
               }`}
             >
-              <Sparkles size={13} className={isDarkPage ? "text-cyan-400" : "text-[#0058be]"} />{" "}
               Studio Admin Preview
             </span>
             <span className={isDarkPage ? "text-white/30" : "text-[#c4c7c7]"}>·</span>
