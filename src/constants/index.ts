@@ -69,4 +69,82 @@ export const SOCIAL_PREFIX_MAP: Record<string, string> = {
   website: "https://",
 } as const;
 
+/** Default fallback business type across the app. */
+export const DEFAULT_BUSINESS_TYPE = "sales" as const;
+
+/**
+ * Maps each BusinessType to its public-facing CTA button label.
+ * Used on the studio navbar, consultation modal, and floating action buttons.
+ */
+export const BUSINESS_TYPE_CTA_MAP = {
+  service: "Book a Consultation",
+  sales: "Make an Order",
+  retail: "Buy Here",
+  ecommerce: "Place Order",
+} as const;
+
+/** Human-readable one-word labels for BusinessType selectors in Settings. */
+export const BUSINESS_TYPE_LABELS: Record<string, string> = {
+  service: "Service",
+  sales: "Sales",
+  retail: "Retail",
+  ecommerce: "Ecommerce",
+};
+
+/** Modal eyebrow tag above the title. */
+export const BUSINESS_TYPE_MODAL_EYEBROW = {
+  service: "Inquiry Desk",
+  sales: "Order Desk",
+  retail: "Shop Desk",
+  ecommerce: "Order Desk",
+} as const;
+
+/** Modal subtitle sentence below the title. */
+export const BUSINESS_TYPE_MODAL_SUBTITLE = {
+  service: "about your project, service requirement, or upcoming occasion.",
+  sales: "about your custom order, specifications, or bespoke requirements.",
+  retail: "about what you'd like to buy, pick up, or arrange in-store.",
+  ecommerce: "what you'd like to order and we'll get it delivered to you.",
+} as const;
+
+/** Label for the "what do you need" select in the modal. */
+export const BUSINESS_TYPE_ITEM_LABEL = {
+  service: "Service Needed",
+  sales: "Product / Item",
+  retail: "Product / Item",
+  ecommerce: "Product / Item",
+} as const;
+
+/** Label for the date field in the modal. */
+export const BUSINESS_TYPE_DATE_LABEL = {
+  service: "Estimated Date",
+  sales: "Delivery Date",
+  retail: "Collection Date",
+  ecommerce: "Delivery Date",
+} as const;
+
+/** Placeholder for the message/details textarea. */
+export const BUSINESS_TYPE_MESSAGE_PLACEHOLDER = {
+  service: "Share details about your requirements, timeline, quantity, or aesthetic preferences...",
+  sales: "Share your order details, quantities, specifications, or any customisation notes...",
+  retail: "List the items, quantities, and any special requests...",
+  ecommerce: "List the items, quantities, and your delivery address or special instructions...",
+} as const;
+
+/** Submit button label inside the modal. */
+export const BUSINESS_TYPE_SUBMIT_LABEL = {
+  service: "Submit Consultation Request",
+  sales: "Submit Order Request",
+  retail: "Submit Purchase Request",
+  ecommerce: "Submit Order",
+} as const;
+
+/** Per-service card action link label in the services section. */
+export const BUSINESS_TYPE_SERVICE_ACTION = {
+  service: "Inquire",
+  sales: "Order",
+  retail: "Buy",
+  ecommerce: "Order",
+} as const;
+
 export * from "./landing";

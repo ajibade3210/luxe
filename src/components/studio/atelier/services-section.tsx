@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { BUSINESS_TYPE_SERVICE_ACTION, DEFAULT_BUSINESS_TYPE } from "@/constants";
 import type { StudioServicesSectionProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
@@ -65,7 +66,9 @@ export function StudioServicesSection({
                 style={{ color: primaryColor }}
                 className="text-xs font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
-                <span>Inquire</span>
+                <span>
+                  {BUSINESS_TYPE_SERVICE_ACTION[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}
+                </span>
                 <ArrowRight size={12} />
               </button>
             </div>

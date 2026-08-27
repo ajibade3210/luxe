@@ -1,4 +1,14 @@
 import { Send, X } from "lucide-react";
+import {
+  BUSINESS_TYPE_CTA_MAP,
+  BUSINESS_TYPE_DATE_LABEL,
+  BUSINESS_TYPE_ITEM_LABEL,
+  BUSINESS_TYPE_MESSAGE_PLACEHOLDER,
+  BUSINESS_TYPE_MODAL_EYEBROW,
+  BUSINESS_TYPE_MODAL_SUBTITLE,
+  BUSINESS_TYPE_SUBMIT_LABEL,
+  DEFAULT_BUSINESS_TYPE,
+} from "@/constants";
 import type { ConsultationModalProps } from "@/types";
 
 export function ConsultationModal({
@@ -14,6 +24,15 @@ export function ConsultationModal({
   radiusClass,
 }: ConsultationModalProps) {
   if (!isOpen) return null;
+
+  const type = profile.businessType ?? DEFAULT_BUSINESS_TYPE;
+  const ctaLabel = BUSINESS_TYPE_CTA_MAP[type];
+  const eyebrow = BUSINESS_TYPE_MODAL_EYEBROW[type];
+  const subtitle = BUSINESS_TYPE_MODAL_SUBTITLE[type];
+  const itemLabel = BUSINESS_TYPE_ITEM_LABEL[type];
+  const dateLabel = BUSINESS_TYPE_DATE_LABEL[type];
+  const messagePlaceholder = BUSINESS_TYPE_MESSAGE_PLACEHOLDER[type];
+  const submitLabel = BUSINESS_TYPE_SUBMIT_LABEL[type];
 
   return (
     <div className="fixed inset-0 z-50 bg-[#171716]/40 backdrop-blur-xs flex items-center justify-center p-4">
@@ -31,13 +50,13 @@ export function ConsultationModal({
             style={{ color: primaryColor }}
             className="text-[10px] uppercase tracking-[0.18em] font-semibold"
           >
-            Inquiry Desk
+            {eyebrow}
           </span>
           <h3 className="font-serif text-2xl sm:text-3xl text-[#1c1917] font-normal mt-1">
-            Book a Consultation
+            {ctaLabel}
           </h3>
           <p className="text-xs text-[#78716c] mt-1">
-            Tell {profile.businessName} about your project, order, or service inquiry.
+            Tell {profile.businessName} {subtitle}
           </p>
         </div>
 
@@ -81,7 +100,7 @@ export function ConsultationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[#1f2937] font-medium mb-1">Service Needed</label>
+              <label className="block text-[#1f2937] font-medium mb-1">{itemLabel}</label>
               <select
                 value={quoteForm.service}
                 onChange={e => setQuoteForm({ ...quoteForm, service: e.target.value })}
@@ -96,7 +115,7 @@ export function ConsultationModal({
             </div>
 
             <div>
-              <label className="block text-[#1f2937] font-medium mb-1">Estimated Date</label>
+              <label className="block text-[#1f2937] font-medium mb-1">{dateLabel}</label>
               <input
                 type="date"
                 value={quoteForm.eventDate}
@@ -107,10 +126,10 @@ export function ConsultationModal({
           </div>
 
           <div>
-            <label className="block text-[#1f2937] font-medium mb-1">Order Details</label>
+            <label className="block text-[#1f2937] font-medium mb-1">Details</label>
             <textarea
               rows={3}
-              placeholder="Share details about your requirements, timeline, quantity, or aesthetic preferences..."
+              placeholder={messagePlaceholder}
               value={quoteForm.message}
               onChange={e => setQuoteForm({ ...quoteForm, message: e.target.value })}
               className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
@@ -125,10 +144,10 @@ export function ConsultationModal({
               className={`w-full text-white text-xs font-medium py-3.5 shadow-sm hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-2 ${radiusClass}`}
             >
               {quoteSubmitting ? (
-                <span>Submitting inquiry...</span>
+                <span>Submitting...</span>
               ) : (
                 <>
-                  <span>Submit Consultation Request</span>
+                  <span>{submitLabel}</span>
                   <Send size={14} />
                 </>
               )}

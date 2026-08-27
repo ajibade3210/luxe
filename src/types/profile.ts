@@ -1,4 +1,8 @@
+import type React from "react";
 import type { ButtonRadiusType, CurrencyCode } from "./common";
+
+/** Classifies the business model to drive dynamic CTA labels and studio behaviour. */
+export type BusinessType = "service" | "sales" | "retail" | "ecommerce";
 
 // Business and studio profile types
 export type SocialChannelType =
@@ -99,6 +103,7 @@ export interface BusinessProfile {
   showServices?: boolean;
   showPortfolio?: boolean;
   showReviews?: boolean;
+  businessType?: BusinessType;
   updatedAt: string;
 }
 
@@ -118,6 +123,8 @@ export interface IdentitySectionProps {
   setEmail: (v: string) => void;
   currency?: CurrencyCode;
   setCurrency?: (v: CurrencyCode) => void;
+  businessType: BusinessType;
+  setBusinessType: (v: BusinessType) => void;
   about: string;
   setAbout: (v: string) => void;
   logoUrl: string;

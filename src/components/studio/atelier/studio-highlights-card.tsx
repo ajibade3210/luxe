@@ -8,6 +8,7 @@ import {
   Share2,
   ShieldCheck,
 } from "lucide-react";
+import { BUSINESS_TYPE_CTA_MAP, DEFAULT_BUSINESS_TYPE } from "@/constants";
 import type { StudioHighlightsCardProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
@@ -233,7 +234,7 @@ export function StudioHighlightsCard({
             style={{ backgroundColor: buttonColor }}
             className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 shadow-xs hover:brightness-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${radiusClass}`}
           >
-            <span>Get a Quote</span>
+            <span>{BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}</span>
             <ArrowRight size={13} />
           </button>
 

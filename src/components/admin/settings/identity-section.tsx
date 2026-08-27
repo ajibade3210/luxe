@@ -1,5 +1,6 @@
 import { Copy, Loader2, Upload } from "lucide-react";
-import type { CurrencyCode, IdentitySectionProps } from "@/types";
+import { BUSINESS_TYPE_CTA_MAP, BUSINESS_TYPE_LABELS } from "@/constants";
+import type { BusinessType, CurrencyCode, IdentitySectionProps } from "@/types";
 import { Card } from "./card";
 
 export function IdentitySection({
@@ -18,6 +19,8 @@ export function IdentitySection({
   setEmail,
   currency = "NGN",
   setCurrency,
+  businessType,
+  setBusinessType,
   about,
   setAbout,
   logoUrl,
@@ -235,6 +238,36 @@ export function IdentitySection({
               <option value="GBP">GBP (£) — British Pound</option>
               <option value="EUR">EUR (€) — Euro</option>
             </select>
+          </div>
+
+          {/* Row 5: Business Type Selection Grid */}
+          <div className="md:col-span-2 space-y-2">
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+              Business Type
+            </label>
+            <div
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3"
+              role="radiogroup"
+              aria-label="Business Type"
+            >
+              {(Object.keys(BUSINESS_TYPE_CTA_MAP) as BusinessType[]).map(type => {
+                const isSelected = businessType === type;
+                return (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setBusinessType(type)}
+                    className={`flex items-center justify-center py-2.5 px-3 rounded-xl border text-center transition-all cursor-pointer shadow-2xs ${
+                      isSelected
+                        ? "border-[#0058be] bg-[#f0f7ff] text-[#0058be] font-bold ring-1.5 ring-[#0058be]/30 shadow-xs"
+                        : "border-[#e5e7eb] bg-white text-[#374151] font-medium hover:border-[#d1d5db] hover:bg-[#fafaf9]"
+                    }`}
+                  >
+                    <span className="text-xs sm:text-sm">{BUSINESS_TYPE_LABELS[type]}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Row 5: About textarea */}

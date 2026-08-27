@@ -9,16 +9,18 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # MANDATORY: Check When Done — NEVER SKIP THIS
 AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 1. No Magic Strings Allowed — define named constants, enums, or configuration maps.
-2. Scan related functions, export counterparts, shared schemas, and sibling services for anything missing, broken, or inconsistent with the change.
-3. Briefly explain the problem, the fix applied, and any important considerations.
-4. End with a one-line statement confirming whether anything important is missing (e.g. "Nothing important appears to be missing.").
-5. Run formatting and lint checks (`pnpm check`), type checking (`pnpm type-check`), and unit tests (`pnpm test`).
-6. If everything is fine, say so explicitly: "Nothing important appears to be missing."
+2. DO not save interface in components section move them to type section (`src/types/`).
+3. Scan related functions, export counterparts, shared schemas, and sibling services for anything missing, broken, or inconsistent with the change.
+4. Briefly explain the problem, the fix applied, and any important considerations.
+5. End with a one-line statement confirming whether anything important is missing (e.g. "Nothing important appears to be missing.").
+6. Run formatting and lint checks (`pnpm check`), type checking (`pnpm type-check`), and unit tests (`pnpm test`).
+7. If everything is fine, say so explicitly: "Nothing important appears to be missing."
 
 ---
 
 # CORE RULES
 
+- **COMPONENT INTERFACES IN TYPE SECTION:** Check for components with interface declarations and move the interface to the type section (`src/types/{domain}.ts`). No component prop interfaces or hook options should be declared inline in component files.
 - **STRICT ARCHITECTURAL PLACEMENT:** Moving forward, EVERYTHING in the codebase MUST be defined strictly in its appropriate designated section without exception:
   - Types & Models $\rightarrow$ `src/types/{domain}.ts` (exported via `src/types/index.ts`)
   - Validation Schemas $\rightarrow$ `src/lib/schemas/{domain}.schema.ts`

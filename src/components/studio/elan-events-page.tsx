@@ -3,7 +3,14 @@
 import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import { APP_CONFIG, AUTO_QUOTE_MODAL_DELAY_MS, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
+import {
+  APP_CONFIG,
+  AUTO_QUOTE_MODAL_DELAY_MS,
+  BUSINESS_TYPE_CTA_MAP,
+  CUSTOM_EVENTS,
+  DEFAULT_BUSINESS_TYPE,
+  STORAGE_KEYS,
+} from "@/constants";
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
@@ -498,7 +505,7 @@ export function ElanEventsPage({
               style={{ backgroundColor: buttonColor }}
               className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
             >
-              <span>Get a Quote</span>
+              <span>{BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}</span>
               <ArrowRight size={15} />
             </button>
 

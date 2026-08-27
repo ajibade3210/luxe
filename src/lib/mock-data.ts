@@ -294,6 +294,7 @@ export const businessProfile: BusinessProfile = {
   showServices: true,
   showPortfolio: true,
   showReviews: true,
+  businessType: "sales",
   updatedAt: "2026-08-25T12:00:00Z",
 };
 

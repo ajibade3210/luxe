@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DEFAULT_BUSINESS_TYPE } from "@/constants";
 import {
   checkSlugAvailability,
   getBusinessProfile,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/api";
 import { businessProfile as initialMockProfile } from "@/lib/mock-data";
 import type {
+  BusinessType,
   ButtonRadiusType,
   ColorScheme,
   CurrencyCode,
@@ -33,6 +35,9 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
   const [email, setEmail] = useState(initialMockProfile.email);
   const [currency, setCurrency] = useState<CurrencyCode>(initialMockProfile.currency || "NGN");
   const [about, setAbout] = useState(initialMockProfile.description);
+  const [businessType, setBusinessType] = useState<BusinessType>(
+    initialMockProfile.businessType || DEFAULT_BUSINESS_TYPE
+  );
 
   // Section Visibility Toggles
   const [showServices, setShowServices] = useState<boolean>(
@@ -176,6 +181,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
       if (data.showReviews !== undefined) setShowReviews(data.showReviews);
       if (data.colors) setColors(data.colors);
       if (data.buttonRadius) setRadius(data.buttonRadius);
+      if (data.businessType) setBusinessType(data.businessType);
     });
   }, []);
 
@@ -376,6 +382,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         showServices,
         showPortfolio,
         showReviews,
+        businessType,
         colors,
         buttonRadius: radius,
       });
@@ -417,6 +424,8 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setCurrency,
     about,
     setAbout,
+    businessType,
+    setBusinessType,
     showServices,
     setShowServices,
     showPortfolio,

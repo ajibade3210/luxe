@@ -33,6 +33,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     setCurrency,
     about,
     setAbout,
+    businessType,
+    setBusinessType,
     showServices,
     setShowServices,
     showPortfolio,
@@ -129,6 +131,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           setEmail={setEmail}
           currency={currency}
           setCurrency={setCurrency}
+          businessType={businessType}
+          setBusinessType={setBusinessType}
           about={about}
           setAbout={setAbout}
           logoUrl={logoUrl}

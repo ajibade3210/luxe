@@ -1,4 +1,5 @@
 import { Menu, Share2, X } from "lucide-react";
+import { BUSINESS_TYPE_CTA_MAP, DEFAULT_BUSINESS_TYPE } from "@/constants";
 import type { StudioNavbarProps } from "@/types";
 import { isDarkColor } from "@/utils/helpers";
 
@@ -192,7 +193,7 @@ export function StudioNavbar({
               style={{ backgroundColor: buttonColor }}
               className={`text-white text-xs font-medium px-5 py-2.5 shadow-2xs hover:shadow-xs transition-all cursor-pointer hidden sm:block ${radiusClass}`}
             >
-              Get a Quote
+              {BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}
             </button>
 
             {/* Mobile Hamburger */}
@@ -269,7 +270,7 @@ export function StudioNavbar({
               style={{ backgroundColor: buttonColor }}
               className={`w-full text-white text-xs font-medium py-3 shadow-2xs ${radiusClass}`}
             >
-              Book a Consultation
+              {BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}
             </button>
           </div>
         )}
