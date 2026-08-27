@@ -40,12 +40,12 @@ export function PublicLandingPage() {
           <h1>
             Your digital shop for
             <br />
-            <em>events & weddings.</em>
+            <em>online vendors & businesses.</em>
           </h1>
           <p>
             Shopwus (<em>Shop With Us</em>) helps creatives, online vendors, and businesses turn
-            visitors into paying clients. Share your 3D card, get booking requests on WhatsApp, send
-            invoices in seconds, and follow up with clients easily.
+            visitors into paying clients. Share your 3D card, receive orders and service requests on
+            WhatsApp, send invoices in seconds, and follow up with clients easily.
           </p>
           <div className="hero-ctas">
             <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">

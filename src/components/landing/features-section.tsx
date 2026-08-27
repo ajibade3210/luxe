@@ -10,7 +10,7 @@ export function FeaturesSection() {
         {/* Section Header */}
         <div className="features-header">
           <span className="features-eyebrow">Features</span>
-          <h2 id="features-title">Everything you need to run your event business.</h2>
+          <h2 id="features-title">Everything you need to run your business.</h2>
         </div>
 
         {/* Feature Grid */}
