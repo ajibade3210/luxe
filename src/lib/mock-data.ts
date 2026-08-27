@@ -566,7 +566,7 @@ export const featuredOrganizations: OrganizationPreview[] = [
     eyebrow: "Architectural Banquets · Stockholm",
     tagline: "Monolithic tablescapes, raw stone accents, and Scandinavian culinary theater.",
     logoUrl: "https://cdn.logosystem.co/logos/hatil.webp",
-    badge: "Minimalist Luxe",
+    badge: "Minimalist Studio",
   },
   {
     id: "org-9",

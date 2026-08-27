@@ -18,8 +18,8 @@ A luxury studio and shop management platform and client-facing digital showcase 
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/ajibade3210/luxe.git
-   cd "luxe-admin (1)"
+   git clone https://github.com/ajibade3210/shopwus.git
+   cd shopwus
    ```
 
 2. **Install dependencies**:

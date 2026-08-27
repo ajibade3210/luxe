@@ -12,11 +12,11 @@ export const APP_CONFIG = {
 } as const;
 
 export const STORAGE_KEYS = {
-  profile: "luxe_business_profile",
-  profileVersion: "luxe_profile_version",
-  leads: "luxe_leads_data",
-  session: "luxe_auth_session",
-  autoQuoteModalSeen: "luxe_auto_quote_modal_seen",
+  profile: "shopwus_business_profile",
+  profileVersion: "shopwus_profile_version",
+  leads: "shopwus_leads_data",
+  session: "shopwus_auth_session",
+  autoQuoteModalSeen: "shopwus_auto_quote_modal_seen",
 } as const;
 
 export const AUTO_QUOTE_MODAL_DELAY_MS = 60_000; // 1 minute dwell time
@@ -37,12 +37,12 @@ export const RESERVED_SLUGS = [
 ] as const;
 
 export const CUSTOM_EVENTS = {
-  leadsUpdated: "luxe_leads_updated",
-  customersUpdated: "luxe_customers_updated",
-  invoicesUpdated: "luxe_invoices_updated",
-  profileUpdated: "luxe_profile_updated",
-  authChanged: "luxe_auth_changed",
-  broadcastSent: "luxe_broadcast_sent",
+  leadsUpdated: "shopwus_leads_updated",
+  customersUpdated: "shopwus_customers_updated",
+  invoicesUpdated: "shopwus_invoices_updated",
+  profileUpdated: "shopwus_profile_updated",
+  authChanged: "shopwus_auth_changed",
+  broadcastSent: "shopwus_broadcast_sent",
 } as const;
 
 export const API_ENDPOINTS = {

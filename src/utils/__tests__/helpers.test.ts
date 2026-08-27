@@ -16,7 +16,7 @@ describe("helper utilities", () => {
 
   it("slugifies text into url-friendly strings", () => {
     expect(slugify("Elan Events & Co.")).toBe("elan-events-co-");
-    expect(slugify("Luxe Atelier")).toBe("luxe-atelier");
+    expect(slugify("Shopwus Studio")).toBe("shopwus-studio");
   });
 
   describe("sanitizeHandle", () => {

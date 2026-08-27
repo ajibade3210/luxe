@@ -32,7 +32,7 @@ export function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#faf8f5] text-[#191c1d] flex flex-col justify-between selection:bg-[#d8e2ff] selection:text-[#0058be] font-sans antialiased relative overflow-hidden">
-      {/* Ambient Luxe Glow */}
+      {/* Ambient Glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] pointer-events-none opacity-40 blur-3xl -z-10"
         style={{
