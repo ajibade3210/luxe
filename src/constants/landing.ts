@@ -1,4 +1,4 @@
-import { CreditCard, Crown, Send, type Sparkles, Star, TrendingUp, Users } from "lucide-react";
+import { CreditCard, Crown, Send, type Sparkles, TrendingUp, Users } from "lucide-react";
 
 export interface FeatureItem {
   id: string;
@@ -7,6 +7,8 @@ export interface FeatureItem {
   title: string;
   description: string;
   highlights: string[];
+  iconBg: string;
+  iconColor: string;
 }
 
 export const LANDING_FEATURES: readonly FeatureItem[] = [
@@ -14,20 +16,22 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
     id: "feat-broadcast",
     icon: Send,
     badge: "Client Outreach",
-    title: "Broadcast Messages & Quick Follow-Up",
+    title: "Broadcast Messaging & Outreach",
     description:
-      "Send bulk announcements and offers directly via WhatsApp or Email, and follow up in one click.",
+      "Send bulk announcements, offers, and WhatsApp updates directly to your active clients.",
     highlights: [
-      "Bulk WhatsApp & Email broadcasting",
+      "WhatsApp & Email bulk broadcasting",
       "Automatic active client filtering",
       "1-click direct chat follow-ups",
     ],
+    iconBg: "#ede9fe",
+    iconColor: "#7c3aed",
   },
   {
     id: "feat-leads",
     icon: Users,
     badge: "CRM & Leads",
-    title: "Lead Tracker & Sales Pipeline",
+    title: "Lead Tracker & CRM Pipeline",
     description:
       "Capture customer inquiries and budgets, then convert warm leads into paying clients in seconds.",
     highlights: [
@@ -35,12 +39,14 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
       "Budget & timeline tracking",
       "1-click lead-to-customer conversion",
     ],
+    iconBg: "#e0f2fe",
+    iconColor: "#0284c7",
   },
   {
     id: "feat-invoicing",
     icon: CreditCard,
     badge: "Invoicing",
-    title: "Instant Professional Invoices",
+    title: "Instant Invoicing & Receipts",
     description:
       "Create clean, itemized invoices with multi-currency support, custom discounts, and instant PDF receipts.",
     highlights: [
@@ -48,6 +54,8 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
       "Itemized services & discount controls",
       "Live payment tracking (Draft, Sent, Paid)",
     ],
+    iconBg: "#fce7f3",
+    iconColor: "#db2777",
   },
   {
     id: "feat-sales",
@@ -61,32 +69,23 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
       "Top-performing service breakdown",
       "Paid vs. pending balance tracking",
     ],
-  },
-  {
-    id: "feat-reviews",
-    icon: Star,
-    badge: "Social Proof",
-    title: "5-Star Reviews & Verified Socials",
-    description:
-      "Build instant trust with 1-click Google review request prompts and verified social media badges.",
-    highlights: [
-      "1-click Google review request prompts",
-      "Verified social media badges",
-      "Client testimonial showcase",
-    ],
+    iconBg: "#ffedd5",
+    iconColor: "#ea580c",
   },
   {
     id: "feat-profile",
     icon: Crown,
     badge: "Mini Storefront",
-    title: "Mini Storefront & 3D Business Card",
+    title: "Mini Storefront & 3D Card",
     description:
-      "A branded public storefront featuring your custom theme, interactive 3D business card, and instant quotes.",
+      "A branded digital shop link with interactive 3D stationery card and instant WhatsApp order intake.",
     highlights: [
       "Interactive 3D business card",
       "Custom brand themes & colors",
       "Instant quote & inquiry intake",
     ],
+    iconBg: "#dcfce7",
+    iconColor: "#16a34a",
   },
 ] as const;
 
