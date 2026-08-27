@@ -525,12 +525,13 @@ em {
   flex-shrink: 0;
 }
 
-/* ==========================================================================
-   Pricing Section
+/* --------------------------------------------------------------------------
+   PRICING & MEMBERSHIP (SPOTIFY-INSPIRED CARDS ON LIGHT BACKGROUND)
    ========================================================================== */
 .pricing-section {
   padding: 64px 40px 84px;
-  background: #faf8f5;
+  background: var(--background);
+  color: var(--ink);
   border-top: 1px solid var(--line);
 }
 
@@ -543,16 +544,6 @@ em {
   text-align: center;
   max-width: 720px;
   margin: 0 auto 52px;
-}
-
-.pricing-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #855e2e;
-  margin-bottom: 12px;
-  display: inline-block;
 }
 
 .pricing-header h2 {
@@ -575,20 +566,20 @@ em {
   margin-top: 32px;
 }
 
-.billing-toggle {
+.spotify-toggle {
   display: inline-flex;
   align-items: center;
-  background: #f0eae1;
-  border: 1px solid #e0d5c4;
+  background: #ece7df;
+  border: 1px solid #ded5c8;
   border-radius: 9999px;
   padding: 4px;
   gap: 4px;
 }
 
-.toggle-btn {
+.spotify-toggle .toggle-btn {
   border: none;
   background: transparent;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 9999px;
   font-size: 13px;
   font-weight: 600;
@@ -600,206 +591,181 @@ em {
   gap: 6px;
 }
 
-.toggle-btn.is-active {
+.spotify-toggle .toggle-btn.is-active {
   background: #ffffff;
   color: var(--ink);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.save-badge {
+.spotify-toggle .save-badge {
   font-size: 10px;
   font-weight: 700;
   color: #2e7d32;
   background: #e8f5e9;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 9999px;
 }
 
-.pricing-grid {
+.spotify-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   align-items: stretch;
 }
 
-.pricing-card {
+.spotify-pricing-card {
   position: relative;
   background: #ffffff;
   border: 1px solid #e6ded2;
-  border-radius: 18px;
-  padding: 36px 30px;
+  border-radius: 16px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  min-height: 480px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
   transition:
-    transform 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
-.pricing-card:hover {
+.spotify-pricing-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+  border-color: rgba(25, 28, 29, 0.25);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
 }
 
-.pricing-card.is-popular {
-  border: 2px solid #855e2e;
-  box-shadow: 0 8px 30px rgba(133, 94, 46, 0.12);
+.spotify-pricing-card.is-featured {
+  border: 2px solid var(--accent-color, #d9480f);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
-.popular-badge {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #855e2e;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 4px 14px;
-  border-radius: 9999px;
+.spotify-card-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.spotify-brand-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(133, 94, 46, 0.25);
-  white-space: nowrap;
+  gap: 5px;
+  background: #f4efe6;
+  color: #64645f;
+  border: 1px solid #e0d5c4;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.plan-header {
-  margin-bottom: 20px;
+.spotify-plan-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  line-height: 1.15;
 }
 
-.plan-name {
-  font-size: 22px;
+.spotify-price-headline {
+  font-size: 20px;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 8px;
-}
-
-.plan-tagline {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  min-height: 40px;
-}
-
-.plan-price-box {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
   margin-bottom: 6px;
 }
 
-.currency-symbol {
+.spotify-price-amount {
   font-size: 24px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.price-number {
-  font-size: 48px;
   font-weight: 800;
-  letter-spacing: -0.03em;
   color: var(--ink);
-  line-height: 1;
 }
 
-.price-period {
+.spotify-price-period {
   font-size: 14px;
   color: var(--muted);
   font-weight: 500;
 }
 
-.annual-billed-note {
+.spotify-plan-subtext {
   font-size: 12px;
-  color: #855e2e;
-  font-weight: 600;
-  margin-bottom: 18px;
-  display: block;
+  color: var(--muted);
+  margin-bottom: 24px;
+  min-height: 18px;
 }
 
-.plan-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 13.5px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  margin: 18px 0 28px;
-}
-
-.cta-standard {
-  background: #f4efe6;
-  color: var(--ink);
-  border: 1px solid #e0d5c4;
-}
-
-.cta-standard:hover {
-  background: #ebe3d6;
-  transform: translateY(-1px);
-}
-
-.cta-popular {
-  background: #191c1d;
-  color: #ffffff;
-  border: 1px solid #191c1d;
-}
-
-.cta-popular:hover {
-  background: #333638;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-}
-
-.plan-features-wrapper {
-  border-top: 1px solid #eae3d7;
-  padding-top: 22px;
-  flex-grow: 1;
-}
-
-.features-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #855e2e;
-  margin-bottom: 14px;
-}
-
-.plan-features-list {
+.spotify-features-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 32px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
 }
 
-.plan-feature-item {
+.spotify-feature-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   font-size: 13.5px;
-  color: #444748;
+  color: #333638;
   line-height: 1.45;
 }
 
-.feature-check {
-  color: #855e2e;
+.spotify-bullet {
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
-.pricing-reassurance {
+.card-bottom-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.spotify-pill-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.spotify-pill-cta:hover {
+  transform: scale(1.02);
+  filter: brightness(0.95);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.spotify-terms-note {
   text-align: center;
-  margin-top: 40px;
+  font-size: 11px;
+  color: #888888;
+  margin-top: 14px;
+  line-height: 1.4;
+}
+
+.spotify-reassurance {
+  text-align: center;
+  margin-top: 48px;
   font-size: 13px;
   color: var(--muted);
 }

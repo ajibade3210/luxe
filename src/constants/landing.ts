@@ -90,7 +90,7 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
   },
 ] as const;
 
-export type BillingPeriod = "monthly" | "annual";
+export type BillingPeriod = "monthly" | "biannual" | "annual";
 
 export interface PricingPlan {
   id: string;
@@ -98,64 +98,82 @@ export interface PricingPlan {
   tagline: string;
   badge?: string;
   isPopular?: boolean;
+  isFreeTrial?: boolean;
+  accentColor: string;
+  buttonColor: string;
+  buttonTextColor: string;
   monthlyPrice: number;
+  biannualPrice: number;
   annualPrice: number;
   features: string[];
   ctaLabel: string;
+  termsNote: string;
 }
 
 export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
   {
-    id: "plan-atelier",
-    name: "Studio Atelier",
-    tagline:
-      "For independent luxury planners, floral designers, and bespoke private scenographers.",
-    monthlyPrice: 49,
-    annualPrice: 39,
+    id: "plan-trial",
+    name: "Free Trial",
+    badge: "3 Months Free",
+    tagline: "Experience the complete digital shop suite with zero initial commitment.",
+    isFreeTrial: true,
+    accentColor: "#0f7b3d",
+    buttonColor: "#1ed760",
+    buttonTextColor: "#000000",
+    monthlyPrice: 0,
+    biannualPrice: 0,
+    annualPrice: 0,
     features: [
-      "1 Digital Atelier Flagship",
-      "Interactive 3D Stationery Card",
-      "Up to 25 Active Client Scopes",
-      "VIP Lead & Inquiry CRM",
-      "Multi-Currency Invoicing (NGN/USD/GBP/EUR)",
-      "Standard Client Milestone Portals",
+      "3 months complimentary access",
+      "Up to 20 customers, leads & invoices",
+      "Interactive 3D business card",
+      "WhatsApp orders & customer tracker",
+      "Cancel anytime",
     ],
-    ctaLabel: "Begin Studio Trial",
+    ctaLabel: "Start 3 Months Free",
+    termsNote: "Free for 3 months, then ₦1,600/month. Cancel anytime. Terms apply.",
   },
   {
-    id: "plan-maison",
-    name: "Maison Flagship",
-    tagline: "For established luxury wedding studios, destination planners, and gala architects.",
+    id: "plan-starter",
+    name: "Starter",
+    badge: "Essential",
+    tagline: "For boutique online vendors and creators with focused customer scopes.",
+    accentColor: "#0b7285",
+    buttonColor: "#76e5d2",
+    buttonTextColor: "#000000",
+    monthlyPrice: 1600,
+    biannualPrice: 8000,
+    annualPrice: 16000,
+    features: [
+      "Capped at 20 customers, leads & invoices",
+      "Interactive 3D digital storefront & card",
+      "WhatsApp orders & CRM lead intake",
+      "Itemized multi-currency invoicing & receipts",
+      "Cancel anytime",
+    ],
+    ctaLabel: "Get Starter",
+    termsNote: "Billed as selected. Cancel anytime. Terms apply.",
+  },
+  {
+    id: "plan-unlimited",
+    name: "Unlimited",
     badge: "Most Popular",
     isPopular: true,
-    monthlyPrice: 129,
-    annualPrice: 99,
+    tagline: "For active online vendors, studios, and high-volume multi-client brands.",
+    accentColor: "#d9480f",
+    buttonColor: "#ff8a65",
+    buttonTextColor: "#000000",
+    monthlyPrice: 2500,
+    biannualPrice: 12500,
+    annualPrice: 25000,
     features: [
-      "Everything in Studio Atelier",
-      "Unlimited Active Client Retainers",
-      "Custom Studio Slug & Branding",
-      "Live Run-of-Show & Mobile Companion",
-      "Multi-Service Invoice Bundling & Tax Engine",
-      "Verified Brand Social Channel Sync",
-      "Priority Concierge Support",
+      "Unlimited customers, leads & invoices",
+      "Unlimited WhatsApp & Email broadcasts",
+      "Custom digital storefront & 3D card",
+      "Sales, revenue & pipeline analytics",
+      "Priority customer & studio support",
     ],
-    ctaLabel: "Enter Maison Flagship",
-  },
-  {
-    id: "plan-haute",
-    name: "Haute Production",
-    tagline: "For multi-market event production houses, luxury agencies, and gala orchestrators.",
-    monthlyPrice: 299,
-    annualPrice: 239,
-    features: [
-      "Everything in Maison Flagship",
-      "Multi-Market Studio Flagships",
-      "Unlimited Team Members & Role Permissions",
-      "Real-Time Multi-Device Show-Calling",
-      "Dedicated VIP Concierge Manager",
-      "Custom Legal Contract Frameworks",
-      "Direct API & Webhook Integrations",
-    ],
-    ctaLabel: "Contact Haute Concierge",
+    ctaLabel: "Get Unlimited",
+    termsNote: "Billed as selected. Cancel anytime. Terms apply.",
   },
 ] as const;

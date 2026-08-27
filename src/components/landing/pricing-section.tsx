@@ -1,25 +1,60 @@
 "use client";
 
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useState } from "react";
-import { type BillingPeriod, LANDING_PRICING_PLANS } from "@/constants";
+import { type BillingPeriod, LANDING_PRICING_PLANS, type PricingPlan } from "@/constants";
 
 export function PricingSection() {
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("annual");
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
+
+  const getPriceDetails = (plan: PricingPlan) => {
+    if (plan.isFreeTrial) {
+      return {
+        priceMain: "Free",
+        periodText: "for 3 months",
+        subtext: "₦0 for 3 months, then ₦1,600 / month",
+      };
+    }
+
+    if (billingPeriod === "monthly") {
+      return {
+        priceMain: `₦${plan.monthlyPrice.toLocaleString()}`,
+        periodText: "/ month",
+        subtext: "Billed monthly. Cancel anytime.",
+      };
+    }
+
+    if (billingPeriod === "biannual") {
+      const perMonth = Math.round(plan.biannualPrice / 6);
+      return {
+        priceMain: `₦${plan.biannualPrice.toLocaleString()}`,
+        periodText: "/ 6 months",
+        subtext: `₦${perMonth.toLocaleString()} / mo equivalent · 1 month free`,
+      };
+    }
+
+    // annual
+    const perMonth = Math.round(plan.annualPrice / 12);
+    return {
+      priceMain: `₦${plan.annualPrice.toLocaleString()}`,
+      periodText: "/ year",
+      subtext: `₦${perMonth.toLocaleString()} / mo equivalent · 2 months free`,
+    };
+  };
 
   return (
     <section className="pricing-section" id="pricing" aria-labelledby="pricing-title">
       <div className="pricing-container">
         {/* Section Header */}
         <div className="pricing-header">
-          <h2 id="pricing-title">Considered plans for studios at every milestone.</h2>
+          <h2 id="pricing-title">Pick your plan.</h2>
           <p className="pricing-subtitle">
-            Predictable, transparent membership. Scale your luxury atelier with zero hidden fees.
+            Create a quick mini storefront, share your 3D card, and track customers. Cancel anytime.
           </p>
 
-          {/* Billing Cycle Toggle */}
+          {/* 3-Cycle Billing Toggle */}
           <div className="billing-toggle-container">
-            <div className="billing-toggle">
+            <div className="billing-toggle spotify-toggle">
               <button
                 type="button"
                 className={`toggle-btn ${billingPeriod === "monthly" ? "is-active" : ""}`}
@@ -29,67 +64,82 @@ export function PricingSection() {
               </button>
               <button
                 type="button"
+                className={`toggle-btn ${billingPeriod === "biannual" ? "is-active" : ""}`}
+                onClick={() => setBillingPeriod("biannual")}
+              >
+                <span>Bi-Annual</span>
+                <span className="save-badge">1 Mo Free</span>
+              </button>
+              <button
+                type="button"
                 className={`toggle-btn ${billingPeriod === "annual" ? "is-active" : ""}`}
                 onClick={() => setBillingPeriod("annual")}
               >
                 <span>Annual</span>
-                <span className="save-badge">Save 20%</span>
+                <span className="save-badge">2 Mos Free</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="pricing-grid">
+        {/* Spotify-Style Pricing Cards Grid */}
+        <div className="pricing-grid spotify-grid">
           {LANDING_PRICING_PLANS.map(plan => {
-            const price = billingPeriod === "annual" ? plan.annualPrice : plan.monthlyPrice;
+            const priceInfo = getPriceDetails(plan);
 
             return (
-              <div className={`pricing-card ${plan.isPopular ? "is-popular" : ""}`} key={plan.id}>
-                {/* Popular Badge */}
-                {plan.badge && (
-                  <div className="popular-badge">
-                    <Sparkles size={12} />
-                    <span>{plan.badge}</span>
+              <div
+                className={`spotify-pricing-card ${plan.isPopular ? "is-featured" : ""}`}
+                key={plan.id}
+                style={{ "--accent-color": plan.accentColor } as React.CSSProperties}
+              >
+                <div className="card-top-content">
+                  {/* Top Badge */}
+                  <div className="spotify-card-badge-row">
+                    <span className="spotify-brand-pill">
+                      <Sparkles size={11} />
+                      <span>{plan.badge || "Shopwus"}</span>
+                    </span>
                   </div>
-                )}
 
-                {/* Plan Header */}
-                <div className="plan-header">
-                  <h3 className="plan-name">{plan.name}</h3>
-                  <p className="plan-tagline">{plan.tagline}</p>
-                </div>
+                  {/* Plan Name */}
+                  <h3 className="spotify-plan-title" style={{ color: plan.accentColor }}>
+                    {plan.name}
+                  </h3>
 
-                {/* Price Display */}
-                <div className="plan-price-box">
-                  <span className="currency-symbol">$</span>
-                  <span className="price-number">{price}</span>
-                  <span className="price-period">/ month</span>
-                </div>
-                {billingPeriod === "annual" && (
-                  <span className="annual-billed-note">Billed annually (${price * 12}/yr)</span>
-                )}
+                  {/* Price Tagline */}
+                  <div className="spotify-price-headline">
+                    <span className="spotify-price-amount">{priceInfo.priceMain}</span>
+                    <span className="spotify-price-period"> {priceInfo.periodText}</span>
+                  </div>
 
-                {/* CTA Button */}
-                <a
-                  href="/signup"
-                  className={`plan-cta ${plan.isPopular ? "cta-popular" : "cta-standard"}`}
-                >
-                  <span>{plan.ctaLabel}</span>
-                  <ArrowRight size={14} />
-                </a>
+                  <p className="spotify-plan-subtext">{priceInfo.subtext}</p>
 
-                {/* Feature Checklist */}
-                <div className="plan-features-wrapper">
-                  <span className="features-label">Included in membership:</span>
-                  <ul className="plan-features-list">
+                  {/* Features List */}
+                  <ul className="spotify-features-list">
                     {plan.features.map(feature => (
-                      <li key={feature} className="plan-feature-item">
-                        <Check size={15} className="feature-check" />
+                      <li key={feature} className="spotify-feature-item">
+                        <span className="spotify-bullet">•</span>
                         <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
+                </div>
+
+                {/* Bottom CTA & Footnote */}
+                <div className="card-bottom-actions">
+                  <a
+                    href="/signup"
+                    className="spotify-pill-cta"
+                    style={{
+                      backgroundColor: plan.buttonColor,
+                      color: plan.buttonTextColor,
+                    }}
+                  >
+                    {plan.ctaLabel}
+                  </a>
+
+                  <p className="spotify-terms-note">{plan.termsNote}</p>
                 </div>
               </div>
             );
@@ -97,11 +147,8 @@ export function PricingSection() {
         </div>
 
         {/* Reassurance Footer */}
-        <div className="pricing-reassurance">
-          <p>
-            All plans include a 14-day private trial · No credit card required to start · Cancel or
-            upgrade anytime
-          </p>
+        <div className="pricing-reassurance spotify-reassurance">
+          <p>No hidden setup fees · Instant activation · Upgrade or cancel anytime</p>
         </div>
       </div>
     </section>
