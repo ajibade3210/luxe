@@ -11,10 +11,6 @@ export function FeaturesSection() {
         <div className="features-header">
           <span className="features-eyebrow">Features</span>
           <h2 id="features-title">Everything you need to run your event business.</h2>
-          <p className="features-subtitle">
-            No clutter or complex setup. Simple, powerful tools built specifically for creatives,
-            online vendors, and event businesses.
-          </p>
         </div>
 
         {/* Feature Grid */}

@@ -330,7 +330,7 @@ export function WorkflowSection() {
   const pillars = [
     {
       step: "01",
-      title: "Create",
+      title: "Create Shop",
       description:
         "Shape a public profile that feels like your work, and invite discerning clients in.",
       PreviewComponent: CreatePreviewCard,
