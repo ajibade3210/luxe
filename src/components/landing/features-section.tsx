@@ -9,7 +9,6 @@ export function FeaturesSection() {
       <div className="features-container">
         {/* Section Header */}
         <div className="features-header">
-          <span className="features-eyebrow">Features</span>
           <h2 id="features-title">Everything you need to run your business.</h2>
         </div>
 

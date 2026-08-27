@@ -12,7 +12,6 @@ export function PricingSection() {
       <div className="pricing-container">
         {/* Section Header */}
         <div className="pricing-header">
-          <span className="pricing-eyebrow">Transparent Investment</span>
           <h2 id="pricing-title">Considered plans for studios at every milestone.</h2>
           <p className="pricing-subtitle">
             Predictable, transparent membership. Scale your luxury atelier with zero hidden fees.
