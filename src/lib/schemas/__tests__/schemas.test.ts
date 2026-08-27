@@ -46,6 +46,29 @@ describe("Runtime Schema Validation (Zod)", () => {
       expect(parsed.name).toBe("Crown & Laurel Co.");
     });
 
+    it("validates valid customer input with phone only (no email)", () => {
+      const validPhoneCustomer = {
+        name: "Sterling & Co.",
+        phone: "+234 800 123 4567",
+        service: "Luxury Weddings",
+        amount: 30000,
+      };
+      const parsed = NewCustomerInputSchema.parse(validPhoneCustomer);
+      expect(parsed.name).toBe("Sterling & Co.");
+      expect(parsed.phone).toBe("+234 800 123 4567");
+    });
+
+    it("rejects customer input with neither email nor phone", () => {
+      const invalidCustomer = {
+        name: "No Contact Client",
+        service: "Floral Design",
+        amount: 5000,
+      };
+      expect(() => NewCustomerInputSchema.parse(invalidCustomer)).toThrow(
+        "At least one contact method"
+      );
+    });
+
     it("rejects negative amount in service input", () => {
       const invalidService = {
         name: "Autumn Exhibition",

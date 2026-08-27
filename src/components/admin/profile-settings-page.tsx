@@ -112,7 +112,7 @@ export function ProfileSettingsPage({ onToast }: { onToast?: (message: string) =
 
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
-              Email address
+              Email
             </label>
             <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
               <input

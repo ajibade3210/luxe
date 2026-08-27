@@ -183,7 +183,7 @@ export async function getCustomerActivity(id: string) {
 export interface NewCustomerInput {
   businessId?: string;
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   company?: string;
   serviceName?: string;
@@ -205,7 +205,7 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
   const newId = `c${Date.now()}`;
   const businessId = validatedInput.businessId || "elan-events";
   const services: CustomerService[] = [];
-  const initialServiceName = validatedInput.serviceName?.trim();
+  const initialServiceName = validatedInput.serviceName?.trim() || validatedInput.service?.trim();
   if (initialServiceName) {
     services.push({
       id: `svc-${Date.now()}`,
@@ -223,9 +223,10 @@ export async function createCustomer(input: NewCustomerInput): Promise<Customer>
     id: newId,
     businessId,
     name: validatedInput.name,
-    email: validatedInput.email,
+    email: validatedInput.email || "",
     phone: validatedInput.phone || "",
     company: validatedInput.company || "",
+
     totalRevenue: services.reduce((acc, s) => acc + (s.amount || 0), 0),
     services,
     isActive: validatedInput.isActive ?? true,

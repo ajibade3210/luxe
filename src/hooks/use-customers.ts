@@ -91,8 +91,13 @@ export function useCustomers(onToast?: (message: string) => void) {
   };
 
   const handleCreateCustomer = async (formData: NewCustomerInput) => {
-    if (!formData.name || !formData.email) {
-      onToast?.("Please enter both customer name and email.");
+    if (!formData.name?.trim()) {
+      onToast?.("Please enter customer name.");
+      return false;
+    }
+
+    if (!formData.email?.trim() && !formData.phone?.trim()) {
+      onToast?.("Please provide at least one contact method (Email or Phone/WhatsApp number).");
       return false;
     }
 

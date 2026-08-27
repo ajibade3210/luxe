@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Loader2, X } from "lucide-react";
+import { AlertCircle, Check, Loader2, X } from "lucide-react";
+
 import { useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
 import type { NewCustomerInput } from "@/lib/api";
-import type { ServiceStatus } from "@/lib/types";
 
 interface CustomerAddModalProps {
   isOpen: boolean;
@@ -24,16 +24,28 @@ export function CustomerAddModal({
     email: "",
     phone: "",
     company: "",
-    serviceName: "",
     service: AVAILABLE_SERVICES[0],
     amount: 0,
-    status: "pending",
+    isActive: true,
   });
+
+  const [contactError, setContactError] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setContactError("");
+
+    if (!formData.name?.trim()) {
+      return;
+    }
+
+    if (!formData.email?.trim() && !formData.phone?.trim()) {
+      setContactError("Please provide at least one contact channel (Email or Phone/WhatsApp).");
+      return;
+    }
+
     const success = await onSubmit(formData);
     if (success) {
       setFormData({
@@ -41,11 +53,11 @@ export function CustomerAddModal({
         email: "",
         phone: "",
         company: "",
-        serviceName: "",
         service: AVAILABLE_SERVICES[0],
         amount: 0,
-        status: "pending",
+        isActive: true,
       });
+      setContactError("");
       onClose();
     }
   };
@@ -56,37 +68,32 @@ export function CustomerAddModal({
       onClick={onClose}
     >
       <div
-        className="bg-white border border-[#eae3d7] rounded-3xl max-w-xl w-full p-7 sm:p-9 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto"
+        className="bg-white border border-[#eae3d7] rounded-3xl max-w-xl w-full p-6 sm:p-9 shadow-2xl space-y-6 relative max-h-[92vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between pb-3 border-b border-[#f0e8dc]">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-              Client Directory · New Relationship
-            </span>
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-              Add New Customer
-            </h3>
-            <p className="text-xs text-[#5c5f60] mt-1">
-              Register a client profile, allocate project scope, and set initial payment status.
-            </p>
-          </div>
+        {/* Modal Header */}
+        <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-[#f0e8dc]">
+          <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight">
+            Add New Customer
+          </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
+            className="p-2 -mr-1.5 -my-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-all cursor-pointer shrink-0"
+            aria-label="Close modal"
           >
             <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4.5">
+          {/* Row 1: Name & Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Customer / Client Name *
+                Name *
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
                   required
                   value={formData.name}
@@ -99,14 +106,16 @@ export function CustomerAddModal({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Email Address *
+                Email
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
-                  required
                   type="email"
-                  value={formData.email}
-                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  value={formData.email || ""}
+                  onChange={e => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (contactError) setContactError("");
+                  }}
                   placeholder="client@luxuryholding.com"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
                 />
@@ -114,15 +123,19 @@ export function CustomerAddModal({
             </div>
           </div>
 
+          {/* Row 2: WhatsApp Number & Customer Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Phone / WhatsApp Number
+                WhatsApp Number
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
-                  value={formData.phone}
-                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                  value={formData.phone || ""}
+                  onChange={e => {
+                    setFormData({ ...formData, phone: e.target.value });
+                    if (contactError) setContactError("");
+                  }}
                   placeholder="+234 800 000 0000"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
                 />
@@ -131,43 +144,34 @@ export function CustomerAddModal({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Company / Organization
+                Customer Status
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                <input
-                  value={formData.company}
-                  onChange={e => setFormData({ ...formData, company: e.target.value })}
-                  placeholder="Sterling Estates Limited"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                />
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+                <select
+                  value={formData.isActive ? "active" : "inactive"}
+                  onChange={e =>
+                    setFormData({ ...formData, isActive: e.target.value === "active" })
+                  }
+                  className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none cursor-pointer"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#f0e8dc]">
+          {/* Row 3: Service Needed & Amount Budget */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#f0e8dc]">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Service Scope (Optional)
+                Service Needed
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                <input
-                  value={formData.serviceName || ""}
-                  onChange={e => setFormData({ ...formData, serviceName: e.target.value })}
-                  placeholder="e.g. Floral Styling & Scenography (Optional)"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Service Specialization
-              </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <select
                   value={formData.service}
                   onChange={e => setFormData({ ...formData, service: e.target.value })}
-                  className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
+                  className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none cursor-pointer"
                 >
                   {AVAILABLE_SERVICES.map(svc => (
                     <option key={svc} value={svc}>
@@ -177,14 +181,12 @@ export function CustomerAddModal({
                 </select>
               </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Contract Value (₦)
+                Amount Budget (₦)
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
                   type="number"
                   step="1000"
@@ -196,28 +198,18 @@ export function CustomerAddModal({
                 />
               </div>
             </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Initial Status
-              </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
-                <select
-                  value={formData.status}
-                  onChange={e =>
-                    setFormData({ ...formData, status: e.target.value as ServiceStatus })
-                  }
-                  className="w-full bg-transparent text-xs text-[#191c1d] focus:outline-none"
-                >
-                  <option value="pending">Pending (Review / Invoicing)</option>
-                  <option value="active">Active Service</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#f0e8dc]">
+          {/* Contact Validation Error */}
+          {contactError && (
+            <div className="flex items-center gap-2 p-3 bg-[#fef2f2] border border-[#fecaca] rounded-xl text-xs text-[#991b1b]">
+              <AlertCircle size={14} className="shrink-0 text-[#dc2626]" />
+              <span>{contactError}</span>
+            </div>
+          )}
+
+          {/* Modal Footer */}
+          <div className="flex items-center justify-end gap-3 pt-5 border-t border-[#f0e8dc]">
             <button
               type="button"
               onClick={onClose}
