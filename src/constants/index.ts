@@ -16,7 +16,10 @@ export const STORAGE_KEYS = {
   profileVersion: "luxe_profile_version",
   leads: "luxe_leads_data",
   session: "luxe_auth_session",
+  autoQuoteModalSeen: "luxe_auto_quote_modal_seen",
 } as const;
+
+export const AUTO_QUOTE_MODAL_DELAY_MS = 60_000; // 1 minute dwell time
 
 export const PROFILE_VERSION = 2; // v2: services migrated to ServiceItem[]
 

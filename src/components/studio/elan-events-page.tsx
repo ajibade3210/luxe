@@ -3,7 +3,7 @@
 import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
-import { CUSTOM_EVENTS } from "@/constants";
+import { AUTO_QUOTE_MODAL_DELAY_MS, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
@@ -123,6 +123,30 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
     });
   }, []);
 
+  // Automatically trigger Get a Quote modal once after 1 minute of customer dwell time
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const hasSeenModal = sessionStorage.getItem(STORAGE_KEYS.autoQuoteModalSeen);
+      if (hasSeenModal === "true") return;
+
+      const timer = setTimeout(() => {
+        setQuoteModalOpen(true);
+        sessionStorage.setItem(STORAGE_KEYS.autoQuoteModalSeen, "true");
+      }, AUTO_QUOTE_MODAL_DELAY_MS);
+
+      return () => clearTimeout(timer);
+    } catch {
+      // Fallback if sessionStorage is disabled/blocked in private mode
+      const timer = setTimeout(() => {
+        setQuoteModalOpen(true);
+      }, AUTO_QUOTE_MODAL_DELAY_MS);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Scroll listener for sticky header & active nav section
   useEffect(() => {
     const handleScroll = () => {
@@ -185,6 +209,7 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
   const textColor = profile.colors?.text || "#191C1D";
   const pageBgColor = profile.colors?.pageBackground || "#faf8f5";
   const cardBgColor = profile.colors?.cardBackground || "#faf6f0";
+  const isCardDark = isDarkColor(cardBgColor);
   const radiusClass = getRadiusClass(profile.buttonRadius);
 
   // Check if WhatsApp is enabled in connected channels and has a valid number
@@ -248,6 +273,9 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
 
       setQuoteSubmitting(false);
       setQuoteModalOpen(false);
+      try {
+        sessionStorage.setItem(STORAGE_KEYS.autoQuoteModalSeen, "true");
+      } catch {}
       showToast("Consultation inquiry saved! Opening WhatsApp to start direct chat...");
       setQuoteForm({
         name: "",
@@ -416,67 +444,62 @@ export function ElanEventsPage({ initialProfile, slug = "elan-events" }: ElanEve
         />
 
         {/* CTA BANNER */}
-        {(() => {
-          const isCardDark = isDarkColor(cardBgColor);
-          return (
-            <section
-              style={{ backgroundColor: cardBgColor }}
-              className={`rounded-3xl p-8 sm:p-14 text-center space-y-6 border transition-colors ${
-                isCardDark
-                  ? "border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
-                  : "border-[#ebd8ca] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+        <section
+          style={{ backgroundColor: cardBgColor }}
+          className={`rounded-3xl p-8 sm:p-14 text-center space-y-6 border transition-colors ${
+            isCardDark
+              ? "border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+              : "border-[#ebd8ca] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+          }`}
+        >
+          <div className="max-w-2xl mx-auto space-y-3">
+            <span
+              style={{ color: primaryColor }}
+              className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
+            >
+              Begin Your Journey
+            </span>
+            <h2
+              style={{ color: textColor }}
+              className="font-serif text-3xl sm:text-4xl font-normal"
+            >
+              Ready to Create Something Extraordinary?
+            </h2>
+            <p
+              className={`text-xs sm:text-sm leading-relaxed ${
+                isCardDark ? "text-white/70" : "text-[#78716c]"
               }`}
             >
-              <div className="max-w-2xl mx-auto space-y-3">
-                <span
-                  style={{ color: primaryColor }}
-                  className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
-                >
-                  Begin Your Journey
-                </span>
-                <h2
-                  style={{ color: textColor }}
-                  className="font-serif text-3xl sm:text-4xl font-normal"
-                >
-                  Ready to Create Something Extraordinary?
-                </h2>
-                <p
-                  className={`text-xs sm:text-sm leading-relaxed ${
-                    isCardDark ? "text-white/70" : "text-[#78716c]"
-                  }`}
-                >
-                  Tell us what you&apos;re planning and we&apos;ll get back to you to schedule an
-                  initial consultation with our creative directors.
-                </p>
-              </div>
+              Tell us what you&apos;re planning and we&apos;ll get back to you to schedule an
+              initial consultation with our creative directors.
+            </p>
+          </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setQuoteModalOpen(true)}
-                  style={{ backgroundColor: buttonColor }}
-                  className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
-                >
-                  <span>Get a Quote</span>
-                  <ArrowRight size={15} />
-                </button>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              type="button"
+              onClick={() => setQuoteModalOpen(true)}
+              style={{ backgroundColor: buttonColor }}
+              className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
+            >
+              <span>Get a Quote</span>
+              <ArrowRight size={15} />
+            </button>
 
-                {isWhatsAppEnabled && (
-                  <a
-                    href={whatsAppLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: "#1c1917" }}
-                    className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
-                  >
-                    <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
-                    <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
-                  </a>
-                )}
-              </div>
-            </section>
-          );
-        })()}
+            {isWhatsAppEnabled && (
+              <a
+                href={whatsAppLink}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "#1c1917" }}
+                className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
+              >
+                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
+                <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
+              </a>
+            )}
+          </div>
+        </section>
       </main>
 
       {/* Studio Bottom Footer */}
