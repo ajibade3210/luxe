@@ -43,9 +43,9 @@ export function PublicLandingPage() {
             <em>online vendors & businesses.</em>
           </h1>
           <p>
-            Shopwus (<em>Shop With Us</em>) helps creatives, online vendors, and businesses turn
-            visitors into paying clients. Share your 3D card, receive orders and service requests on
-            WhatsApp, send invoices in seconds, and follow up with clients easily.
+            Shopwus (<em>Shop With Us</em>) is the platform that helps you create a quick mini
+            storefront, share an interactive 3D business card, broadcast messages, and track
+            customers turning visitors into paying clients.
           </p>
           <div className="hero-ctas">
             <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">

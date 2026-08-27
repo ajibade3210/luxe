@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Shopwus — Shop With Us | Digital Shop for Online Vendors & Businesses",
   description:
-    "Shopwus (Shop With Us) is the simple website and business tool for creatives, online vendors, and businesses.",
+    "Shopwus (Shop With Us) is the platform to create a quick mini storefront, share interactive 3D business cards, broadcast messages, and track customers.",
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
