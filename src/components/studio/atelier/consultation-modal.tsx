@@ -1,5 +1,5 @@
 import { Send, X } from "lucide-react";
-import type { ConsultationModalProps, ServiceItem } from "@/types";
+import type { ConsultationModalProps } from "@/types";
 
 export function ConsultationModal({
   isOpen,
@@ -87,7 +87,7 @@ export function ConsultationModal({
                 onChange={e => setQuoteForm({ ...quoteForm, service: e.target.value })}
                 className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
               >
-                {((profile.services as ServiceItem[]) || []).map(s => (
+                {(profile.services || []).map(s => (
                   <option key={s.id} value={s.name}>
                     {s.name}
                   </option>

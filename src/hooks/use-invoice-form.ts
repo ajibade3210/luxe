@@ -13,11 +13,11 @@ import {
 } from "@/lib/api";
 import type {
   CurrencyCode,
-  Customer,
   Invoice,
   InvoiceInput,
   InvoiceItem,
   PaymentTerms,
+  UseInvoiceFormOptions,
 } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
@@ -27,15 +27,6 @@ export const PAYMENT_TERMS_OPTIONS: PaymentTerms[] = [
   "Net 30",
   "Net 60",
 ];
-
-interface UseInvoiceFormOptions {
-  initialCustomer?: Customer;
-  existingInvoice?: Invoice;
-  allCustomers?: Customer[];
-  onToast: (msg: string) => void;
-  onInvoiceSaved?: (invoice: Invoice) => void;
-  onClose: () => void;
-}
 
 export function useInvoiceForm({
   initialCustomer,

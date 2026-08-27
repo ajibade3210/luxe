@@ -159,3 +159,12 @@ export interface InvoicePreviewProps {
   copiedLink: boolean;
   onCopyLink: () => void;
 }
+
+export interface UseInvoiceFormOptions {
+  initialCustomer?: Customer;
+  existingInvoice?: Invoice;
+  allCustomers?: Customer[];
+  onToast: (msg: string) => void;
+  onInvoiceSaved?: (invoice: Invoice) => void;
+  onClose: () => void;
+}
