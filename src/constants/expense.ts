@@ -1,4 +1,5 @@
 import type { Expense, ExpenseCategory, ExpensePaymentMethod } from "@/types";
+import { THEME_PALETTE } from "./theme";
 
 export const EXPENSE_CATEGORIES: readonly ExpenseCategory[] = [
   "materials",
@@ -14,61 +15,43 @@ export const EXPENSE_CATEGORIES: readonly ExpenseCategory[] = [
 
 export const EXPENSE_CATEGORY_CONFIG: Record<
   ExpenseCategory,
-  { label: string; bg: string; color: string; border: string }
+  { label: string; bg: string; color: string; border: string; text?: string }
 > = {
   materials: {
     label: "Materials & Supplies",
-    bg: "#eff6ff",
-    color: "#1d4ed8",
-    border: "#dbeafe",
+    ...THEME_PALETTE.slate,
   },
   logistics: {
     label: "Logistics & Delivery",
-    bg: "#f0fdf4",
-    color: "#15803d",
-    border: "#dcfce7",
+    ...THEME_PALETTE.emerald,
   },
   marketing: {
     label: "Marketing & Ads",
-    bg: "#faf5ff",
-    color: "#7e22ce",
-    border: "#f3e8ff",
+    ...THEME_PALETTE.terracotta,
   },
   packaging: {
     label: "Packaging & Boxes",
-    bg: "#fff7ed",
-    color: "#c2410c",
-    border: "#ffedd5",
+    ...THEME_PALETTE.bronze,
   },
   utilities: {
     label: "Utilities & Tools",
-    bg: "#ecfeff",
-    color: "#0e7490",
-    border: "#cffafe",
+    ...THEME_PALETTE.amber,
   },
   equipment: {
     label: "Equipment & Studio",
-    bg: "#fdf4ff",
-    color: "#a21caf",
-    border: "#fae8ff",
+    ...THEME_PALETTE.teal,
   },
   rent: {
     label: "Studio Rent & Space",
-    bg: "#fef2f2",
-    color: "#b91c1c",
-    border: "#fee2e2",
+    ...THEME_PALETTE.rose,
   },
   salaries: {
     label: "Salaries & Crew",
-    bg: "#f0fdfa",
-    color: "#0f766e",
-    border: "#ccfbf1",
+    ...THEME_PALETTE.emerald,
   },
   other: {
     label: "Other Expenses",
-    bg: "#f3f4f6",
-    color: "#4b5563",
-    border: "#e5e7eb",
+    ...THEME_PALETTE.stone,
   },
 };
 
