@@ -99,3 +99,34 @@ Forbidden:
 - Three-up feature card rows on white
 - The phrase "transform your workflow"
 - Soft drop shadows (use hard 1px borders instead)
+
+**## 6. Design Restraint & Intentionality**
+
+Every UI element must have a clear purpose.
+
+* **Do not add unnecessary design elements.**
+* **Do not add unnecessary icons, illustrations, badges, decorative graphics, animations, gradients, or visual effects.**
+* If an element is **not useful, not requested, and does not meaningfully improve the clarity, usability, hierarchy, or overall aesthetic of the interface, do not add it.**
+* Do not add icons simply to fill empty space or make a component appear more visually complete.
+* Do not introduce decorative elements merely because they are common in modern UI designs.
+* **Less is preferred when less communicates the same information more effectively.**
+* Every component, element, and visual treatment should earn its place in the interface.
+* When implementing a requested design, **follow the existing patterns and visual language in this document rather than inventing additional UI patterns.**
+* Do not embellish a design beyond the requirements of the task.
+* If there is uncertainty about whether an element is necessary, **leave it out unless its inclusion provides a clear functional or meaningful visual benefit.**
+* The goal is **intentional minimalism, not minimalism for its own sake**: the interface should feel refined, purposeful, and complete without feeling decorated.
+
+**AI Implementation Rule:**
+Before adding any UI element, ask: *“Is this necessary? Was it requested? Does it improve the experience or the design?”* If the answer is no, **do not add it.**
+
+**## 7. Forbidden Design Elements & Patterns:**
+
+* Inter, Roboto, or Open Sans.
+* Purple-to-indigo or other generic SaaS-style gradients.
+* Generic three-up feature-card layouts on white backgrounds.
+* The phrase **“transform your workflow.”**
+* Soft, diffuse drop shadows. Prefer **1px borders, subtle surface contrast, and restrained elevation** instead.
+* Decorative UI elements, icons, or illustrations that do not serve a clear functional or informational purpose.
+* Visual embellishments added solely to make a section feel “designed.”
+* Generic SaaS/dashboard patterns that conflict with the **Modern Digital Atelier / Quiet Luxury / Executive Fintech** aesthetic.
+
