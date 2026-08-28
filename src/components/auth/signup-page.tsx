@@ -201,12 +201,12 @@ export function SignupPage() {
             </button>
 
             {/* Terms Agreement Checkbox */}
-            <label className="flex items-start gap-2.5 text-xs text-[#64748b] cursor-pointer select-none pt-1">
+            <label className="flex items-center gap-2 text-xs text-[#64748b] cursor-pointer select-none pt-1">
               <input
                 type="checkbox"
                 checked={agreedToTerms}
                 onChange={e => setAgreedToTerms(e.target.checked)}
-                className="w-4 h-4 rounded border-[#cbd5e1] text-[#2563eb] focus:ring-[#2563eb] mt-0.5"
+                className="w-4 h-4 rounded border-[#cbd5e1] text-[#2563eb] focus:ring-0 cursor-pointer shrink-0"
               />
               <span>
                 I agree to the{" "}
@@ -245,8 +245,8 @@ export function SignupPage() {
               Ready to join Shopwus?
             </h2>
             <p className="text-xs sm:text-sm text-[#64748b] leading-relaxed">
-              Over 10,000+ luxury event architects, bespoke wedding ateliers, and creative directors
-              use Shopwus to orchestrate their business.
+              Over 2000+ online vendors, boutique brands, event planners, and creative businesses
+              use Shopwus to turn visitors into paying clients.
             </p>
           </div>
 
