@@ -473,7 +473,6 @@ em {
   padding: 64px 40px 84px;
   background: var(--background);
   color: var(--ink);
-  border-top: 1px solid var(--line);
 }
 
 .pricing-container {

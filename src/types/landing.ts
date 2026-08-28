@@ -88,3 +88,10 @@ export interface AnimatedWorkflowConnectorProps {
 export interface MobileVerticalConnectorProps {
   stepNumber: number;
 }
+
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+  category?: string;
+}

@@ -52,10 +52,6 @@ export function PricingSection() {
         {/* Section Header */}
         <div className="pricing-header">
           <h2 id="pricing-title">Pick your plan.</h2>
-          <p className="pricing-subtitle">
-            Create a quick mini storefront, share your 3D card, and track customers. Cancel anytime.
-          </p>
-
           {/* 3-Cycle Billing Toggle */}
           <div className="billing-toggle-container">
             <div className="billing-toggle spotify-toggle">

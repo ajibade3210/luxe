@@ -1,9 +1,10 @@
 "use client";
 
-import { Check, Loader2, Shield, Sparkles } from "lucide-react";
+import { Check, ChevronDown, Globe, HelpCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AuthHeader } from "@/components/auth/auth-header";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { GoogleIcon } from "@/components/shared/icons";
 import { checkSlugAvailability, signUpWithGoogle, updateBusinessProfile } from "@/lib/api";
 
@@ -15,6 +16,7 @@ export function SignupPage() {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(true);
+  const [agreedToTerms, setAgreedToTerms] = useState(true);
 
   const [selectedPlan, setSelectedPlan] = useState("");
   const [selectedCycle, setSelectedCycle] = useState("");
@@ -34,7 +36,6 @@ export function SignupPage() {
         const clean = claim.toLowerCase().replace(/[^a-z0-9-]/g, "");
         setClaimSlug(clean);
         setSlug(clean);
-        // Formulate a nice default studio name from slug e.g. "elan-events" -> "Elan Events"
         const formatted = clean
           .split("-")
           .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -58,6 +59,7 @@ export function SignupPage() {
   }, [slug]);
 
   const handleGoogleSignup = async () => {
+    if (!agreedToTerms) return;
     setIsSubmitting(true);
     const effectiveSlug = slug || claimSlug || "my-atelier";
     const effectiveName = studioName || "My Luxury Studio";
@@ -80,81 +82,73 @@ export function SignupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#faf8f5] text-[#191c1d] flex flex-col justify-between selection:bg-[#d8e2ff] selection:text-[#0058be] font-sans antialiased relative overflow-hidden">
-      {/* Ambient Glows */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] pointer-events-none opacity-40 blur-3xl -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(214, 180, 138, 0.3) 0%, transparent 70%)",
-        }}
-      />
+    <div className="min-h-screen bg-white text-[#191c1d] flex flex-col lg:flex-row font-sans selection:bg-[#191c1d] selection:text-white">
+      {/* Left Panel: Signup Flow */}
+      <div className="w-full lg:w-[58%] min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14">
+        {/* Top Header */}
+        <div className="flex items-center justify-between">
+          <BrandLogo size="md" href="/" />
 
-      {/* Top Header */}
-      <AuthHeader mode="signup" claimSlug={claimSlug} />
+          <div className="flex items-center gap-5 text-xs text-[#5c5f60]">
+            <a
+              href="mailto:support@shopwus.com"
+              className="text-[#2563eb] hover:underline font-medium flex items-center gap-1"
+            >
+              <HelpCircle size={14} />
+              <span>Need help?</span>
+            </a>
+            <div className="h-3.5 w-px bg-[#e5e7eb] hidden sm:block" />
+            <div className="hidden sm:flex items-center gap-1.5 text-[#191c1d] font-medium cursor-pointer">
+              <Globe size={14} className="text-[#64748b]" />
+              <span>English</span>
+              <ChevronDown size={13} className="text-[#94a3b8]" />
+            </div>
+          </div>
+        </div>
 
-      {/* Main Signup Form Container */}
-      <div className="w-full max-w-lg mx-auto px-6 py-12 my-auto z-10">
-        <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-12 shadow-[0_12px_40px_rgba(40,30,20,0.04)]">
-          {/* Header Section */}
-          <div className="mb-10">
-            {/* Claim Banner Pill */}
-            {claimSlug ? (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-5 w-full justify-center">
-                <Sparkles size={13} className="text-[#855e2e]" />
-                <span>
-                  Reserving Handle:{" "}
-                  <span className="font-semibold text-[#6f4c22]">/{claimSlug}</span>
-                </span>
-              </div>
-            ) : selectedPlan ? (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f0eae1] border border-[#e4dacf] text-xs font-medium text-[#855e2e] mb-5">
-                <span>
-                  Selected Tier:{" "}
-                  <span className="font-semibold capitalize text-[#6f4c22]">
-                    {selectedPlan === "trial" ? "14-Day Free Trial" : selectedPlan}
-                  </span>
-                  {selectedCycle && selectedPlan !== "trial" ? ` (${selectedCycle})` : ""}
-                </span>
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-5">
-                <span>Create Your Digital Shop</span>
-              </div>
-            )}
-
-            {/* Form Title & Subtitle */}
-            <h1 className="text-2xl sm:text-3xl font-serif text-[#191c1d] font-bold tracking-tight mb-2.5">
-              {claimSlug ? "Claim your studio handle." : "Open your studio atelier."}
-            </h1>
-            <p className="text-xs sm:text-sm text-[#5c5f60] leading-relaxed">
-              Reserve your bespoke public profile URL and unlock your studio director dashboard with
-              Google.
-            </p>
+        {/* Form Area */}
+        <div className="max-w-md w-full mx-auto my-auto py-8">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#191c1d] tracking-tight">
+                Get Started
+              </h1>
+              <p className="text-xs sm:text-sm text-[#64748b] mt-1">
+                {selectedPlan
+                  ? `Start your ${selectedPlan === "trial" ? "14-day free trial" : `${selectedPlan} (${selectedCycle || "monthly"})`} to continue.`
+                  : "Create your free Shopwus account with Google."}
+              </p>
+            </div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#94a3b8] shrink-0 mt-1">
+              STEP 1 / 3
+            </span>
           </div>
 
-          {/* Form Input Fields with Tight Label Proximity and Clean Separation */}
-          <div className="space-y-6 mb-9">
-            {/* Studio Handle / Slug */}
+          {/* Optional Handle & Studio Setup */}
+          <div className="space-y-4 mb-6">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d]">
-                  Studio Handle / Public URL
+                <label className="block text-xs font-semibold text-[#191c1d]">
+                  Claim your public URL{" "}
+                  <span className="text-[#94a3b8] font-normal">(optional)</span>
                 </label>
-                <span className="text-[10px] text-[#8e9192]">
-                  {isCheckingSlug ? (
-                    "Checking…"
-                  ) : slugAvailable ? (
-                    <span className="text-[#10b981] flex items-center gap-1 font-sans font-medium">
-                      <Check size={10} /> Available
-                    </span>
-                  ) : (
-                    <span className="text-[#ef4444] font-sans font-medium">Unavailable</span>
-                  )}
-                </span>
+                {slug && (
+                  <span className="text-[10px] text-[#8e9192]">
+                    {isCheckingSlug ? (
+                      "Checking…"
+                    ) : slugAvailable ? (
+                      <span className="text-[#10b981] flex items-center gap-1 font-medium">
+                        <Check size={10} /> Available
+                      </span>
+                    ) : (
+                      <span className="text-[#ef4444] font-medium">Unavailable</span>
+                    )}
+                  </span>
+                )}
               </div>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
-                <span className="text-[#8e9192] select-none shrink-0 text-xs mr-1 font-medium">
+              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#2563eb] focus-within:ring-1 focus-within:ring-[#2563eb] focus-within:bg-white transition-all">
+                <span className="text-[#94a3b8] select-none shrink-0 text-xs mr-1 font-medium">
                   shopwus.com/
                 </span>
                 <input
@@ -162,62 +156,158 @@ export function SignupPage() {
                   value={slug}
                   onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
                   placeholder="your-studio"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#94a3b8] outline-none"
                 />
               </div>
             </div>
 
-            {/* Studio Name */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
-                Studio / Brand Name
+              <label className="block text-xs font-semibold text-[#191c1d] mb-1.5">
+                Studio / Brand Name <span className="text-[#94a3b8] font-normal">(optional)</span>
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#2563eb] focus-within:ring-1 focus-within:ring-[#2563eb] focus-within:bg-white transition-all">
                 <input
                   type="text"
                   value={studioName}
                   onChange={e => setStudioName(e.target.value)}
                   placeholder="e.g. Élan Events Atelier"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#94a3b8] outline-none"
                 />
               </div>
             </div>
           </div>
 
-          {/* Primary Google Signup Button */}
-          <div className="pt-1">
+          {/* Primary Google Auth Button */}
+          <div className="space-y-4">
             <button
               type="button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !agreedToTerms}
               onClick={handleGoogleSignup}
-              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin text-[#0058be]" />
-                  <span>Opening Atelier with Google…</span>
+                  <Loader2 size={16} className="animate-spin text-white" />
+                  <span>Connecting with Google…</span>
                 </>
               ) : (
                 <>
-                  <GoogleIcon className="w-4 h-4" />
-                  <span>Continue with Google</span>
+                  <div className="w-5 h-5 rounded-md bg-white flex items-center justify-center shrink-0">
+                    <GoogleIcon className="w-3.5 h-3.5" />
+                  </div>
+                  <span>Sign up with Google</span>
                 </>
               )}
             </button>
+
+            {/* Terms Agreement Checkbox */}
+            <label className="flex items-start gap-2.5 text-xs text-[#64748b] cursor-pointer select-none pt-1">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={e => setAgreedToTerms(e.target.checked)}
+                className="w-4 h-4 rounded border-[#cbd5e1] text-[#2563eb] focus:ring-[#2563eb] mt-0.5"
+              />
+              <span>
+                I agree to the{" "}
+                <Link href="/terms" className="text-[#2563eb] underline hover:text-[#1d4ed8]">
+                  Terms & Conditions
+                </Link>{" "}
+                and have read the{" "}
+                <Link href="/privacy" className="text-[#2563eb] underline hover:text-[#1d4ed8]">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
           </div>
 
-          {/* Privacy Note */}
-          <div className="flex items-center gap-2 mt-10 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">
-            <Shield size={13} className="text-[#10b981]" />
-            <span>Encrypted with bank-grade 256-bit security.</span>
+          {/* Bottom Link */}
+          <div className="pt-6 mt-6 border-t border-[#f1f5f9] flex items-center justify-between text-xs text-[#64748b]">
+            <span>Already have an account?</span>
+            <Link href="/login" className="text-[#2563eb] font-semibold hover:underline">
+              Sign in to Studio
+            </Link>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center lg:text-left text-[11px] text-[#94a3b8]">
+          © {new Date().getFullYear()} Shopwus. All rights reserved.
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-[#8e9192] z-10">
-        © 2026 Shopwus Atelier Suite. All rights reserved.
-      </footer>
-    </main>
+      {/* Right Panel: Testimonials Showcase */}
+      <div className="w-full lg:w-[42%] bg-[#f3f4f6] border-l border-[#e5e7eb] p-8 sm:p-12 lg:p-14 flex flex-col justify-center">
+        <div className="max-w-md mx-auto space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#191c1d] tracking-tight">
+              Ready to join Shopwus?
+            </h2>
+            <p className="text-xs sm:text-sm text-[#64748b] leading-relaxed">
+              Over 10,000+ luxury event architects, bespoke wedding ateliers, and creative directors
+              use Shopwus to orchestrate their business.
+            </p>
+          </div>
+
+          {/* Testimonial Cards */}
+          <div className="space-y-4">
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <strong className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
+                  Élan Events
+                </strong>
+                <span className="text-[10px] bg-[#ecfdf5] text-[#059669] px-2 py-0.5 rounded-full font-medium">
+                  Verified Atelier
+                </span>
+              </div>
+              <p className="text-xs text-[#475569] leading-relaxed">
+                &ldquo;Through Shopwus&apos;s bespoke 3D cards and invoicing, our team has seamless
+                customer tracking, instant deposits, and complete financial clarity.&rdquo;
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                <div className="w-8 h-8 rounded-full bg-[#191c1d] text-white flex items-center justify-center text-xs font-bold">
+                  AB
+                </div>
+                <div>
+                  <strong className="text-xs font-bold text-[#191c1d] block">Amelia Bell</strong>
+                  <span className="text-[11px] text-[#64748b] block">
+                    Studio Director · Élan Events
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <strong className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
+                  Maison Production
+                </strong>
+                <span className="text-[10px] bg-[#f0fdf4] text-[#16a34a] px-2 py-0.5 rounded-full font-medium">
+                  Flagship Brand
+                </span>
+              </div>
+              <p className="text-xs text-[#475569] leading-relaxed">
+                &ldquo;A super toolset dedicated to luxury client service that connects our
+                inquiries, multi-currency invoicing, and real-time business valuation.&rdquo;
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                <div className="w-8 h-8 rounded-full bg-[#3b82f6] text-white flex items-center justify-center text-xs font-bold">
+                  LH
+                </div>
+                <div>
+                  <strong className="text-xs font-bold text-[#191c1d] block">Laurent Hayoz</strong>
+                  <span className="text-[11px] text-[#64748b] block">
+                    Head of Digital & Experiential
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

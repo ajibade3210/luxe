@@ -178,3 +178,48 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     termsNote: "Billed as selected. Cancel anytime. Terms apply.",
   },
 ] as const;
+
+export const LANDING_FAQS = [
+  {
+    id: "faq-what-is",
+    question: "What is Shopwus and who is it built for?",
+    answer:
+      "Shopwus (Shop With Us) is the premier studio operating system built for boutique online vendors, event planners, bespoke artisans, and creative directors. It combines a public digital storefront with an interactive 3D stationery card, CRM lead pipeline, executive multi-currency invoicing, expense bookkeeping, and business valuation modeling in one cohesive workspace.",
+  },
+  {
+    id: "faq-3d-card",
+    question: "How does the interactive 3D stationery card work?",
+    answer:
+      "Every studio gets a bespoke public link (e.g., shopwus.com/your-brand) with an interactive physics-driven 3D card that showcases your business logo, verified social channels, service menu, and contact details. Clients can flip the card and submit instant consultation inquiries directly into your studio CRM.",
+  },
+  {
+    id: "faq-valuation",
+    question: "How is the Business Valuation calculated?",
+    answer:
+      "The Business Valuation Estimator uses the industry-standard Seller's Discretionary Earnings (SDE) Multiple Method. It analyzes your annualized revenue run-rate (ARR), net profit margins after logged operating expenses, and active retained client base to provide a confidential appraisal range and strategic growth recommendations.",
+  },
+  {
+    id: "faq-privacy",
+    question: "Is my studio financial, expense, and client data private?",
+    answer:
+      "Yes, absolutely. All your financial ledgers, revenue numbers, operating expenses, customer records, and valuation models are encrypted and strictly private to your verified director account. We do not sell or share your proprietary business data with third parties or competitors, in full compliance with the Nigeria Data Protection Act (NDPA).",
+  },
+  {
+    id: "faq-broadcast",
+    question: "How does WhatsApp Broadcast and outreach work?",
+    answer:
+      "You can filter your active client list and dispatch 1-click bulk broadcast announcements or customized follow-ups directly via WhatsApp and discreet Email BCC. The system enforces anti-spam character limits and supports image attachment previews without third-party API lock-in.",
+  },
+  {
+    id: "faq-export",
+    question: "Can I export my invoices, leads, and bookkeeping records?",
+    answer:
+      "Yes. You can export your leads, customer contacts, and expense ledgers into structured CSV spreadsheets at any time with a single click for your accountant or tax bookkeeping.",
+  },
+  {
+    id: "faq-trial",
+    question: "Is there a free trial?",
+    answer:
+      "Yes, we offer a 14-day complimentary trial with complete access to all studio tools, 3D cards, invoicing, and expense bookkeeping with zero initial commitment. You can upgrade or cancel at any time.",
+  },
+] as const;
