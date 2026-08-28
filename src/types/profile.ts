@@ -139,8 +139,8 @@ export interface ChannelsSectionProps {
   setGoogleReviewsLink: (v: string) => void;
   showReviews: boolean;
   setShowReviews: (v: boolean) => void;
-  isSyncingReviews: boolean;
-  handleSyncReviews: () => void;
+  isSyncingReviews?: boolean;
+  handleSyncReviews?: () => void;
   channels: SocialChannel[];
   updateChannelHandle: (id: string, handle: string) => void;
   toggleChannel: (id: string) => void;

@@ -169,4 +169,5 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
 
 export * from "./expense";
 export * from "./landing";
+export * from "./reviews";
 export * from "./valuation";

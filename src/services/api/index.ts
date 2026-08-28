@@ -8,4 +8,5 @@ export * from "./invoice.service";
 export * from "./leads.service";
 export * from "./media.service";
 export * from "./profile.service";
+export * from "./reviews.service";
 export * from "./valuation.service";
