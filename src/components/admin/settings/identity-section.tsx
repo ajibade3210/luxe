@@ -145,7 +145,7 @@ export function IdentitySection({
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Claim handle / custom slug
+              Slug
             </label>
             <div className="relative">
               <input
@@ -206,7 +206,7 @@ export function IdentitySection({
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Primary contact email
+              Email
             </label>
             <input
               value={email}
@@ -229,7 +229,7 @@ export function IdentitySection({
 
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Default Studio Currency
+              Currency
             </label>
             <select
               value={currency}
@@ -276,7 +276,7 @@ export function IdentitySection({
           {/* Row 6: About textarea */}
           <div className="md:col-span-2 space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              About your studio & signature approach
+              About store
             </label>
             <textarea
               rows={4}
