@@ -3,6 +3,7 @@ export * from "./analytics.service";
 export * from "./auth.service";
 export * from "./customer.service";
 export * from "./expense.service";
+export * from "./feedback.service";
 export * from "./invoice.service";
 export * from "./leads.service";
 export * from "./media.service";

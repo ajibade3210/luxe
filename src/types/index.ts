@@ -4,6 +4,7 @@ export * from "./broadcast";
 export * from "./common";
 export * from "./customer";
 export * from "./expense";
+export * from "./feedback";
 export * from "./invoice";
 export * from "./landing";
 export * from "./lead";

@@ -3,19 +3,17 @@
 import { ArrowRight } from "lucide-react";
 import { FaqSection } from "@/components/landing/faq-section";
 import { FeaturesSection } from "@/components/landing/features-section";
+import { FloatingChatWidget } from "@/components/landing/floating-chat-widget";
 import { HeroRotatingCard } from "@/components/landing/hero-rotating-card";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { TrustedBusinesses } from "@/components/landing/trusted-businesses";
 import { WorkflowSection } from "@/components/landing/workflow-section";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { APP_CONFIG } from "@/constants";
 import { useScroll } from "@/hooks";
-import { businessProfile } from "@/lib/mock-data";
 
 export function PublicLandingPage() {
   const isScrolled = useScroll(20);
-  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
 
   return (
     <main className="public">
@@ -26,7 +24,6 @@ export function PublicLandingPage() {
             <a href="#workflow">How it works</a>
             <a href="/signup">Pricing</a>
             <a href="#faq">FAQ</a>
-            <a href={`/${slug}`}>Studio Demo</a>
           </nav>
         </div>
         <BrandLogo className="public-logo" />
@@ -66,6 +63,7 @@ export function PublicLandingPage() {
       <PricingSection />
       <FaqSection />
       <SiteFooter />
+      <FloatingChatWidget />
     </main>
   );
 }
