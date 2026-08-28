@@ -144,9 +144,7 @@ export function IdentitySection({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Slug
-            </label>
+            <label className="text-xs font-semibold text-[#374151] tracking-wide block">Slug</label>
             <div className="relative">
               <input
                 value={slug}
