@@ -259,7 +259,7 @@ export function SignupPage() {
                   Élan Events
                 </strong>
                 <span className="text-[10px] bg-[#ecfdf5] text-[#059669] px-2 py-0.5 rounded-full font-medium">
-                  Verified Atelier
+                  Verified shop
                 </span>
               </div>
               <p className="text-xs text-[#475569] leading-relaxed">
