@@ -166,3 +166,4 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
 } as const;
 
 export * from "./landing";
+export * from "./reviews";

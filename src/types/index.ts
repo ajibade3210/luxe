@@ -7,3 +7,4 @@ export * from "./invoice";
 export * from "./landing";
 export * from "./lead";
 export * from "./profile";
+export * from "./reviews";
