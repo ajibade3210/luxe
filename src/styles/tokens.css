@@ -52,6 +52,18 @@
   --on-secondary-fixed: #001a42;
   --on-secondary-fixed-variant: #004395;
 
+  /* Atelier Luxury Brand Tokens */
+  --atelier-canvas: #faf8f5;
+  --atelier-warm: #faf7f2;
+  --atelier-card: #ffffff;
+  --atelier-line: #eee7dc;
+  --atelier-subtle: #f4eee6;
+  --atelier-ink: #1f1d1a;
+  --atelier-body: #665e57;
+  --atelier-muted: #8c827a;
+  --atelier-accent: #9e633d;
+  --atelier-accent-hover: #c59a78;
+
   /* Backward Compatibility Mappings */
   --background: var(--surface);
   --foreground: var(--on-surface);
@@ -70,4 +82,38 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --sans: var(--font-sans);
   --serif: var(--font-sans);
+}
+
+/* ==========================================================================
+   Atelier Semantic Utility Classes
+   ========================================================================== */
+.bg-atelier-canvas {
+  background-color: var(--atelier-canvas);
+}
+.bg-atelier-warm {
+  background-color: var(--atelier-warm);
+}
+.bg-atelier-card {
+  background-color: var(--atelier-card);
+}
+.border-atelier-line {
+  border-color: var(--atelier-line);
+}
+.border-atelier-subtle {
+  border-color: var(--atelier-subtle);
+}
+.border-atelier-accent-hover:hover {
+  border-color: var(--atelier-accent-hover);
+}
+.text-atelier-ink {
+  color: var(--atelier-ink);
+}
+.text-atelier-body {
+  color: var(--atelier-body);
+}
+.text-atelier-muted {
+  color: var(--atelier-muted);
+}
+.text-atelier-accent {
+  color: var(--atelier-accent);
 }

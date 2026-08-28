@@ -2,8 +2,6 @@
 
 import { ChevronUp, Smartphone } from "lucide-react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { APP_CONFIG } from "@/constants";
-import { businessProfile } from "@/lib/mock-data";
 
 const QR_CODE_IMAGE_SRC =
   "https://cdn.accessa.ng/test/accessa/joe-fitness/qrcodes/images/7343ffeb0bfd056e77e8e8d52edf0722.png";
@@ -11,7 +9,8 @@ const QR_CODE_IMAGE_SRC =
 const FOOTER_NAV_LINKS = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#workflow" },
-  { label: "Studio Demo", href: `/${businessProfile.slug || APP_CONFIG.defaultSlug}` },
+  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
   { label: "Sign up", href: "/signup" },
   { label: "Enter Studio", href: "/login" },
 ] as const;
@@ -21,6 +20,11 @@ const FOOTER_CONNECT_LINKS = [
   { label: "LinkedIn", href: "https://linkedin.com" },
   { label: "Pinterest", href: "https://pinterest.com" },
   { label: "Twitter / X", href: "https://x.com" },
+] as const;
+
+const FOOTER_LEGAL_LINKS = [
+  { label: "Privacy policy", href: "/privacy" },
+  { label: "Terms of service", href: "/terms" },
 ] as const;
 
 export function SiteFooter() {
@@ -66,7 +70,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          {/* Center Column: Navigation */}
+          {/* Column 2: Navigation */}
           <div className="footer-nav-column footer-center-column">
             <h3 className="footer-nav-title">Navigation</h3>
             <ul className="footer-nav-list">
@@ -80,8 +84,8 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Right Column: Connect */}
-          <div className="footer-nav-column footer-right-column">
+          {/* Column 3: Connect */}
+          <div className="footer-nav-column footer-connect-column">
             <h3 className="footer-nav-title">Connect</h3>
             <ul className="footer-nav-list">
               {FOOTER_CONNECT_LINKS.map(link => (
@@ -98,22 +102,26 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
+
+          {/* Column 4: BORING */}
+          <div className="footer-nav-column footer-boring-column">
+            <h3 className="footer-nav-title">BORING</h3>
+            <ul className="footer-nav-list">
+              {FOOTER_LEGAL_LINKS.map(link => (
+                <li key={link.label}>
+                  <a href={link.href} className="footer-nav-link">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Bottom Bar: Copyright, Legal & Back to Top */}
+        {/* Bottom Bar: Copyright & Back to Top */}
         <div className="footer-bottom-bar">
           <div className="footer-bottom-left">
             <span>© {new Date().getFullYear()} Shopwus. All rights reserved.</span>
-          </div>
-
-          <div className="footer-legal-links">
-            <a href="#privacy" className="footer-legal-item">
-              Privacy Policy
-            </a>
-            <span className="footer-legal-sep">·</span>
-            <a href="#terms" className="footer-legal-item">
-              Terms of Service
-            </a>
           </div>
 
           <button

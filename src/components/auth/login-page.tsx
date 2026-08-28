@@ -1,8 +1,19 @@
 "use client";
 
-import { Loader2, Shield } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronDown,
+  CreditCard,
+  Download,
+  Globe,
+  HelpCircle,
+  Loader2,
+  Shield,
+} from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AuthHeader } from "@/components/auth/auth-header";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { GoogleIcon } from "@/components/shared/icons";
 import { signInWithGoogle } from "@/lib/api";
 
@@ -31,68 +42,153 @@ export function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#faf8f5] text-[#191c1d] flex flex-col justify-between selection:bg-[#d8e2ff] selection:text-[#0058be] font-sans antialiased relative overflow-hidden">
-      {/* Ambient Glow */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[450px] pointer-events-none opacity-40 blur-3xl -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(214, 180, 138, 0.3) 0%, transparent 70%)",
-        }}
-      />
+    <div className="min-h-screen bg-white text-[#191c1d] flex flex-col lg:flex-row font-sans selection:bg-[#2563eb] selection:text-white">
+      {/* Left Panel: Google Sign-in */}
+      <div className="w-full lg:w-[58%] min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14">
+        {/* Top Header */}
+        <div className="flex items-center justify-between">
+          <BrandLogo size="md" href="/" />
 
-      {/* Top Header */}
-      <AuthHeader mode="login" claimSlug={claimParam} />
+          <div className="flex items-center gap-5 text-xs text-[#5c5f60]">
+            <a
+              href="mailto:support@shopwus.com"
+              className="text-[#2563eb] hover:underline font-medium flex items-center gap-1"
+            >
+              <HelpCircle size={14} />
+              <span>Need help?</span>
+            </a>
+            <div className="h-3.5 w-px bg-[#e5e7eb] hidden sm:block" />
+            <div className="hidden sm:flex items-center gap-1.5 text-[#191c1d] font-medium cursor-pointer">
+              <Globe size={14} className="text-[#64748b]" />
+              <span>English</span>
+              <ChevronDown size={13} className="text-[#94a3b8]" />
+            </div>
+          </div>
+        </div>
 
-      {/* Main Login Form Container */}
-      <div className="w-full max-w-md mx-auto px-6 py-12 my-auto z-10">
-        <div className="bg-white border border-[#eae3d7] rounded-3xl p-8 sm:p-12 shadow-[0_12px_40px_rgba(40,30,20,0.04)] text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f4f4f4] text-xs font-medium text-[#5c5f60] mb-6">
-            <span>Studio Director Portal</span>
+        {/* Action Container */}
+        <div className="max-w-md w-full mx-auto my-auto py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#191c1d] tracking-tight">Login</h1>
+            <p className="text-xs sm:text-sm text-[#64748b] mt-1">
+              Sign in with your verified Google account to access your studio director dashboard.
+            </p>
           </div>
 
-          <h1
-            style={{ marginBottom: "36px" }}
-            className="text-xl sm:text-2xl font-serif text-[#191c1d] font-bold tracking-tight whitespace-nowrap"
-          >
-            Return to your studio.
-          </h1>
-
-          {/* Action Area with Generous Spacing */}
-          <div style={{ marginTop: "12px" }}>
+          {/* Primary Google Auth Button */}
+          <div className="space-y-4">
             <button
               type="button"
               disabled={isSubmitting}
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border border-[#ded7cb] bg-[#faf8f5] hover:bg-[#f2ece3] active:scale-[0.99] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:pointer-events-none"
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-60"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin text-[#0058be]" />
+                  <Loader2 size={16} className="animate-spin text-white" />
                   <span>Signing in with Google…</span>
                 </>
               ) : (
                 <>
-                  <GoogleIcon className="w-4 h-4" />
-                  <span>Continue with Google</span>
+                  <div className="w-5 h-5 rounded-md bg-white flex items-center justify-center shrink-0">
+                    <GoogleIcon className="w-3.5 h-3.5" />
+                  </div>
+                  <span>Sign in with Google</span>
                 </>
               )}
             </button>
+
+            {/* Security Badge */}
+            <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] pt-2">
+              <Shield size={14} className="text-[#10b981]" />
+              <span>Bank-grade 256-bit Google OAuth</span>
+            </div>
           </div>
 
-          {/* Privacy & Security Note */}
-          <div className="flex items-center gap-2 mt-10 pt-6 border-t border-[#f0e8dc] text-[11px] text-[#8e9192] justify-center">
-            <Shield size={13} className="text-[#10b981]" />
-            <span>Encrypted with bank-grade 256-bit security.</span>
+          {/* Bottom Links */}
+          <div className="flex items-center justify-between pt-8 mt-8 border-t border-[#f1f5f9] text-xs text-[#64748b]">
+            <span>Don&apos;t have an account yet?</span>
+            <Link
+              href="/signup"
+              className="text-[#2563eb] font-semibold underline underline-offset-2 hover:text-[#1d4ed8]"
+            >
+              Get started.
+            </Link>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center lg:text-left text-[11px] text-[#94a3b8]">
+          © {new Date().getFullYear()} Shopwus. All rights reserved.
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <footer className="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-[#8e9192] z-10">
-        © 2026 Shopwus Atelier Suite. All rights reserved.
-      </footer>
-    </main>
+      {/* Right Panel: Feature Preview */}
+      <div className="w-full lg:w-[42%] bg-[#2563eb] text-white p-8 sm:p-12 lg:p-14 flex flex-col justify-center relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-md mx-auto space-y-8 relative z-10">
+          <div className="space-y-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
+              Manage your entire studio right from your Shopwus Dashboard
+            </h2>
+            <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
+              Supercharge your client intake, live show-calls, multi-currency invoicing, and
+              real-time business valuation in one cohesive workspace.
+            </p>
+            <div>
+              <Link
+                href="/#features"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-white underline underline-offset-4 hover:text-blue-200"
+              >
+                <span>Learn More</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Interactive Mockup Preview Card */}
+          <div className="bg-white text-[#191c1d] rounded-2xl p-6 shadow-xl border border-blue-400/30 space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-[10px] font-bold">
+                  É
+                </div>
+                <strong className="text-xs font-bold text-[#191c1d]">Élan Events Atelier</strong>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                <CheckCircle2 size={11} /> Invoice Paid
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-xs text-gray-600">
+              <div className="p-3 bg-gray-50 rounded-xl space-y-1 text-[11px]">
+                <span className="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">
+                  Client Note
+                </span>
+                <p>
+                  &ldquo;Here is the itemized invoice for the March Grand Gala. Deposit has been
+                  received!&rdquo;
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <CreditCard size={14} className="text-[#2563eb]" />
+                <span className="font-semibold text-gray-900">₦2,500,000</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer shadow-2xs">
+                <Download size={12} />
+                <span>Download Receipt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

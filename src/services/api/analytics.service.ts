@@ -5,6 +5,8 @@
  */
 
 import type { AnalyticsOverview, Timeframe } from "@/types";
+import { getExpenseCategoryBreakdown, getExpenseSummary } from "./expense.service";
+import { calculateBusinessValuation } from "./valuation.service";
 
 const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
   daily: {
@@ -102,8 +104,8 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       progressPercent: 78,
     },
     revenue: {
-      value: "₦198,254",
-      rawNumber: 198254,
+      value: "₦485,250",
+      rawNumber: 485250,
       change: "+25.00%",
       isPositive: true,
       progressPercent: 84,
@@ -179,8 +181,8 @@ const ANALYTICS_DATA: Record<Timeframe, AnalyticsOverview> = {
       progressPercent: 82,
     },
     revenue: {
-      value: "₦1,420,000",
-      rawNumber: 1420000,
+      value: "₦4,850,000",
+      rawNumber: 4850000,
       change: "+45.20%",
       isPositive: true,
       progressPercent: 94,
@@ -244,10 +246,48 @@ const delay = (ms = 100) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * Fetch Studio Overview & Telemetry Analytics
+ * Combines revenue inflows, operational expenses, net profit, and real-time studio valuation.
  * When connecting to real backend, swap with:
  * `const res = await fetch(`/api/analytics?timeframe=${timeframe}`); return res.json();`
  */
 export async function getAnalytics(timeframe: Timeframe = "monthly"): Promise<AnalyticsOverview> {
   await delay(120);
-  return ANALYTICS_DATA[timeframe] || ANALYTICS_DATA.monthly;
+  const base = ANALYTICS_DATA[timeframe] || ANALYTICS_DATA.monthly;
+
+  // Retrieve live expense and valuation metrics
+  const [expenseSummary, categoryBreakdown, valuation] = await Promise.all([
+    getExpenseSummary(),
+    getExpenseCategoryBreakdown(),
+    calculateBusinessValuation(base.revenue.rawNumber),
+  ]);
+
+  const expenseMultiplier = timeframe === "daily" ? 0.08 : timeframe === "yearly" ? 6.5 : 1;
+  const rawExpenseAmount = Math.round((expenseSummary.totalAmount || 285500) * expenseMultiplier);
+  const rawRevenue = base.revenue.rawNumber;
+  const rawNetProfit = rawRevenue - rawExpenseAmount;
+  const isProfitable = rawNetProfit >= 0;
+  const netMargin = Math.round((Math.abs(rawNetProfit) / Math.max(rawRevenue, 1)) * 100);
+
+  return {
+    ...base,
+    expenses: {
+      value: `₦${rawExpenseAmount.toLocaleString()}`,
+      rawNumber: rawExpenseAmount,
+      change: "-5.40%",
+      isPositive: true,
+      progressPercent: Math.min(
+        Math.round((rawExpenseAmount / Math.max(rawRevenue, 1)) * 100),
+        100
+      ),
+    },
+    netProfit: {
+      value: `₦${rawNetProfit.toLocaleString()}`,
+      rawNumber: rawNetProfit,
+      change: isProfitable ? `+${netMargin}% margin` : `-${netMargin}% deficit`,
+      isPositive: isProfitable,
+      progressPercent: Math.min(netMargin, 100),
+    },
+    expenseCategoryBreakdown: categoryBreakdown,
+    valuation,
+  };
 }

@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Eye,
   Menu,
+  Receipt,
   Search,
   Settings,
   TrendingUp,
@@ -18,7 +19,7 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import { getCustomers, getLeads, publishChanges } from "@/lib/api";
+import { getCustomers, getExpenses, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type {
   AdminHeaderProps,
@@ -26,6 +27,7 @@ import type {
   AdminSidebarProps,
   AdminToastContextType,
   Customer,
+  Expense,
   Lead,
   MetricProps,
   PageTitleProps,
@@ -65,10 +67,17 @@ export function Toast({ message, onClose }: ToastProps) {
 }
 
 export function Metric({ label, value, detail }: MetricProps) {
+  const isLong = typeof value === "string" && value.length > 12;
   return (
     <div className="metric">
       <span className="eyebrow">{label}</span>
-      <strong>{value}</strong>
+      <strong
+        className={
+          isLong ? "!text-xl sm:!text-2xl !leading-tight font-serif !font-normal truncate" : ""
+        }
+      >
+        {value}
+      </strong>
       {detail && <small>{detail}</small>}
     </div>
   );
@@ -91,10 +100,12 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
   const [leadCount, setLeadCount] = useState(5);
   const [customerCount, setCustomerCount] = useState(3);
+  const [expenseCount, setExpenseCount] = useState(5);
 
   useEffect(() => {
     getLeads().then(res => setLeadCount(res.length));
     getCustomers().then(res => setCustomerCount(res.length));
+    getExpenses().then(res => setExpenseCount(res.length));
 
     const handleLeadsUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Lead[]>;
@@ -108,12 +119,20 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         setCustomerCount(customEvent.detail.length);
       }
     };
+    const handleExpensesUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Expense[]>;
+      if (customEvent.detail) {
+        setExpenseCount(customEvent.detail.length);
+      }
+    };
 
     window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
     window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+    window.addEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
     return () => {
       window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
       window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
     };
   }, []);
 
@@ -138,6 +157,9 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         <a className={path === "/customers" ? "active" : ""} href="/customers">
           <Users size={16} /> Customers <span className="nav-count">{customerCount}</span>
         </a>
+        <a className={path === "/expenses" ? "active" : ""} href="/expenses">
+          <Receipt size={16} /> Expenses <span className="nav-count">{expenseCount}</span>
+        </a>
         <a
           className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
           href={`/${slug}?from=settings`}
@@ -150,6 +172,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
           <Settings size={16} /> Settings
         </a>
       </nav>
+
       <div className="mt-auto pt-4 border-t border-[#e5e7eb]">
         <a
           className={`flex items-center gap-3 p-3 rounded-xl text-decoration-none transition-all cursor-pointer ${
@@ -158,7 +181,8 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
               : "hover:bg-white/80 hover:shadow-2xs text-[#191c1d]"
           }`}
           href="/profile"
-          aria-label="Open profile settings"
+          aria-label="Open director profile and studio equity"
+          title="Director Profile & Studio Equity"
         >
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shrink-0 shadow-2xs">
             AB
@@ -168,7 +192,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
               Amelia Bell
             </b>
             <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
-              Studio Director
+              Admin Overview
             </span>
           </div>
           <ChevronRight size={14} className="text-[#9ca3af] shrink-0" />

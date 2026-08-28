@@ -1,31 +1,31 @@
-import { CreditCard, Crown, Send, TrendingUp, Users } from "lucide-react";
+import { CreditCard, Crown, Landmark, Receipt, Send, TrendingUp, Users } from "lucide-react";
 import type { BillingPeriod, FeatureItem, PricingPlan } from "@/types";
 
 export type { BillingPeriod, FeatureItem, PricingPlan };
 
 export const LANDING_FEATURES: readonly FeatureItem[] = [
   {
-    id: "feat-broadcast",
-    icon: Send,
-    badge: "Client Outreach",
-    title: "Broadcast Messaging & Outreach",
+    id: "feat-storefront",
+    icon: Crown,
+    badge: "Digital Atelier",
+    title: "Digital Storefront & 3D Card",
     description:
-      "Send bulk announcements, offers, and WhatsApp updates directly to your active clients.",
+      "A branded public studio link with an interactive 3D stationery card and instant WhatsApp intake.",
     highlights: [
-      "WhatsApp & Email bulk broadcasting",
-      "Automatic active client filtering",
-      "1-click direct chat follow-ups",
+      "Interactive 3D business card",
+      "Custom brand identity & verified social links",
+      "Direct WhatsApp order & consultation intake",
     ],
-    iconBg: "#ede9fe",
-    iconColor: "#7c3aed",
+    iconBg: "#ecfdf5",
+    iconColor: "#059669",
   },
   {
     id: "feat-leads",
     icon: Users,
-    badge: "CRM & Leads",
+    badge: "CRM Pipeline",
     title: "Lead Tracker & CRM Pipeline",
     description:
-      "Capture customer inquiries and budgets, then convert warm leads into paying clients in seconds.",
+      "Capture consultation inquiries, budgets, and timelines, then convert warm leads into paying clients in one click.",
     highlights: [
       "Automated inquiry intake form",
       "Budget & timeline tracking",
@@ -37,47 +37,77 @@ export const LANDING_FEATURES: readonly FeatureItem[] = [
   {
     id: "feat-invoicing",
     icon: CreditCard,
-    badge: "Invoicing",
-    title: "Instant Invoicing & Receipts",
+    badge: "Executive Invoicing",
+    title: "Invoicing & Instant Receipts",
     description:
-      "Create clean, itemized invoices with multi-currency support, custom discounts, and instant PDF receipts.",
+      "Generate itemized multi-currency invoices with discount controls, balance tracking, and instant receipts.",
     highlights: [
       "Multi-currency support (NGN, USD, GBP, EUR)",
-      "Itemized services & discount controls",
-      "Live payment tracking (Draft, Sent, Paid)",
+      "Itemized service scopes & discounts",
+      "Real-time status tracking (Draft, Sent, Paid)",
     ],
     iconBg: "#fce7f3",
     iconColor: "#db2777",
   },
   {
-    id: "feat-sales",
-    icon: TrendingUp,
-    badge: "Sales Tracking",
-    title: "Sales & Revenue Analytics",
+    id: "feat-expenses",
+    icon: Receipt,
+    badge: "Bookkeeping",
+    title: "Expense Bookkeeping & Net Profit",
     description:
-      "Track your earnings, top-selling services, and outstanding balances in real time without spreadsheets.",
+      "Log operational outflows and supplier payments to calculate real Net Profit instead of relying on gross sales.",
     highlights: [
-      "Real-time gross revenue & metrics",
-      "Top-performing service breakdown",
-      "Paid vs. pending balance tracking",
+      "Category breakdowns & supplier logging",
+      "Net profit calculation vs. gross revenue",
+      "1-click CSV bookkeeping export",
+    ],
+    iconBg: "#fef3c7",
+    iconColor: "#d97706",
+  },
+  {
+    id: "feat-valuation",
+    icon: Landmark,
+    badge: "Studio Worth",
+    title: "Business Valuation Estimator",
+    description:
+      "Automated appraisal snapshots and SDE market multiple benchmarks calculated directly from logged cashflow.",
+    highlights: [
+      "Real-time equity valuation range",
+      "SDE earnings multiple benchmark",
+      "Automated profit margin analytics",
     ],
     iconBg: "#ffedd5",
     iconColor: "#ea580c",
   },
   {
-    id: "feat-profile",
-    icon: Crown,
-    badge: "Mini Storefront",
-    title: "Mini Storefront & 3D Card",
+    id: "feat-broadcast",
+    icon: Send,
+    badge: "Client Outreach",
+    title: "Broadcast Messaging & Outreach",
     description:
-      "A branded digital shop link with interactive 3D stationery card and instant WhatsApp order intake.",
+      "Dispatch targeted WhatsApp announcements and discreet email updates exclusively to active clients.",
     highlights: [
-      "Interactive 3D business card",
-      "Custom brand themes & colors",
-      "Instant quote & inquiry intake",
+      "WhatsApp & Email bulk broadcasting",
+      "Automatic active client filtering",
+      "Anti-spam character protection meters",
     ],
-    iconBg: "#dcfce7",
-    iconColor: "#16a34a",
+    iconBg: "#ede9fe",
+    iconColor: "#7c3aed",
+  },
+  {
+    id: "feat-analytics",
+    icon: TrendingUp,
+    badge: "Revenue Intelligence",
+    title: "Sales & Revenue Analytics",
+    description:
+      "Track gross receipts, top-performing services, and outstanding balances in real time without spreadsheets.",
+    highlights: [
+      "Real-time gross revenue & metrics",
+      "Top-performing service breakdown",
+      "Paid vs. pending balance tracking",
+    ],
+    iconBg: "#f5f3ff",
+    iconColor: "#6366f1",
   },
 ] as const;
 
@@ -146,5 +176,50 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     ],
     ctaLabel: "Get Unlimited Access",
     termsNote: "Billed as selected. Cancel anytime. Terms apply.",
+  },
+] as const;
+
+export const LANDING_FAQS = [
+  {
+    id: "faq-what-is",
+    question: "What is Shopwus and who is it built for?",
+    answer:
+      "Shopwus (Shop With Us) is the premier studio operating system built for boutique online vendors, event planners, bespoke artisans, and creative directors. It combines a public digital storefront with an interactive 3D stationery card, CRM lead pipeline, executive multi-currency invoicing, expense bookkeeping, and business valuation modeling in one cohesive workspace.",
+  },
+  {
+    id: "faq-3d-card",
+    question: "How does the interactive 3D stationery card work?",
+    answer:
+      "Every studio gets a bespoke public link (e.g., shopwus.com/your-brand) with an interactive physics-driven 3D card that showcases your business logo, verified social channels, service menu, and contact details. Clients can flip the card and submit instant consultation inquiries directly into your studio CRM.",
+  },
+  {
+    id: "faq-valuation",
+    question: "How is the Business Valuation calculated?",
+    answer:
+      "The Business Valuation Estimator uses the industry-standard Seller's Discretionary Earnings (SDE) Multiple Method. It analyzes your annualized revenue run-rate (ARR), net profit margins after logged operating expenses, and active retained client base to provide a confidential appraisal range and strategic growth recommendations.",
+  },
+  {
+    id: "faq-privacy",
+    question: "Is my studio financial, expense, and client data private?",
+    answer:
+      "Yes, absolutely. All your financial ledgers, revenue numbers, operating expenses, customer records, and valuation models are encrypted and strictly private to your verified director account. We do not sell or share your proprietary business data with third parties or competitors, in full compliance with the Nigeria Data Protection Act (NDPA).",
+  },
+  {
+    id: "faq-broadcast",
+    question: "How does WhatsApp Broadcast and outreach work?",
+    answer:
+      "You can filter your active client list and dispatch 1-click bulk broadcast announcements or customized follow-ups directly via WhatsApp and discreet Email BCC. The system enforces anti-spam character limits and supports image attachment previews without third-party API lock-in.",
+  },
+  {
+    id: "faq-export",
+    question: "Can I export my invoices, leads, and bookkeeping records?",
+    answer:
+      "Yes. You can export your leads, customer contacts, and expense ledgers into structured CSV spreadsheets at any time with a single click for your accountant or tax bookkeeping.",
+  },
+  {
+    id: "faq-trial",
+    question: "Is there a free trial?",
+    answer:
+      "Yes, we offer a 14-day complimentary trial with complete access to all studio tools, 3D cards, invoicing, and expense bookkeeping with zero initial commitment. You can upgrade or cancel at any time.",
   },
 ] as const;

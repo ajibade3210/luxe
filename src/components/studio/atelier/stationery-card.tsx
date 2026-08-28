@@ -74,6 +74,8 @@ export function StationeryCard({
                   alt={profile.businessName}
                   width={240}
                   height={240}
+                  priority
+                  loading="eager"
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (

@@ -368,41 +368,41 @@ td:last-child {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
-  padding: 3px 10px;
-  color: var(--muted);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 2px 10px;
+  font-size: 11px;
   border-radius: 9999px;
-  font-weight: 700;
+  font-weight: 600;
   width: fit-content;
   max-width: fit-content;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: capitalize;
 }
 
 .status.new {
-  color: #92400e;
-  border-color: #fde68a;
-  background: #fef3c7;
+  color: #c2410c;
+  border-color: #ffedd5;
+  background: #fff7ed;
 }
 
 .status.contacted {
-  color: #1e40af;
-  border-color: #bfdbfe;
+  color: #1d4ed8;
+  border-color: #dbeafe;
   background: #eff6ff;
 }
 
 .status.qualified {
-  color: #065f46;
-  border-color: #a7f3d0;
-  background: #ecfdf5;
+  color: #0e7490;
+  border-color: #cffafe;
+  background: #ecfeff;
 }
 
 .status.converted,
 .status.completed,
 .status.active {
-  color: #065f46;
-  border-color: #a7f3d0;
-  background: #ecfdf5;
+  color: #15803d;
+  border-color: #dcfce7;
+  background: #f0fdf4;
 }
 
 .status.closed {

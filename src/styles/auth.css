@@ -56,7 +56,7 @@
   background: var(--line);
 }
 
-label {
+.login-box label {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -67,7 +67,12 @@ label {
   letter-spacing: 0.02em;
 }
 
-input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
 textarea {
   width: 100%;
   border: 1px solid var(--border-subtle);
@@ -80,12 +85,20 @@ textarea {
   transition: all 0.15s ease;
 }
 
-textarea {
-  min-height: 110px;
-  resize: vertical;
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: none;
 }
 
-input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
 textarea:focus {
   border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(0, 88, 190, 0.12);

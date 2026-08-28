@@ -1,6 +1,20 @@
 "use client";
 
-import { Check, Copy, ExternalLink, Eye, Globe, ShoppingBag, Users } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Check,
+  Copy,
+  ExternalLink,
+  Eye,
+  Globe,
+  PieChart,
+  Receipt,
+  ShoppingBag,
+  TrendingUp,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { APP_CONFIG } from "@/constants";
 import { getAnalytics, getBusinessProfile } from "@/lib/api";
@@ -22,7 +36,6 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
     });
   }, []);
 
-  // Fetch telemetry from domain service (ready for backend API swap)
   useEffect(() => {
     getAnalytics(timeframe).then(res => {
       setData(res);
@@ -44,7 +57,7 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
     return (
       <section className="content max-w-6xl mx-auto py-12 flex justify-center items-center">
         <div className="text-xs text-[#8c827a] font-medium animate-pulse">
-          Loading studio telemetry...
+          Loading studio telemetry & financial records...
         </div>
       </section>
     );
@@ -52,14 +65,14 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
 
   return (
     <section className="content max-w-6xl mx-auto space-y-7 pb-16">
-      {/* Top Header matching inspiration warm styling */}
+      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] tracking-tight">
             Welcome to Élan Atelier
           </h1>
           <p className="text-xs text-[#8c827a] mt-0.5 font-medium">
-            Studio Performance & Overview Analytics
+            Financial Health, Records & Studio Overview
           </p>
         </div>
 
@@ -98,7 +111,7 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
           </div>
           <div className="min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#9e633d] block">
-              Public Atelier URL
+              Public Shop URL
             </span>
             <span className="text-xs text-[#524a43] font-mono block truncate max-w-xs sm:max-w-md">
               {publicUrl}
@@ -136,115 +149,134 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
         </div>
       </div>
 
-      {/* 3 Top Metric Cards in exact style of inspiration image */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Card 1: Profile Views */}
-        <div className="bg-white border border-[#eee7dc] rounded-3xl p-6 shadow-[0_4px_24px_rgba(70,50,30,0.03)] flex flex-col justify-between space-y-4 hover:border-[#c59a78] transition-all">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
-              <Eye size={18} />
+      {/* 5 Financial & Growth Metric Cards (Responsive 5-column layout) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Card 1: Total Gross Sales (Inflow) */}
+        <div className="bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_2px_12px_rgba(70,50,30,0.02)] flex flex-col justify-between space-y-4 hover:border-[#c59a78]/60 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
+              <ShoppingBag size={17} />
             </div>
-            <div>
-              <span className="text-xs font-semibold text-[#665e57] block">Profile Views</span>
-              <span
-                className={`text-[11px] font-bold block mt-0.5 ${
-                  data.views.isPositive ? "text-[#16a34a]" : "text-[#dc2626]"
-                }`}
-              >
-                {data.views.change}
-              </span>
-            </div>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+                data.revenue.isPositive
+                  ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]"
+                  : "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]"
+              }`}
+            >
+              {data.revenue.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+              {data.revenue.change}
+            </span>
           </div>
 
           <div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] tracking-tight">
-              {data.views.value}
-            </div>
-
-            {/* Custom Track Bar matching Inspo */}
-            <div className="w-full bg-[#f2ede4] rounded-full h-1.5 mt-3 overflow-hidden">
-              <div
-                style={{ width: `${data.views.progressPercent}%` }}
-                className="bg-[#9e633d] h-full rounded-full transition-all duration-700"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Card 2: New Inquiries / Leads */}
-        <div className="bg-white border border-[#eee7dc] rounded-3xl p-6 shadow-[0_4px_24px_rgba(70,50,30,0.03)] flex flex-col justify-between space-y-4 hover:border-[#c59a78] transition-all">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
-              <Users size={18} />
-            </div>
-            <div>
-              <span className="text-xs font-semibold text-[#665e57] block">New Inquiries</span>
-              <span
-                className={`text-[11px] font-bold block mt-0.5 ${
-                  data.leads.isPositive ? "text-[#16a34a]" : "text-[#dc2626]"
-                }`}
-              >
-                {data.leads.change}
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] tracking-tight">
-              {data.leads.value}
-            </div>
-
-            {/* Custom Track Bar */}
-            <div className="w-full bg-[#f2ede4] rounded-full h-1.5 mt-3 overflow-hidden">
-              <div
-                style={{ width: `${data.leads.progressPercent}%` }}
-                className="bg-[#9e633d] h-full rounded-full transition-all duration-700"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3: Total Sales / Revenue */}
-        <div className="bg-white border border-[#eee7dc] rounded-3xl p-6 shadow-[0_4px_24px_rgba(70,50,30,0.03)] flex flex-col justify-between space-y-4 hover:border-[#c59a78] transition-all">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
-              <ShoppingBag size={18} />
-            </div>
-            <div>
-              <span className="text-xs font-semibold text-[#665e57] block">Total Sales</span>
-              <span
-                className={`text-[11px] font-bold block mt-0.5 ${
-                  data.revenue.isPositive ? "text-[#16a34a]" : "text-[#dc2626]"
-                }`}
-              >
-                {data.revenue.change}
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] tracking-tight">
+            <span className="text-xs font-medium text-[#8c827a] block">Gross Sales (Inflow)</span>
+            <div className="text-2xl font-bold tracking-tight text-[#1f1d1a] font-sans tabular-nums mt-0.5">
               {formatMoney(data.revenue.rawNumber)}
             </div>
+          </div>
+        </div>
 
-            {/* Custom Track Bar */}
-            <div className="w-full bg-[#f2ede4] rounded-full h-1.5 mt-3 overflow-hidden">
-              <div
-                style={{ width: `${data.revenue.progressPercent}%` }}
-                className="bg-[#9e633d] h-full rounded-full transition-all duration-700"
-              />
+        {/* Card 2: Total Operating Expenses (Outflow) */}
+        <div className="bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_2px_12px_rgba(70,50,30,0.02)] flex flex-col justify-between space-y-4 hover:border-[#c59a78]/60 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#fef2f2] border border-[#fee2e2] flex items-center justify-center shrink-0 text-[#b91c1c]">
+              <Receipt size={17} />
+            </div>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]">
+              <ArrowDownRight size={12} />
+              {data.expenses?.change || "Outflow"}
+            </span>
+          </div>
+
+          <div>
+            <span className="text-xs font-medium text-[#8c827a] block">Operating Expenses</span>
+            <div className="text-2xl font-bold tracking-tight text-[#1f1d1a] font-sans tabular-nums mt-0.5">
+              {data.expenses ? formatMoney(data.expenses.rawNumber) : "₦0"}
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Real Net Profit (Take-Home - Highlight Card) */}
+        <div className="bg-gradient-to-b from-[#f0fdf4]/80 via-white to-white border-2 border-[#10b981]/50 rounded-2xl p-5 shadow-[0_4px_16px_rgba(16,185,129,0.08)] flex flex-col justify-between space-y-4 hover:border-[#10b981] hover:shadow-lg transition-all relative overflow-hidden">
+          <div className="flex items-center justify-between gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#dcfce7] border border-[#bbf7d0] flex items-center justify-center shrink-0 text-[#15803d]">
+              <Wallet size={17} />
+            </div>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#dcfce7] text-[#15803d] border border-[#86efac]">
+              <TrendingUp size={12} />
+              {data.netProfit?.change || "45% margin"}
+            </span>
+          </div>
+
+          <div>
+            <span className="text-xs font-semibold text-[#15803d] block">Real Net Profit</span>
+            <div className="text-2xl font-bold tracking-tight text-[#15803d] font-sans tabular-nums mt-0.5">
+              {data.netProfit ? formatMoney(data.netProfit.rawNumber) : "₦0"}
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4: New Inquiries */}
+        <div className="bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_2px_12px_rgba(70,50,30,0.02)] flex flex-col justify-between space-y-4 hover:border-[#c59a78]/60 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
+              <Users size={17} />
+            </div>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+                data.leads.isPositive
+                  ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]"
+                  : "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]"
+              }`}
+            >
+              {data.leads.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+              {data.leads.change}
+            </span>
+          </div>
+
+          <div>
+            <span className="text-xs font-medium text-[#8c827a] block">New Inquiries</span>
+            <div className="text-2xl font-bold tracking-tight text-[#1f1d1a] font-sans tabular-nums mt-0.5">
+              {data.leads.value}
+            </div>
+          </div>
+        </div>
+
+        {/* Card 5: Profile Views */}
+        <div className="bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_2px_12px_rgba(70,50,30,0.02)] flex flex-col justify-between space-y-4 hover:border-[#c59a78]/60 hover:shadow-md transition-all">
+          <div className="flex items-center justify-between gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center shrink-0 text-[#a06840]">
+              <Eye size={17} />
+            </div>
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+                data.views.isPositive
+                  ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]"
+                  : "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]"
+              }`}
+            >
+              {data.views.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+              {data.views.change}
+            </span>
+          </div>
+
+          <div>
+            <span className="text-xs font-medium text-[#8c827a] block">Storefront Views</span>
+            <div className="text-2xl font-bold tracking-tight text-[#1f1d1a] font-sans tabular-nums mt-0.5">
+              {data.views.value}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Bottom Section: Sales Analytics Curve Chart + Trending Services */}
+      {/* Main Section: Sales Curve Chart + Expense Category Breakdown / Trending Offerings */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column (7 cols): Curved Area Spline Chart */}
         <div className="lg:col-span-7 bg-white border border-[#eee7dc] rounded-3xl p-6 sm:p-7 shadow-[0_4px_24px_rgba(70,50,30,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between pb-4">
             <h2 className="text-base sm:text-lg font-serif font-bold text-[#1f1d1a]">
-              Sales & Traffic Analytics
+              Sales & Cashflow Telemetry
             </h2>
             <button
               type="button"
@@ -260,7 +292,6 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
             <div className="min-w-[480px]">
               <svg viewBox="0 0 840 260" className="w-full h-56 overflow-visible">
                 <defs>
-                  {/* Warm Gradient matching inspiration */}
                   <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#e5a97f" stopOpacity="0.55" />
                     <stop offset="70%" stopColor="#faede2" stopOpacity="0.2" />
@@ -307,7 +338,6 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
 
                 {/* Peak Indicator Callout Pill */}
                 <g>
-                  {/* Outer circle */}
                   <circle
                     cx={data.chart.peakCoord.cx}
                     cy={data.chart.peakCoord.cy}
@@ -316,7 +346,6 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
                     stroke="#ffffff"
                     strokeWidth="2"
                   />
-                  {/* Tooltip callout pill */}
                   <rect
                     x={data.chart.peakCoord.cx - 24}
                     y={data.chart.peakCoord.cy - 34}
@@ -350,53 +379,47 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
           </div>
         </div>
 
-        {/* Right Column (5 cols): Trending Services List */}
+        {/* Right Column (5 cols): Expense Category Breakdown */}
         <div className="lg:col-span-5 bg-white border border-[#eee7dc] rounded-3xl p-6 sm:p-7 shadow-[0_4px_24px_rgba(70,50,30,0.03)] flex flex-col justify-between">
           <div className="flex items-center justify-between pb-4 border-b border-[#f4eee6]">
-            <h2 className="text-base sm:text-lg font-serif font-bold text-[#1f1d1a]">
-              Trending Offerings
+            <h2 className="text-base sm:text-lg font-serif font-bold text-[#1f1d1a] flex items-center gap-2">
+              <PieChart size={16} className="text-[#9e633d]" /> Spending by Category
             </h2>
-            <button
-              type="button"
-              onClick={() => notify("Viewing all catalog items.")}
+            <a
+              href="/expenses"
               className="text-xs font-semibold text-[#a06840] hover:text-[#6d3e1e] transition-colors cursor-pointer"
             >
-              See all
-            </button>
+              Manage
+            </a>
           </div>
 
-          {/* List items matching the Inspo layout */}
-          <div className="space-y-4 pt-3">
-            {data.trendingServices.map(service => (
-              <div
-                key={service.name}
-                className="flex items-center justify-between gap-3 group hover:bg-[#faf7f2] p-2 rounded-2xl transition-all cursor-pointer"
-              >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-11 h-11 rounded-2xl overflow-hidden bg-[#faf5ee] border border-[#eee3d5] shrink-0">
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <b className="text-xs font-bold text-[#1f1d1a] block truncate leading-tight">
-                      {service.name}
-                    </b>
-                    <span className="text-[11px] text-[#8c827a] font-medium block mt-0.5">
-                      {formatMoney(service.price)}
+          {/* Expense Category Bars */}
+          <div className="space-y-3.5 pt-3">
+            {data.expenseCategoryBreakdown && data.expenseCategoryBreakdown.length > 0 ? (
+              data.expenseCategoryBreakdown.map(cat => (
+                <div key={cat.category} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#1f1d1a]">{cat.label}</span>
+                    <span className="font-mono text-[#665e57]">
+                      {formatMoney(cat.amount)} ({cat.percentage}%)
                     </span>
                   </div>
+                  <div className="w-full bg-[#f2ede4] rounded-full h-2 overflow-hidden">
+                    <div
+                      style={{
+                        width: `${cat.percentage}%`,
+                        backgroundColor: cat.color,
+                      }}
+                      className="h-full rounded-full transition-all duration-500"
+                    />
+                  </div>
                 </div>
-
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-mono font-bold text-[#1f1d1a] block">
-                    {service.volume}
-                  </span>
-                </div>
+              ))
+            ) : (
+              <div className="text-center py-6 text-xs text-[#8c827a]">
+                No expense category records found.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

@@ -44,6 +44,7 @@ export const CUSTOM_EVENTS = {
   leadsUpdated: "shopwus_leads_updated",
   customersUpdated: "shopwus_customers_updated",
   invoicesUpdated: "shopwus_invoices_updated",
+  expensesUpdated: "shopwus_expenses_updated",
   profileUpdated: "shopwus_profile_updated",
   authChanged: "shopwus_auth_changed",
   broadcastSent: "shopwus_broadcast_sent",
@@ -53,6 +54,7 @@ export const API_ENDPOINTS = {
   leads: "/api/leads",
   customers: "/api/customers",
   invoices: "/api/invoices",
+  expenses: "/api/expenses",
   analytics: "/api/analytics",
   profile: "/api/profile",
   auth: "/api/auth",
@@ -165,5 +167,7 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
   ecommerce: "Showcase",
 } as const;
 
+export * from "./expense";
 export * from "./landing";
 export * from "./reviews";
+export * from "./valuation";
