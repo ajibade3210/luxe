@@ -22,7 +22,7 @@ export function PublicLandingPage() {
           <nav>
             <a href="#features">Features</a>
             <a href="#workflow">How it works</a>
-            <a href="/signup">Pricing</a>
+            <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
           </nav>
         </div>

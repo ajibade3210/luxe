@@ -111,7 +111,7 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
           </div>
           <div className="min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#9e633d] block">
-              Public Atelier URL
+              Public Shop URL
             </span>
             <span className="text-xs text-[#524a43] font-mono block truncate max-w-xs sm:max-w-md">
               {publicUrl}

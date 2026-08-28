@@ -81,7 +81,7 @@ export function FaqSection() {
             Have a custom workflow question?
           </strong>
           <p className="text-xs text-[#665e57] leading-relaxed">
-            Our atelier support team is available to assist you with onboarding, custom domain
+            Our Shopwus support team is available to assist you with onboarding, custom domain
             mapping, and data migrations.
           </p>
           <div className="pt-1">
@@ -89,7 +89,7 @@ export function FaqSection() {
               href="mailto:support@shopwus.com"
               className="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl bg-[#faf5ee] border border-[#ded7cb] text-[#855e2e] hover:bg-[#f0e8dc] transition-colors"
             >
-              Contact Atelier Support
+              Contact Shopwus Support
             </a>
           </div>
         </div>

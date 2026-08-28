@@ -9,7 +9,7 @@ const QR_CODE_IMAGE_SRC =
 const FOOTER_NAV_LINKS = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#workflow" },
-  { label: "Pricing", href: "/signup" },
+  { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Sign up", href: "/signup" },
   { label: "Enter Studio", href: "/login" },
