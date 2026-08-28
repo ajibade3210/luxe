@@ -1,3 +1,6 @@
+import type { ExpenseCategorySummary } from "./expense";
+import type { BusinessValuation } from "./valuation";
+
 // Analytics telemetry and overview types
 export type Timeframe = "daily" | "monthly" | "yearly";
 
@@ -32,6 +35,10 @@ export interface AnalyticsOverview {
   views: MetricSummary;
   leads: MetricSummary;
   revenue: MetricSummary;
+  expenses?: MetricSummary;
+  netProfit?: MetricSummary;
+  expenseCategoryBreakdown?: ExpenseCategorySummary[];
+  valuation?: BusinessValuation;
   chart: ChartData;
   trendingServices: TrendingServiceItem[];
 }

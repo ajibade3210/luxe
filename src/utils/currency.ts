@@ -41,3 +41,21 @@ export const formatMoney = (
     minimumFractionDigits: decimals,
   }).format(n);
 };
+
+export const formatCompactMoney = (
+  n: number,
+  currency: CurrencyCode = DEFAULT_CURRENCY
+): string => {
+  const sym = CURRENCY_SYMBOLS[currency] ?? "₦";
+  if (!Number.isFinite(n) || n === 0) return `${sym}0`;
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) {
+    const val = (n / 1_000_000).toFixed(1).replace(/\.0$/, "");
+    return `${sym}${val}M`;
+  }
+  if (abs >= 1_000) {
+    const val = (n / 1_000).toFixed(1).replace(/\.0$/, "");
+    return `${sym}${val}K`;
+  }
+  return `${sym}${n}`;
+};
