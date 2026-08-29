@@ -2,6 +2,7 @@ export { useCustomers } from "./use-customers";
 export { useDebounce } from "./use-debounce";
 export { useExpenses } from "./use-expenses";
 export { useInvoiceForm } from "./use-invoice-form";
+export { useInvoices } from "./use-invoices";
 export { useLeads } from "./use-leads";
 export { useScroll } from "./use-scroll";
 export { useSettingsForm } from "./use-settings-form";

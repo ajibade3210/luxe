@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ExternalLink,
   Eye,
+  FileText,
   Menu,
   Receipt,
   Search,
@@ -19,7 +20,7 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import { getCustomers, getExpenses, getLeads, publishChanges } from "@/lib/api";
+import { getCustomers, getExpenses, getInvoices, getLeads, publishChanges } from "@/lib/api";
 import { businessProfile } from "@/lib/mock-data";
 import type {
   AdminHeaderProps,
@@ -28,6 +29,7 @@ import type {
   AdminToastContextType,
   Customer,
   Expense,
+  Invoice,
   Lead,
   MetricProps,
   PageTitleProps,
@@ -96,11 +98,13 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
   const [leadCount, setLeadCount] = useState(5);
   const [customerCount, setCustomerCount] = useState(3);
+  const [invoiceCount, setInvoiceCount] = useState(0);
   const [expenseCount, setExpenseCount] = useState(5);
 
   useEffect(() => {
     getLeads().then(res => setLeadCount(res.length));
     getCustomers().then(res => setCustomerCount(res.length));
+    getInvoices().then(res => setInvoiceCount(res.length));
     getExpenses().then(res => setExpenseCount(res.length));
 
     const handleLeadsUpdate = (e: Event) => {
@@ -115,6 +119,12 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         setCustomerCount(customEvent.detail.length);
       }
     };
+    const handleInvoicesUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<Invoice[]>;
+      if (customEvent.detail) {
+        setInvoiceCount(customEvent.detail.length);
+      }
+    };
     const handleExpensesUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Expense[]>;
       if (customEvent.detail) {
@@ -124,10 +134,12 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
 
     window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
     window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
     window.addEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
     return () => {
       window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
       window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
+      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
       window.removeEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
     };
   }, []);
@@ -152,6 +164,9 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         </a>
         <a className={path === "/customers" ? "active" : ""} href="/customers">
           <Users size={16} /> Customers <span className="nav-count">{customerCount}</span>
+        </a>
+        <a className={path === "/invoices" ? "active" : ""} href="/invoices">
+          <FileText size={16} /> Invoices <span className="nav-count">{invoiceCount}</span>
         </a>
         <a className={path === "/expenses" ? "active" : ""} href="/expenses">
           <Receipt size={16} /> Expenses <span className="nav-count">{expenseCount}</span>

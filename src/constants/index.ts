@@ -251,6 +251,7 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
 
 export * from "./blog";
 export * from "./expense";
+export * from "./invoice";
 export * from "./landing";
 export * from "./theme";
 export * from "./valuation";

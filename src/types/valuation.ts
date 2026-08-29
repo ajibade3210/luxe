@@ -41,6 +41,22 @@ export interface ValuationCardProps {
   onToast?: (msg: string) => void;
 }
 
+export interface ValuationHealthPillar {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  actionLabel: string;
+  actionHref: string;
+  iconName: "Receipt" | "CreditCard" | "Users" | "TrendingUp";
+}
+
+export interface ValuationHealthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  valuation: BusinessValuation;
+}
+
 export interface PublicValuationInputs {
   currency: CurrencyCode;
   industry: IndustrySector;

@@ -168,3 +168,62 @@ export interface UseInvoiceFormOptions {
   onInvoiceSaved?: (invoice: Invoice) => void;
   onClose: () => void;
 }
+
+export type InvoiceStatusFilter = "all" | InvoiceStatus;
+
+export interface InvoiceMetrics {
+  totalInvoiced: number;
+  paidRevenue: number;
+  outstandingRevenue: number;
+  collectionRate: number;
+  totalCount: number;
+  paidCount: number;
+}
+
+export interface InvoicesPageProps {
+  onToast?: (msg: string) => void;
+}
+
+export interface InvoiceTableProps {
+  items: Invoice[];
+  paginatedItems: Invoice[];
+  searchQuery: string;
+  statusFilter: InvoiceStatusFilter;
+  onSearch: (query: string) => void;
+  onStatusFilterChange: (status: InvoiceStatusFilter) => void;
+  onSelectInvoice: (invoice: Invoice) => void;
+  onMarkPaid: (id: string) => void;
+  onMarkUnpaid: (id: string) => void;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  startIndex: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+}
+
+export interface UseInvoicesReturn {
+  invoices: Invoice[];
+  paginatedItems: Invoice[];
+  searchQuery: string;
+  statusFilter: InvoiceStatusFilter;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  pageSize: number;
+  setPageSize: (size: number) => void;
+  totalPages: number;
+  startIndex: number;
+  metrics: InvoiceMetrics;
+  isExporting: boolean;
+  selectedInvoice: Invoice | undefined;
+  isModalOpen: boolean;
+  handleSearch: (query: string) => void;
+  handleStatusFilter: (status: InvoiceStatusFilter) => void;
+  handleOpenCreate: () => void;
+  handleOpenEdit: (invoice: Invoice) => void;
+  handleCloseModal: () => void;
+  handleMarkPaid: (id: string) => Promise<void>;
+  handleMarkUnpaid: (id: string) => Promise<void>;
+  handleExportCSV: () => void;
+  reloadInvoices: () => Promise<void>;
+}

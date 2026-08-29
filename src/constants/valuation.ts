@@ -46,10 +46,68 @@ export const VALUATION_TIER_CONFIG: Record<
 };
 
 export const VALUATION_GROWTH_LEVERS = [
-  "Increasing repeat customer rate adds up to +0.8x to your valuation multiple.",
-  "Maintaining profit margins above 30% puts your business in the Established Brand tier.",
-  "Keeping clean customer records makes due diligence and ownership handover seamless.",
-  "Tracking all expenses with digital receipts gives you an audit-ready P&L statement.",
+  "Retain past clients: Increasing repeat buyers can add up to +0.8x to your valuation multiple.",
+  "Protect net margins: Maintaining profit margins above 30% qualifies your business for higher valuation tiers.",
+  "Centralize CRM records: Clean client histories eliminate buyer risk and streamline due diligence.",
+  "Track receipts: Categorizing expenses ensures an audit-ready P&L statement for financing or sale.",
+] as const;
+
+export const VALUATION_HEALTH_MODAL_CONFIG = {
+  eyebrow: "Valuation Audit",
+  title: "How Your Store Value is Calculated",
+  subtitle:
+    "Your valuation updates automatically based on 4 verified operational records. Keep these records updated for an accurate, audit-ready appraisal.",
+  pillarsSectionTitle: "4 Operational Data Pillars",
+  pillarsSectionSubtitle: "Synced in real time",
+  heroEstimatedLabel: "Estimated Store Value",
+  heroMultipleLabel: "SDE Multiple & Margin",
+  accuracyPillLabel: "Live Records Synced",
+  growthLeversTitle: "How to Increase Your Valuation",
+  closeButtonLabel: "Done",
+  auditChecklistButtonLabel: "Audit Checklist",
+  auditChecklistTooltip: "View valuation accuracy checklist & formula",
+} as const;
+
+export const VALUATION_HEALTH_PILLARS = [
+  {
+    id: "invoices",
+    eyebrow: "Revenue",
+    title: "Paid Invoices",
+    description:
+      "Total sales recorded from paid invoices. Drives your annualized revenue run-rate (ARR).",
+    actionLabel: "Manage Invoices",
+    actionHref: "/invoices",
+    iconName: "Receipt",
+  },
+  {
+    id: "expenses",
+    eyebrow: "Bookkeeping",
+    title: "Operating Expenses",
+    description:
+      "Logged overhead, materials, and rent. Proves your take-home net profit margin to buyers.",
+    actionLabel: "Log Expenses",
+    actionHref: "/expenses",
+    iconName: "CreditCard",
+  },
+  {
+    id: "customers",
+    eyebrow: "Retention",
+    title: "Active CRM Clients",
+    description:
+      "Repeat customers in your database. Adds direct brand equity and boosts your profit multiple.",
+    actionLabel: "View Clients",
+    actionHref: "/customers",
+    iconName: "Users",
+  },
+  {
+    id: "leads",
+    eyebrow: "Pipeline",
+    title: "Inbound Inquiries",
+    description: "Quotes and consultation requests. Proves ongoing buyer demand for your studio.",
+    actionLabel: "Manage Leads",
+    actionHref: "/leads",
+    iconName: "TrendingUp",
+  },
 ] as const;
 
 export const VALUATION_DISCLAIMER_NOTE =

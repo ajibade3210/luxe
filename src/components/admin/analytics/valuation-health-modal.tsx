@@ -1,0 +1,189 @@
+"use client";
+
+import { ArrowRight, CreditCard, Receipt, TrendingUp, Users, X } from "lucide-react";
+import Link from "next/link";
+import {
+  VALUATION_DISCLAIMER_NOTE,
+  VALUATION_HEALTH_MODAL_CONFIG,
+  VALUATION_HEALTH_PILLARS,
+} from "@/constants";
+import type { ValuationHealthModalProps } from "@/types";
+import { formatCompactMoney } from "@/utils";
+
+export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHealthModalProps) {
+  if (!isOpen) return null;
+
+  const getPillarMetric = (id: string) => {
+    switch (id) {
+      case "invoices":
+        return `${formatCompactMoney(valuation.annualRunRate)} / yr ARR`;
+      case "expenses":
+        return `${valuation.profitMargin}% Net Margin`;
+      case "customers":
+        return `${valuation.activeCustomerCount} Clients (${formatCompactMoney(
+          valuation.activeCustomerCount * 25000
+        )} Equity)`;
+      case "leads": {
+        const pipelineDriver = valuation.drivers.find(d => d.id === "pipeline");
+        return pipelineDriver ? pipelineDriver.value : "Active Inquiries";
+      }
+      default:
+        return "Synced";
+    }
+  };
+
+  const getPillarIcon = (name: string) => {
+    switch (name) {
+      case "Receipt":
+        return <Receipt size={16} className="text-[#855e2e]" />;
+      case "CreditCard":
+        return <CreditCard size={16} className="text-[#855e2e]" />;
+      case "Users":
+        return <Users size={16} className="text-[#855e2e]" />;
+      case "TrendingUp":
+        return <TrendingUp size={16} className="text-[#855e2e]" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white border border-[#eee7dc] rounded-3xl max-w-2xl w-full p-6 sm:p-7 space-y-5 relative max-h-[90vh] overflow-y-auto shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between pb-3.5 border-b border-[#eee7dc]">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9e633d] block">
+              {VALUATION_HEALTH_MODAL_CONFIG.eyebrow}
+            </span>
+            <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
+              {VALUATION_HEALTH_MODAL_CONFIG.title}
+            </h3>
+            <p className="text-xs text-[#665e57] mt-1 max-w-lg leading-relaxed">
+              {VALUATION_HEALTH_MODAL_CONFIG.subtitle}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-xl text-[#8c827a] hover:text-[#191c1d] hover:bg-[#faf7f2] border border-transparent hover:border-[#eee7dc] transition-all cursor-pointer shrink-0"
+            aria-label="Close valuation checklist modal"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Current Valuation Overview Summary */}
+        <div className="bg-[#faf7f2] border border-[#eee7dc] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
+              {VALUATION_HEALTH_MODAL_CONFIG.heroEstimatedLabel}
+            </span>
+            <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[#191c1d] font-sans tabular-nums mt-0.5">
+              {formatCompactMoney(valuation.estimatedLow)} –{" "}
+              {formatCompactMoney(valuation.estimatedHigh)}
+            </div>
+          </div>
+
+          <div className="flex sm:flex-col items-start sm:items-end justify-between border-t sm:border-t-0 pt-2 sm:pt-0 border-[#eee7dc] text-xs">
+            <span className="text-[#8c827a] text-[10px] font-bold uppercase tracking-wider">
+              {VALUATION_HEALTH_MODAL_CONFIG.heroMultipleLabel}
+            </span>
+            <span className="font-sans font-bold text-[#191c1d] text-sm tabular-nums mt-0.5">
+              {valuation.multiple}x SDE / {valuation.profitMargin}% Margin
+            </span>
+          </div>
+        </div>
+
+        {/* 4 Pillars Checklist Grid */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
+              {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionTitle}
+            </h4>
+            <span className="text-[11px] text-[#8c827a] font-medium">
+              {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionSubtitle}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {VALUATION_HEALTH_PILLARS.map(pillar => (
+              <div
+                key={pillar.id}
+                className="bg-[#faf8f5] border border-[#eee7dc] rounded-2xl p-4 flex flex-col justify-between hover:border-[#c59a78] transition-all group"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="text-[#855e2e]">{getPillarIcon(pillar.iconName)}</div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#9e633d]">
+                      {pillar.eyebrow}
+                    </span>
+                  </div>
+
+                  <h5 className="text-xs font-bold text-[#191c1d] mt-1">{pillar.title}</h5>
+                  <p className="text-[11px] text-[#665e57] mt-1 leading-relaxed">
+                    {pillar.description}
+                  </p>
+                </div>
+
+                <div className="mt-3.5 pt-3 border-t border-[#eee7dc] flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-sans font-bold text-[#191c1d] tabular-nums truncate">
+                    {getPillarMetric(pillar.id)}
+                  </span>
+                  <Link
+                    href={pillar.actionHref}
+                    onClick={onClose}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#855e2e] hover:text-[#191c1d] transition-colors shrink-0 cursor-pointer"
+                  >
+                    <span>{pillar.actionLabel}</span>
+                    <ArrowRight
+                      size={12}
+                      className="group-hover:translate-x-0.5 transition-transform"
+                    />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Actionable Valuation Growth Levers */}
+        <div className="bg-[#faf7f2] border border-[#eee7dc] rounded-2xl p-4 sm:p-4.5 space-y-2.5">
+          <h5 className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
+            {VALUATION_HEALTH_MODAL_CONFIG.growthLeversTitle}
+          </h5>
+          <div className="space-y-1.5">
+            {valuation.growthLevers.map(lever => (
+              <p key={lever} className="text-xs text-[#665e57] leading-relaxed">
+                {lever}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Disclaimer Note & Footer */}
+        <div className="space-y-3.5 pt-1">
+          <p className="text-[11px] text-[#8c827a] leading-relaxed italic text-center sm:text-left">
+            {VALUATION_DISCLAIMER_NOTE}
+          </p>
+
+          <div className="flex justify-end pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto bg-[#191c1d] hover:bg-black !text-white px-6 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer text-center"
+            >
+              {VALUATION_HEALTH_MODAL_CONFIG.closeButtonLabel}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
