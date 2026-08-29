@@ -69,3 +69,135 @@ export const VALUATION_EMPTY_STATE = {
     "Log your first paid invoices and operating expenses to calculate an automated real-time valuation model.",
   actionLabel: "View Invoices & Bookkeeping",
 } as const;
+
+export const INDUSTRY_SECTORS = {
+  retail_ecommerce: {
+    label: "Retail & E-Commerce",
+    baseMultiple: 3.5,
+    description: "Direct-to-consumer physical products, fashion, and retail inventory.",
+  },
+  luxury_services: {
+    label: "Luxury Atelier & Bespoke Services",
+    baseMultiple: 4.8,
+    description: "High-ticket custom couture, bespoke events, bridal, and fine artisan services.",
+  },
+  agency_consulting: {
+    label: "Agency & Creative Consulting",
+    baseMultiple: 3.8,
+    description: "Design studios, marketing firms, retainer models, and professional services.",
+  },
+  events_hospitality: {
+    label: "Events & Hospitality Production",
+    baseMultiple: 3.6,
+    description: "Experiential production, luxury catering, decor, and event planning.",
+  },
+  digital_tech: {
+    label: "Digital Products & Software",
+    baseMultiple: 5.2,
+    description: "Digital downloads, SaaS platforms, memberships, and content libraries.",
+  },
+  general_business: {
+    label: "General SME & Commercial Trading",
+    baseMultiple: 3.2,
+    description: "Standard local merchant services, distribution, and commercial trade.",
+  },
+} as const;
+
+export const DEFAULT_PUBLIC_VALUATION_INPUTS = {
+  currency: "GBP" as const,
+  industry: "luxury_services" as const,
+  annualRevenue: 50000,
+  annualExpenses: 40000,
+  netAssets: 15000,
+  customerRetentionRate: 50,
+};
+
+export const VALUATION_HOW_CALCULATED_SECTIONS = [
+  {
+    title: "1. SDE / EBITDA Earnings Multiple Method",
+    description:
+      "For small-to-medium businesses and boutique studios, the most widely accepted valuation framework is the Seller's Discretionary Earnings (SDE) multiple. This metric evaluates the true cashflow available to an owner after operating expenses, multiplied by an industry factor reflecting risk, market position, and growth trajectory.",
+    badge: "Primary Metric",
+  },
+  {
+    title: "2. Net Tangible Asset Valuation",
+    description:
+      "Tangible balance sheet assets — including production equipment, studio inventory, cash receivables, and proprietary tooling minus all outstanding liabilities — are added directly to the earnings baseline to form a complete enterprise asset valuation.",
+    badge: "Balance Sheet",
+  },
+  {
+    title: "3. Customer Equity & Retention Multiplier",
+    description:
+      "A business with an organized, recurring customer database and automated re-engagement channels commands a 20% to 50% premium multiple over an informal vendor relying purely on one-off serendipitous discovery.",
+    badge: "Valuation Premium",
+  },
+] as const;
+
+export const VALUATION_PURPOSE_GUIDES = [
+  {
+    id: "selling",
+    title: "Valuing a Business For Selling",
+    eyebrow: "Exit & Handover",
+    summary:
+      "Position your studio to command top market multiples and execute a smooth ownership transfer.",
+    points: [
+      "Prove recurring revenue and repeat client retention to eliminate buyer risk.",
+      "Package clean, itemized customer CRM data and pipeline records that can be transferred instantly on Day 1.",
+      "Demonstrate predictable profit margins with audit-ready bookkeeping and invoice histories.",
+      "Show that the brand runs on established operational systems rather than chaotic personal DMs.",
+    ],
+  },
+  {
+    id: "buying",
+    title: "Valuing a Business For Buying",
+    eyebrow: "Acquisition Due Diligence",
+    summary:
+      "Assess fair market asking price, operational transferability, and hidden liabilities before making an offer.",
+    points: [
+      "Audit net tangible assets vs. unrecorded supplier liabilities and outstanding invoices.",
+      "Verify historical customer retention rates to ensure revenue won't evaporate after founder departure.",
+      "Examine cashflow consistency across low and high seasons over a 12 to 36 month lookback.",
+      "Evaluate digital asset portability: custom domains, verified social badges, and client portals.",
+    ],
+  },
+  {
+    id: "investing",
+    title: "Valuing a Business For Investing",
+    eyebrow: "Capital & Growth",
+    summary:
+      "Evaluate scalability, unit economics, gross margins, and customer lifetime value (LTV).",
+    points: [
+      "Analyze gross margin trends and operational expense leverage at higher revenue scales.",
+      "Assess the potential to expand average order value (AOV) via broadcast outreach and new service tiers.",
+      "Verify that foundational financial ledgers and tax records are strictly compartmentalized.",
+      "Estimate future exit valuation based on projected ARR and enterprise multiple expansion.",
+    ],
+  },
+] as const;
+
+export const VALUATION_SHOPWUS_BENEFITS = [
+  {
+    iconName: "Users",
+    title: "1. Turn Informal DMs into Transferable Customer Equity",
+    description:
+      "When selling or appraising a business, buyers pay top dollar for organized, transferable customer databases. Shopwus replaces messy phone chat logs with a structured CRM that records client purchase histories, consultation budgets, and contact profiles — making your client database an institutional balance sheet asset.",
+  },
+  {
+    iconName: "Send",
+    title: "2. Boost Repeat Retention with Broadcast Outreach",
+    description:
+      "Repeat customers are the highest-margin revenue stream in any business. With Shopwus 1-click WhatsApp and email broadcasting, you re-engage past clients with seasonal announcements and exclusive drops, raising your customer lifetime value (LTV) and expanding your SDE valuation multiple.",
+  },
+  {
+    iconName: "CreditCard",
+    title: "3. Audit-Ready Bookkeeping & Live Financial Telemetry",
+    description:
+      "Nothing kills a business valuation faster than unorganized financial records. Shopwus gives you professional multi-currency invoicing, receipt tracking, categorized expense ledgers, and real-time Net Profit analytics, ensuring your books are continuously audit-ready for buyers, lenders, or investors.",
+  },
+  {
+    iconName: "Crown",
+    title: "4. Premium Brand Positioning & Interactive 3D Cards",
+    description:
+      "Businesses with bespoke, high-trust digital storefronts command higher pricing power and better gross margins. Your interactive 3D stationery card and verified social links establish immediate luxury authority that directly elevates your company's perceived market worth.",
+  },
+] as const;

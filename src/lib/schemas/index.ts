@@ -3,3 +3,4 @@ export * from "./expense.schema";
 export * from "./feedback.schema";
 export * from "./invoice.schema";
 export * from "./lead.schema";
+export * from "./valuation.schema";

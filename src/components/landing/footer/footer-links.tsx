@@ -38,11 +38,11 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
   {
     title: "Resources",
     links: [
+      { label: "Business Valuation Calculator", href: "/valuation-calculator", badge: "Free" },
+      { label: "The Atelier Journal (Blog)", href: "/blog" },
       { label: "Studio Operating Guide", href: "#workflow" },
-      { label: "Event Margin Calculator", href: "/settings" },
       { label: "Luxury Wedding Index 2026", href: "#features" },
-      { label: "Contract Legal Frameworks", href: "/settings" },
-      { label: "API & Webhook Docs", href: "#features" },
+      { label: "Contract Legal Frameworks", href: "/terms" },
       { label: "Changelog & Releases", href: "#workflow" },
     ],
     subsections: [
@@ -50,9 +50,9 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
         title: "Company",
         links: [
           { label: "About Shopwus", href: "#workflow" },
-          { label: "The Atelier Journal", href: "#features" },
-          { label: "Press & Accolades", href: "#features" },
-          { label: "Careers", href: "#contact", badge: "Hiring" },
+          { label: "The Atelier Journal", href: "/blog" },
+          { label: "Privacy Policy", href: "/privacy" },
+          { label: "Terms of Service", href: "/terms" },
         ],
       },
     ],

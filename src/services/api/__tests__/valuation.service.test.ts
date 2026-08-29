@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateBusinessValuation } from "../valuation.service";
+import { calculateBusinessValuation, calculatePublicValuation } from "../valuation.service";
 
 describe("valuation service", () => {
   it("calculates real-time business valuation with valid range and tiers", async () => {
@@ -27,5 +27,25 @@ describe("valuation service", () => {
 
     expect(scaled.annualRunRate).toBeGreaterThan(baseline.annualRunRate);
     expect(scaled.estimatedHigh).toBeGreaterThan(baseline.estimatedHigh);
+  });
+
+  it("calculates public valuation with £10,000 net profit and £15,000 net assets", () => {
+    const result = calculatePublicValuation({
+      currency: "GBP",
+      industry: "luxury_services",
+      annualRevenue: 50000,
+      annualExpenses: 40000,
+      netAssets: 15000,
+      customerRetentionRate: 50,
+    });
+
+    expect(result.averageNetProfit).toBe(10000);
+    expect(result.netAssets).toBe(15000);
+    expect(result.multiple).toBe(7.0);
+    expect(result.approximateValue).toBe(85000);
+    expect(result.valuationRangeLow).toBeLessThan(result.approximateValue);
+    expect(result.valuationRangeHigh).toBeGreaterThan(result.approximateValue);
+    expect(result.drivers.length).toBe(4);
+    expect(result.growthOpportunities.length).toBeGreaterThan(0);
   });
 });

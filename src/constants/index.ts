@@ -249,6 +249,7 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
   ecommerce: "Showcase",
 } as const;
 
+export * from "./blog";
 export * from "./expense";
 export * from "./landing";
 export * from "./theme";

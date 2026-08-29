@@ -33,6 +33,7 @@
 
 .public-nav nav {
   display: flex;
+  align-items: center;
   gap: 28px;
   color: #64645f;
   font-size: 12px;
