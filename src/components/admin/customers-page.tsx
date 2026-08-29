@@ -108,9 +108,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
   return (
     <section className="content">
       <PageTitle
-        eyebrow="Client relationships"
         title="Customers"
-        description="The people behind the remarkable moments."
         action={
           <div className="flex items-center gap-2.5">
             <button

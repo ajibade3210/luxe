@@ -70,21 +70,6 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
 
   return (
     <main className="min-h-screen bg-[#faf8f5] text-[#191c1d] flex flex-col justify-between selection:bg-[#d8e2ff] selection:text-[#0058be] font-sans antialiased relative overflow-hidden">
-      {/* Ambient Luxury Radial Glows */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] pointer-events-none opacity-40 blur-3xl -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(214, 180, 138, 0.25) 0%, rgba(240, 234, 225, 0.1) 50%, transparent 75%)",
-        }}
-      />
-      <div
-        className="absolute bottom-0 right-0 w-[600px] h-[400px] pointer-events-none opacity-30 blur-3xl -z-10"
-        style={{
-          background: "radial-gradient(circle, rgba(133, 94, 46, 0.15) 0%, transparent 70%)",
-        }}
-      />
-
       {/* Top Header Navigation */}
       <header className="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between z-10">
         <BrandLogo subtitle="Atelier Studio" />
@@ -118,8 +103,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           </div>
 
           {/* Status Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fef2f2]/90 backdrop-blur-sm border border-[#fecaca] text-xs text-[#991b1b] mb-7 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-[#dc2626] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fef2f2] border border-[#fecaca] text-xs text-[#991b1b] mb-7">
             <span className="font-semibold tracking-wide">404 · Unregistered Atelier</span>
           </div>
 
@@ -149,7 +133,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
 
           {/* Smart AI Concierge Match (Did you mean?) */}
           {suggestedOrg && (
-            <div className="mb-9 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#f7f2ea] to-[#f2ecdf] border border-[#e2d6c5] shadow-xs text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 animate-in fade-in slide-in-from-top-2 duration-500">
+            <div className="mb-9 p-4 sm:p-5 rounded-2xl bg-[#faf6f0] border border-[#e2d6c5] text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
               <div className="flex items-center gap-3.5">
                 <div className="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-[#dcd0bf] bg-white p-0.5">
                   <img

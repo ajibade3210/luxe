@@ -104,9 +104,7 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
   return (
     <section className="content">
       <PageTitle
-        eyebrow="Relationship management"
         title="Leads & inquiries"
-        description="A considered view of every client opportunity."
         action={
           <button
             type="button"

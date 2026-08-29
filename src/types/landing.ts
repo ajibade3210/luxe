@@ -29,6 +29,7 @@ export interface PricingPlan {
   name: string;
   tagline: string;
   badge?: string;
+  socialProofBadge?: string;
   isPopular?: boolean;
   isFreeTrial?: boolean;
   accentColor: string;

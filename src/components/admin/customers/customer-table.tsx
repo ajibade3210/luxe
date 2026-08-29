@@ -145,13 +145,19 @@ export function CustomerTable({
                   <td>
                     <div className="flex items-center min-h-[38px]">
                       <span
-                        className={`w-2.5 h-2.5 rounded-full ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                           c.isActive
-                            ? "bg-[#10b981] shadow-xs shadow-emerald-500/20"
-                            : "bg-[#d1d5db]"
+                            ? "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]"
+                            : "bg-[#f4f4f5] text-[#71717a] border-[#e4e4e7]"
                         }`}
-                        title={c.isActive ? "Active Customer" : "Inactive Customer"}
-                      />
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            c.isActive ? "bg-[#059669]" : "bg-[#a1a1aa]"
+                          }`}
+                        />
+                        {c.isActive ? "Active" : "Inactive"}
+                      </span>
                     </div>
                   </td>
                   <td>

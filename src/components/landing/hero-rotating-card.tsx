@@ -72,7 +72,7 @@ export function HeroRotatingCard({
       >
         {/* Top Floating Badge */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/90 backdrop-blur-md border border-[#e8dfd3] shadow-xs text-[10px] font-medium text-[#191c1d]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#855e2e] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#855e2e]" />
           <span>Spotlight</span>
         </div>
 

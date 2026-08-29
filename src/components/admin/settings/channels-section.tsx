@@ -68,7 +68,7 @@ export function ChannelsSection({
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-bold text-[#191c1d]">Google Business Profile</h4>
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
                       Live Sync Active
                     </span>
                   </div>

@@ -72,9 +72,7 @@ export function Metric({ label, value, detail }: MetricProps) {
     <div className="metric">
       <span className="eyebrow">{label}</span>
       <strong
-        className={
-          isLong ? "!text-xl sm:!text-2xl !leading-tight font-serif !font-normal truncate" : ""
-        }
+        className={isLong ? "!text-lg sm:!text-xl !leading-snug !font-semibold truncate" : ""}
       >
         {value}
       </strong>
@@ -83,13 +81,11 @@ export function Metric({ label, value, detail }: MetricProps) {
   );
 }
 
-export function PageTitle({ eyebrow, title, description, action, children }: PageTitleProps) {
+export function PageTitle({ title, action, children }: PageTitleProps) {
   return (
     <div className="page-title">
       <div>
-        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h1>{title}</h1>
-        {description && <p>{description}</p>}
       </div>
       {(action || children) && <div className="page-title-actions">{action || children}</div>}
     </div>

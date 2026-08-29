@@ -95,6 +95,13 @@ export function PricingSection() {
                 key={plan.id}
                 style={{ "--accent-color": plan.accentColor } as React.CSSProperties}
               >
+                {/* Floating Social Proof Badge on top border */}
+                {plan.socialProofBadge && billingPeriod === "monthly" && (
+                  <div className="spotify-card-floating-badge" aria-hidden="true">
+                    <span>{plan.socialProofBadge}</span>
+                  </div>
+                )}
+
                 <div className="card-top-content">
                   {/* Top Badge */}
                   <div className="spotify-card-badge-row">

@@ -159,6 +159,7 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     id: "plan-unlimited",
     name: "Unlimited",
     badge: "Most Popular",
+    socialProofBadge: "+500 vendors subscribed",
     isPopular: true,
     tagline: "For active online vendors, studios, and high-volume multi-client brands.",
     accentColor: "#d9480f",

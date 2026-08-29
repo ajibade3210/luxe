@@ -39,9 +39,7 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
   return (
     <section className="content">
       <PageTitle
-        eyebrow="Record Keeping & Bookkeeping"
         title="Business expenses"
-        description="Track operational outflows, supplier payments, and calculate accurate Net Profit."
         action={
           <div className="flex items-center gap-2.5">
             <button

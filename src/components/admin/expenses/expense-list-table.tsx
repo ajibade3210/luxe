@@ -109,7 +109,7 @@ export function ExpenseListTable({
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border"
                       style={{
                         backgroundColor: categoryConfig.bg,
-                        color: categoryConfig.color,
+                        color: categoryConfig.text || categoryConfig.color,
                         borderColor: categoryConfig.border,
                       }}
                     >

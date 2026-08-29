@@ -131,7 +131,7 @@ function CreatePreviewCard() {
           <span>elanevents.com/studio</span>
         </div>
         <div className="flex items-center gap-1 text-[10px] text-[#2e7d32] font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2e7d32] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#2e7d32]" />
           <span>Live</span>
         </div>
       </div>

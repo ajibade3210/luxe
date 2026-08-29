@@ -99,6 +99,9 @@ Forbidden:
 - Three-up feature card rows on white
 - The phrase "transform your workflow"
 - Soft drop shadows (use hard 1px borders instead)
+- No unnecessary dots, decorative effects, or gradients.
+- Do not add visual effects or gradients unless specifically requested or they serve a clear functional purpose.
+- If an element does not improve the design or usability, leave it out.
 
 **## 6. Design Restraint & Intentionality**
 
@@ -129,4 +132,3 @@ Before adding any UI element, ask: *“Is this necessary? Was it requested? Does
 * Decorative UI elements, icons, or illustrations that do not serve a clear functional or informational purpose.
 * Visual embellishments added solely to make a section feel “designed.”
 * Generic SaaS/dashboard patterns that conflict with the **Modern Digital Atelier / Quiet Luxury / Executive Fintech** aesthetic.
-
