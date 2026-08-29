@@ -39,19 +39,19 @@ export function CustomerTable({
 
         <div className="flex items-center gap-3">
           {selectedCustomerIds.length > 0 && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 animate-in fade-in duration-150">
               <button
                 type="button"
                 onClick={onOpenBroadcast}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                className="px-3.5 py-2 rounded-xl bg-[#191c1d] hover:bg-black text-white !text-white text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer shadow-xs"
               >
-                <span>Broadcast ({selectedCustomerIds.length})</span>
+                Broadcast ({selectedCustomerIds.length})
               </button>
 
               <button
                 type="button"
                 onClick={onClearSelection}
-                className="px-2.5 py-1.5 rounded-xl border border-[#ded7cb] text-xs font-semibold text-[#5c5f60] hover:bg-[#faf8f5] transition-colors cursor-pointer"
+                className="px-3 py-2 rounded-xl border border-[#ded7cb] hover:border-[#c59a78] bg-white hover:bg-[#faf7f2] text-[#5c5f60] hover:text-[#191c1d] text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer shadow-2xs"
               >
                 Clear
               </button>

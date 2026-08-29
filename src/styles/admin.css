@@ -303,7 +303,7 @@
   letter-spacing: -0.01em;
 }
 
-.table-head span {
+.table-head > span {
   color: var(--muted);
   font-size: 11px;
 }
