@@ -45,18 +45,13 @@ export function InvoiceFormFields({
           Customer *
         </label>
         {customerName ? (
-          <div className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-xs text-[#111827] flex items-center justify-between">
-            <div className="min-w-0 pr-2 truncate">
-              <span className="font-semibold text-[#111827]">{customerName}</span>
-              {customerEmail && (
-                <span className="text-[#6b7280] text-[11px] ml-1.5 font-normal">
-                  ({customerEmail})
-                </span>
-              )}
-            </div>
-            <span className="text-[10px] uppercase font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded shrink-0">
-              Client
-            </span>
+          <div className="w-full bg-[#f9fafb] border border-[#e5e7eb] rounded-xl px-4 py-2.5 text-xs text-[#111827]">
+            <span className="font-semibold text-[#111827]">{customerName}</span>
+            {customerEmail && (
+              <span className="text-[#6b7280] text-[11px] ml-1.5 font-normal">
+                ({customerEmail})
+              </span>
+            )}
           </div>
         ) : allCustomers.length > 0 ? (
           <select
