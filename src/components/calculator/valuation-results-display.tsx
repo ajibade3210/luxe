@@ -30,28 +30,36 @@ export function ValuationResultsDisplay({ result }: ValuationResultsDisplayProps
       <div className="bg-gradient-to-br from-[#faf7f2] via-[#fcfbf9] to-[#f5efe6]/70 border border-[#ded5c8] rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
         {/* Annual Net Profit & Net Assets Row */}
         <div className="grid grid-cols-2 gap-4 border-b border-[#eee7dc] pb-4">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#8c827a] block">Annual Net Profit</span>
-            <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a]">
+          <div className="space-y-1 min-w-0">
+            <span className="text-xs font-semibold text-[#8c827a] block truncate">
+              Annual Net Profit
+            </span>
+            <div
+              className="text-xl sm:text-2xl lg:text-3xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a] truncate"
+              title={formattedNetProfit}
+            >
               {formattedNetProfit}
             </div>
-            <p className="text-xs text-[#059669] font-medium">
+            <p className="text-xs text-[#059669] font-medium truncate">
               {result.profitMargin}% Profit Margin
             </p>
           </div>
 
-          <div className="space-y-1">
-            <span className="text-xs font-semibold text-[#8c827a] block">Net Assets</span>
-            <div className="text-2xl sm:text-3xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a]">
+          <div className="space-y-1 min-w-0">
+            <span className="text-xs font-semibold text-[#8c827a] block truncate">Net Assets</span>
+            <div
+              className="text-xl sm:text-2xl lg:text-3xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a] truncate"
+              title={formattedNetAssets}
+            >
               {formattedNetAssets}
             </div>
-            <p className="text-xs text-[#8c827a]">Cash, stock & equipment</p>
+            <p className="text-xs text-[#8c827a] truncate">Cash, stock & equipment</p>
           </div>
         </div>
 
         {/* Estimated Business Value (Featured Highlight) */}
-        <div className="bg-white border border-[#ded5c8] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-          <div className="space-y-1">
+        <div className="bg-white border border-[#ded5c8] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+          <div className="space-y-1 min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-bold uppercase tracking-wider text-[#9e633d]">
                 Estimated Business Value
@@ -60,22 +68,25 @@ export function ValuationResultsDisplay({ result }: ValuationResultsDisplayProps
                 <HelpCircle size={14} className="text-[#8c827a]" />
               </div>
             </div>
-            <div className="text-3xl sm:text-4xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a]">
+            <div
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold font-sans tabular-nums tracking-tight text-[#1f1d1a] break-words"
+              title={formattedApproxValue}
+            >
               {formattedApproxValue}
             </div>
-            <div className="text-xs text-[#665e57]">
-              Estimated Range:{" "}
+            <div className="text-xs text-[#665e57] flex flex-wrap items-center gap-1">
+              <span>Estimated Range:</span>
               <span className="font-semibold font-sans tabular-nums text-[#1f1d1a]">
                 {formattedLow}
-              </span>{" "}
-              –{" "}
+              </span>
+              <span>–</span>
               <span className="font-semibold font-sans tabular-nums text-[#1f1d1a]">
                 {formattedHigh}
               </span>
             </div>
           </div>
 
-          <div className="bg-[#faf7f2] px-4 py-3 rounded-xl border border-[#ded5c8] text-right shrink-0">
+          <div className="bg-[#faf7f2] px-4 py-3 rounded-xl border border-[#ded5c8] text-left sm:text-right shrink-0">
             <span className="text-xs uppercase font-bold tracking-widest text-[#8c827a] block">
               {result.averageNetProfit > 0 ? "Multiple Applied" : "Method Applied"}
             </span>

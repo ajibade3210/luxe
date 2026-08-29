@@ -76,9 +76,15 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
             <input
               type="number"
               min="0"
+              max="999999999999"
               step="1000"
               value={values.annualRevenue === 0 ? "" : values.annualRevenue}
-              onChange={e => onChange("annualRevenue", Math.max(0, Number(e.target.value) || 0))}
+              onChange={e =>
+                onChange(
+                  "annualRevenue",
+                  Math.min(999_999_999_999, Math.max(0, Number(e.target.value) || 0))
+                )
+              }
               aria-label="Annual Revenue"
               className="w-full bg-transparent text-xs sm:text-sm font-bold font-sans tabular-nums text-[#1f1d1a] outline-hidden p-0 border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="50000"
@@ -98,9 +104,15 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
             <input
               type="number"
               min="0"
+              max="999999999999"
               step="1000"
               value={values.annualExpenses === 0 ? "" : values.annualExpenses}
-              onChange={e => onChange("annualExpenses", Math.max(0, Number(e.target.value) || 0))}
+              onChange={e =>
+                onChange(
+                  "annualExpenses",
+                  Math.min(999_999_999_999, Math.max(0, Number(e.target.value) || 0))
+                )
+              }
               aria-label="Annual Expenses"
               className="w-full bg-transparent text-xs sm:text-sm font-bold font-sans tabular-nums text-[#1f1d1a] outline-hidden p-0 border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="40000"
@@ -121,9 +133,15 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
           <input
             type="number"
             min="0"
+            max="999999999999"
             step="500"
             value={values.netAssets === 0 ? "" : values.netAssets}
-            onChange={e => onChange("netAssets", Math.max(0, Number(e.target.value) || 0))}
+            onChange={e =>
+              onChange(
+                "netAssets",
+                Math.min(999_999_999_999, Math.max(0, Number(e.target.value) || 0))
+              )
+            }
             aria-label="Net Assets"
             className="w-full bg-transparent text-xs sm:text-sm font-bold font-sans tabular-nums text-[#1f1d1a] outline-hidden p-0 border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="15000"
