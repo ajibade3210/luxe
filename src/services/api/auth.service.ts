@@ -29,10 +29,10 @@ export function isAuthenticated(): boolean {
 export function createSession(user: Partial<UserSession>): UserSession {
   const session: UserSession = {
     id: user.id || `usr-${Date.now()}`,
-    name: user.name || "Amelia Bell",
-    email: user.email || "director@elanatelier.com",
-    role: user.role || "Studio Director",
-    studioName: user.studioName || "Élan Events",
+    name: user.name || "Elena Vance",
+    email: user.email || "elena@atelierforma.design",
+    role: user.role || "Lead Brand Designer & Director",
+    studioName: user.studioName || "Atelier Forma",
     studioSlug: user.studioSlug || APP_CONFIG.defaultSlug,
     avatarUrl:
       user.avatarUrl ||
@@ -61,14 +61,14 @@ export async function signInWithGoogle(options?: { claimSlug?: string }): Promis
     ? `${claim
         .split("-")
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ")} Atelier`
-    : "Élan Events";
+        .join(" ")} Studio`
+    : "Atelier Forma";
   const studioSlug = claim || APP_CONFIG.defaultSlug;
 
   return createSession({
-    name: "Amelia Bell",
-    email: "amelia.bell@gmail.com",
-    role: "Studio Director",
+    name: "Elena Vance",
+    email: "elena@atelierforma.design",
+    role: "Lead Brand Designer & Director",
     studioName,
     studioSlug,
   });
@@ -86,19 +86,19 @@ export async function signUpWithGoogle(data?: {
 }): Promise<UserSession> {
   await delay(350);
 
-  const effectiveSlug = data?.slug || "my-atelier";
+  const effectiveSlug = data?.slug || "my-studio";
   const effectiveName =
     data?.studioName ||
     `${effectiveSlug
       .split("-")
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ")} Atelier`;
-  const effectiveDirector = data?.fullName || "Amelia Bell";
+      .join(" ")} Studio`;
+  const effectiveDirector = data?.fullName || "Elena Vance";
 
   return createSession({
     name: effectiveDirector,
-    email: "amelia.bell@gmail.com",
-    role: "Studio Director",
+    email: "elena@atelierforma.design",
+    role: "Lead Brand Designer & Director",
     studioName: effectiveName,
     studioSlug: effectiveSlug,
   });

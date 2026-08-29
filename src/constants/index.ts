@@ -3,12 +3,12 @@
  * Single Source of Truth for storage keys, default configs, and routing rules.
  */
 
-import type { BusinessType } from "@/types";
+import type { BusinessType, PortfolioProject } from "@/types";
 
 export const APP_CONFIG = {
   name: process.env.NEXT_PUBLIC_APP_NAME || "Shopwus",
   defaultStudioPhone: process.env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE || "+2348055966944",
-  defaultSlug: "elan-events",
+  defaultSlug: "atelier-forma",
   defaultLeadBudget: 25_000,
   defaultServiceAmount: 35_000,
   siteDomain: process.env.NEXT_PUBLIC_SITE_DOMAIN || "shopwus.com",
@@ -25,7 +25,7 @@ export const STORAGE_KEYS = {
 
 export const AUTO_QUOTE_MODAL_DELAY_MS = 60_000; // 1 minute dwell time
 
-export const PROFILE_VERSION = 2; // v2: services migrated to ServiceItem[]
+export const PROFILE_VERSION = 7; // v7: service tier limits and character capping
 
 export const RESERVED_SLUGS = [
   "admin",
@@ -48,6 +48,7 @@ export const CUSTOM_EVENTS = {
   profileUpdated: "shopwus_profile_updated",
   authChanged: "shopwus_auth_changed",
   broadcastSent: "shopwus_broadcast_sent",
+  valuationUpdated: "shopwus_valuation_updated",
 } as const;
 
 export const API_ENDPOINTS = {
@@ -60,7 +61,20 @@ export const API_ENDPOINTS = {
   auth: "/api/auth",
 } as const;
 
-export const SOCIAL_PREFIX_MAP: Record<string, string> = {
+export const SOCIAL_PLATFORMS = [
+  "instagram",
+  "facebook",
+  "linkedin",
+  "tiktok",
+  "x",
+  "youtube",
+  "whatsapp",
+  "threads",
+  "pinterest",
+  "website",
+] as const;
+
+export const SOCIAL_BASE_URLS = {
   instagram: "instagram.com/",
   facebook: "facebook.com/",
   linkedin: "linkedin.com/in/",
@@ -73,8 +87,76 @@ export const SOCIAL_PREFIX_MAP: Record<string, string> = {
   website: "https://",
 } as const;
 
+export const SOCIAL_PREFIX_MAP: Record<string, string> = SOCIAL_BASE_URLS;
+
+export const DEFAULT_PORTFOLIO_IMAGE =
+  "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1200&q=80";
+
+export const DEFAULT_NEW_PROJECT: Partial<PortfolioProject> = {
+  title: "",
+  category: "Brand Identity",
+  location: "Lagos & London",
+  description: "",
+  image: "",
+  gallery: [],
+  client: "",
+  year: "2026",
+};
+
+/** Initial number of projects visible in the public studio before "View More". */
+export const INITIAL_VISIBLE_PORTFOLIO_COUNT = 6;
+
+/** Maximum showcase projects allowed per membership tier. */
+export const TIER_PROJECT_LIMITS = {
+  starter: 3,
+  unlimited: 10,
+} as const;
+
+export const MAX_PORTFOLIO_PROJECTS = TIER_PROJECT_LIMITS.unlimited; // 10
+export const STARTER_PORTFOLIO_PROJECTS = TIER_PROJECT_LIMITS.starter; // 3
+
+/** Maximum showcase categories allowed per membership tier. */
+export const TIER_CATEGORY_LIMITS = {
+  starter: 3,
+  unlimited: 5,
+} as const;
+
+export const MAX_PORTFOLIO_CATEGORIES = TIER_CATEGORY_LIMITS.unlimited; // 5
+export const STARTER_PORTFOLIO_CATEGORIES = TIER_CATEGORY_LIMITS.starter; // 3
+
+/** Maximum character length for custom portfolio category names. */
+export const MAX_CATEGORY_NAME_LENGTH = 30;
+
+/** Maximum services allowed per membership tier. */
+export const TIER_SERVICE_LIMITS = {
+  starter: 3,
+  unlimited: 6,
+} as const;
+
+export const MAX_SERVICES = TIER_SERVICE_LIMITS.unlimited; // 6
+export const STARTER_SERVICES = TIER_SERVICE_LIMITS.starter; // 3
+
+/** Maximum character length for custom service names. */
+export const MAX_SERVICE_NAME_LENGTH = 30;
+
+export const DEFAULT_PORTFOLIO_CATEGORIES = [
+  "Brand Identity",
+  "UI/UX & Product",
+  "Packaging & Print",
+  "Art Direction",
+] as const;
+
+export const DEFAULT_FOOTER_EYEBROW = "Begin Your Journey";
+export const DEFAULT_FOOTER_TITLE = "Ready to Create Something Extraordinary?";
+export const DEFAULT_FOOTER_DESCRIPTION =
+  "Tell us what you're planning and we'll get back to you to schedule an initial consultation with our creative directors.";
+
+export const MAX_FOOTER_EYEBROW_LENGTH = 50;
+export const MAX_FOOTER_TITLE_LENGTH = 100;
+export const MAX_FOOTER_DESC_LENGTH = 300;
+
 /** Default fallback business type across the app. */
-export const DEFAULT_BUSINESS_TYPE = "sales" as const;
+export const DEFAULT_BUSINESS_TYPE = "service" as const;
 
 /**
  * Maps each BusinessType to its public-facing CTA button label.

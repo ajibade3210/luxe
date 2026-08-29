@@ -127,8 +127,9 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     features: [
       "14 days complimentary full access",
       "Up to 20 customers, leads & invoices",
-      "Interactive 3D business card",
-      "WhatsApp orders & customer tracker",
+      "Up to 3 showcase projects & 3 categories",
+      "Interactive 3D digital storefront & card",
+      "WhatsApp orders & CRM lead intake",
       "Cancel anytime",
     ],
     ctaLabel: "Start 14-Day Free Trial",
@@ -147,6 +148,7 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     annualPrice: 16000,
     features: [
       "Capped at 20 customers, leads & invoices",
+      "Up to 3 showcase projects & 3 categories",
       "Interactive 3D digital storefront & card",
       "WhatsApp orders & CRM lead intake",
       "Itemized multi-currency invoicing & receipts",
@@ -170,6 +172,8 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
     annualPrice: 25000,
     features: [
       "Unlimited customers, leads & invoices",
+      "Up to 10 showcase projects & 5 categories",
+      "Multi-photo gallery lightboxes per project",
       "Unlimited WhatsApp & Email broadcasts",
       "Custom digital storefront & 3D card",
       "Sales, revenue & pipeline analytics",
@@ -186,6 +190,12 @@ export const LANDING_FAQS = [
     question: "What is Shopwus and who is it built for?",
     answer:
       "Shopwus (Shop With Us) is the premier studio operating system built for boutique online vendors, event planners, bespoke artisans, and creative directors. It combines a public digital storefront with an interactive 3D stationery card, CRM lead pipeline, executive multi-currency invoicing, expense bookkeeping, and business valuation modeling in one cohesive workspace.",
+  },
+  {
+    id: "faq-limits",
+    question: "How many showcase projects and categories can I feature?",
+    answer:
+      "On the Starter tier, you can feature up to 3 showcase projects and 3 custom categories. On the Unlimited tier, you can showcase up to 10 rich projects with multi-photo gallery lightboxes and up to 5 custom categories.",
   },
   {
     id: "faq-3d-card",

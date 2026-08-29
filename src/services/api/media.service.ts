@@ -1,3 +1,5 @@
+import { DEFAULT_PORTFOLIO_IMAGE } from "@/constants";
+
 const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function uploadBusinessLogo(
@@ -25,7 +27,7 @@ export async function uploadPortfolioImage(
       };
       reader.onerror = () => {
         resolve({
-          url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+          url: DEFAULT_PORTFOLIO_IMAGE,
           success: true,
         });
       };
@@ -33,7 +35,7 @@ export async function uploadPortfolioImage(
     });
   }
   return {
-    url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    url: DEFAULT_PORTFOLIO_IMAGE,
     success: true,
   };
 }

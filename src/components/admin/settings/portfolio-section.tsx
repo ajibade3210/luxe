@@ -1,9 +1,11 @@
 import {
   ArrowDown,
   ArrowUp,
+  ChevronDown,
   Copy,
   GripVertical,
   ImagePlus,
+  Images,
   Loader2,
   Plus,
   Trash2,
@@ -11,12 +13,21 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import {
+  MAX_CATEGORY_NAME_LENGTH,
+  MAX_PORTFOLIO_CATEGORIES,
+  MAX_PORTFOLIO_PROJECTS,
+} from "@/constants";
 import type { PortfolioSectionProps } from "@/types";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
 export function PortfolioSection({
   portfolio,
+  categories = [],
+  addPortfolioCategory,
+  removePortfolioCategory,
   showPortfolio,
   setShowPortfolio,
   showAddProjectModal,
@@ -26,7 +37,10 @@ export function PortfolioSection({
   newProject,
   setNewProject,
   isUploadingProjectImage,
+  isUploadingGalleryImages = false,
   handleProjectImageUpload,
+  handleGalleryImagesUpload,
+  removeGalleryImageFromNewProject,
   handleAddProject,
   removeProject,
   moveProject,
@@ -37,11 +51,15 @@ export function PortfolioSection({
   handleDragEnd,
   onToast,
 }: PortfolioSectionProps) {
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [newCatInput, setNewCatInput] = useState("");
+  const galleryPhotos = newProject.gallery || [];
+
   return (
     <>
       <Card
         title="Portfolio showcase"
-        description="High-resolution visuals that highlight your aesthetic standard and client transformations."
+        description="High-resolution visuals that highlight your aesthetic standard, case studies, and client transformations."
         action={
           <div className="flex items-center gap-2">
             <span className="text-xs text-[#6b7280]">Show on page</span>
@@ -59,10 +77,27 @@ export function PortfolioSection({
               This section is currently hidden on your public studio page.
             </div>
           )}
+          {portfolio.length >= MAX_PORTFOLIO_PROJECTS && (
+            <div className="bg-[#eff6ff] text-[#1e40af] text-xs px-3.5 py-2.5 rounded-xl border border-[#bfdbfe] flex items-center justify-between gap-2">
+              <span>
+                Maximum portfolio capacity reached ({portfolio.length}/{MAX_PORTFOLIO_PROJECTS}{" "}
+                projects).
+              </span>
+              <span className="font-semibold text-[11px] uppercase tracking-wider text-[#1d4ed8]">
+                Unlimited Tier Cap
+              </span>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-3.5">
             <button
               type="button"
-              onClick={() => setShowAddProjectModal(true)}
+              onClick={() => {
+                if (portfolio.length >= MAX_PORTFOLIO_PROJECTS) {
+                  onToast(`Maximum limit of ${MAX_PORTFOLIO_PROJECTS} portfolio projects reached`);
+                  return;
+                }
+                setShowAddProjectModal(true);
+              }}
               className="dark-button text-xs py-2.5 px-4 rounded-xl flex-1 justify-center"
             >
               <Upload size={15} /> Upload new project
@@ -72,46 +107,56 @@ export function PortfolioSection({
               onClick={() => setShowManageGalleryModal(true)}
               className="outline-button text-xs py-2.5 px-4 rounded-xl flex-1 justify-center"
             >
-              <ImagePlus size={15} /> Manage gallery ({portfolio.length})
+              <ImagePlus size={15} /> Manage gallery ({portfolio.length}/{MAX_PORTFOLIO_PROJECTS})
             </button>
           </div>
 
           {/* Current Projects List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
-            {portfolio.map(proj => (
-              <div
-                key={proj.id}
-                className="border border-[#e5e7eb] rounded-xl p-3.5 bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
-              >
-                <div className="flex items-center gap-3 overflow-hidden min-w-0">
-                  <div className="relative w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-[#e5e7eb]">
-                    <Image
-                      src={proj.image}
-                      alt={proj.title}
-                      fill
-                      sizes="44px"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="truncate min-w-0">
-                    <strong className="text-xs font-bold block text-[#111827] truncate">
-                      {proj.title}
-                    </strong>
-                    <span className="text-[10px] text-[#6b7280] font-medium block mt-0.5">
-                      {proj.category}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeProject(proj.id)}
-                  className="text-[#9ca3af] hover:text-[#dc2626] p-1.5 rounded transition-colors cursor-pointer shrink-0"
-                  title="Remove project"
+            {portfolio.map(proj => {
+              const photoCount = proj.gallery && proj.gallery.length > 0 ? proj.gallery.length : 1;
+              return (
+                <div
+                  key={proj.id}
+                  className="border border-[#e5e7eb] rounded-xl p-3.5 bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
                 >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-center gap-3 overflow-hidden min-w-0">
+                    <div className="relative w-11 h-11 rounded-lg overflow-hidden shrink-0 border border-[#e5e7eb]">
+                      <Image
+                        src={proj.image}
+                        alt={proj.title}
+                        fill
+                        sizes="44px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="truncate min-w-0">
+                      <strong className="text-xs font-bold block text-[#111827] truncate">
+                        {proj.title}
+                      </strong>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[10px] text-[#6b7280] font-medium truncate">
+                          {proj.category}
+                        </span>
+                        {photoCount > 1 && (
+                          <span className="text-[9px] bg-[#f3f4f6] text-[#4b5563] px-1.5 py-0.5 rounded font-mono shrink-0">
+                            {photoCount} photos
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeProject(proj.id)}
+                    className="text-[#9ca3af] hover:text-[#dc2626] p-1.5 rounded transition-colors cursor-pointer shrink-0"
+                    title="Remove project"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Card>
@@ -119,8 +164,9 @@ export function PortfolioSection({
       {/* Add Project Modal */}
       {showAddProjectModal && (
         <div className="fixed inset-0 z-50 bg-[#191c1d]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#e5e7eb] rounded-lg max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-[#e5e7eb] rounded-xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button
+              type="button"
               onClick={() => setShowAddProjectModal(false)}
               className="absolute right-4 top-4 text-[#6b7280] hover:text-[#191c1d] p-1"
             >
@@ -130,7 +176,7 @@ export function PortfolioSection({
               Add New Showcase Project
             </h3>
             <p className="text-xs text-[#6b7280] mb-5">
-              Upload images directly to the CDN to feature in your curated public gallery.
+              Upload multiple images to showcase rich case studies in your public atelier gallery.
             </p>
 
             <form onSubmit={handleAddProject} className="space-y-4 text-xs">
@@ -139,43 +185,159 @@ export function PortfolioSection({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Royal Mirage Gala & Pavilion"
-                  value={newProject.title}
+                  placeholder="e.g. Aethel Luxury Rebrand"
+                  value={newProject.title || ""}
                   onChange={e => setNewProject({ ...newProject, title: e.target.value })}
                   className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">Category</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Luxury Wedding"
-                    value={newProject.category}
-                    onChange={e => setNewProject({ ...newProject, category: e.target.value })}
-                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
-                  />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="relative">
+                  <label className="block text-[#1f2937] font-medium text-xs mb-1">
+                    Category ({categories.length}/{MAX_PORTFOLIO_CATEGORIES})
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowCategoryDropdown(prev => !prev)}
+                    className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#d1d5db] transition-colors"
+                    aria-haspopup="listbox"
+                    aria-expanded={showCategoryDropdown}
+                  >
+                    <span className="font-medium truncate">
+                      {newProject.category || "Select Category"}
+                    </span>
+                    <ChevronDown
+                      size={14}
+                      className={`text-[#6b7280] transition-transform duration-200 ${
+                        showCategoryDropdown ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showCategoryDropdown && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-[#e5e7eb] rounded-xl shadow-xl z-50 p-2 space-y-2 animate-fade-in">
+                      <div className="text-[10px] font-semibold text-[#6b7280] uppercase tracking-wider px-2 py-0.5 flex items-center justify-between">
+                        <span>Select Category</span>
+                        <span className="font-normal font-mono">
+                          {categories.length}/{MAX_PORTFOLIO_CATEGORIES}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 max-h-44 overflow-y-auto">
+                        {categories.map(cat => {
+                          const isSelected = newProject.category === cat;
+                          return (
+                            <div
+                              key={cat}
+                              className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                                isSelected
+                                  ? "bg-[#eff6ff] text-[#0058be] font-semibold"
+                                  : "hover:bg-[#f9fafb] text-[#374151]"
+                              }`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNewProject(prev => ({ ...prev, category: cat }));
+                                  setShowCategoryDropdown(false);
+                                }}
+                                className="flex items-center gap-2 flex-1 text-left cursor-pointer min-w-0 pr-2"
+                              >
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                    isSelected ? "bg-[#0058be]" : "bg-transparent"
+                                  }`}
+                                />
+                                <span className="truncate">{cat}</span>
+                              </button>
+
+                              {/* Delete Category Button */}
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  removePortfolioCategory(cat);
+                                }}
+                                disabled={categories.length <= 1}
+                                className="text-[#9ca3af] hover:text-[#ba1a1a] p-1 rounded hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+                                title="Delete category"
+                                aria-label={`Delete category ${cat}`}
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Add New Category Section - Capped at MAX_PORTFOLIO_CATEGORIES */}
+                      {categories.length < MAX_PORTFOLIO_CATEGORIES ? (
+                        <div className="pt-2 border-t border-[#f3f4f6]">
+                          <div className="flex gap-1.5">
+                            <input
+                              type="text"
+                              maxLength={MAX_CATEGORY_NAME_LENGTH}
+                              placeholder={`New category (max ${MAX_CATEGORY_NAME_LENGTH} chars)...`}
+                              value={newCatInput}
+                              onChange={e => setNewCatInput(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  if (newCatInput.trim()) {
+                                    addPortfolioCategory(newCatInput);
+                                    setNewCatInput("");
+                                  }
+                                }
+                              }}
+                              className="flex-1 bg-[#f9fafb] border border-[#e5e7eb] rounded-lg px-2.5 py-1 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] focus:bg-white"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (newCatInput.trim()) {
+                                  addPortfolioCategory(newCatInput);
+                                  setNewCatInput("");
+                                }
+                              }}
+                              disabled={!newCatInput.trim()}
+                              className="dark-button !text-xs !py-1 !px-2.5 rounded-lg disabled:opacity-40 shrink-0"
+                            >
+                              <Plus size={11} /> Add
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="pt-1.5 border-t border-[#f3f4f6] text-[10px] text-[#9ca3af] text-center italic">
+                          Category capacity reached ({MAX_PORTFOLIO_CATEGORIES}/
+                          {MAX_PORTFOLIO_CATEGORIES})
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-[#1f2937] font-medium mb-1">Location</label>
+                  <label className="block text-[#1f2937] font-medium mb-1">Location / Client</label>
                   <input
                     type="text"
-                    placeholder="e.g. Victoria Island, Lagos"
-                    value={newProject.location}
+                    placeholder="e.g. London & Lagos"
+                    value={newProject.location || ""}
                     onChange={e => setNewProject({ ...newProject, location: e.target.value })}
                     className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
                   />
                 </div>
               </div>
 
+              {/* Cover Photo */}
               <div>
                 <label className="block text-[#1f2937] font-medium mb-1.5">
-                  Project Cover Photo
+                  Project Cover Photo *
                 </label>
                 {newProject.image ? (
                   <div className="space-y-2">
-                    <div className="relative rounded-lg overflow-hidden border border-[#e5e7eb] bg-[#f3f4f5] group aspect-[16/9] max-h-48 w-full flex items-center justify-center">
+                    <div className="relative rounded-lg overflow-hidden border border-[#e5e7eb] bg-[#f3f4f5] group aspect-[16/9] max-h-44 w-full flex items-center justify-center">
                       <Image
                         src={newProject.image}
                         alt="Project Cover Preview"
@@ -213,7 +375,7 @@ export function PortfolioSection({
                     </div>
 
                     <div className="flex items-center gap-2 bg-[#f8f9fa] border border-[#e5e7eb] rounded p-1.5 text-[11px]">
-                      <span className="text-[#6b7280] font-medium shrink-0 pl-1">URL:</span>
+                      <span className="text-[#6b7280] font-medium shrink-0 pl-1">Cover URL:</span>
                       <span className="font-mono text-[#191c1d] truncate flex-1 select-all">
                         {newProject.image}
                       </span>
@@ -233,7 +395,7 @@ export function PortfolioSection({
                     </div>
                   </div>
                 ) : (
-                  <label className="cursor-pointer block border-2 border-dashed border-[#e5e7eb] hover:border-[#0058be] bg-[#f8f9fa] hover:bg-[#f0f6ff]/30 rounded-lg p-6 text-center transition-all group">
+                  <label className="cursor-pointer block border-2 border-dashed border-[#e5e7eb] hover:border-[#0058be] bg-[#f8f9fa] hover:bg-[#f0f6ff]/30 rounded-lg p-5 text-center transition-all group">
                     <input
                       type="file"
                       accept="image/*"
@@ -241,22 +403,86 @@ export function PortfolioSection({
                       disabled={isUploadingProjectImage}
                       onChange={handleProjectImageUpload}
                     />
-                    <div className="w-10 h-10 rounded-full bg-white border border-[#e5e7eb] group-hover:border-[#0058be] text-[#0058be] flex items-center justify-center mx-auto mb-2 shadow-2xs group-hover:scale-105 transition-all">
+                    <div className="w-9 h-9 rounded-full bg-white border border-[#e5e7eb] group-hover:border-[#0058be] text-[#0058be] flex items-center justify-center mx-auto mb-1.5 shadow-2xs group-hover:scale-105 transition-all">
                       {isUploadingProjectImage ? (
-                        <Loader2 size={18} className="animate-spin" />
+                        <Loader2 size={16} className="animate-spin" />
                       ) : (
-                        <Upload size={18} />
+                        <Upload size={16} />
                       )}
                     </div>
                     <span className="block text-xs font-semibold text-[#191c1d] group-hover:text-[#0058be] transition-colors">
                       {isUploadingProjectImage
                         ? "Uploading to CDN..."
-                        : "Click to upload project cover picture"}
+                        : "Click to upload project cover image"}
                     </span>
-                    <span className="block text-[11px] text-[#6b7280] mt-0.5">
-                      PNG, JPG, or WebP (max 10MB) · Hosted on CDN
+                    <span className="block text-[10px] text-[#6b7280] mt-0.5">
+                      PNG, JPG, or WebP · Main banner image
                     </span>
                   </label>
+                )}
+              </div>
+
+              {/* Multiple Gallery Photos */}
+              <div className="pt-1">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[#1f2937] font-medium">
+                    Additional Gallery Photos ({galleryPhotos.length})
+                  </label>
+                  {handleGalleryImagesUpload && (
+                    <label className="cursor-pointer text-[#0058be] hover:underline inline-flex items-center gap-1 text-[11px] font-medium">
+                      {isUploadingGalleryImages ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <Plus size={12} />
+                      )}
+                      <span>Add More Photos</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        disabled={isUploadingGalleryImages}
+                        onChange={handleGalleryImagesUpload}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                {galleryPhotos.length > 0 ? (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 bg-[#f8f9fa] p-2.5 rounded-lg border border-[#e5e7eb] max-h-36 overflow-y-auto">
+                    {galleryPhotos.map((imgUrl, i) => (
+                      <div
+                        key={`${imgUrl}-${i}`}
+                        className="relative aspect-square rounded-md overflow-hidden border border-[#e5e7eb] bg-white group"
+                      >
+                        <Image
+                          src={imgUrl}
+                          alt={`Gallery photo ${i + 1}`}
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                        />
+                        {removeGalleryImageFromNewProject && (
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryImageFromNewProject(i)}
+                            className="absolute top-1 right-1 bg-black/70 hover:bg-[#ba1a1a] text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            title="Remove photo"
+                          >
+                            <Trash2 size={10} />
+                          </button>
+                        )}
+                        <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] text-center font-mono py-0.5">
+                          #{i + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="border border-dashed border-[#e5e7eb] rounded-lg p-3 text-center text-[#6b7280] text-[11px] flex items-center justify-center gap-1.5">
+                    <Images size={14} className="text-[#9ca3af]" />
+                    <span>Optional: Add multiple images to build a full project gallery</span>
+                  </div>
                 )}
               </div>
 
@@ -266,8 +492,8 @@ export function PortfolioSection({
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="A brief editorial summary of this project..."
-                  value={newProject.description}
+                  placeholder="A brief editorial summary of this project and design deliverables..."
+                  value={newProject.description || ""}
                   onChange={e =>
                     setNewProject({
                       ...newProject,
@@ -311,11 +537,12 @@ export function PortfolioSection({
                   Manage Gallery Arrangement
                 </h3>
                 <p className="text-xs text-[#6b7280] mt-1">
-                  Drag items or use the arrows to reorder how projects appear in &quot;Our Best
-                  Work&quot; on your public site.
+                  Drag items or use the arrows to reorder how projects appear in your public
+                  portfolio.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowManageGalleryModal(false)}
                 className="text-[#6b7280] hover:text-[#191c1d] p-1.5 rounded-md hover:bg-[#f3f4f5] cursor-pointer transition-colors"
               >
@@ -336,6 +563,9 @@ export function PortfolioSection({
                 portfolio.map((proj, idx) => {
                   const isDragging = draggedProjectIndex === idx;
                   const isDragOver = dragOverProjectIndex === idx && draggedProjectIndex !== idx;
+                  const photoCount =
+                    proj.gallery && proj.gallery.length > 0 ? proj.gallery.length : 1;
+
                   return (
                     <div
                       key={proj.id}
@@ -375,7 +605,8 @@ export function PortfolioSection({
                       <div className="flex-1 min-w-0">
                         <h4 className="text-xs font-bold text-[#191c1d] truncate">{proj.title}</h4>
                         <p className="text-[11px] text-[#6b7280] truncate">
-                          {proj.category} · {proj.location}
+                          {proj.category} · {proj.location}{" "}
+                          {photoCount > 1 && `(${photoCount} photos)`}
                         </p>
                       </div>
                       <div className="flex items-center gap-1">

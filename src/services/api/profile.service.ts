@@ -75,7 +75,12 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessProfile |
   const current = loadPersistedProfile();
   const normalized = (slug || "").toLowerCase().trim();
 
-  if (!normalized || normalized === current.slug || normalized === "elan-events") {
+  if (
+    !normalized ||
+    normalized === current.slug ||
+    normalized === "atelier-forma" ||
+    normalized === "elan-events"
+  ) {
     return current;
   }
 

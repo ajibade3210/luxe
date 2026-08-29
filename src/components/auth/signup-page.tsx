@@ -268,12 +268,12 @@ export function SignupPage() {
               </p>
               <div className="flex items-center gap-3 pt-1">
                 <div className="w-8 h-8 rounded-full bg-[#191c1d] text-white flex items-center justify-center text-xs font-bold">
-                  AB
+                  EV
                 </div>
                 <div>
-                  <strong className="text-xs font-bold text-[#191c1d] block">Amelia Bell</strong>
+                  <strong className="text-xs font-bold text-[#191c1d] block">Elena Vance</strong>
                   <span className="text-[11px] text-[#64748b] block">
-                    Studio Director · Élan Events
+                    Creative Director · Atelier Forma
                   </span>
                 </div>
               </div>

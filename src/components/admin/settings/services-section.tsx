@@ -1,4 +1,5 @@
 import { Edit3, Plus, Trash2 } from "lucide-react";
+import { MAX_SERVICE_NAME_LENGTH, MAX_SERVICES } from "@/constants";
 import type { ServicesSectionProps } from "@/types";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
@@ -23,8 +24,8 @@ export function ServicesSection({
 }: ServicesSectionProps) {
   return (
     <Card
-      title="Services & offerings"
-      description="Make your expertise easy to understand for prospective couples and clients."
+      title={`Services & offerings (${services.length}/${MAX_SERVICES})`}
+      description="Make your expertise easy to understand for prospective clients."
       action={
         <div className="flex items-center gap-2">
           <span className="text-xs text-[#6b7280]">Show on page</span>
@@ -60,10 +61,11 @@ export function ServicesSection({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <label className="text-[11px] font-semibold text-[#374151] uppercase tracking-wide block">
-                        Service Name
+                        Service Name (max {MAX_SERVICE_NAME_LENGTH} chars)
                       </label>
                       <input
                         value={service.name}
+                        maxLength={MAX_SERVICE_NAME_LENGTH}
                         onChange={e => updateService(service.id, { name: e.target.value })}
                         className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be]"
                       />
@@ -168,17 +170,22 @@ export function ServicesSection({
         </div>
 
         {/* Add Service Section */}
-        {showAddService ? (
+        {services.length >= MAX_SERVICES ? (
+          <div className="border border-[#e5e7eb] rounded-xl bg-[#fafaf9] p-3 text-center text-xs text-[#6b7280] italic">
+            Service capacity reached ({MAX_SERVICES}/{MAX_SERVICES})
+          </div>
+        ) : showAddService ? (
           <div className="border border-[#0058be]/30 bg-[#f0f6ff]/40 rounded-xl p-4 sm:p-5 space-y-3">
             <span className="text-xs font-bold text-[#0058be] block">New Service Item</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-[11px] font-semibold text-[#374151] uppercase tracking-wide block">
-                  Service Name *
+                  Service Name (max {MAX_SERVICE_NAME_LENGTH} chars) *
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Destination Wedding Planning"
+                  maxLength={MAX_SERVICE_NAME_LENGTH}
+                  placeholder={`e.g. Destination Brand Direction (max ${MAX_SERVICE_NAME_LENGTH} chars)`}
                   value={newServiceInput}
                   onChange={e => setNewServiceInput(e.target.value)}
                   className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be]"

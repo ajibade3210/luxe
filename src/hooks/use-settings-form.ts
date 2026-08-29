@@ -1,7 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DEFAULT_BUSINESS_TYPE } from "@/constants";
+import {
+  DEFAULT_BUSINESS_TYPE,
+  DEFAULT_FOOTER_DESCRIPTION,
+  DEFAULT_FOOTER_EYEBROW,
+  DEFAULT_FOOTER_TITLE,
+  DEFAULT_NEW_PROJECT,
+  DEFAULT_PORTFOLIO_CATEGORIES,
+  DEFAULT_PORTFOLIO_IMAGE,
+  MAX_CATEGORY_NAME_LENGTH,
+  MAX_PORTFOLIO_CATEGORIES,
+  MAX_PORTFOLIO_PROJECTS,
+  MAX_SERVICE_NAME_LENGTH,
+  MAX_SERVICES,
+} from "@/constants";
 import {
   checkSlugAvailability,
   getBusinessProfile,
@@ -62,20 +75,15 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
   const [portfolio, setPortfolio] = useState<PortfolioProject[]>(
     initialMockProfile.portfolio || []
   );
+  const [categories, setCategories] = useState<string[]>(
+    initialMockProfile.portfolioCategories || [...DEFAULT_PORTFOLIO_CATEGORIES]
+  );
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [newProject, setNewProject] = useState<Partial<PortfolioProject>>({
-    title: "",
-    category: "Luxury Wedding",
-    location: "Victoria Island, Lagos",
-    description: "",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
-    stats: "250 Guests · Bespoke Styling",
-  });
+  const [newProject, setNewProject] = useState<Partial<PortfolioProject>>(DEFAULT_NEW_PROJECT);
 
   // Google Reviews & Reputation
   const [googleReviewsLink, setGoogleReviewsLink] = useState(
-    initialMockProfile.googleReviewsLink || "https://business.google.com/elan-events"
+    initialMockProfile.googleReviewsLink || "https://business.google.com/atelier-forma"
   );
   const [isSyncingReviews, setIsSyncingReviews] = useState(false);
 
@@ -124,6 +132,18 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     initialMockProfile.buttonRadius || "Subtle"
   );
 
+  // Footer CTA Banner
+  const [footerEyebrow, setFooterEyebrow] = useState(
+    initialMockProfile.footerEyebrow || DEFAULT_FOOTER_EYEBROW
+  );
+  const [footerTitle, setFooterTitle] = useState(
+    initialMockProfile.footerTitle || DEFAULT_FOOTER_TITLE
+  );
+  const [footerDescription, setFooterDescription] = useState(
+    initialMockProfile.footerDescription || DEFAULT_FOOTER_DESCRIPTION
+  );
+  const [showFooterCta, setShowFooterCta] = useState(initialMockProfile.showFooterCta ?? true);
+
   // Gallery Drag & Drop Reordering State
   const [showManageGalleryModal, setShowManageGalleryModal] = useState(false);
   const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
@@ -165,6 +185,9 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         setServices(data.services);
       }
       if (data.portfolio) setPortfolio(data.portfolio);
+      if (data.portfolioCategories && data.portfolioCategories.length > 0) {
+        setCategories(data.portfolioCategories);
+      }
       if (data.socialChannels) setChannels(data.socialChannels);
       if (data.googleReviewsLink) setGoogleReviewsLink(data.googleReviewsLink);
       if (data.operatingHours) setHours(data.operatingHours);
@@ -179,6 +202,10 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
       if (data.showServices !== undefined) setShowServices(data.showServices);
       if (data.showPortfolio !== undefined) setShowPortfolio(data.showPortfolio);
       if (data.showReviews !== undefined) setShowReviews(data.showReviews);
+      if (data.footerEyebrow !== undefined) setFooterEyebrow(data.footerEyebrow);
+      if (data.footerTitle !== undefined) setFooterTitle(data.footerTitle);
+      if (data.footerDescription !== undefined) setFooterDescription(data.footerDescription);
+      if (data.showFooterCta !== undefined) setShowFooterCta(data.showFooterCta);
       if (data.colors) setColors(data.colors);
       if (data.buttonRadius) setRadius(data.buttonRadius);
       if (data.businessType) setBusinessType(data.businessType);
@@ -201,11 +228,24 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
   // Handlers
   const addService = () => {
-    if (!newServiceInput.trim()) return;
+    const trimmedName = newServiceInput.trim();
+    if (!trimmedName) return;
+    if (trimmedName.length > MAX_SERVICE_NAME_LENGTH) {
+      notify(`Service name cannot exceed ${MAX_SERVICE_NAME_LENGTH} characters`);
+      return;
+    }
+    if (services.length >= MAX_SERVICES) {
+      notify(`Maximum limit of ${MAX_SERVICES} services reached`);
+      return;
+    }
+    if (services.some(s => s.name.toLowerCase() === trimmedName.toLowerCase())) {
+      notify(`Service "${trimmedName}" already exists`);
+      return;
+    }
     const newSvc: ServiceItem = {
       id: `svc-${Date.now()}`,
-      name: newServiceInput.trim(),
-      category: newServiceCategory || "Bespoke",
+      name: trimmedName,
+      category: newServiceCategory.trim() || "Bespoke",
       description: newServiceDesc.trim(),
     };
     setServices(prev => [...prev, newSvc]);
@@ -238,32 +278,69 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     notify("Project removed from gallery");
   };
 
+  const addPortfolioCategory = (cat: string) => {
+    const trimmed = cat.trim();
+    if (!trimmed) return;
+    if (trimmed.length > MAX_CATEGORY_NAME_LENGTH) {
+      notify(`Category name cannot exceed ${MAX_CATEGORY_NAME_LENGTH} characters`);
+      return;
+    }
+    if (categories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+      notify(`Category "${trimmed}" already exists`);
+      return;
+    }
+    if (categories.length >= MAX_PORTFOLIO_CATEGORIES) {
+      notify(`Maximum limit of ${MAX_PORTFOLIO_CATEGORIES} categories reached`);
+      return;
+    }
+    const updated = [...categories, trimmed];
+    setCategories(updated);
+    setNewProject(prev => ({ ...prev, category: trimmed }));
+    notify(`Added category "${trimmed}"`);
+  };
+
+  const removePortfolioCategory = (cat: string) => {
+    if (categories.length <= 1) {
+      notify("You must keep at least one category");
+      return;
+    }
+    const updated = categories.filter(c => c !== cat);
+    setCategories(updated);
+    if (newProject.category === cat) {
+      setNewProject(prev => ({ ...prev, category: updated[0] || "General" }));
+    }
+    notify(`Removed category "${cat}"`);
+  };
+
+  const [isUploadingGalleryImages, setIsUploadingGalleryImages] = useState(false);
+
   const handleAddProject = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.title) return;
+    if (portfolio.length >= MAX_PORTFOLIO_PROJECTS) {
+      notify(`Maximum limit of ${MAX_PORTFOLIO_PROJECTS} portfolio projects reached`);
+      return;
+    }
+    const coverImage = newProject.image || newProject.gallery?.[0] || DEFAULT_PORTFOLIO_IMAGE;
+
+    const galleryImages =
+      newProject.gallery && newProject.gallery.length > 0 ? newProject.gallery : [coverImage];
+
     const proj: PortfolioProject = {
       id: `p-${Date.now()}`,
       title: newProject.title || "Untitled Project",
-      category: newProject.category || "Luxury Event",
-      location: newProject.location || "Lagos, Nigeria",
+      category: newProject.category || "Brand Identity",
+      location: newProject.location || "Lagos & London",
       description: newProject.description || "",
-      image:
-        newProject.image ||
-        "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
-      stats: newProject.stats || "Bespoke Production",
+      image: coverImage,
+      gallery: galleryImages,
+      client: newProject.client || undefined,
+      year: newProject.year || "2026",
     };
     setPortfolio(prev => [proj, ...prev]);
     setShowAddProjectModal(false);
-    setNewProject({
-      title: "",
-      category: "Luxury Wedding",
-      location: "Victoria Island, Lagos",
-      description: "",
-      image:
-        "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
-      stats: "250 Guests · Bespoke Styling",
-    });
-    notify(`Added project "${proj.title}" to gallery`);
+    setNewProject(DEFAULT_NEW_PROJECT);
+    notify(`Added project "${proj.title}" with ${galleryImages.length} images to gallery`);
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -287,13 +364,51 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setIsUploadingProjectImage(true);
     try {
       const res = await uploadPortfolioImage(file);
-      setNewProject(prev => ({ ...prev, image: res.url }));
-      notify("Project image uploaded successfully");
+      setNewProject(prev => {
+        const updatedGallery =
+          prev.gallery && prev.gallery.length > 0 ? [res.url, ...prev.gallery.slice(1)] : [res.url];
+        return { ...prev, image: res.url, gallery: updatedGallery };
+      });
+      notify("Project cover image uploaded successfully");
     } catch {
       notify("Failed to upload project image");
     } finally {
       setIsUploadingProjectImage(false);
     }
+  };
+
+  const handleGalleryImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploadingGalleryImages(true);
+    try {
+      const uploadPromises = Array.from(files).map(file => uploadPortfolioImage(file));
+      const results = await Promise.all(uploadPromises);
+      const newUrls = results.map(r => r.url);
+      setNewProject(prev => ({
+        ...prev,
+        gallery: [...(prev.gallery || (prev.image ? [prev.image] : [])), ...newUrls],
+      }));
+      notify(`Uploaded ${results.length} gallery ${results.length === 1 ? "image" : "images"}`);
+    } catch {
+      notify("Failed to upload gallery images");
+    } finally {
+      setIsUploadingGalleryImages(false);
+    }
+  };
+
+  const removeGalleryImageFromNewProject = (index: number) => {
+    setNewProject(prev => {
+      const currentGallery = prev.gallery || [];
+      const removedUrl = currentGallery[index];
+      const updated = currentGallery.filter((_, i) => i !== index);
+      const isRemovingCover = prev.image && removedUrl === prev.image;
+      return {
+        ...prev,
+        image: isRemovingCover ? updated[0] || "" : prev.image,
+        gallery: updated,
+      };
+    });
   };
 
   const moveProject = (index: number, direction: "up" | "down") => {
@@ -370,6 +485,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         logoUrl,
         services,
         portfolio,
+        portfolioCategories: categories,
         socialChannels: channels,
         googleReviewsLink,
         operatingHours: hours,
@@ -382,6 +498,10 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         showServices,
         showPortfolio,
         showReviews,
+        footerEyebrow,
+        footerTitle,
+        footerDescription,
+        showFooterCta,
         businessType,
         colors,
         buttonRadius: radius,
@@ -432,6 +552,14 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setShowPortfolio,
     showReviews,
     setShowReviews,
+    footerEyebrow,
+    setFooterEyebrow,
+    footerTitle,
+    setFooterTitle,
+    footerDescription,
+    setFooterDescription,
+    showFooterCta,
+    setShowFooterCta,
     services,
     showAddService,
     setShowAddService,
@@ -444,6 +572,9 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     editingServiceId,
     setEditingServiceId,
     portfolio,
+    categories,
+    addPortfolioCategory,
+    removePortfolioCategory,
     showAddProjectModal,
     setShowAddProjectModal,
     newProject,
@@ -470,6 +601,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setLogoUrl,
     isUploadingLogo,
     isUploadingProjectImage,
+    isUploadingGalleryImages,
     colors,
     setColors,
     radius,
@@ -489,6 +621,8 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     handleAddProject,
     handleLogoUpload,
     handleProjectImageUpload,
+    handleGalleryImagesUpload,
+    removeGalleryImageFromNewProject,
     moveProject,
     handleDragStart,
     handleDragEnter,

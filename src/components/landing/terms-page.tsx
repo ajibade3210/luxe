@@ -96,8 +96,9 @@ export function TermsOfServicePage() {
           </h2>
           <p className="text-xs sm:text-sm text-[#444748] leading-relaxed">
             Shopwus guarantees that inbound customer inquiries and records are never discarded or
-            throttled. If you exceed the customer allowance of the Starter tier, you may upgrade to
-            Unlimited at any time without losing data.
+            throttled. Plan allowances (including customer and lead caps, up to 3 showcase projects
+            & 3 categories on Starter, and up to 10 showcase projects & 5 categories on Unlimited)
+            are enforced gracefully. You may upgrade to Unlimited at any time without losing data.
           </p>
         </section>
 

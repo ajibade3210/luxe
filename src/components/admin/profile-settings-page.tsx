@@ -125,7 +125,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
                   <input
                     value={name}
                     onChange={event => setName(event.target.value)}
-                    placeholder="Amelia Bell"
+                    placeholder="Elena Vance"
                     className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
                   />
                 </div>
@@ -140,7 +140,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
                     type="email"
                     value={email}
                     onChange={event => setEmail(event.target.value)}
-                    placeholder="amelia@elanevents.com"
+                    placeholder="elena@atelierforma.design"
                     className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
                   />
                 </div>
@@ -155,7 +155,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
                     type="tel"
                     value={phone}
                     onChange={event => setPhone(event.target.value)}
-                    placeholder="+234 800 ELAN VIP"
+                    placeholder="+234 800 FORMA VIP"
                     className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
                   />
                 </div>
@@ -190,7 +190,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
                 Full name
               </span>
               <strong className="text-xs font-bold text-[#191c1d] block mt-1">
-                {name || "Amelia Bell"}
+                {name || "Elena Vance"}
               </strong>
             </div>
 
@@ -199,7 +199,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
                 Email address
               </span>
               <strong className="text-xs font-bold text-[#191c1d] block mt-1 truncate">
-                {email || "director@elanatelier.com"}
+                {email || "elena@atelierforma.design"}
               </strong>
             </div>
 

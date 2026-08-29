@@ -8,6 +8,7 @@ import { useAdminToast } from "./admin-layout";
 import { AppearanceSection } from "./settings/appearance-section";
 import { ChannelsSection } from "./settings/channels-section";
 import { ContactSection } from "./settings/contact-section";
+import { FooterSection } from "./settings/footer-section";
 import { IdentitySection } from "./settings/identity-section";
 import { PortfolioSection } from "./settings/portfolio-section";
 import { ServicesSection } from "./settings/services-section";
@@ -41,6 +42,14 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     setShowPortfolio,
     showReviews,
     setShowReviews,
+    footerEyebrow,
+    setFooterEyebrow,
+    footerTitle,
+    setFooterTitle,
+    footerDescription,
+    setFooterDescription,
+    showFooterCta,
+    setShowFooterCta,
     services,
     showAddService,
     setShowAddService,
@@ -53,6 +62,9 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     editingServiceId,
     setEditingServiceId,
     portfolio,
+    categories,
+    addPortfolioCategory,
+    removePortfolioCategory,
     showAddProjectModal,
     setShowAddProjectModal,
     newProject,
@@ -73,6 +85,7 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     setLogoUrl,
     isUploadingLogo,
     isUploadingProjectImage,
+    isUploadingGalleryImages,
     colors,
     setColors,
     radius,
@@ -92,6 +105,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     handleAddProject,
     handleLogoUpload,
     handleProjectImageUpload,
+    handleGalleryImagesUpload,
+    removeGalleryImageFromNewProject,
     moveProject,
     handleDragStart,
     handleDragEnter,
@@ -176,6 +191,9 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
 
         <PortfolioSection
           portfolio={portfolio}
+          categories={categories}
+          addPortfolioCategory={addPortfolioCategory}
+          removePortfolioCategory={removePortfolioCategory}
           showPortfolio={showPortfolio}
           setShowPortfolio={setShowPortfolio}
           showAddProjectModal={showAddProjectModal}
@@ -185,7 +203,10 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           newProject={newProject}
           setNewProject={setNewProject}
           isUploadingProjectImage={isUploadingProjectImage}
+          isUploadingGalleryImages={isUploadingGalleryImages}
           handleProjectImageUpload={handleProjectImageUpload}
+          handleGalleryImagesUpload={handleGalleryImagesUpload}
+          removeGalleryImageFromNewProject={removeGalleryImageFromNewProject}
           handleAddProject={handleAddProject}
           removeProject={removeProject}
           moveProject={moveProject}
@@ -214,6 +235,17 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           radius={radius}
           setRadius={setRadius}
         />
+
+        <FooterSection
+          footerEyebrow={footerEyebrow}
+          setFooterEyebrow={setFooterEyebrow}
+          footerTitle={footerTitle}
+          setFooterTitle={setFooterTitle}
+          footerDescription={footerDescription}
+          setFooterDescription={setFooterDescription}
+          showFooterCta={showFooterCta}
+          setShowFooterCta={setShowFooterCta}
+        />
       </div>
 
       {/* Bottom Action Bar */}
@@ -233,7 +265,7 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           </button>
 
           <a
-            href={`/${slug || APP_CONFIG.defaultSlug}`}
+            href={`/${slug || APP_CONFIG.defaultSlug}?from=settings`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"

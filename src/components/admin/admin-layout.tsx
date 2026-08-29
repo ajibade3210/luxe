@@ -181,14 +181,14 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
           title="Director Profile & Studio Equity"
         >
           <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shrink-0 shadow-2xs">
-            AB
+            EV
           </div>
           <div className="min-w-0 flex-1">
             <b className="text-xs font-bold text-[#191c1d] block leading-tight truncate">
-              Amelia Bell
+              Elena Vance
             </b>
             <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
-              Admin Overview
+              Lead Brand Designer
             </span>
           </div>
           <ChevronRight size={14} className="text-[#9ca3af] shrink-0" />

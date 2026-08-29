@@ -50,6 +50,8 @@ export interface PortfolioProject {
   isCover?: boolean;
   gallery?: string[];
   stats?: string;
+  client?: string;
+  year?: string;
 }
 
 export interface ColorScheme {
@@ -100,9 +102,14 @@ export interface BusinessProfile {
   colors: ColorScheme;
   buttonRadius: ButtonRadiusType;
   currency?: CurrencyCode;
+  portfolioCategories?: string[];
   showServices?: boolean;
   showPortfolio?: boolean;
   showReviews?: boolean;
+  footerEyebrow?: string;
+  footerTitle?: string;
+  footerDescription?: string;
+  showFooterCta?: boolean;
   businessType?: BusinessType;
   updatedAt: string;
 }
@@ -121,13 +128,13 @@ export interface IdentitySectionProps {
   setWebsite: (v: string) => void;
   email: string;
   setEmail: (v: string) => void;
-  currency?: CurrencyCode;
-  setCurrency?: (v: CurrencyCode) => void;
+  currency: CurrencyCode;
+  setCurrency: (v: CurrencyCode) => void;
   businessType: BusinessType;
   setBusinessType: (v: BusinessType) => void;
   about: string;
   setAbout: (v: string) => void;
-  logoUrl: string;
+  logoUrl?: string;
   setLogoUrl: (v: string) => void;
   isUploadingLogo: boolean;
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -168,6 +175,9 @@ export interface ServicesSectionProps {
 
 export interface PortfolioSectionProps {
   portfolio: PortfolioProject[];
+  categories: string[];
+  addPortfolioCategory: (cat: string) => void;
+  removePortfolioCategory: (cat: string) => void;
   showPortfolio: boolean;
   setShowPortfolio: (v: boolean) => void;
   showAddProjectModal: boolean;
@@ -177,7 +187,10 @@ export interface PortfolioSectionProps {
   newProject: Partial<PortfolioProject>;
   setNewProject: React.Dispatch<React.SetStateAction<Partial<PortfolioProject>>>;
   isUploadingProjectImage: boolean;
+  isUploadingGalleryImages?: boolean;
   handleProjectImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleGalleryImagesUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  removeGalleryImageFromNewProject?: (index: number) => void;
   handleAddProject: (e: React.FormEvent) => void;
   removeProject: (id: string) => void;
   moveProject: (index: number, direction: "up" | "down") => void;
@@ -198,6 +211,17 @@ export interface ContactSectionProps {
   setTimeTo: (v: string) => void;
   byAppointmentOnly: boolean;
   setByAppointmentOnly: (v: boolean) => void;
+}
+
+export interface FooterSectionProps {
+  footerEyebrow: string;
+  setFooterEyebrow: (v: string) => void;
+  footerTitle: string;
+  setFooterTitle: (v: string) => void;
+  footerDescription: string;
+  setFooterDescription: (v: string) => void;
+  showFooterCta: boolean;
+  setShowFooterCta: (v: boolean) => void;
 }
 
 export interface AppearanceSectionProps {
