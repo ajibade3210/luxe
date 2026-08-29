@@ -40,18 +40,17 @@ export function PublicLandingPage() {
       <section className="hero">
         <div className="hero-copy">
           <h1>
-            Your digital shop for
+            The operating system for
             <br />
-            <em>online vendors & businesses.</em>
+            <em>online vendors & studios.</em>
           </h1>
           <p>
-            Shopwus (<em>Shop With Us</em>) is the platform that helps you create a quick mini
-            storefront, share an interactive 3D business card, broadcast messages, and track
-            customers turning visitors into paying clients.
+            Create your bespoke 3D digital storefront, broadcast WhatsApp updates, issue itemized
+            multi-currency invoices, and track your business valuation—all in one place.
           </p>
           <div className="hero-ctas">
-            <a className="dark-button bg-[#000000] border-[#000000]" href="/settings">
-              Enter your studio <ArrowRight size={15} />
+            <a className="dark-button bg-[#000000] border-[#000000]" href="/signup">
+              Start 14-day free trial <ArrowRight size={15} />
             </a>
           </div>
         </div>

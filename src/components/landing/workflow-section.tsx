@@ -331,21 +331,23 @@ export function WorkflowSection() {
   const pillars = [
     {
       step: "01",
-      title: "Create Shop",
+      title: "Create Storefront",
       description:
-        "Shape a public profile that feels like your work, and invite discerning clients in.",
+        "Build a custom 3D digital storefront and interactive stationery card in under 60 seconds.",
       PreviewComponent: CreatePreviewCard,
     },
     {
       step: "02",
-      title: "Curate",
-      description: "Keep your services, stories, and 10 social channels beautifully unified.",
+      title: "Curate & Showcase",
+      description:
+        "Feature signature projects, connect verified social channels, and capture high-intent inquiries.",
       PreviewComponent: CuratePreviewCard,
     },
     {
       step: "03",
-      title: "Convert",
-      description: "Turn a first consultation inquiry into a considered, lasting relationship.",
+      title: "Convert & Scale",
+      description:
+        "Issue itemized invoices, broadcast drops to past clients, and watch your business valuation grow.",
       PreviewComponent: ConvertPreviewCard,
     },
   ];
