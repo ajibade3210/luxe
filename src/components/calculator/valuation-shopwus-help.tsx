@@ -3,54 +3,57 @@ import { VALUATION_SHOPWUS_BENEFITS } from "@/constants/valuation";
 
 export function ValuationShopwusHelp() {
   return (
-    <section className="bg-gradient-to-br from-[#1f1d1a] to-[#2a2622] text-white rounded-3xl p-8 sm:p-10 border border-[#3d3630] shadow-xl space-y-8">
-      <div className="max-w-3xl space-y-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#c59a78]">
-          Enterprise Multiplier Advantage
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white leading-tight">
-          How Shopwus helps you grow and multiply your business valuation
+    <section className="bg-white rounded-3xl p-8 sm:p-10 border border-[#eee7dc] shadow-[0_2px_16px_rgba(70,50,30,0.03)] space-y-8">
+      {/* Section Header */}
+      <div className="text-center max-w-2xl mx-auto space-y-2.5">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1f1d1a] leading-tight tracking-tight">
+          How to Increase Your Business Valuation with Shopwus
         </h2>
-        <p className="text-xs sm:text-sm text-[#ded5c8] leading-relaxed">
-          Valuation is not luck; it is systematic operational engineering. Here is how our suite
-          transforms an informal shop into an institutional, highly sellable company.
+        <p className="text-xs sm:text-sm text-[#665e57] leading-relaxed">
+          Your business is worth more when it runs on clean systems instead of scattered DMs. Here
+          is how Shopwus helps you command a higher market multiple.
         </p>
       </div>
 
+      {/* 4 Value Driver Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {VALUATION_SHOPWUS_BENEFITS.map((item, idx) => (
           <div
             key={idx}
-            className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-2 hover:bg-white/10 transition-colors"
+            className="bg-[#faf7f2] border border-[#e8dfd2] rounded-2xl p-6 space-y-2.5 hover:border-[#c59a78]/60 transition-all flex flex-col justify-between"
           >
-            <h3 className="text-sm font-bold text-white">{item.title}</h3>
-            <p className="text-xs text-[#ded5c8] leading-relaxed">{item.description}</p>
+            <div className="space-y-2">
+              <h3 className="text-base font-bold text-[#1f1d1a] leading-snug">{item.title}</h3>
+              <p className="text-xs sm:text-sm text-[#665e57] leading-relaxed">
+                {item.description}
+              </p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* CTA Box */}
-      <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Action Banner */}
+      <div className="border-t border-[#f4eee6] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="space-y-1 text-center sm:text-left">
-          <h4 className="text-sm font-bold text-white">
-            Ready to build a transferable, high-valuation studio?
+          <h4 className="text-base font-bold text-[#1f1d1a]">
+            Ready to track and grow your valuation?
           </h4>
-          <p className="text-xs text-[#b5a99f]">
-            Start your 14-day free trial. Setup takes under 60 seconds with zero credit card.
+          <p className="text-xs text-[#8c827a]">
+            Start your free trial in under 60 seconds. No credit card required.
           </p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
           <a
             href="/signup"
-            className="bg-[#c59a78] hover:bg-[#b08563] text-[#1f1d1a] px-5 py-3 rounded-xl text-xs font-bold hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 transition-all cursor-pointer flex items-center gap-2"
+            className="bg-[#191c1d] hover:bg-black !text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer flex items-center gap-2"
           >
             <span>Start 14-Day Free Trial</span>
             <ArrowRight size={14} />
           </a>
           <a
             href="/login"
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-3 rounded-xl text-xs font-semibold hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+            className="bg-white hover:bg-[#faf7f2] text-[#1f1d1a] border border-[#ded5c8] px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 transition-all cursor-pointer"
           >
             Enter Studio
           </a>

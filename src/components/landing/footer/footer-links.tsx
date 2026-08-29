@@ -38,8 +38,12 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
   {
     title: "Resources",
     links: [
-      { label: "Business Valuation Calculator", href: "/valuation-calculator", badge: "Free" },
-      { label: "The Atelier Journal (Blog)", href: "/blog" },
+      {
+        label: "Business Valuation Calculator",
+        href: "/valuation-calculator",
+        badge: "Free",
+      },
+      { label: "Blog (Blog)", href: "/blog" },
       { label: "Studio Operating Guide", href: "#workflow" },
       { label: "Luxury Wedding Index 2026", href: "#features" },
       { label: "Contract Legal Frameworks", href: "/terms" },
@@ -50,7 +54,7 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
         title: "Company",
         links: [
           { label: "About Shopwus", href: "#workflow" },
-          { label: "The Atelier Journal", href: "/blog" },
+          { label: "Blog", href: "/blog" },
           { label: "Privacy Policy", href: "/privacy" },
           { label: "Terms of Service", href: "/terms" },
         ],

@@ -75,7 +75,7 @@ export interface ValuationInputFormProps {
     field: K,
     value: PublicValuationInputs[K]
   ) => void;
-  onCalculate: () => void;
+  onCalculate?: () => void;
   isCalculating?: boolean;
 }
 

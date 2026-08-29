@@ -113,7 +113,13 @@ export function PrivacyPolicyPage() {
           </p>
           <ul className="space-y-2 text-xs sm:text-sm text-[#444748] pl-5 list-disc leading-relaxed">
             <li>
-              We never display your valuation, revenue, or expenses on your public storefront.
+              <strong>Public Calculators:</strong> Inputs entered into our public Business Valuation
+              Calculator are computed locally in real time and are not stored, shared, or linked to
+              your identity unless you voluntarily create an account to save your valuation.
+            </li>
+            <li>
+              <strong>Private Dashboard:</strong> We never display your valuation, revenue, or
+              expenses on your public storefront (`/[slug]`).
             </li>
             <li>We do not sell, trade, or monetize your financial records or client lists.</li>
             <li>

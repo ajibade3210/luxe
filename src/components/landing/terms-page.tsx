@@ -105,12 +105,15 @@ export function TermsOfServicePage() {
         {/* Section 5 */}
         <section className="space-y-3">
           <h2 className="text-lg font-serif font-bold text-[#191c1d]">
-            5. Business Valuation Disclaimer
+            5. Business Valuation & Free Tools Disclaimer
           </h2>
           <p className="text-xs sm:text-sm text-[#444748] leading-relaxed">
-            Valuation figures are automated analytical benchmarks calculated from your logged
-            cashflow and industry SDE multiples for internal owner planning only. They do not
-            constitute a certified audit or formal appraisal.
+            Valuation figures and estimations provided across our public tools (such as the Business
+            Valuation Calculator) and registered studio dashboards are automated analytical
+            benchmarks for internal owner planning and educational purposes only. They do not
+            constitute a certified appraisal, formal financial audit, tax advice, or legal opinion.
+            Shopwus accepts no liability for commercial decisions or transactions made based on
+            these automated estimates.
           </p>
         </section>
 

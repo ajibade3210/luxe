@@ -8,7 +8,7 @@ import { BlogGraphicCard } from "./blog-graphics";
 
 export function BlogArticlePage({ post, relatedPosts = [] }: BlogArticlePageProps) {
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1f1d1a]">
+    <div className="min-h-screen bg-white text-[#1f1d1a]">
       {/* Top Header Navigation */}
       <header className="border-b border-[#eee7dc] bg-white/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -18,11 +18,11 @@ export function BlogArticlePage({ post, relatedPosts = [] }: BlogArticlePageProp
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#665e57] hover:text-[#1f1d1a] transition-colors"
             >
               <ArrowLeft size={14} />
-              <span>Back to Journal</span>
+              <span>Back to Blog</span>
             </a>
             <span className="text-[#ded5c8] hidden sm:inline">|</span>
             <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#8c827a]">
-              <span>The Atelier Journal</span>
+              <span>Blog</span>
               <span>/</span>
               <span className="text-[#1f1d1a] font-bold truncate max-w-[200px]">{post.title}</span>
             </div>
@@ -151,19 +151,15 @@ export function BlogArticlePage({ post, relatedPosts = [] }: BlogArticlePageProp
         </div>
 
         {/* Interactive Bottom CTA Box */}
-        <div className="bg-gradient-to-br from-[#1f1d1a] to-[#2a2622] text-white rounded-3xl p-8 sm:p-10 border border-[#3d3630] space-y-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="bg-gradient-to-br from-[#faf7f2] to-[#f4eee6] border border-[#e8dfd2] rounded-3xl p-8 sm:p-10 text-[#1f1d1a] space-y-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1.5 max-w-lg">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#c59a78]">
-              {post.keyBenefit}
-            </span>
-            <h3 className="text-xl sm:text-2xl font-serif font-bold text-white">
+            <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#1f1d1a]">
               {post.callToAction.title}
             </h3>
-            <p className="text-xs text-[#ded5c8]">{post.callToAction.description}</p>
           </div>
           <a
             href={post.callToAction.buttonHref}
-            className="bg-[#c59a78] hover:bg-[#b08563] text-[#1f1d1a] px-6 py-3.5 rounded-xl text-xs font-bold hover:-translate-y-0.5 hover:shadow-lg transition-all flex items-center gap-2 shrink-0"
+            className="bg-[#191c1d] hover:bg-black !text-white px-6 py-3.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md transition-all flex items-center gap-2 shrink-0"
           >
             <span>{post.callToAction.buttonLabel}</span>
             <ArrowRight size={14} />

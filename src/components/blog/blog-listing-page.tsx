@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, BookOpen, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { useState } from "react";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -16,7 +16,7 @@ export function BlogListingPage() {
       : BLOG_POSTS.filter(p => p.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1f1d1a]">
+    <div className="min-h-screen bg-white text-[#1f1d1a]">
       {/* Top Header Navigation */}
       <header className="border-b border-[#eee7dc] bg-white/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -32,7 +32,7 @@ export function BlogListingPage() {
             <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#8c827a]">
               <span>Resources</span>
               <span>/</span>
-              <span className="text-[#1f1d1a] font-bold">The Atelier Journal</span>
+              <span className="text-[#1f1d1a] font-bold">Blog</span>
             </div>
           </div>
 
@@ -59,9 +59,8 @@ export function BlogListingPage() {
       {/* Hero Header */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 sm:space-y-12">
         <section className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[#f3e8ff] text-[#9333ea] border border-[#e9d5ff]">
-            <BookOpen size={13} />
-            <span>The Atelier Journal • Illustrated Series</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[#faf7f2] text-[#9e633d] border border-[#ded5c8]">
+            <span>Illustrated Series</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-[#1f1d1a] tracking-tight leading-tight">
             Visual Insights for High-Growth Vendors & Ateliers
@@ -155,16 +154,9 @@ export function BlogListingPage() {
         {/* Featured Valuation Tool Box */}
         <section className="bg-gradient-to-br from-[#faf7f2] to-[#f4eee6] border border-[#e8dfd2] rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl text-center sm:text-left">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9e633d]">
-              Interactive Assessment
-            </span>
             <h3 className="text-2xl font-serif font-bold text-[#1f1d1a]">
               Want to see what your business is worth right now?
             </h3>
-            <p className="text-xs sm:text-sm text-[#665e57]">
-              Use our free SDE Business Valuation Calculator to assess your earnings multiple,
-              customer retention value, and net tangible assets.
-            </p>
           </div>
           <a
             href="/valuation-calculator"

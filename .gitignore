@@ -20,3 +20,10 @@ tsconfig.tsbuildinfo
 .DS_Store
 .DS_Store
 **/.DS_Store
+skills-lock.json
+.agents
+.agents/
+.agents/**
+.agent
+.agent/
+.agent/**

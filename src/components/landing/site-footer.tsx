@@ -7,10 +7,12 @@ const QR_CODE_IMAGE_SRC =
   "https://cdn.accessa.ng/test/accessa/joe-fitness/qrcodes/images/7343ffeb0bfd056e77e8e8d52edf0722.png";
 
 const FOOTER_NAV_LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#workflow" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Features", href: "/#features" },
+  { label: "How it works", href: "/#workflow" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Blog", href: "/blog" },
+  { label: "Valuation Calculator", href: "/valuation-calculator" },
+  { label: "FAQ", href: "/#faq" },
   { label: "Sign up", href: "/signup" },
   { label: "Enter Studio", href: "/login" },
 ] as const;

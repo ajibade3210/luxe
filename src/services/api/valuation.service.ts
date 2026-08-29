@@ -145,39 +145,51 @@ export function calculatePublicValuation(inputs: PublicValuationInputs): PublicV
   const averageNetProfit = Math.max(0, annualRevenue - annualExpenses);
   const profitMargin = annualRevenue > 0 ? Math.round((averageNetProfit / annualRevenue) * 100) : 0;
 
-  // Base multiple by sector
+  // Base multiple by sector (Standard SME M&A averages)
   const sectorConfig = INDUSTRY_SECTORS[industry] || INDUSTRY_SECTORS.luxury_services;
   let baseMultiple = sectorConfig.baseMultiple;
 
-  // Margin adjustment
+  // Profit margin leverage (healthy margins command higher valuation multiple)
   if (profitMargin >= 40) {
-    baseMultiple += 1.4;
+    baseMultiple += 0.4;
   } else if (profitMargin >= 20) {
-    baseMultiple += 0.8;
+    baseMultiple += 0.2;
   } else if (profitMargin < 10 && profitMargin > 0) {
-    baseMultiple -= 0.4;
+    baseMultiple -= 0.3;
   }
 
-  // Retention adjustment (0% to 100% maps to +0.0x to +2.8x)
-  const retentionBoost = (customerRetentionRate / 100) * 2.8;
+  // Customer retention multiplier (predictable repeat clients reduce buyer risk: +0.0x to +0.8x)
+  const retentionBoost = (customerRetentionRate / 100) * 0.8;
   baseMultiple += retentionBoost;
 
-  const multiple = Number(Math.max(1.5, baseMultiple).toFixed(1));
+  // Max multiple cap (SMEs realistically cap between 1.5x - 4.8x, SaaS up to 6.0x)
+  const maxCap = industry === "digital_tech" ? 6.0 : 4.8;
+  const multiple = Number(Math.min(maxCap, Math.max(1.5, baseMultiple)).toFixed(1));
 
-  // Valuation calculation
+  // Valuation calculation: (Net Profit * Multiple) + Net Assets
   const earningsValue = averageNetProfit * multiple;
   const approximateValue = Math.round(earningsValue + netAssets);
 
-  const valuationRangeLow = Math.round(averageNetProfit * (multiple * 0.88) + netAssets * 0.9);
-  const valuationRangeHigh = Math.round(averageNetProfit * (multiple * 1.15) + netAssets * 1.1);
+  // Confidence range calculation
+  const valuationRangeLow =
+    averageNetProfit > 0
+      ? Math.round(averageNetProfit * (multiple * 0.88) + netAssets * 0.95)
+      : Math.round(netAssets * 0.9);
 
-  // Classify tier
+  const valuationRangeHigh =
+    averageNetProfit > 0
+      ? Math.round(averageNetProfit * (multiple * 1.15) + netAssets * 1.05)
+      : Math.round(netAssets * 1.1);
+
+  // Currency-agnostic business stage classification based on operational health
   let tier: ValuationTier = "emerging";
-  if (approximateValue >= 500000) {
+  if (averageNetProfit === 0 && customerRetentionRate < 30) {
+    tier = "emerging";
+  } else if (profitMargin >= 40 && customerRetentionRate >= 60) {
     tier = "haute";
-  } else if (approximateValue >= 200000) {
+  } else if (profitMargin >= 25 && customerRetentionRate >= 40) {
     tier = "flagship";
-  } else if (approximateValue >= 75000) {
+  } else if (profitMargin >= 10 || customerRetentionRate >= 25) {
     tier = "established";
   }
 
@@ -187,36 +199,36 @@ export function calculatePublicValuation(inputs: PublicValuationInputs): PublicV
   const drivers: ValuationDriver[] = [
     {
       id: "net_profit",
-      name: "Average Net Profit",
+      name: "Annual Net Profit",
       value: `${profitMargin}% Margin`,
       impact: profitMargin >= 30 ? "high" : "positive",
-      detail: "True cashflow after deducting all annual operational expenses",
+      detail: "Annual cashflow after deducting all operating expenses",
     },
     {
       id: "sde_multiple",
-      name: "SDE Valuation Multiple",
+      name: "Profit Multiple",
       value: `${multiple}x`,
-      impact: multiple >= 4.0 ? "high" : "neutral",
+      impact: multiple >= 3.0 ? "high" : "neutral",
       detail: `${sectorConfig.label} industry baseline + retention score`,
     },
     {
       id: "net_assets",
-      name: "Net Tangible Assets",
+      name: "Net Assets",
       value: "Balance Sheet",
       impact: netAssets > 0 ? "positive" : "neutral",
-      detail: "Tangible studio assets, inventory, and equipment equity",
+      detail: "Tangible studio assets, inventory, and equipment",
     },
     {
       id: "retention",
-      name: "Customer Retention Score",
+      name: "Repeat Customer Rate",
       value: `${customerRetentionRate}% Repeat`,
       impact: customerRetentionRate >= 40 ? "high" : "positive",
-      detail: "Repeat purchase velocity and active client loyalty",
+      detail: "Repeat purchase velocity and customer loyalty",
     },
   ];
 
   const growthOpportunities = [
-    `Increasing customer retention from ${customerRetentionRate}% to ${Math.min(100, customerRetentionRate + 20)}% could increase your multiple by +0.4x.`,
+    `Increasing repeat customer rate from ${customerRetentionRate}% to ${Math.min(100, customerRetentionRate + 20)}% could add up to +0.3x to your valuation multiple.`,
     "Centralizing customer records into an exportable CRM eliminates buyer risk during due diligence.",
     "Categorizing operating expenses and issuing digital receipts protects your valuation from tax penalties.",
     "Broadcasting seasonal drops via WhatsApp to past buyers generates high-margin repeat revenue.",

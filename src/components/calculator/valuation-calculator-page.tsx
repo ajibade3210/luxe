@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Calculator } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -16,7 +16,6 @@ export function ValuationCalculatorPage() {
   const [inputs, setInputs] = useState<PublicValuationInputs>({
     ...DEFAULT_PUBLIC_VALUATION_INPUTS,
   });
-  const [isCalculating, setIsCalculating] = useState(false);
 
   const handleFieldChange = <K extends keyof PublicValuationInputs>(
     field: K,
@@ -29,15 +28,8 @@ export function ValuationCalculatorPage() {
     return calculatePublicValuation(inputs);
   }, [inputs]);
 
-  const handleManualCalculate = () => {
-    setIsCalculating(true);
-    setTimeout(() => {
-      setIsCalculating(false);
-    }, 200);
-  };
-
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-[#1f1d1a]">
+    <div className="min-h-screen bg-white text-[#1f1d1a]">
       {/* Top Header Navigation */}
       <header className="border-b border-[#eee7dc] bg-white/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -80,10 +72,6 @@ export function ValuationCalculatorPage() {
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12 sm:space-y-16">
         <section className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[#ffedd5] text-[#ea580c] border border-[#fed7aa]">
-            <Calculator size={13} />
-            <span>Interactive Business Appraisal Engine</span>
-          </div>
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-[#1f1d1a] tracking-tight leading-tight">
             Business Valuation Calculator
           </h1>
@@ -95,13 +83,8 @@ export function ValuationCalculatorPage() {
 
         {/* 2-Column Calculator Grid */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <ValuationInputForm
-            values={inputs}
-            onChange={handleFieldChange}
-            onCalculate={handleManualCalculate}
-            isCalculating={isCalculating}
-          />
-          <ValuationResultsDisplay result={result} onRecalculate={handleManualCalculate} />
+          <ValuationInputForm values={inputs} onChange={handleFieldChange} />
+          <ValuationResultsDisplay result={result} />
         </section>
 
         {/* Educational Guide Section */}

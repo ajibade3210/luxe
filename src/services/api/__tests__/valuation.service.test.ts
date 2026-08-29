@@ -41,8 +41,8 @@ describe("valuation service", () => {
 
     expect(result.averageNetProfit).toBe(10000);
     expect(result.netAssets).toBe(15000);
-    expect(result.multiple).toBe(7.0);
-    expect(result.approximateValue).toBe(85000);
+    expect(result.multiple).toBe(3.4);
+    expect(result.approximateValue).toBe(49000);
     expect(result.valuationRangeLow).toBeLessThan(result.approximateValue);
     expect(result.valuationRangeHigh).toBeGreaterThan(result.approximateValue);
     expect(result.drivers.length).toBe(4);

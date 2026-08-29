@@ -12,36 +12,32 @@ export const VALUATION_TIER_CONFIG: Record<
   }
 > = {
   emerging: {
-    label: "Emerging Boutique",
-    description:
-      "Active early stage with healthy initial customer acquisition and lean operating expenses.",
+    label: "Early Stage",
+    description: "Early-stage business with steady initial sales and lean expenses.",
     minMultiple: 1.8,
     maxMultiple: 2.4,
     badgeColor: "#0284c7",
     bg: "#e0f2fe",
   },
   established: {
-    label: "Established Studio",
-    description:
-      "Consistent monthly cashflow, steady repeat clients, and proven profit margins above 45%.",
+    label: "Growing Business",
+    description: "Consistent monthly cashflow and healthy profit margins.",
     minMultiple: 2.5,
     maxMultiple: 3.2,
     badgeColor: "#16a34a",
     bg: "#dcfce7",
   },
   flagship: {
-    label: "Flagship Brand",
-    description:
-      "Strong brand equity, high customer lifetime value, multi-channel sales, and excellent margins.",
+    label: "Established Brand",
+    description: "Strong customer loyalty and high profit margins.",
     minMultiple: 3.3,
     maxMultiple: 4.2,
     badgeColor: "#9333ea",
     bg: "#f3e8ff",
   },
   haute: {
-    label: "Haute Enterprise",
-    description:
-      "Premier tier enterprise with superior customer retention, high average order value, and scaled ARR.",
+    label: "Scaled Enterprise",
+    description: "High recurring revenue, strong brand equity, and premium valuation multiples.",
     minMultiple: 4.3,
     maxMultiple: 5.5,
     badgeColor: "#d97706",
@@ -50,21 +46,21 @@ export const VALUATION_TIER_CONFIG: Record<
 };
 
 export const VALUATION_GROWTH_LEVERS = [
-  "Logging recurring customer retainers adds an estimated 2.8x multiple to your valuation.",
-  "Maintaining gross profit margins above 50% moves your studio into the Flagship Brand tier.",
-  "Converting incoming leads within 24 hours increases customer lifetime equity by up to 18%.",
-  "Recording all operational expenses gives you an audit-ready P&L statement for grant and loan applications.",
+  "Increasing repeat customer rate adds up to +0.8x to your valuation multiple.",
+  "Maintaining profit margins above 30% puts your business in the Established Brand tier.",
+  "Keeping clean customer records makes due diligence and ownership handover seamless.",
+  "Tracking all expenses with digital receipts gives you an audit-ready P&L statement.",
 ] as const;
 
 export const VALUATION_DISCLAIMER_NOTE =
-  "Informational estimate only. This valuation is an automated analytical benchmark calculated from logged cashflow, expenses, and industry SDE multiples. It does not constitute a certified appraisal or formal financial audit.";
+  "This automated estimate is for informational planning only and does not constitute a certified appraisal or formal financial audit.";
 
 export const SDE_TOOLTIP_TEXT =
-  "SDE (Seller's Discretionary Earnings) multiple is the industry standard benchmark used to value boutique studios based on owner net take-home earnings.";
+  "Profit multiple is the standard benchmark used to value small-to-medium businesses based on annual net earnings.";
 
 export const VALUATION_EMPTY_STATE = {
   eyebrow: "Valuation Benchmark",
-  title: "Unlock Live Studio Valuation",
+  title: "Unlock Live Valuation",
   description:
     "Log your first paid invoices and operating expenses to calculate an automated real-time valuation model.",
   actionLabel: "View Invoices & Bookkeeping",
@@ -73,38 +69,38 @@ export const VALUATION_EMPTY_STATE = {
 export const INDUSTRY_SECTORS = {
   retail_ecommerce: {
     label: "Retail & E-Commerce",
-    baseMultiple: 3.5,
+    baseMultiple: 2.5,
     description: "Direct-to-consumer physical products, fashion, and retail inventory.",
   },
   luxury_services: {
-    label: "Luxury Atelier & Bespoke Services",
-    baseMultiple: 4.8,
-    description: "High-ticket custom couture, bespoke events, bridal, and fine artisan services.",
+    label: "Services & Consulting",
+    baseMultiple: 2.8,
+    description: "Bespoke services, event planning, consulting, and client work.",
   },
   agency_consulting: {
-    label: "Agency & Creative Consulting",
-    baseMultiple: 3.8,
-    description: "Design studios, marketing firms, retainer models, and professional services.",
+    label: "Creative & Marketing Agency",
+    baseMultiple: 2.6,
+    description: "Design studios, marketing firms, retainers, and professional services.",
   },
   events_hospitality: {
-    label: "Events & Hospitality Production",
-    baseMultiple: 3.6,
-    description: "Experiential production, luxury catering, decor, and event planning.",
+    label: "Events & Hospitality",
+    baseMultiple: 2.2,
+    description: "Experiential production, catering, decor, and event planning.",
   },
   digital_tech: {
-    label: "Digital Products & Software",
-    baseMultiple: 5.2,
-    description: "Digital downloads, SaaS platforms, memberships, and content libraries.",
+    label: "Software & Digital Products",
+    baseMultiple: 4.2,
+    description: "Digital downloads, SaaS platforms, memberships, and content.",
   },
   general_business: {
-    label: "General SME & Commercial Trading",
-    baseMultiple: 3.2,
-    description: "Standard local merchant services, distribution, and commercial trade.",
+    label: "General Business & Trade",
+    baseMultiple: 2.2,
+    description: "Local merchant services, distribution, and commercial trade.",
   },
 } as const;
 
 export const DEFAULT_PUBLIC_VALUATION_INPUTS = {
-  currency: "GBP" as const,
+  currency: "NGN" as const,
   industry: "luxury_services" as const,
   annualRevenue: 50000,
   annualExpenses: 40000,
@@ -114,63 +110,60 @@ export const DEFAULT_PUBLIC_VALUATION_INPUTS = {
 
 export const VALUATION_HOW_CALCULATED_SECTIONS = [
   {
-    title: "1. SDE / EBITDA Earnings Multiple Method",
+    title: "1. Annual Cashflow × Multiple",
     description:
-      "For small-to-medium businesses and boutique studios, the most widely accepted valuation framework is the Seller's Discretionary Earnings (SDE) multiple. This metric evaluates the true cashflow available to an owner after operating expenses, multiplied by an industry factor reflecting risk, market position, and growth trajectory.",
-    badge: "Primary Metric",
+      "Buyers pay for predictable future earnings. Your annual profit after operating expenses is multiplied by an industry benchmark (typically 2.0x to 4.5x for service studios and retail).",
+    badge: "Core Driver",
   },
   {
-    title: "2. Net Tangible Asset Valuation",
+    title: "2. Net Assets & Inventory",
     description:
-      "Tangible balance sheet assets — including production equipment, studio inventory, cash receivables, and proprietary tooling minus all outstanding liabilities — are added directly to the earnings baseline to form a complete enterprise asset valuation.",
+      "Physical and liquid assets—cash in bank, production tools, studio stock, and pending invoices minus debts—are added directly to your cashflow value.",
     badge: "Balance Sheet",
   },
   {
-    title: "3. Customer Equity & Retention Multiplier",
+    title: "3. Repeat Client Loyalty",
     description:
-      "A business with an organized, recurring customer database and automated re-engagement channels commands a 20% to 50% premium multiple over an informal vendor relying purely on one-off serendipitous discovery.",
-    badge: "Valuation Premium",
+      "Businesses with repeat clients and organized contact records command up to 40% higher purchase offers than businesses relying solely on one-off walk-ins.",
+    badge: "Value Multiplier",
   },
 ] as const;
 
 export const VALUATION_PURPOSE_GUIDES = [
   {
     id: "selling",
-    title: "Valuing a Business For Selling",
-    eyebrow: "Exit & Handover",
+    title: "Command Top Value at Exit",
+    eyebrow: "Selling Your Business",
     summary:
-      "Position your studio to command top market multiples and execute a smooth ownership transfer.",
+      "Prove your studio is profitable, transferable, and runs on established systems rather than messy phone chats.",
     points: [
-      "Prove recurring revenue and repeat client retention to eliminate buyer risk.",
-      "Package clean, itemized customer CRM data and pipeline records that can be transferred instantly on Day 1.",
-      "Demonstrate predictable profit margins with audit-ready bookkeeping and invoice histories.",
-      "Show that the brand runs on established operational systems rather than chaotic personal DMs.",
+      "Prove predictable profit margins with clean, itemized invoice histories.",
+      "Package an organized CRM customer database that transfers seamlessly on Day 1.",
+      "Demonstrate high repeat client loyalty to eliminate buyer risk.",
     ],
   },
   {
     id: "buying",
-    title: "Valuing a Business For Buying",
-    eyebrow: "Acquisition Due Diligence",
+    title: "Verify True Worth Before You Buy",
+    eyebrow: "Buying an Existing Studio",
     summary:
-      "Assess fair market asking price, operational transferability, and hidden liabilities before making an offer.",
+      "Uncover hidden liabilities, verify true take-home earnings, and assess fair asking price before making an offer.",
     points: [
-      "Audit net tangible assets vs. unrecorded supplier liabilities and outstanding invoices.",
-      "Verify historical customer retention rates to ensure revenue won't evaporate after founder departure.",
-      "Examine cashflow consistency across low and high seasons over a 12 to 36 month lookback.",
-      "Evaluate digital asset portability: custom domains, verified social badges, and client portals.",
+      "Audit physical studio assets against unrecorded supplier debts.",
+      "Verify historical customer retention to ensure sales won't drop after founder departure.",
+      "Analyze cashflow consistency across low and high seasons over a 12-month lookback.",
     ],
   },
   {
     id: "investing",
-    title: "Valuing a Business For Investing",
-    eyebrow: "Capital & Growth",
+    title: "Unlock Bank Loans & Capital",
+    eyebrow: "Growth & Funding",
     summary:
-      "Evaluate scalability, unit economics, gross margins, and customer lifetime value (LTV).",
+      "Present clean, audit-ready financial ledgers that prove your studio's creditworthiness to lenders and investors.",
     points: [
-      "Analyze gross margin trends and operational expense leverage at higher revenue scales.",
-      "Assess the potential to expand average order value (AOV) via broadcast outreach and new service tiers.",
-      "Verify that foundational financial ledgers and tax records are strictly compartmentalized.",
-      "Estimate future exit valuation based on projected ARR and enterprise multiple expansion.",
+      "Demonstrate healthy profit margins and clear operating expense control.",
+      "Show measurable growth levers (like increasing retention) to expand enterprise value.",
+      "Keep digital receipts and P&L statements ready for grant and loan applications.",
     ],
   },
 ] as const;
@@ -178,26 +171,26 @@ export const VALUATION_PURPOSE_GUIDES = [
 export const VALUATION_SHOPWUS_BENEFITS = [
   {
     iconName: "Users",
-    title: "1. Turn Informal DMs into Transferable Customer Equity",
+    title: "1. Turn Contacts into a Transferable CRM",
     description:
-      "When selling or appraising a business, buyers pay top dollar for organized, transferable customer databases. Shopwus replaces messy phone chat logs with a structured CRM that records client purchase histories, consultation budgets, and contact profiles — making your client database an institutional balance sheet asset.",
+      "When you sell or raise capital, buyers pay for organized client records. Shopwus replaces lost phone chats with a structured CRM tracking client history, budgets, and lifetime value.",
   },
   {
     iconName: "Send",
-    title: "2. Boost Repeat Retention with Broadcast Outreach",
+    title: "2. Re-Engage Clients with 1-Click Broadcasts",
     description:
-      "Repeat customers are the highest-margin revenue stream in any business. With Shopwus 1-click WhatsApp and email broadcasting, you re-engage past clients with seasonal announcements and exclusive drops, raising your customer lifetime value (LTV) and expanding your SDE valuation multiple.",
+      "Repeat customers deliver your highest profit margins. Send targeted WhatsApp and email announcements to past buyers to generate predictable, high-margin revenue.",
   },
   {
-    iconName: "CreditCard",
-    title: "3. Audit-Ready Bookkeeping & Live Financial Telemetry",
+    iconName: "Receipt",
+    title: "3. Maintain Audit-Ready Invoices & Books",
     description:
-      "Nothing kills a business valuation faster than unorganized financial records. Shopwus gives you professional multi-currency invoicing, receipt tracking, categorized expense ledgers, and real-time Net Profit analytics, ensuring your books are continuously audit-ready for buyers, lenders, or investors.",
+      "Messy records kill valuation during due diligence. Shopwus keeps your books audit-ready with multi-currency invoices, expense tracking, and real-time net profit analytics.",
   },
   {
-    iconName: "Crown",
-    title: "4. Premium Brand Positioning & Interactive 3D Cards",
+    iconName: "Sparkles",
+    title: "4. Command Premium Brand Positioning",
     description:
-      "Businesses with bespoke, high-trust digital storefronts command higher pricing power and better gross margins. Your interactive 3D stationery card and verified social links establish immediate luxury authority that directly elevates your company's perceived market worth.",
+      "High-trust digital storefronts protect your margins. Your interactive 3D stationery card and verified social links establish immediate luxury authority with every client.",
   },
 ] as const;
