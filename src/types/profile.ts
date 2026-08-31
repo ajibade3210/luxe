@@ -406,3 +406,15 @@ export interface ElanEventsPageProps {
   initialProfile?: BusinessProfile;
   slug?: string;
 }
+
+export interface ProfileIdentityCardProps {
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  onSave: (updates: { name: string; email: string; phone: string }) => Promise<void>;
+}
+
+export interface ProfileSecurityCardProps {
+  email: string;
+}

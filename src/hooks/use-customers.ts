@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CUSTOM_EVENTS } from "@/constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { queryKeys } from "@/lib/query-keys";
+import { exportCustomersCSV } from "@/services/api/customer.service";
+import type { NewCustomerInput, ServiceStatus } from "@/types";
 import {
-  addServiceToCustomer,
-  createCustomer,
-  deleteCustomerService,
-  deleteInvoice,
-  exportCustomersCSV,
-  getCustomers,
-  getInvoices,
-  resendInvoice,
-  toggleCustomerActiveStatus,
-  updateCustomerServiceStatus,
-} from "@/lib/api";
-import type { Customer, Invoice, NewCustomerInput, ServiceStatus } from "@/types";
+  useAddCustomerServiceMutation,
+  useCreateCustomerMutation,
+  useCustomersQuery,
+  useDeleteCustomerServiceMutation,
+  useDeleteInvoiceMutation,
+  useInvoicesQuery,
+  useResendInvoiceMutation,
+  useToggleCustomerStatusMutation,
+  useUpdateCustomerServiceStatusMutation,
+} from "./queries";
 
 export const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",
@@ -26,54 +27,36 @@ export const AVAILABLE_SERVICES = [
 ] as const;
 
 export function useCustomers(onToast?: (message: string) => void) {
-  const [items, setItems] = useState<Customer[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    getCustomers(searchQuery)
-      .then(setItems)
-      .catch(() => setItems([]));
-    getInvoices()
-      .then(setInvoices)
-      .catch(() => setInvoices([]));
+  const queryClient = useQueryClient();
+  const { data: customersData = [], isLoading: isLoadingCustomers } =
+    useCustomersQuery(searchQuery);
+  const { data: invoicesData = [], isLoading: isLoadingInvoices } = useInvoicesQuery();
 
-    const handleCustomersUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Customer[]>;
-      if (customEvent.detail) {
-        setItems(customEvent.detail);
-      }
-    };
+  const createCustomerMutation = useCreateCustomerMutation();
+  const addServiceMutation = useAddCustomerServiceMutation();
+  const deleteServiceMutation = useDeleteCustomerServiceMutation();
+  const updateServiceStatusMutation = useUpdateCustomerServiceStatusMutation();
+  const toggleStatusMutation = useToggleCustomerStatusMutation();
+  const resendInvoiceMutation = useResendInvoiceMutation();
+  const deleteInvoiceMutation = useDeleteInvoiceMutation();
 
-    const handleInvoicesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoices(customEvent.detail);
-      }
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-
-    return () => {
-      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-    };
-  }, [searchQuery]);
+  const items = customersData;
+  const invoices = invoicesData;
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
     setCurrentPage(1);
-    getCustomers(val).then(setItems);
   };
 
   const reloadCustomers = () => {
-    getCustomers(searchQuery).then(setItems);
+    queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
   };
 
   const handleExport = async () => {
@@ -99,17 +82,13 @@ export function useCustomers(onToast?: (message: string) => void) {
       return false;
     }
 
-    setIsSubmitting(true);
     try {
-      const newCustomer = await createCustomer(formData);
-      setItems(prev => [newCustomer, ...prev]);
+      const newCustomer = await createCustomerMutation.mutateAsync(formData);
       onToast?.(`Customer "${newCustomer.name}" added successfully.`);
       return true;
     } catch {
       onToast?.("Failed to create customer.");
       return false;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -124,8 +103,7 @@ export function useCustomers(onToast?: (message: string) => void) {
     }
 
     try {
-      const updatedCust = await addServiceToCustomer(customerId, data);
-      setItems(prev => prev.map(c => (c.id === updatedCust.id ? updatedCust : c)));
+      await addServiceMutation.mutateAsync({ customerId, input: data });
       onToast?.(`Service "${data.name}" added to ${customerName}.`);
       return true;
     } catch {
@@ -140,8 +118,7 @@ export function useCustomers(onToast?: (message: string) => void) {
     serviceName: string
   ) => {
     try {
-      const updated = await deleteCustomerService(customerId, serviceId);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
+      await deleteServiceMutation.mutateAsync({ customerId, serviceId });
       onToast?.(`Service "${serviceName}" removed.`);
       return true;
     } catch {
@@ -158,8 +135,7 @@ export function useCustomers(onToast?: (message: string) => void) {
     statusLabel: string
   ) => {
     try {
-      const updated = await updateCustomerServiceStatus(customerId, serviceId, status);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
+      await updateServiceStatusMutation.mutateAsync({ customerId, serviceId, status });
       onToast?.(`Service "${serviceName}" marked as ${statusLabel}.`);
       return true;
     } catch {
@@ -170,8 +146,7 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleToggleCustomerStatus = async (customerId: string, isActive: boolean) => {
     try {
-      const updated = await toggleCustomerActiveStatus(customerId, isActive);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
+      const updated = await toggleStatusMutation.mutateAsync({ id: customerId, isActive });
       onToast?.(`Customer "${updated.name}" is now ${isActive ? "Active" : "Inactive"}.`);
       return true;
     } catch {
@@ -182,7 +157,7 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleResendInvoice = async (invoiceId: string) => {
     try {
-      const res = await resendInvoice(invoiceId);
+      const res = await resendInvoiceMutation.mutateAsync(invoiceId);
       onToast?.(`Invoice ${res.invoiceNumber} re-sent to ${res.customerEmail}.`);
       return true;
     } catch {
@@ -193,7 +168,7 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleDeleteDraftInvoice = async (invoiceId: string) => {
     try {
-      await deleteInvoice(invoiceId);
+      await deleteInvoiceMutation.mutateAsync(invoiceId);
       onToast?.("Draft invoice deleted successfully.");
       return true;
     } catch (err: unknown) {
@@ -239,7 +214,8 @@ export function useCustomers(onToast?: (message: string) => void) {
     totalRevenue,
     activeServicesCount,
     isExporting,
-    isSubmitting,
+    isSubmitting: createCustomerMutation.isPending,
+    isLoading: isLoadingCustomers || isLoadingInvoices,
     handleSearch,
     reloadCustomers,
     handleExport,

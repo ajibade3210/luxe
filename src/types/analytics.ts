@@ -42,3 +42,21 @@ export interface AnalyticsOverview {
   chart: ChartData;
   trendingServices: TrendingServiceItem[];
 }
+
+export interface AnalyticsStatCardsProps {
+  data: AnalyticsOverview;
+}
+
+export interface AnalyticsChartProps {
+  data: AnalyticsOverview;
+  onSeeAll?: () => void;
+}
+
+export interface AnalyticsExpensesBreakdownProps {
+  data: AnalyticsOverview;
+}
+
+export interface AnalyticsPublicUrlBarProps {
+  slug: string;
+  onNotify?: (message: string) => void;
+}

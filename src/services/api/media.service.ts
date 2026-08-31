@@ -1,41 +1,43 @@
-import { DEFAULT_PORTFOLIO_IMAGE } from "@/constants";
+import { apiClient } from "@/lib/api-client";
 
-const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
+export async function uploadMediaFile(
+  file: File | Blob
+): Promise<{ url: string; success: boolean }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const result = await apiClient.post<{ url: string }>("/media/upload/image", formData);
+
+  if (!result?.url) {
+    throw new Error("Failed to upload media file: No URL returned from server");
+  }
+
+  return {
+    url: result.url,
+    success: true,
+  };
+}
 
 export async function uploadBusinessLogo(
-  _file?: File | Blob | string
+  file?: File | Blob | string
 ): Promise<{ url: string; success: boolean }> {
-  await delay(400);
-  const cdnUrl =
-    "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png";
+  if (file && typeof file !== "string") {
+    return uploadMediaFile(file);
+  }
   return {
-    url: cdnUrl,
-    success: true,
+    url: typeof file === "string" ? file : "",
+    success: typeof file === "string" && file.length > 0,
   };
 }
 
 export async function uploadPortfolioImage(
   file?: File | Blob | string
 ): Promise<{ url: string; success: boolean }> {
-  await delay(350);
-  if (file && typeof window !== "undefined" && file instanceof File) {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const dataUrl = e.target?.result as string;
-        resolve({ url: dataUrl, success: true });
-      };
-      reader.onerror = () => {
-        resolve({
-          url: DEFAULT_PORTFOLIO_IMAGE,
-          success: true,
-        });
-      };
-      reader.readAsDataURL(file);
-    });
+  if (file && typeof file !== "string") {
+    return uploadMediaFile(file);
   }
   return {
-    url: DEFAULT_PORTFOLIO_IMAGE,
-    success: true,
+    url: typeof file === "string" ? file : "",
+    success: typeof file === "string" && file.length > 0,
   };
 }

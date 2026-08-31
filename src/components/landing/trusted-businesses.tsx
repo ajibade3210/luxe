@@ -1,9 +1,19 @@
-import Image from "next/image";
-import { featuredOrganizations } from "@/lib/mock-data";
-import type { LogoRowProps } from "@/types";
+"use client";
+
+import { useFeaturedStudiosQuery } from "@/hooks/queries/use-studio-queries";
+import type { LogoRowProps, TrustedBusinessesProps } from "@/types";
 
 function LogoRow({ organizations, reverse = false }: LogoRowProps) {
-  const items = [...organizations, ...organizations, ...organizations];
+  if (!organizations || organizations.length === 0) return null;
+
+  // Ensure the base sequence has enough items to comfortably exceed any screen width
+  let baseItems = [...organizations];
+  while (baseItems.length < 8) {
+    baseItems = [...baseItems, ...organizations];
+  }
+  // Double the base set exactly: [base, base] -> -50% translateX translates 1 full base set smoothly
+  const items = [...baseItems, ...baseItems];
+
   return (
     <div className={`logo-marquee ${reverse ? "logo-marquee-reverse" : ""}`}>
       <div className="logo-track">
@@ -15,13 +25,17 @@ function LogoRow({ organizations, reverse = false }: LogoRowProps) {
             title={`${org.name} — ${org.eyebrow}`}
             aria-label={`View ${org.name} studio showcase`}
           >
-            <Image
-              src={org.logoUrl}
-              alt={`${org.name} logo`}
-              width={120}
-              height={40}
-              className="object-contain"
-            />
+            {org.logoUrl ? (
+              <img
+                src={org.logoUrl}
+                alt={`${org.name} logo`}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <span className="font-serif font-bold text-base tracking-wider text-[#5c5f60] group-hover:text-[#191c1d] transition-colors px-4 text-center">
+                {org.name}
+              </span>
+            )}
           </a>
         ))}
       </div>
@@ -29,17 +43,26 @@ function LogoRow({ organizations, reverse = false }: LogoRowProps) {
   );
 }
 
-export function TrustedBusinesses() {
-  const midpoint = Math.ceil(featuredOrganizations.length / 2);
-  const rowOne = featuredOrganizations.slice(0, midpoint);
-  const rowTwo = featuredOrganizations.slice(midpoint);
+export function TrustedBusinesses({ organizations: initialOrgs }: TrustedBusinessesProps = {}) {
+  const { data: queryOrgs } = useFeaturedStudiosQuery();
+  const orgs = (initialOrgs && initialOrgs.length > 0 ? initialOrgs : queryOrgs) || [];
+
+  if (orgs.length === 0) {
+    return null;
+  }
+
+  const midpoint = Math.ceil(orgs.length / 2);
+  const rowOne = [...orgs.slice(0, midpoint), ...orgs.slice(midpoint)];
+  const rowTwo = [...orgs.slice(midpoint), ...orgs.slice(0, midpoint)];
 
   return (
     <section className="trusted-businesses" aria-labelledby="trusted-businesses-title">
       <div className="trusted-heading">
-        <h2 id="trusted-businesses-title">Trusted by businesses like yours.</h2>
+        <h2 id="trusted-businesses-title">
+          Built for high-touch luxury vendors & modern creative studios.
+        </h2>
       </div>
-      <div className="marquee-viewport">
+      <div className="marquee-viewport flex flex-col gap-3">
         <LogoRow organizations={rowOne} />
         <LogoRow organizations={rowTwo} reverse />
       </div>

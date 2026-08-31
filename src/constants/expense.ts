@@ -1,4 +1,4 @@
-import type { Expense, ExpenseCategory, ExpensePaymentMethod } from "@/types";
+import type { ExpenseCategory, ExpensePaymentMethod } from "@/types";
 import { THEME_PALETTE } from "./theme";
 
 export const EXPENSE_CATEGORIES: readonly ExpenseCategory[] = [
@@ -62,66 +62,3 @@ export const EXPENSE_PAYMENT_METHODS: Record<ExpensePaymentMethod, string> = {
   pos: "POS Terminal",
   online: "Online Payment",
 };
-
-export const INITIAL_EXPENSES: Expense[] = [
-  {
-    id: "exp-001",
-    businessId: "elan-events",
-    title: "Bulk Velvet & Silk Fabric Sourcing",
-    amount: 145000,
-    category: "materials",
-    date: "2026-08-20",
-    paymentMethod: "bank_transfer",
-    notes: "Raw fabric & trims for Autumn Atelier capsule collection",
-    currency: "NGN",
-    createdAt: "2026-08-20T10:30:00.000Z",
-  },
-  {
-    id: "exp-002",
-    businessId: "elan-events",
-    title: "Instagram Sponsored Collection Drop Ads",
-    amount: 45000,
-    category: "marketing",
-    date: "2026-08-18",
-    paymentMethod: "card",
-    notes: "Meta ads campaign targeting Lagos and Abuja VIP clients",
-    currency: "NGN",
-    createdAt: "2026-08-18T14:15:00.000Z",
-  },
-  {
-    id: "exp-003",
-    businessId: "elan-events",
-    title: "Branded Embossed Gift Boxes & Ribbon",
-    amount: 38000,
-    category: "packaging",
-    date: "2026-08-15",
-    paymentMethod: "bank_transfer",
-    notes: "200 custom embossed gold foil presentation gift boxes",
-    currency: "NGN",
-    createdAt: "2026-08-15T09:00:00.000Z",
-  },
-  {
-    id: "exp-004",
-    businessId: "elan-events",
-    title: "Interstate Courier & Same-Day Dispatch",
-    amount: 22500,
-    category: "logistics",
-    date: "2026-08-12",
-    paymentMethod: "bank_transfer",
-    notes: "VIP weekend deliveries to Ikoyi and Victoria Island",
-    currency: "NGN",
-    createdAt: "2026-08-12T16:45:00.000Z",
-  },
-  {
-    id: "exp-005",
-    businessId: "elan-events",
-    title: "Studio High-Speed Fiber Internet & Generator Fuel",
-    amount: 35000,
-    category: "utilities",
-    date: "2026-08-05",
-    paymentMethod: "pos",
-    notes: "Monthly fiber connectivity and studio power upkeep",
-    currency: "NGN",
-    createdAt: "2026-08-05T11:20:00.000Z",
-  },
-];

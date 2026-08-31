@@ -21,7 +21,6 @@ import {
   submitConsultationInquiry,
   submitReview,
 } from "@/lib/api";
-import { businessProfile as defaultProfile } from "@/lib/mock-data";
 import type {
   BusinessProfile,
   ButtonRadiusType,
@@ -48,19 +47,23 @@ export function ElanEventsPage({
   slug = APP_CONFIG.defaultSlug,
 }: ElanEventsPageProps) {
   // Live dynamic profile state
-  const [profile, setProfile] = useState<BusinessProfile>(initialProfile || defaultProfile);
+  const [profile, setProfile] = useState<BusinessProfile | null>(initialProfile || null);
   const [isNotFound, setIsNotFound] = useState(false);
 
   // Fetch freshest profile and subscribe to settings changes
   useEffect(() => {
-    getBusinessBySlug(slug).then(res => {
-      if (res) {
-        setProfile(res);
-        setIsNotFound(false);
-      } else {
+    getBusinessBySlug(slug)
+      .then(res => {
+        if (res) {
+          setProfile(res);
+          setIsNotFound(false);
+        } else {
+          setIsNotFound(true);
+        }
+      })
+      .catch(() => {
         setIsNotFound(true);
-      }
-    });
+      });
 
     const handleProfileUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<BusinessProfile>;
@@ -191,12 +194,12 @@ export function ElanEventsPage({
 
   // Set default quote service once profile loads
   useEffect(() => {
-    if (profile.services && profile.services.length > 0 && !quoteForm.service) {
+    if (profile?.services && profile.services.length > 0 && !quoteForm.service) {
       const firstService = profile.services[0];
       const serviceName = typeof firstService === "string" ? firstService : firstService.name;
       setQuoteForm(prev => ({ ...prev, service: serviceName }));
     }
-  }, [profile.services, quoteForm.service]);
+  }, [profile?.services, quoteForm.service]);
 
   // Styling helpers
   const getRadiusClass = (radius?: ButtonRadiusType) => {
@@ -217,35 +220,35 @@ export function ElanEventsPage({
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const primaryColor = profile.colors?.primary || "#000000";
-  const secondaryColor = profile.colors?.secondary || "#0058BE";
-  const buttonColor = profile.colors?.button || "#000000";
-  const textColor = profile.colors?.text || "#191C1D";
-  const pageBgColor = profile.colors?.pageBackground || "#faf8f5";
-  const cardBgColor = profile.colors?.cardBackground || "#faf6f0";
+  const primaryColor = profile?.colors?.primary || "#000000";
+  const secondaryColor = profile?.colors?.secondary || "#0058BE";
+  const buttonColor = profile?.colors?.button || "#000000";
+  const textColor = profile?.colors?.text || "#191C1D";
+  const pageBgColor = profile?.colors?.pageBackground || "#faf8f5";
+  const cardBgColor = profile?.colors?.cardBackground || "#faf6f0";
   const isCardDark = isDarkColor(cardBgColor);
-  const radiusClass = getRadiusClass(profile.buttonRadius);
+  const radiusClass = getRadiusClass(profile?.buttonRadius);
 
   // Check if WhatsApp is enabled in connected channels and has a valid number
-  const whatsAppChannel = profile.socialChannels?.find(c => c.type === "whatsapp");
-  const whatsAppPhone = whatsAppChannel?.handle || profile.whatsAppNumber || profile.phone;
+  const whatsAppChannel = profile?.socialChannels?.find(c => c.type === "whatsapp");
+  const whatsAppPhone = whatsAppChannel?.handle || profile?.whatsAppNumber || profile?.phone;
   const isWhatsAppEnabled =
     (whatsAppChannel ? whatsAppChannel.connected : true) && Boolean(whatsAppPhone?.trim());
 
   // Computed review stats
   const averageRating = useMemo(() => {
-    if (!profile.reviews || profile.reviews.length === 0) return "5.0";
+    if (!profile?.reviews || profile.reviews.length === 0) return "5.0";
     const sum = profile.reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
     return (sum / profile.reviews.length).toFixed(1);
-  }, [profile.reviews]);
+  }, [profile?.reviews]);
 
-  const totalReviews = (profile.reviews?.length || 0) > 3 ? profile.reviews.length : 127;
+  const totalReviews = profile?.reviews?.length || 0;
 
   const handleCopyLink = () => {
     const url =
       typeof window !== "undefined"
         ? window.location.href
-        : `https://shopwus.com/${profile.slug || slug}`;
+        : `https://shopwus.com/${profile?.slug || slug}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
     }
@@ -254,10 +257,11 @@ export function ElanEventsPage({
 
   const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile) return;
     setQuoteSubmitting(true);
     try {
       const selectedService =
-        quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings";
+        quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Bespoke Service";
 
       await submitConsultationInquiry({
         name: quoteForm.name,
@@ -271,7 +275,7 @@ export function ElanEventsPage({
 
       const whatsappUrl = createWhatsAppConsultationUrl({
         studioPhone: whatsAppPhone || profile.phone,
-        studioName: profile.businessName || "Élan Events",
+        studioName: profile.businessName || "Studio",
         clientName: quoteForm.name,
         clientPhone: quoteForm.phone,
         clientEmail: quoteForm.email,
@@ -295,7 +299,7 @@ export function ElanEventsPage({
         name: "",
         email: "",
         phone: "",
-        service: (profile.services as ServiceItem[])?.[0]?.name || "Luxury Weddings",
+        service: (profile.services as ServiceItem[])?.[0]?.name || "Bespoke Service",
         eventDate: "",
         budget: "50000",
         message: "",
@@ -308,9 +312,11 @@ export function ElanEventsPage({
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile) return;
     setReviewSubmitting(true);
     try {
       await submitReview({
+        studioSlug: profile.slug || slug,
         author: reviewForm.author,
         eventType: reviewForm.eventType,
         rating: reviewForm.rating,
@@ -332,6 +338,18 @@ export function ElanEventsPage({
     }
   };
 
+  if (isNotFound) {
+    return <NotFoundView slug={slug} />;
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#faf8f5]">
+        <div className="w-8 h-8 rounded-full border-2 border-[#0058be] border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
   const monogram = profile.businessName ? profile.businessName[0].toUpperCase() : "Ś";
 
   const defaultStudioPhoneClean = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
@@ -340,10 +358,6 @@ export function ElanEventsPage({
     ""
   );
   const whatsAppLink = `https://wa.me/${cleanPhone || defaultStudioPhoneClean}`;
-
-  if (isNotFound) {
-    return <NotFoundView slug={slug} />;
-  }
 
   return (
     <div

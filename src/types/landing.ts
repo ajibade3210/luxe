@@ -11,6 +11,19 @@ export interface OrganizationPreview {
   badge: string;
 }
 
+export interface ShowcaseSlide {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  badge: string;
+  badgeColor: string;
+  icon: ComponentType<{ size?: number; className?: string }>;
+  previewType: "storefront" | "inquiry" | "invoice" | "valuation";
+  metricLabel: string;
+  metricValue: string;
+}
+
 export type BillingPeriod = "monthly" | "biannual" | "annual";
 
 export interface FeatureItem {
@@ -71,6 +84,10 @@ export interface AiPrompt {
 export interface HeroRotatingCardProps {
   organizations?: OrganizationPreview[];
   intervalMs?: number;
+}
+
+export interface TrustedBusinessesProps {
+  organizations?: OrganizationPreview[];
 }
 
 export interface LogoRowProps {

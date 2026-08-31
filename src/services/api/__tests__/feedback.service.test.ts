@@ -1,34 +1,51 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { apiClient } from "@/lib/api-client";
+import type { FeatureRequest } from "@/types";
 import { getFeatureRequests, submitFeatureRequest } from "../feedback.service";
 
 describe("Feedback & Feature Request Service", () => {
   it("submits a valid feature request successfully", async () => {
-    const request = await submitFeatureRequest({
-      title: "Automated Currency Converter",
-      description: "Auto-convert invoice totals using live CBN and interbank exchange rates.",
-      category: "invoicing",
-      email: "director@elanevents.com",
+    const mockRequest: FeatureRequest = {
+      id: "req-1",
+      title: "Direct WhatsApp Webhook Integration",
+      description:
+        "Direct bi-directional WhatsApp chatbot automation for real-time consultation triage.",
+      category: "crm",
+      email: "director@atelierforma.design",
+      createdAt: new Date().toISOString(),
+      status: "submitted",
+    };
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce(mockRequest);
+
+    const result = await submitFeatureRequest({
+      title: "Direct WhatsApp Webhook Integration",
+      description:
+        "Direct bi-directional WhatsApp chatbot automation for real-time consultation triage.",
+      category: "crm",
+      email: "director@atelierforma.design",
     });
 
-    expect(request.id).toBeDefined();
-    expect(request.title).toBe("Automated Currency Converter");
-    expect(request.status).toBe("submitted");
+    expect(result.id).toBeDefined();
+    expect(result.status).toBe("submitted");
+    expect(result.title).toBe("Direct WhatsApp Webhook Integration");
   });
 
-  it("retrieves the list of feature requests including initial seeds", async () => {
-    const list = await getFeatureRequests();
-    expect(list.length).toBeGreaterThan(0);
-    expect(list[0].title).toBeDefined();
-  });
+  it("retrieves the list of feature requests", async () => {
+    const mockRequests: FeatureRequest[] = [
+      {
+        id: "req-1",
+        title: "Custom Domain Mapping",
+        description: "Map custom domain to storefront",
+        category: "storefront",
+        email: "director@elanevents.com",
+        createdAt: "2026-08-20T10:00:00Z",
+        status: "planned",
+      },
+    ];
+    vi.spyOn(apiClient, "get").mockResolvedValueOnce(mockRequests);
 
-  it("throws validation error for invalid email or short description", async () => {
-    await expect(
-      submitFeatureRequest({
-        title: "Short",
-        description: "Too short",
-        category: "other",
-        email: "not-an-email",
-      })
-    ).rejects.toThrow();
+    const requests = await getFeatureRequests();
+    expect(Array.isArray(requests)).toBe(true);
+    expect(requests.length).toBeGreaterThan(0);
   });
 });

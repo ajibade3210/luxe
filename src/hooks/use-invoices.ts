@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { CUSTOM_EVENTS, INVOICE_CSV_COLUMNS } from "@/constants";
-import { getInvoices, markInvoiceAsPaid, markInvoiceAsUnpaid } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import { INVOICE_CSV_COLUMNS } from "@/constants";
+import { queryKeys } from "@/lib/query-keys";
 import type { Invoice, InvoiceMetrics, InvoiceStatusFilter, UseInvoicesReturn } from "@/types";
+import {
+  useInvoicesQuery,
+  useMarkInvoicePaidMutation,
+  useMarkInvoiceUnpaidMutation,
+} from "./queries";
 
 export function useInvoices(notify?: (message: string) => void): UseInvoicesReturn {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<InvoiceStatusFilter>("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,36 +20,18 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const queryClient = useQueryClient();
+  const { data: rawInvoices = [] } = useInvoicesQuery();
+  const markPaidMutation = useMarkInvoicePaidMutation();
+  const markUnpaidMutation = useMarkInvoiceUnpaidMutation();
+
   const loadInvoices = useCallback(async () => {
-    try {
-      const list = await getInvoices();
-      setInvoices(list);
-    } catch {
-      setInvoices([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadInvoices();
-
-    const handleInvoicesUpdated = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoices(customEvent.detail);
-      } else {
-        loadInvoices();
-      }
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdated);
-    return () => {
-      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdated);
-    };
-  }, [loadInvoices]);
+    await queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
+  }, [queryClient]);
 
   // Filter and Search Logic
   const filteredInvoices = useMemo(() => {
-    return invoices.filter(invoice => {
+    return rawInvoices.filter(invoice => {
       const matchesStatus = statusFilter === "all" || invoice.status === statusFilter;
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
@@ -56,7 +43,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
       return matchesStatus && matchesSearch;
     });
-  }, [invoices, statusFilter, searchQuery]);
+  }, [rawInvoices, statusFilter, searchQuery]);
 
   // Pagination
   const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / pageSize));
@@ -67,16 +54,16 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
   // Metrics Calculation
   const metrics = useMemo<InvoiceMetrics>(() => {
-    const totalInvoiced = invoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
-    const paidRevenue = invoices
+    const totalInvoiced = rawInvoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
+    const paidRevenue = rawInvoices
       .filter(inv => inv.status === "paid")
       .reduce((acc, inv) => acc + (inv.total || 0), 0);
-    const outstandingRevenue = invoices
+    const outstandingRevenue = rawInvoices
       .filter(inv => inv.status === "sent")
       .reduce((acc, inv) => acc + (inv.total || 0), 0);
     const collectionRate = totalInvoiced > 0 ? Math.round((paidRevenue / totalInvoiced) * 100) : 0;
-    const totalCount = invoices.length;
-    const paidCount = invoices.filter(inv => inv.status === "paid").length;
+    const totalCount = rawInvoices.length;
+    const paidCount = rawInvoices.filter(inv => inv.status === "paid").length;
 
     return {
       totalInvoiced,
@@ -86,7 +73,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
       totalCount,
       paidCount,
     };
-  }, [invoices]);
+  }, [rawInvoices]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -115,7 +102,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
   const handleMarkPaid = async (id: string) => {
     try {
-      const updated = await markInvoiceAsPaid(id);
+      const updated = await markPaidMutation.mutateAsync(id);
       notify?.(`Invoice ${updated.invoiceNumber} marked as Paid.`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to mark invoice as paid";
@@ -125,7 +112,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
   const handleMarkUnpaid = async (id: string) => {
     try {
-      const updated = await markInvoiceAsUnpaid(id);
+      const updated = await markUnpaidMutation.mutateAsync(id);
       notify?.(`Invoice ${updated.invoiceNumber} reverted to Sent status.`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to update invoice status";

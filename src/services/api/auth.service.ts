@@ -1,12 +1,43 @@
-import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
-import { currentUser } from "@/lib/mock-data";
+/**
+ * Auth service for Shopwus Web
+ *
+ * Token lifecycle (access + refresh) is handled exclusively via HttpOnly cookies
+ * set by the Fastify API. This service does NOT write tokens to localStorage or
+ * document.cookie. Only non-sensitive user profile metadata (name, email, studio)
+ * is stored in localStorage for UI state convenience.
+ */
+import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
+import { apiClient } from "@/lib/api-client";
 import type { User, UserSession } from "@/types";
 
-const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
+interface UserDto {
+  id: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  role: string;
+  avatarUrl?: string | null;
+}
 
-export async function getCurrentUser(): Promise<User> {
-  await delay(80);
-  return currentUser;
+interface BusinessDto {
+  id: string;
+  slug: string;
+  name: string;
+  logoUrl?: string | null;
+}
+
+interface AuthResponseDto {
+  user: UserDto;
+  business?: BusinessDto | null;
+  studio?: BusinessDto | null;
+}
+
+interface MeResponseDto {
+  user: UserDto;
+  business?: BusinessDto | null;
+  isStudioOwner?: boolean;
+  permissions?: string[];
 }
 
 export function getCurrentSession(): UserSession | null {
@@ -26,88 +57,149 @@ export function isAuthenticated(): boolean {
   return getCurrentSession() !== null;
 }
 
+/**
+ * Persists non-sensitive UI session metadata to localStorage and syncs the
+ * Next.js Edge middleware cookie (does NOT contain the JWT access token).
+ */
 export function createSession(user: Partial<UserSession>): UserSession {
   const session: UserSession = {
-    id: user.id || `usr-${Date.now()}`,
-    name: user.name || "Elena Vance",
-    email: user.email || "elena@atelierforma.design",
-    role: user.role || "Lead Brand Designer & Director",
-    studioName: user.studioName || "Atelier Forma",
-    studioSlug: user.studioSlug || APP_CONFIG.defaultSlug,
-    avatarUrl:
-      user.avatarUrl ||
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    id: user.id ?? "",
+    name: user.name ?? "",
+    email: user.email ?? "",
+    role: user.role ?? "user",
+    studioName: user.studioName ?? "",
+    studioSlug: user.studioSlug ?? "",
+    avatarUrl: user.avatarUrl,
   };
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(session));
-    // biome-ignore lint/suspicious/noDocumentCookie: cookie synchronization required for Next.js edge middleware
+    // This cookie carries non-sensitive profile metadata only — NOT the access token.
+    // It is used by Next.js Edge middleware (proxy.ts) for redirect decisions when the
+    // HttpOnly access-token cookie is present but needs augmented user identity context.
+    // biome-ignore lint/suspicious/noDocumentCookie: non-sensitive session metadata for Edge middleware
     document.cookie = `${STORAGE_KEYS.session}=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=2592000; SameSite=Lax`;
     window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.authChanged, { detail: session }));
   }
   return session;
 }
 
-/**
- * Initiates Google OAuth Sign-in.
- * Currently uses simulated OAuth round-trip.
- * When connecting to real backend, simply replace the body with:
- * `window.location.href = '/api/auth/google?redirect=' + encodeURIComponent(redirectUrl)`
- */
-export async function signInWithGoogle(options?: { claimSlug?: string }): Promise<UserSession> {
-  await delay(350);
+export async function getCurrentUser(): Promise<User> {
+  const me = await apiClient.get<MeResponseDto>("/auth/me");
+  const fullName = [me.user.firstName, me.user.lastName].filter(Boolean).join(" ") || me.user.email;
 
-  const claim = options?.claimSlug;
-  const studioName = claim
-    ? `${claim
-        .split("-")
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ")} Studio`
-    : "Atelier Forma";
-  const studioSlug = claim || APP_CONFIG.defaultSlug;
+  createSession({
+    id: me.user.id,
+    name: fullName,
+    email: me.user.email,
+    role: me.user.role,
+    studioName: me.business?.name ?? "",
+    studioSlug: me.business?.slug ?? "",
+    avatarUrl: me.user.avatarUrl ?? undefined,
+  });
+
+  return {
+    id: me.user.id,
+    email: me.user.email,
+    name: fullName,
+    phone: me.user.phone ?? undefined,
+    avatar: me.user.avatarUrl ?? undefined,
+    role: me.user.role === "OWNER" || me.user.role === "ADMIN" ? "admin" : "user",
+  };
+}
+
+export async function signIn(email: string, password: string): Promise<UserSession> {
+  // Tokens are delivered as HttpOnly cookies by the API — no token in the response body
+  const authData = await apiClient.post<AuthResponseDto>("/auth/login", { email, password });
+
+  const fullName =
+    [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
+    authData.user.email;
 
   return createSession({
-    name: "Elena Vance",
-    email: "elena@atelierforma.design",
-    role: "Lead Brand Designer & Director",
-    studioName,
-    studioSlug,
+    id: authData.user.id,
+    name: fullName,
+    email: authData.user.email,
+    role: authData.user.role,
+    studioName: authData.business?.name ?? "",
+    studioSlug: authData.business?.slug ?? "",
+    avatarUrl: authData.user.avatarUrl ?? undefined,
   });
 }
 
-/**
- * Initiates Google OAuth Sign-up / Atelier Claim.
- * When connecting to real backend, easily swap with:
- * `window.location.href = '/api/auth/google/signup?claim=' + encodeURIComponent(data.slug)`
- */
+export async function signInWithGoogle(options?: {
+  code?: string;
+  idToken?: string;
+  claimSlug?: string;
+  studioName?: string;
+}): Promise<UserSession> {
+  const claim = options?.claimSlug;
+  const studioName = options?.studioName;
+  const studioSlug = claim || undefined;
+
+  const authData = await apiClient.post<AuthResponseDto>("/auth/google", {
+    code: options?.code,
+    idToken: options?.idToken,
+    slug: studioSlug,
+    studioName,
+  });
+
+  const fullName =
+    [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
+    authData.user.email;
+
+  return createSession({
+    id: authData.user.id,
+    name: fullName,
+    email: authData.user.email,
+    role: authData.user.role,
+    studioName: authData.business?.name ?? studioName ?? "",
+    studioSlug: authData.business?.slug ?? studioSlug ?? "",
+    avatarUrl: authData.user.avatarUrl ?? undefined,
+  });
+}
+
 export async function signUpWithGoogle(data?: {
+  code?: string;
+  idToken?: string;
   slug?: string;
   studioName?: string;
-  fullName?: string;
 }): Promise<UserSession> {
-  await delay(350);
+  const effectiveSlug = data?.slug;
+  const effectiveName = data?.studioName;
 
-  const effectiveSlug = data?.slug || "my-studio";
-  const effectiveName =
-    data?.studioName ||
-    `${effectiveSlug
-      .split("-")
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ")} Studio`;
-  const effectiveDirector = data?.fullName || "Elena Vance";
+  const authData = await apiClient.post<AuthResponseDto>("/auth/google", {
+    code: data?.code,
+    idToken: data?.idToken,
+    slug: effectiveSlug,
+    studioName: effectiveName,
+  });
+
+  const fullName =
+    [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
+    authData.user.email;
 
   return createSession({
-    name: effectiveDirector,
-    email: "elena@atelierforma.design",
-    role: "Lead Brand Designer & Director",
-    studioName: effectiveName,
-    studioSlug: effectiveSlug,
+    id: authData.user.id,
+    name: fullName,
+    email: authData.user.email,
+    role: authData.user.role,
+    studioName: authData.business?.name ?? effectiveName ?? "",
+    studioSlug: authData.business?.slug ?? effectiveSlug ?? "",
+    avatarUrl: authData.user.avatarUrl ?? undefined,
   });
 }
 
-export function clearSession(): void {
+export async function clearSession(): Promise<void> {
+  try {
+    // Server will expire the HttpOnly auth cookies via Set-Cookie headers
+    await apiClient.post("/auth/logout", {});
+  } catch {
+    // Purge local session state even if server is unreachable
+  }
+
   if (typeof window !== "undefined") {
     localStorage.removeItem(STORAGE_KEYS.session);
-    // biome-ignore lint/suspicious/noDocumentCookie: cookie synchronization required for Next.js edge middleware
+    // biome-ignore lint/suspicious/noDocumentCookie: clear non-sensitive session metadata cookie
     document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax`;
     window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.authChanged, { detail: null }));
   }

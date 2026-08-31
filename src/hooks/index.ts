@@ -1,6 +1,8 @@
+export * from "./queries";
 export { useCustomers } from "./use-customers";
 export { useDebounce } from "./use-debounce";
 export { useExpenses } from "./use-expenses";
+export { useGoogleAuth } from "./use-google-auth";
 export { useInvoiceForm } from "./use-invoice-form";
 export { useInvoices } from "./use-invoices";
 export { useLeads } from "./use-leads";

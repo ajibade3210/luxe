@@ -20,8 +20,15 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import { getCustomers, getExpenses, getInvoices, getLeads, publishChanges } from "@/lib/api";
-import { businessProfile } from "@/lib/mock-data";
+import {
+  getBusinessProfile,
+  getCurrentSession,
+  getCustomers,
+  getExpenses,
+  getInvoices,
+  getLeads,
+  publishChanges,
+} from "@/lib/api";
 import type {
   AdminHeaderProps,
   AdminLayoutProps,
@@ -95,13 +102,25 @@ export function PageTitle({ title, action, children }: PageTitleProps) {
 }
 
 export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
-  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
-  const [leadCount, setLeadCount] = useState(5);
-  const [customerCount, setCustomerCount] = useState(3);
+  // Always start with the stable default so SSR and the initial client render agree,
+  // then immediately update from the session cache and/or API.
+  const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
+  const [leadCount, setLeadCount] = useState(0);
+  const [customerCount, setCustomerCount] = useState(0);
   const [invoiceCount, setInvoiceCount] = useState(0);
-  const [expenseCount, setExpenseCount] = useState(5);
+  const [expenseCount, setExpenseCount] = useState(0);
 
   useEffect(() => {
+    // Hydrate slug from session cache first (instant), then confirm from API.
+    const cached = getCurrentSession()?.studioSlug;
+    if (cached) setSlug(cached);
+
+    getBusinessProfile()
+      .then(profile => {
+        if (profile?.slug) setSlug(profile.slug);
+      })
+      .catch(() => {});
+
     getLeads().then(res => setLeadCount(res.length));
     getCustomers().then(res => setCustomerCount(res.length));
     getInvoices().then(res => setInvoiceCount(res.length));
@@ -215,7 +234,21 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
 
 export function Header({ onMenu, onToast }: AdminHeaderProps) {
   const [busy, setBusy] = useState(false);
-  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
+  // Start with the stable default so SSR and the initial client render agree.
+  const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
+
+  useEffect(() => {
+    const cached = getCurrentSession()?.studioSlug;
+    if (cached) setSlug(cached);
+    else {
+      getBusinessProfile()
+        .then(profile => {
+          if (profile?.slug) setSlug(profile.slug);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
   return (
     <header className="admin-header">
       <button className="mobile-menu" onClick={onMenu}>

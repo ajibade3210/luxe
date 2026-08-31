@@ -1,51 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-
-import { CUSTOM_EVENTS } from "@/constants";
+import { useMemo, useState } from "react";
+import { exportExpensesCSV } from "@/services/api/expense.service";
+import type { Expense, ExpenseCategory, ExpenseInput } from "@/types";
 import {
-  createExpense,
-  deleteExpense,
-  exportExpensesCSV,
-  getExpenseSummary,
-  getExpenses,
-  updateExpense,
-} from "@/lib/api";
-import type { Expense, ExpenseCategory, ExpenseInput, ExpenseSummary } from "@/types";
+  useCreateExpenseMutation,
+  useDeleteExpenseMutation,
+  useExpenseSummaryQuery,
+  useExpensesQuery,
+  useUpdateExpenseMutation,
+} from "./queries";
 
 export function useExpenses(notify?: (message: string) => void) {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [summary, setSummary] = useState<ExpenseSummary | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | "all">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const loadData = useCallback(async (query: string, category: ExpenseCategory | "all") => {
-    try {
-      const [list, sum] = await Promise.all([getExpenses(query, category), getExpenseSummary()]);
-      setExpenses(list);
-      setSummary(sum);
-    } catch {
-      setExpenses([]);
-    }
-  }, []);
+  const { data: expenses = [], isLoading: isLoadingExpenses } = useExpensesQuery(
+    searchQuery,
+    categoryFilter
+  );
+  const { data: summary = null, isLoading: isLoadingSummary } = useExpenseSummaryQuery();
 
-  useEffect(() => {
-    loadData(searchQuery, categoryFilter);
-
-    const handleExpensesUpdate = () => {
-      loadData(searchQuery, categoryFilter);
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-    return () => window.removeEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-  }, [searchQuery, categoryFilter, loadData]);
+  const createMutation = useCreateExpenseMutation();
+  const updateMutation = useUpdateExpenseMutation();
+  const deleteMutation = useDeleteExpenseMutation();
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
@@ -73,13 +57,12 @@ export function useExpenses(notify?: (message: string) => void) {
   };
 
   const handleSaveExpense = async (input: ExpenseInput): Promise<boolean> => {
-    setIsSubmitting(true);
     try {
       if (editingExpense) {
-        await updateExpense(editingExpense.id, input);
+        await updateMutation.mutateAsync({ id: editingExpense.id, input });
         notify?.(`Expense updated: ${input.title}`);
       } else {
-        await createExpense(input);
+        await createMutation.mutateAsync(input);
         notify?.(`Expense logged: ${input.title}`);
       }
       handleCloseModal();
@@ -88,14 +71,12 @@ export function useExpenses(notify?: (message: string) => void) {
       const msg = err instanceof Error ? err.message : "Failed to save expense";
       notify?.(msg);
       return false;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleDeleteExpense = async (id: string, title: string) => {
     try {
-      await deleteExpense(id);
+      await deleteMutation.mutateAsync(id);
       notify?.(`Expense deleted: ${title}`);
     } catch {
       notify?.("Failed to delete expense record");
@@ -135,8 +116,9 @@ export function useExpenses(notify?: (message: string) => void) {
     startIndex,
     isModalOpen,
     editingExpense,
-    isSubmitting,
+    isSubmitting: createMutation.isPending || updateMutation.isPending,
     isExporting,
+    isLoading: isLoadingExpenses || isLoadingSummary,
     handleSearch,
     handleCategoryFilter,
     handleOpenCreate,

@@ -1,39 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { CUSTOM_EVENTS } from "@/constants";
-import { convertLeadToCustomer, exportLeadsCSV, getLeads, updateLeadStatus } from "@/lib/api";
+import { useMemo, useState } from "react";
+import { exportLeadsCSV } from "@/services/api/leads.service";
 import type { Lead } from "@/types";
+import { useConvertLeadMutation, useLeadsQuery, useUpdateLeadStatusMutation } from "./queries";
 
 export function useLeads(notify?: (message: string) => void) {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
-  const [items, setItems] = useState<Lead[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
-  const [isConverting, setIsConverting] = useState(false);
 
-  useEffect(() => {
-    getLeads(searchQuery)
-      .then(setItems)
-      .catch(() => setItems([]));
-    const handleLeadsUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Lead[]>;
-      if (customEvent.detail) {
-        setItems(customEvent.detail);
-      }
-    };
-    window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-    return () => window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-  }, [searchQuery]);
+  const { data: items = [], isLoading } = useLeadsQuery(searchQuery);
+  const convertMutation = useConvertLeadMutation();
+  const updateStatusMutation = useUpdateLeadStatusMutation();
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
     setCurrentPage(1);
-    getLeads(val)
-      .then(setItems)
-      .catch(() => setItems([]));
   };
 
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
@@ -53,27 +38,20 @@ export function useLeads(notify?: (message: string) => void) {
   };
 
   const handleConvertToCustomer = async (leadId: string) => {
-    setIsConverting(true);
     try {
-      const { customer } = await convertLeadToCustomer(leadId);
-      setItems(prev => prev.filter(l => l.id !== leadId));
+      const { customer } = await convertMutation.mutateAsync({ id: leadId });
       setSelectedLeadId(null);
       notify?.(`Lead converted to customer and moved to customer register: ${customer.name}.`);
       return true;
     } catch {
       notify?.("Failed to convert lead to customer.");
       return false;
-    } finally {
-      setIsConverting(false);
     }
   };
 
   const handleUpdateStatus = async (leadId: string, status: Lead["status"]) => {
     try {
-      const updated = await updateLeadStatus(leadId, status);
-      if (updated) {
-        setItems(prev => prev.map(l => (l.id === leadId ? updated : l)));
-      }
+      const updated = await updateStatusMutation.mutateAsync({ id: leadId, status });
       return updated;
     } catch {
       return null;
@@ -107,7 +85,8 @@ export function useLeads(notify?: (message: string) => void) {
     startIndex,
     paginatedItems,
     isExporting,
-    isConverting,
+    isConverting: convertMutation.isPending,
+    isLoading,
     metrics,
     handleSearch,
     handleExport,

@@ -64,6 +64,8 @@ export interface PublicValuationInputs {
   annualExpenses: number;
   netAssets: number;
   customerRetentionRate: number;
+  email?: string;
+  phone?: string;
 }
 
 export interface PublicValuationResult {

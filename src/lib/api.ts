@@ -3,3 +3,4 @@
  * Re-exports domain services from @/services/api for modularity & backward compatibility.
  */
 export * from "@/services/api";
+export * from "./api-client";

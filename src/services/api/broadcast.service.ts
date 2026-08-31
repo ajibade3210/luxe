@@ -1,6 +1,6 @@
 import { CUSTOM_EVENTS } from "@/constants";
-import type { BroadcastPayload, BroadcastResult, Customer } from "@/types";
-import { getCustomers } from "./customer.service";
+import { apiClient } from "@/lib/api-client";
+import type { BroadcastPayload, BroadcastResult } from "@/types";
 
 export const BROADCAST_LIMITS = {
   WHATSAPP_MAX_LENGTH: 500,
@@ -8,31 +8,14 @@ export const BROADCAST_LIMITS = {
   BOTH_MAX_LENGTH: 500,
 } as const;
 
-let broadcastHistory: BroadcastResult[] = [];
-
-const delay = (ms = 180) => new Promise(resolve => setTimeout(resolve, ms));
-
 /**
  * Service to execute bulk broadcast dispatches across WhatsApp, Email, or Both.
- * Fully decoupled for seamless swap with live WhatsApp Business Cloud API / SendGrid / Resend backend endpoints.
  */
 export async function sendBroadcast(payload: BroadcastPayload): Promise<BroadcastResult> {
-  await delay(200);
-
   if (!payload.customerIds || payload.customerIds.length === 0) {
     throw new Error("No recipients selected for broadcast.");
   }
 
-  const allCustomers = await getCustomers();
-  const targetedCustomers: Customer[] = allCustomers.filter(c =>
-    payload.customerIds.includes(c.id)
-  );
-
-  if (targetedCustomers.length === 0) {
-    throw new Error("None of the selected customers were found in the database.");
-  }
-
-  // Validate message length according to channel
   const maxLen =
     payload.channel === "email"
       ? BROADCAST_LIMITS.EMAIL_MAX_LENGTH
@@ -50,24 +33,7 @@ export async function sendBroadcast(payload: BroadcastPayload): Promise<Broadcas
     throw new Error("Email broadcasts require a subject line.");
   }
 
-  const whatsAppRecipients = targetedCustomers.filter(
-    c => c.phone && c.phone.trim().length > 0
-  ).length;
-  const emailRecipients = targetedCustomers.filter(
-    c => c.email && c.email.trim().length > 0
-  ).length;
-
-  const result: BroadcastResult = {
-    broadcastId: `bc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    channel: payload.channel,
-    totalRecipients: targetedCustomers.length,
-    whatsAppRecipients: payload.channel === "email" ? 0 : whatsAppRecipients,
-    emailRecipients: payload.channel === "whatsapp" ? 0 : emailRecipients,
-    deliveredCount: targetedCustomers.length,
-    timestamp: new Date().toISOString(),
-  };
-
-  broadcastHistory = [result, ...broadcastHistory];
+  const result = await apiClient.post<BroadcastResult>("/broadcasts/send", payload);
 
   if (typeof window !== "undefined") {
     window.dispatchEvent(
@@ -84,8 +50,8 @@ export async function sendBroadcast(payload: BroadcastPayload): Promise<Broadcas
  * Retrieve recent broadcast campaign history
  */
 export async function getBroadcastHistory(): Promise<BroadcastResult[]> {
-  await delay(50);
-  return [...broadcastHistory];
+  const data = await apiClient.get<BroadcastResult[]>("/broadcasts/history");
+  return Array.isArray(data) ? data : [];
 }
 
 /**

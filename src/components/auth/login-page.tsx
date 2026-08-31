@@ -15,11 +15,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { GoogleIcon } from "@/components/shared/icons";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { signInWithGoogle } from "@/lib/api";
 
 export function LoginPage() {
   const [claimParam, setClaimParam] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -29,16 +31,34 @@ export function LoginPage() {
     }
   }, []);
 
-  const handleGoogleSignIn = async () => {
+  const handleCredential = async (codeOrToken: string) => {
     setIsSubmitting(true);
+    setAuthError("");
     try {
-      await signInWithGoogle({ claimSlug: claimParam });
+      const isJwt = codeOrToken.split(".").length === 3;
+
+      await signInWithGoogle({
+        code: isJwt ? undefined : codeOrToken,
+        idToken: isJwt ? codeOrToken : undefined,
+        claimSlug: claimParam,
+      });
       window.location.href = claimParam
         ? `/settings?claim=${encodeURIComponent(claimParam)}`
-        : "/settings";
-    } catch {
+        : "/overview";
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
       setIsSubmitting(false);
     }
+  };
+
+  const { trigger: triggerGoogle, loaded: googleLoaded } = useGoogleAuth(
+    handleCredential,
+    setAuthError
+  );
+
+  const handleGoogleSignIn = () => {
+    setAuthError("");
+    triggerGoogle();
   };
 
   return (
@@ -80,7 +100,7 @@ export function LoginPage() {
           <div className="space-y-4">
             <button
               type="button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !googleLoaded}
               onClick={handleGoogleSignIn}
               className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-60"
             >
@@ -94,10 +114,15 @@ export function LoginPage() {
                   <div className="w-5 h-5 rounded-md bg-white flex items-center justify-center shrink-0">
                     <GoogleIcon className="w-3.5 h-3.5" />
                   </div>
-                  <span>Sign in with Google</span>
+                  <span>{googleLoaded ? "Sign in with Google" : "Loading…"}</span>
                 </>
               )}
             </button>
+
+            {/* Auth error */}
+            {authError && (
+              <p className="text-[11px] text-[#ef4444] text-center pt-1">{authError}</p>
+            )}
 
             {/* Security Badge */}
             <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] pt-2">

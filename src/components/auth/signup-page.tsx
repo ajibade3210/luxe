@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { GoogleIcon } from "@/components/shared/icons";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { checkSlugAvailability, signUpWithGoogle, updateBusinessProfile } from "@/lib/api";
 
 export function SignupPage() {
@@ -17,6 +18,7 @@ export function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState(true);
   const [agreedToTerms, setAgreedToTerms] = useState(true);
+  const [authError, setAuthError] = useState("");
 
   const [selectedPlan, setSelectedPlan] = useState("");
   const [selectedCycle, setSelectedCycle] = useState("");
@@ -58,27 +60,38 @@ export function SignupPage() {
     return () => clearTimeout(timer);
   }, [slug]);
 
-  const handleGoogleSignup = async () => {
+  const handleCredential = async (codeOrToken: string) => {
     if (!agreedToTerms) return;
     setIsSubmitting(true);
+    setAuthError("");
     const effectiveSlug = slug || claimSlug || "my-atelier";
     const effectiveName = studioName || "My Luxury Studio";
 
     try {
+      const isJwt = codeOrToken.split(".").length === 3;
       await signUpWithGoogle({
+        code: isJwt ? undefined : codeOrToken,
+        idToken: isJwt ? codeOrToken : undefined,
         slug: effectiveSlug,
         studioName: effectiveName,
       });
-
-      await updateBusinessProfile({
-        businessName: effectiveName,
-        slug: effectiveSlug,
-      });
-
+      await updateBusinessProfile({ businessName: effectiveName, slug: effectiveSlug });
       router.push(`/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
-    } catch {
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Sign-up failed. Please try again.");
       setIsSubmitting(false);
     }
+  };
+
+  const { trigger: triggerGoogle, loaded: googleLoaded } = useGoogleAuth(
+    handleCredential,
+    setAuthError
+  );
+
+  const handleGoogleSignup = () => {
+    if (!agreedToTerms) return;
+    setAuthError("");
+    triggerGoogle();
   };
 
   return (
@@ -181,7 +194,7 @@ export function SignupPage() {
           <div className="space-y-4">
             <button
               type="button"
-              disabled={isSubmitting || !agreedToTerms}
+              disabled={isSubmitting || !agreedToTerms || !googleLoaded}
               onClick={handleGoogleSignup}
               className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-[#191c1d] hover:bg-black text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
             >
@@ -195,10 +208,15 @@ export function SignupPage() {
                   <div className="w-5 h-5 rounded-md bg-white flex items-center justify-center shrink-0">
                     <GoogleIcon className="w-3.5 h-3.5" />
                   </div>
-                  <span>Sign up with Google</span>
+                  <span>{googleLoaded ? "Sign up with Google" : "Loading…"}</span>
                 </>
               )}
             </button>
+
+            {/* Auth error */}
+            {authError && (
+              <p className="text-[11px] text-[#ef4444] text-center pt-1">{authError}</p>
+            )}
 
             {/* Terms Agreement Checkbox */}
             <label className="flex items-center gap-2 text-xs text-[#64748b] cursor-pointer select-none pt-1">

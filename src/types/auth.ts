@@ -30,3 +30,19 @@ export interface AuthHeaderProps {
   mode?: "login" | "signup";
   claimSlug?: string;
 }
+
+export interface DecodedJwtPayload {
+  userId?: string;
+  id?: string;
+  email?: string;
+  role?: string;
+  businessId?: string;
+  jti?: string;
+  iat?: number;
+  exp?: number;
+}
+
+export interface DecodedJwtHeader {
+  alg?: string;
+  typ?: string;
+}
