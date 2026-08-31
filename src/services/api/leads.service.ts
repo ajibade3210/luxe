@@ -30,6 +30,16 @@ export async function getLeads(query?: string, status?: LeadStatus): Promise<Lea
   return Array.isArray(response) ? response : response?.leads || [];
 }
 
+export interface LeadsSummary {
+  total: number;
+  newToday: number;
+  conversion: number;
+}
+
+export async function getLeadsSummary(): Promise<LeadsSummary> {
+  return apiClient.get<LeadsSummary>("/leads/summary");
+}
+
 /**
  * Retrieves a single lead by ID
  */

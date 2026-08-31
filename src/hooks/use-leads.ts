@@ -3,7 +3,12 @@
 import { useMemo, useState } from "react";
 import { exportLeadsCSV } from "@/services/api/leads.service";
 import type { Lead } from "@/types";
-import { useConvertLeadMutation, useLeadsQuery, useUpdateLeadStatusMutation } from "./queries";
+import {
+  useConvertLeadMutation,
+  useLeadsQuery,
+  useLeadsSummaryQuery,
+  useUpdateLeadStatusMutation,
+} from "./queries";
 
 export function useLeads(notify?: (message: string) => void) {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
@@ -13,6 +18,7 @@ export function useLeads(notify?: (message: string) => void) {
   const [isExporting, setIsExporting] = useState(false);
 
   const { data: items = [], isLoading } = useLeadsQuery(searchQuery);
+  const { data: summary } = useLeadsSummaryQuery();
   const convertMutation = useConvertLeadMutation();
   const updateStatusMutation = useUpdateLeadStatusMutation();
 
@@ -60,16 +66,16 @@ export function useLeads(notify?: (message: string) => void) {
 
   const selectedLead = items.find(l => l.id === selectedLeadId) || null;
 
-  const metrics = useMemo(
-    () => ({
+  const metrics = useMemo(() => {
+    if (summary) return summary;
+    return {
       total: items.length,
       newToday: items.filter(l => l.status === "new").length,
       conversion: Math.round(
         (items.filter(l => l.status === "converted").length / (items.length || 1)) * 100
       ),
-    }),
-    [items]
-  );
+    };
+  }, [summary, items]);
 
   return {
     items,

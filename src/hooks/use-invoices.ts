@@ -7,6 +7,7 @@ import { queryKeys } from "@/lib/query-keys";
 import type { Invoice, InvoiceMetrics, InvoiceStatusFilter, UseInvoicesReturn } from "@/types";
 import {
   useInvoicesQuery,
+  useInvoicesSummaryQuery,
   useMarkInvoicePaidMutation,
   useMarkInvoiceUnpaidMutation,
 } from "./queries";
@@ -22,6 +23,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
   const queryClient = useQueryClient();
   const { data: rawInvoices = [] } = useInvoicesQuery();
+  const { data: summary } = useInvoicesSummaryQuery();
   const markPaidMutation = useMarkInvoicePaidMutation();
   const markUnpaidMutation = useMarkInvoiceUnpaidMutation();
 
@@ -54,6 +56,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
 
   // Metrics Calculation
   const metrics = useMemo<InvoiceMetrics>(() => {
+    if (summary) return summary;
     const totalInvoiced = rawInvoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
     const paidRevenue = rawInvoices
       .filter(inv => inv.status === "paid")
@@ -73,7 +76,7 @@ export function useInvoices(notify?: (message: string) => void): UseInvoicesRetu
       totalCount,
       paidCount,
     };
-  }, [rawInvoices]);
+  }, [summary, rawInvoices]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

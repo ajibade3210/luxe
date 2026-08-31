@@ -72,7 +72,11 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   if (params) {
     const searchParams = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null) {
+      if (
+        value !== undefined &&
+        value !== null &&
+        (typeof value !== "string" || value.trim() !== "")
+      ) {
         searchParams.append(key, String(value));
       }
     }
@@ -131,6 +135,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
           onRefreshFailed(sessionErr);
           isRefreshing = false;
           if (typeof window !== "undefined") {
+            //  token expires and the refresh attempt fails, automatically kicking them back to /login
             window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
           }
           throw sessionErr;
@@ -140,6 +145,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
           onRefreshFailed(sessionErr);
           isRefreshing = false;
           if (typeof window !== "undefined") {
+            //  error occured or refresh attempt failed, user will be kicked back to /login
             window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
           }
           throw sessionErr;

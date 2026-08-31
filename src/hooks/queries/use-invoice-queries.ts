@@ -7,6 +7,7 @@ import {
   getInvoiceById,
   getInvoices,
   getInvoicesByCustomerId,
+  getInvoicesSummary,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
   resendInvoice,
@@ -19,6 +20,13 @@ export function useInvoicesQuery(status?: InvoiceStatus) {
   return useQuery({
     queryKey: queryKeys.invoices.list(status),
     queryFn: () => getInvoices(status),
+  });
+}
+
+export function useInvoicesSummaryQuery() {
+  return useQuery({
+    queryKey: queryKeys.invoices.summary(),
+    queryFn: () => getInvoicesSummary(),
   });
 }
 

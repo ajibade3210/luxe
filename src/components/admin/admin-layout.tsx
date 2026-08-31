@@ -22,12 +22,7 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import {
-  clearSession,
-  getBusinessProfile,
-  getCurrentSession,
-  publishChanges,
-} from "@/lib/api";
+import { clearSession, getBusinessProfile, getCurrentSession, publishChanges } from "@/lib/api";
 import type {
   AdminHeaderProps,
   AdminLayoutProps,
@@ -74,13 +69,7 @@ export function Toast({ message, onClose }: ToastProps) {
   );
 }
 
-export function LogoutConfirmModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+export function LogoutConfirmModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -278,16 +267,20 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
             <TrendingUp size={16} /> Analytics
           </Link>
           <Link className={path === "/leads" ? "active" : ""} href="/leads">
-            <Users size={16} /> Leads {leadCount !== null && <span className="nav-count">{leadCount}</span>}
+            <Users size={16} /> Leads{" "}
+            {leadCount !== null && <span className="nav-count">{leadCount}</span>}
           </Link>
           <Link className={path === "/customers" ? "active" : ""} href="/customers">
-            <Users size={16} /> Customers {customerCount !== null && <span className="nav-count">{customerCount}</span>}
+            <Users size={16} /> Customers{" "}
+            {customerCount !== null && <span className="nav-count">{customerCount}</span>}
           </Link>
           <Link className={path === "/invoices" ? "active" : ""} href="/invoices">
-            <FileText size={16} /> Invoices {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
+            <FileText size={16} /> Invoices{" "}
+            {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
           </Link>
           <Link className={path === "/expenses" ? "active" : ""} href="/expenses">
-            <Receipt size={16} /> Expenses {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
+            <Receipt size={16} /> Expenses{" "}
+            {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
           </Link>
           <a
             className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
@@ -345,10 +338,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         </div>
       </aside>
 
-      <LogoutConfirmModal
-        isOpen={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-      />
+      <LogoutConfirmModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
     </>
   );
 }

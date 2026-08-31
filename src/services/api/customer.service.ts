@@ -19,6 +19,16 @@ export async function getCustomers(query?: string, isActive?: boolean): Promise<
   return Array.isArray(data) ? data : data?.customers || [];
 }
 
+export interface CustomersSummary {
+  total: number;
+  activeServicesCount: number;
+  totalRevenue: number;
+}
+
+export async function getCustomersSummary(): Promise<CustomersSummary> {
+  return apiClient.get<CustomersSummary>("/customers/summary");
+}
+
 /**
  * Retrieve single customer by ID
  */

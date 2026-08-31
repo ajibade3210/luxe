@@ -9,6 +9,7 @@ import {
   useAddCustomerServiceMutation,
   useCreateCustomerMutation,
   useCustomersQuery,
+  useCustomersSummaryQuery,
   useDeleteCustomerServiceMutation,
   useDeleteInvoiceMutation,
   useInvoicesQuery,
@@ -36,6 +37,7 @@ export function useCustomers(onToast?: (message: string) => void) {
   const queryClient = useQueryClient();
   const { data: customersData = [], isLoading: isLoadingCustomers } =
     useCustomersQuery(searchQuery);
+  const { data: summary } = useCustomersSummaryQuery();
   const { data: invoicesData = [], isLoading: isLoadingInvoices } = useInvoicesQuery();
 
   const createCustomerMutation = useCreateCustomerMutation();
@@ -98,31 +100,35 @@ export function useCustomers(onToast?: (message: string) => void) {
     data: { name: string; service: string; amount: number; status: ServiceStatus }
   ) => {
     if (!data.name) {
-      onToast?.("Please enter a service name.");
+      onToast?.("Service name is required.");
       return false;
     }
 
     try {
-      await addServiceMutation.mutateAsync({ customerId, input: data });
-      onToast?.(`Service "${data.name}" added to ${customerName}.`);
+      await addServiceMutation.mutateAsync({
+        customerId,
+        input: {
+          name: data.name,
+          service: data.service,
+          amount: data.amount,
+          status: data.status,
+        },
+      });
+      onToast?.(`Service scope added for ${customerName}.`);
       return true;
     } catch {
-      onToast?.("Failed to add service.");
+      onToast?.("Failed to add service scope.");
       return false;
     }
   };
 
-  const handleDeleteService = async (
-    customerId: string,
-    serviceId: string,
-    serviceName: string
-  ) => {
+  const handleDeleteService = async (customerId: string, serviceId: string) => {
     try {
       await deleteServiceMutation.mutateAsync({ customerId, serviceId });
-      onToast?.(`Service "${serviceName}" removed.`);
+      onToast?.("Service scope removed.");
       return true;
     } catch {
-      onToast?.("Failed to remove service.");
+      onToast?.("Failed to remove service scope.");
       return false;
     }
   };
@@ -130,13 +136,11 @@ export function useCustomers(onToast?: (message: string) => void) {
   const handleUpdateServiceStatus = async (
     customerId: string,
     serviceId: string,
-    status: ServiceStatus,
-    serviceName: string,
-    statusLabel: string
+    status: ServiceStatus
   ) => {
     try {
       await updateServiceStatusMutation.mutateAsync({ customerId, serviceId, status });
-      onToast?.(`Service "${serviceName}" marked as ${statusLabel}.`);
+      onToast?.(`Service status updated to ${status}.`);
       return true;
     } catch {
       onToast?.("Failed to update service status.");
@@ -147,7 +151,7 @@ export function useCustomers(onToast?: (message: string) => void) {
   const handleToggleCustomerStatus = async (customerId: string, isActive: boolean) => {
     try {
       const updated = await toggleStatusMutation.mutateAsync({ id: customerId, isActive });
-      onToast?.(`Customer "${updated.name}" is now ${isActive ? "Active" : "Inactive"}.`);
+      onToast?.(`Customer "${updated.name}" is now ${isActive ? "Active" : "Archived"}.`);
       return true;
     } catch {
       onToast?.("Failed to update customer status.");
@@ -158,7 +162,7 @@ export function useCustomers(onToast?: (message: string) => void) {
   const handleResendInvoice = async (invoiceId: string) => {
     try {
       const res = await resendInvoiceMutation.mutateAsync(invoiceId);
-      onToast?.(`Invoice ${res.invoiceNumber} re-sent to ${res.customerEmail}.`);
+      onToast?.(`Invoice #${res.invoiceNumber} resent to ${res.customerEmail}.`);
       return true;
     } catch {
       onToast?.("Failed to resend invoice.");
@@ -169,11 +173,10 @@ export function useCustomers(onToast?: (message: string) => void) {
   const handleDeleteDraftInvoice = async (invoiceId: string) => {
     try {
       await deleteInvoiceMutation.mutateAsync(invoiceId);
-      onToast?.("Draft invoice deleted successfully.");
+      onToast?.("Draft invoice deleted.");
       return true;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to delete draft.";
-      onToast?.(msg);
+    } catch {
+      onToast?.("Failed to delete draft invoice.");
       return false;
     }
   };
@@ -189,11 +192,12 @@ export function useCustomers(onToast?: (message: string) => void) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-  const totalRevenue = items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
-  const activeServicesCount = items.reduce(
-    (acc, c) => acc + c.services.filter(s => s.status === "active").length,
-    0
-  );
+  const totalCustomers = summary?.total ?? items.length;
+  const totalRevenue =
+    summary?.totalRevenue ?? items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
+  const activeServicesCount =
+    summary?.activeServicesCount ??
+    items.reduce((acc, c) => acc + c.services.filter(s => s.status === "active").length, 0);
 
   return {
     items,
@@ -211,6 +215,7 @@ export function useCustomers(onToast?: (message: string) => void) {
     totalPages,
     startIndex,
     paginatedItems,
+    totalCustomers,
     totalRevenue,
     activeServicesCount,
     isExporting,

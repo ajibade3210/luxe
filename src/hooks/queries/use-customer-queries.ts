@@ -9,6 +9,7 @@ import {
   deleteCustomerService,
   getCustomer,
   getCustomers,
+  getCustomersSummary,
   importCustomers,
   toggleCustomerActiveStatus,
   updateCustomer,
@@ -25,6 +26,13 @@ export function useCustomersQuery(query?: string, isActive?: boolean) {
   return useQuery({
     queryKey: queryKeys.customers.list(query, isActive),
     queryFn: () => getCustomers(query, isActive),
+  });
+}
+
+export function useCustomersSummaryQuery() {
+  return useQuery({
+    queryKey: queryKeys.customers.summary(),
+    queryFn: () => getCustomersSummary(),
   });
 }
 

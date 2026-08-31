@@ -21,6 +21,7 @@ export const queryKeys = {
     list: (query?: string, isActive?: boolean) =>
       ["customers", "list", { query: query ?? "", isActive }] as const,
     detail: (id: string) => ["customers", "detail", id] as const,
+    summary: () => ["customers", "summary"] as const,
   },
 
   // Invoices
@@ -29,6 +30,7 @@ export const queryKeys = {
     list: (status?: InvoiceStatus) => ["invoices", "list", { status }] as const,
     detail: (id: string) => ["invoices", "detail", id] as const,
     byCustomer: (customerId: string) => ["invoices", "customer", customerId] as const,
+    summary: () => ["invoices", "summary"] as const,
   },
 
   // Expenses
@@ -47,6 +49,7 @@ export const queryKeys = {
     list: (query?: string, status?: LeadStatus) =>
       ["leads", "list", { query: query ?? "", status }] as const,
     detail: (id: string) => ["leads", "detail", id] as const,
+    summary: () => ["leads", "summary"] as const,
   },
 
   // Analytics & Dashboards

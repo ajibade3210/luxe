@@ -8,6 +8,7 @@ import {
   deleteLead,
   getLeadById,
   getLeads,
+  getLeadsSummary,
   updateLeadStatus,
 } from "@/services/api/leads.service";
 import type { CreateLeadInput, LeadStatus } from "@/types";
@@ -16,6 +17,13 @@ export function useLeadsQuery(query?: string, status?: LeadStatus) {
   return useQuery({
     queryKey: queryKeys.leads.list(query, status),
     queryFn: () => getLeads(query, status),
+  });
+}
+
+export function useLeadsSummaryQuery() {
+  return useQuery({
+    queryKey: queryKeys.leads.summary(),
+    queryFn: () => getLeadsSummary(),
   });
 }
 

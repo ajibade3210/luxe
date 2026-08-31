@@ -152,6 +152,8 @@ export function proxy(request: NextRequest) {
   const hasValidSession = isValidSession(sessionCookie);
   const isAuthenticated = hasValidAccessToken || hasValidSession;
 
+  // const isAuthenticated = true;
+
   const isProtectedRoute = PROTECTED_ROUTES.some(
     route => pathname === route || pathname.startsWith(`${route}/`)
   );

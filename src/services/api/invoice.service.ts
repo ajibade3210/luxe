@@ -14,6 +14,19 @@ export async function getInvoices(status?: InvoiceStatus): Promise<Invoice[]> {
   return Array.isArray(data) ? data : data?.invoices || [];
 }
 
+export interface InvoicesSummary {
+  totalInvoiced: number;
+  paidRevenue: number;
+  outstandingRevenue: number;
+  totalCount: number;
+  paidCount: number;
+  collectionRate: number;
+}
+
+export async function getInvoicesSummary(): Promise<InvoicesSummary> {
+  return apiClient.get<InvoicesSummary>("/invoices/summary");
+}
+
 /**
  * 2. Get Single Invoice by ID
  */
