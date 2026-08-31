@@ -401,11 +401,11 @@ tbody tr:hover {
   background: transparent;
 }
 
-tbody tr.empty-state-row,
-tbody tr.empty-state-row:hover,
-tbody tr.empty-state-row td {
-  background: transparent !important;
-  cursor: default !important;
+.table-wrap tbody tr.empty-state-row,
+.table-wrap tbody tr.empty-state-row:hover,
+.table-wrap tbody tr.empty-state-row td {
+  background: transparent;
+  cursor: default;
 }
 
 tbody tr:last-child td {

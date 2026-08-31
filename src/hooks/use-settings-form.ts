@@ -5,7 +5,6 @@ import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib
 import { logger } from "@/lib/logger";
 import type { UseSettingsFormOptions } from "@/types";
 import {
-  cleanPhoneForWhatsApp,
   isValidPhone,
   isValidUrl,
   normalizeButtonRadius,
@@ -184,7 +183,9 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     const waChannel = contact.channels.find(c => c.type === "whatsapp");
     const waHandle = waChannel?.handle?.trim();
     if (waHandle && !isValidPhone(waHandle)) {
-      notify("Please enter a valid Nigerian phone number for WhatsApp (e.g. 0803 123 4567 or +234 803 123 4567)");
+      notify(
+        "Please enter a valid Nigerian phone number for WhatsApp (e.g. 0803 123 4567 or +234 803 123 4567)"
+      );
       return false;
     }
 

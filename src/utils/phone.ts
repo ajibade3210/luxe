@@ -9,7 +9,7 @@
  * Allows optional whitespace, dashes, brackets.
  */
 export function isValidNigerianPhone(phone?: string | null): boolean {
-  if (!phone || !phone.trim()) return false;
+  if (!phone?.trim()) return false;
   const cleaned = phone.trim().replace(/[\s\-()+]/g, "");
 
   // 11 digits starting with 0 (e.g. 08031234567, 070..., 081..., 090..., 091...)
@@ -34,7 +34,7 @@ export function isValidNigerianPhone(phone?: string | null): boolean {
  * Validates phone numbers (Nigerian formats or standard international E.164 formats).
  */
 export function isValidPhone(phone?: string | null): boolean {
-  if (!phone || !phone.trim()) return false;
+  if (!phone?.trim()) return false;
   const trimmed = phone.trim();
   if (isValidNigerianPhone(trimmed)) return true;
 
