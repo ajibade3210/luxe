@@ -26,7 +26,7 @@ export function InvoiceSummary({
             step="100"
             value={discount}
             onChange={e => onDiscountChange(Number(e.target.value) || 0)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
           />
         </div>
 
@@ -41,7 +41,7 @@ export function InvoiceSummary({
             step="0.5"
             value={taxRate}
             onChange={e => onTaxRateChange(Number(e.target.value) || 0)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
           />
         </div>
 
@@ -64,7 +64,7 @@ export function InvoiceSummary({
           value={notes}
           onChange={e => onNotesChange(e.target.value)}
           placeholder="Thank you for your trust. Please complete the payment before the due date."
-          className="w-full bg-white border border-[#d1d5db] rounded-xl p-3.5 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+          className="w-full bg-white border border-[#d1d5db] rounded-xl p-3.5 text-xs text-[#111827] focus:outline-none transition-all"
         />
       </div>
     </>

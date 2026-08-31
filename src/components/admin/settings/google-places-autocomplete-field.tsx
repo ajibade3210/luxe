@@ -22,7 +22,7 @@ import type {
 const defaultInputClassName = [
   "w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827]",
   "transition-colors duration-150",
-  "focus:border-[#0058be] focus:outline-none shadow-2xs",
+  "focus:outline-none shadow-2xs",
   "hover:border-gray-400",
   "disabled:cursor-not-allowed disabled:opacity-60",
   "placeholder:text-[#9ca3af]",

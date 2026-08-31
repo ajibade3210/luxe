@@ -119,6 +119,7 @@ export function PortfolioSection({
                         src={proj.image}
                         alt={proj.title}
                         fill
+                        unoptimized
                         sizes="44px"
                         className="object-cover"
                       />
@@ -181,7 +182,7 @@ export function PortfolioSection({
                   placeholder="e.g. Aethel Luxury Rebrand"
                   value={newProject.title || ""}
                   onChange={e => setNewProject({ ...newProject, title: e.target.value })}
-                  className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] h-[38px] transition-colors hover:border-[#d1d5db]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none h-[38px] transition-colors hover:border-[#d1d5db]"
                 />
               </div>
 
@@ -204,7 +205,7 @@ export function PortfolioSection({
                     placeholder="e.g. London & Lagos"
                     value={newProject.location || ""}
                     onChange={e => setNewProject({ ...newProject, location: e.target.value })}
-                    className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] h-[38px] transition-colors hover:border-[#d1d5db]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none h-[38px] transition-colors hover:border-[#d1d5db]"
                   />
                 </div>
               </div>
@@ -221,6 +222,7 @@ export function PortfolioSection({
                         src={newProject.image}
                         alt="Project Cover Preview"
                         fill
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, 400px"
                         className="object-cover"
                       />
@@ -338,6 +340,7 @@ export function PortfolioSection({
                           src={imgUrl}
                           alt={`Gallery photo ${i + 1}`}
                           fill
+                          unoptimized
                           sizes="80px"
                           className="object-cover"
                         />
@@ -357,6 +360,30 @@ export function PortfolioSection({
                       </div>
                     ))}
                   </div>
+                ) : handleGalleryImagesUpload ? (
+                  <label className="border border-dashed border-[#e5e7eb] hover:border-[#0058be] bg-[#f8f9fa] hover:bg-[#f0f6ff]/30 rounded-lg p-3.5 text-center text-[#6b7280] text-[11px] flex items-center justify-center gap-2 cursor-pointer transition-colors group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      disabled={isUploadingGalleryImages}
+                      onChange={handleGalleryImagesUpload}
+                    />
+                    {isUploadingGalleryImages ? (
+                      <Loader2 size={14} className="animate-spin text-[#0058be]" />
+                    ) : (
+                      <Images
+                        size={14}
+                        className="text-[#9ca3af] group-hover:text-[#0058be] transition-colors"
+                      />
+                    )}
+                    <span className="group-hover:text-[#0058be] font-medium transition-colors">
+                      {isUploadingGalleryImages
+                        ? "Uploading images..."
+                        : "Click to select and upload multiple gallery images"}
+                    </span>
+                  </label>
                 ) : (
                   <div className="border border-dashed border-[#e5e7eb] rounded-lg p-3 text-center text-[#6b7280] text-[11px] flex items-center justify-center gap-1.5">
                     <Images size={14} className="text-[#9ca3af]" />
@@ -379,7 +406,7 @@ export function PortfolioSection({
                       description: e.target.value,
                     })
                   }
-                  className="w-full bg-white border border-[#e5e7eb] rounded p-3 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+                  className="w-full bg-white border border-[#e5e7eb] rounded p-3 text-xs text-[#191c1d] focus:outline-none resize-none"
                 />
               </div>
 
@@ -472,6 +499,7 @@ export function PortfolioSection({
                           src={proj.image}
                           alt={proj.title}
                           fill
+                          unoptimized
                           sizes="56px"
                           className="object-cover"
                         />

@@ -92,7 +92,22 @@ Everything in the codebase must live strictly in its appropriate architectural s
 - **Channel Character Capping:** Enforces strict anti-spam limits (500 chars for WhatsApp & Both, 2,000 chars for Email) with real-time countdown meters and optional media/image URL attachments.
 - **Multi-Channel Dispatch Engine:** Supports WhatsApp Forwarding Intent (`https://api.whatsapp.com/send?text=...`), individual 1-click WhatsApp dispatches (`https://wa.me/...`), discreet Email BCC (`mailto:?bcc=...`), and mock backend async service logging.
 
-### 6. Verification Workflow Before Responding
+### 6. Input Focus Reset (Design System Rule)
+**NEVER add focus rings, shadows, or colored borders to any input, textarea, or select — anywhere in the app.**
+
+This is enforced globally in `src/styles/base.css` via `@layer base`:
+```css
+input, textarea, select { outline: none; box-shadow: none; -webkit-box-shadow: none; }
+```
+
+**Banned classes on inputs and their wrapper divs:**
+- `focus:ring-*`, `focus:border-[#...]`, `focus:shadow-*`
+- `focus-within:ring-*`, `focus-within:border-[#...]`, `focus-within:bg-white`
+
+**Exempt:** Checkboxes (`focus:ring-*` for accent colour) and the shadcn `<Button>` (`focus-visible:ring-*`).
+See `DESIGN.md §8` for the full rule.
+
+### 7. Verification Workflow Before Responding
 1. `pnpm check` (Biome linting & formatting).
 2. `pnpm type-check` (`tsc --noEmit` with 0 type errors and zero `any`).
 3. `pnpm test` (Vitest unit test suite).

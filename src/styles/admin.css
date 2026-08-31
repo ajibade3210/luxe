@@ -340,8 +340,8 @@
 }
 
 .table-card .table-head .table-search-box input:focus {
-  border-color: #855e2e;
-  box-shadow: 0 0 0 1px #855e2e;
+  border-color: #ded7cb;
+  outline: none;
 }
 
 .table-card .table-head .table-search-box input::placeholder {

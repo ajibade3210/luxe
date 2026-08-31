@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
 import { logger } from "@/lib/logger";
-import type { UseSettingsFormOptions } from "@/types";
+import type { ServiceItem, UseSettingsFormOptions } from "@/types";
 import {
   isValidPhone,
   isValidUrl,
@@ -231,7 +231,23 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
       contact.setChannels(updatedChannels);
 
-      await updateBusinessProfile({
+      const cleanedServices: ServiceItem[] = (services.services || [])
+        .map(s => ({
+          id: s.id || `svc-${Date.now()}`,
+          name: (s.name || "").trim(),
+          category: (s.category || "").trim() || "General",
+          description: (s.description || "").trim(),
+          price: typeof s.price === "number" && !Number.isNaN(s.price) ? s.price : undefined,
+          minPrice:
+            typeof s.minPrice === "number" && !Number.isNaN(s.minPrice) ? s.minPrice : undefined,
+          maxPrice:
+            typeof s.maxPrice === "number" && !Number.isNaN(s.maxPrice) ? s.maxPrice : undefined,
+          priceType: s.priceType,
+          isFeatured: Boolean(s.isFeatured),
+        }))
+        .filter(s => s.name.length > 0);
+
+      const updated = await updateBusinessProfile({
         businessName: branding.name,
         slug: branding.slug,
         tagline: branding.tagline,
@@ -241,7 +257,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         currency: branding.currency,
         description: branding.about,
         logoUrl: portfolio.logoUrl,
-        services: services.services,
+        services: cleanedServices,
         portfolio: portfolio.portfolio,
         portfolioCategories: portfolio.categories,
         socialChannels: updatedChannels,
@@ -264,6 +280,19 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         colors: appearance.colors,
         buttonRadius: appearance.radius,
       });
+
+      if (updated) {
+        if (Array.isArray(updated.services)) {
+          services.setServices(updated.services);
+        }
+        if (Array.isArray(updated.portfolio)) {
+          portfolio.setPortfolio(updated.portfolio);
+        }
+        if (Array.isArray(updated.portfolioCategories)) {
+          portfolio.setCategories(updated.portfolioCategories);
+        }
+      }
+
       if (!options?.silent) {
         notify("Changes saved successfully");
       }
@@ -336,6 +365,14 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setNewServiceCategory: services.setNewServiceCategory,
     newServiceDesc: services.newServiceDesc,
     setNewServiceDesc: services.setNewServiceDesc,
+    newServicePriceType: services.newServicePriceType,
+    setNewServicePriceType: services.setNewServicePriceType,
+    newServicePrice: services.newServicePrice,
+    setNewServicePrice: services.setNewServicePrice,
+    newServiceMinPrice: services.newServiceMinPrice,
+    setNewServiceMinPrice: services.setNewServiceMinPrice,
+    newServiceMaxPrice: services.newServiceMaxPrice,
+    setNewServiceMaxPrice: services.setNewServiceMaxPrice,
     editingServiceId: services.editingServiceId,
     setEditingServiceId: services.setEditingServiceId,
     addService: services.addService,

@@ -100,7 +100,7 @@ export function IdentitySection({
             <input
               value={name}
               onChange={e => setName(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs"
             />
           </div>
 
@@ -111,7 +111,7 @@ export function IdentitySection({
                 value={slug}
                 onChange={e => setSlug(slugify(e.target.value))}
                 placeholder="e.g. elan-events"
-                className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs pr-24"
+                className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs pr-24"
               />
               {slugStatus === "checking" && (
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8c827a]">
@@ -140,7 +140,7 @@ export function IdentitySection({
               value={tagline}
               onChange={e => setTagline(e.target.value)}
               placeholder="e.g. Bespoke luxury wedding design and creative direction"
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs"
             />
           </div>
 
@@ -203,7 +203,7 @@ export function IdentitySection({
               className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs transition-colors ${
                 website && !isValidUrl(website)
                   ? "border-amber-400 focus:border-amber-500 bg-amber-50/20"
-                  : "border-[#d1d5db] focus:border-[#0058be]"
+                  : "border-[#d1d5db]"
               }`}
             />
           </div>
@@ -216,7 +216,7 @@ export function IdentitySection({
               <select
                 value={currency}
                 onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
-                className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none font-medium shadow-2xs appearance-none cursor-pointer"
+                className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-[#111827] focus:outline-none font-medium shadow-2xs appearance-none cursor-pointer"
               >
                 <option value="NGN">₦ NGN</option>
                 <option value="USD">$ USD</option>
@@ -268,7 +268,7 @@ export function IdentitySection({
               rows={4}
               value={about}
               onChange={e => setAbout(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-3 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs leading-relaxed"
+              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-3 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs leading-relaxed"
             />
           </div>
         </div>

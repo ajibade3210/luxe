@@ -17,12 +17,28 @@ export function normalizeServices(raw: (string | ServiceItem)[] | undefined): Se
   });
 }
 
+let inFlightProfilePromise: Promise<BusinessProfile> | null = null;
+
 export async function getBusinessProfile(): Promise<BusinessProfile> {
-  const profile = await apiClient.get<BusinessProfile>("/studios/me");
-  return {
-    ...profile,
-    services: normalizeServices(profile.services as (string | ServiceItem)[]),
-  };
+  if (inFlightProfilePromise) {
+    return inFlightProfilePromise;
+  }
+
+  inFlightProfilePromise = (async () => {
+    try {
+      const profile = await apiClient.get<BusinessProfile>("/studios/me");
+      return {
+        ...profile,
+        services: normalizeServices(profile.services as (string | ServiceItem)[]),
+      };
+    } finally {
+      setTimeout(() => {
+        inFlightProfilePromise = null;
+      }, 50);
+    }
+  })();
+
+  return inFlightProfilePromise;
 }
 
 export async function getBusinessBySlug(slug: string): Promise<BusinessProfile | null> {

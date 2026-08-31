@@ -119,12 +119,22 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
   const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const localPreviewUrl = URL.createObjectURL(file);
+    setNewProject(prev => {
+      const updatedGallery =
+        prev.gallery && prev.gallery.length > 0
+          ? [localPreviewUrl, ...prev.gallery.slice(1)]
+          : [localPreviewUrl];
+      return { ...prev, image: localPreviewUrl, gallery: updatedGallery };
+    });
     setIsUploadingProjectImage(true);
     try {
       const res = await uploadPortfolioImage(file);
       setNewProject(prev => {
         const updatedGallery =
-          prev.gallery && prev.gallery.length > 0 ? [res.url, ...prev.gallery.slice(1)] : [res.url];
+          prev.gallery && prev.gallery.length > 0
+            ? prev.gallery.map(url => (url === localPreviewUrl ? res.url : url))
+            : [res.url];
         return { ...prev, image: res.url, gallery: updatedGallery };
       });
       notify("Project cover image uploaded successfully");
@@ -138,15 +148,34 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
   const handleGalleryImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+    const fileArray = Array.from(files);
+    const localPreviews = fileArray.map(file => URL.createObjectURL(file));
+    setNewProject(prev => ({
+      ...prev,
+      gallery: [...(prev.gallery || (prev.image ? [prev.image] : [])), ...localPreviews],
+    }));
     setIsUploadingGalleryImages(true);
     try {
-      const uploadPromises = Array.from(files).map(file => uploadPortfolioImage(file));
+      const uploadPromises = fileArray.map(file => uploadPortfolioImage(file));
       const results = await Promise.all(uploadPromises);
       const newUrls = results.map(r => r.url);
-      setNewProject(prev => ({
-        ...prev,
-        gallery: [...(prev.gallery || (prev.image ? [prev.image] : [])), ...newUrls],
-      }));
+      setNewProject(prev => {
+        const currentGallery = prev.gallery || [];
+        // Replace temporary preview URLs with uploaded CDN URLs
+        let urlIndex = 0;
+        const finalGallery = currentGallery.map(url => {
+          if (localPreviews.includes(url)) {
+            const mappedUrl = newUrls[urlIndex] || url;
+            urlIndex++;
+            return mappedUrl;
+          }
+          return url;
+        });
+        return {
+          ...prev,
+          gallery: finalGallery,
+        };
+      });
       notify(`Uploaded ${results.length} gallery ${results.length === 1 ? "image" : "images"}`);
     } catch {
       notify("Failed to upload gallery images");

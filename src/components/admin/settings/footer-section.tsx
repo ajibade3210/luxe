@@ -50,7 +50,7 @@ export function FooterSection({
               placeholder="e.g. Begin Your Journey"
               value={footerEyebrow}
               onChange={e => setFooterEyebrow(e.target.value)}
-              className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] transition-colors"
+              className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2 text-xs text-[#111827] focus:outline-none transition-colors"
             />
           </div>
 
@@ -64,7 +64,7 @@ export function FooterSection({
               placeholder="e.g. Ready to Create Something Extraordinary?"
               value={footerTitle}
               onChange={e => setFooterTitle(e.target.value)}
-              className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] transition-colors font-medium"
+              className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2 text-xs text-[#111827] focus:outline-none transition-colors font-medium"
             />
           </div>
         </div>
@@ -79,7 +79,7 @@ export function FooterSection({
             placeholder="Tell prospective clients what to expect and how to get in touch..."
             value={footerDescription}
             onChange={e => setFooterDescription(e.target.value)}
-            className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] resize-none leading-relaxed transition-colors"
+            className="w-full rounded-xl border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none resize-none leading-relaxed transition-colors"
           />
         </div>
       </div>

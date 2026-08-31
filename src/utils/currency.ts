@@ -58,3 +58,36 @@ export const formatCompactMoney = (
   }
   return `${sym}${n}`;
 };
+
+export const formatServicePrice = (
+  service: {
+    price?: number | null;
+    minPrice?: number | null;
+    maxPrice?: number | null;
+    priceType?: "fixed" | "range" | string | null;
+  },
+  currency: CurrencyCode | string = DEFAULT_CURRENCY
+): string | null => {
+  const code = (currency || DEFAULT_CURRENCY) as CurrencyCode;
+  const sym = CURRENCY_SYMBOLS[code] ?? "₦";
+
+  if (service.priceType === "range" || (service.minPrice && service.maxPrice)) {
+    const min = service.minPrice ?? service.price;
+    const max = service.maxPrice;
+    if (min && max) {
+      return `${sym}${Number(min).toLocaleString()} – ${sym}${Number(max).toLocaleString()}`;
+    }
+    if (min) {
+      return `From ${sym}${Number(min).toLocaleString()}`;
+    }
+    if (max) {
+      return `Up to ${sym}${Number(max).toLocaleString()}`;
+    }
+  }
+
+  if (service.price !== undefined && service.price !== null && Number(service.price) > 0) {
+    return `${sym}${Number(service.price).toLocaleString()}`;
+  }
+
+  return null;
+};

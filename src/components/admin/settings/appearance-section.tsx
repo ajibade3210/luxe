@@ -239,7 +239,7 @@ export function AppearanceSection({
                   <label className="text-[11px] font-medium text-[#4b5563] block truncate">
                     {label}
                   </label>
-                  <div className="flex items-center gap-2.5 bg-white border border-[#d1d5db] focus-within:border-[#0058be] focus-within:ring-2 focus-within:ring-[#0058be]/10 rounded-lg px-2.5 py-1.5 transition-all shadow-2xs">
+                  <div className="flex items-center gap-2.5 bg-white border border-[#d1d5db] rounded-lg px-2.5 py-1.5 transition-all shadow-2xs">
                     <div
                       className="relative w-5 h-5 rounded-md shrink-0 border border-black/15 shadow-2xs overflow-hidden cursor-pointer"
                       style={{ backgroundColor: pickerValue }}

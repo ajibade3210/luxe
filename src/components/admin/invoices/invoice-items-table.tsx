@@ -29,7 +29,7 @@ export function InvoiceItemsTable({
                 value={item.description}
                 onChange={e => onItemChange(item.id, "description", e.target.value)}
                 placeholder="Item description"
-                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none"
+                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] focus:outline-none"
               />
             </div>
 
@@ -41,7 +41,7 @@ export function InvoiceItemsTable({
                 value={item.quantity}
                 onChange={e => onItemChange(item.id, "quantity", Number(e.target.value) || 1)}
                 placeholder="Qty"
-                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] text-center focus:border-[#111827] focus:outline-none"
+                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] text-center focus:outline-none"
               />
             </div>
 
@@ -54,7 +54,7 @@ export function InvoiceItemsTable({
                 value={item.unitPrice}
                 onChange={e => onItemChange(item.id, "unitPrice", Number(e.target.value) || 0)}
                 placeholder="Cost"
-                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] text-right focus:border-[#111827] focus:outline-none"
+                className="w-full bg-white border border-[#e5e7eb] rounded-xl px-3 py-2 text-xs text-[#111827] text-right focus:outline-none"
               />
             </div>
 

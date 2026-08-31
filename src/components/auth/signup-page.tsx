@@ -160,7 +160,7 @@ export function SignupPage() {
                   </span>
                 )}
               </div>
-              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#2563eb] focus-within:ring-1 focus-within:ring-[#2563eb] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs transition-all">
                 <span className="text-[#94a3b8] select-none shrink-0 text-xs mr-1 font-medium">
                   shopwus.com/
                 </span>
@@ -178,7 +178,7 @@ export function SignupPage() {
               <label className="block text-xs font-semibold text-[#191c1d] mb-1.5">
                 Studio / Brand Name <span className="text-[#94a3b8] font-normal">(optional)</span>
               </label>
-              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#2563eb] focus-within:ring-1 focus-within:ring-[#2563eb] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs transition-all">
                 <input
                   type="text"
                   value={studioName}

@@ -52,8 +52,8 @@ export function CategoryDropdown({
 
   const defaultButtonClass =
     size === "sm"
-      ? "w-full bg-white border border-[#d1d5db] rounded-lg px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#9ca3af] transition-colors h-[32px]"
-      : "w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#d1d5db] transition-colors h-[38px]";
+      ? "w-full bg-white border border-[#d1d5db] rounded-lg px-3 py-1.5 text-xs text-[#111827] focus:outline-none flex items-center justify-between cursor-pointer hover:border-[#9ca3af] transition-colors h-[32px]"
+      : "w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none flex items-center justify-between cursor-pointer hover:border-[#d1d5db] transition-colors h-[38px]";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -151,7 +151,7 @@ export function CategoryDropdown({
                       handleAdd();
                     }
                   }}
-                  className="flex-1 bg-[#f9fafb] border border-[#e5e7eb] rounded-lg px-2.5 py-1 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] focus:bg-white"
+                  className="flex-1 bg-[#f9fafb] border border-[#e5e7eb] rounded-lg px-2.5 py-1 text-xs text-[#191c1d] focus:outline-none focus:bg-white"
                 />
                 <button
                   type="button"

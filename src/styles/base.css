@@ -27,8 +27,23 @@ a {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+  Focus Reset — unlayered so it beats @layer utilities (Tailwind v4).
+  No blue border, shadow glow, or ring on any input, textarea, or select.
+  See DESIGN.md §8.
+*/
+input,
+textarea,
+select {
+  outline: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
 }
 
 button {

@@ -132,3 +132,33 @@ Before adding any UI element, ask: *“Is this necessary? Was it requested? Does
 * Decorative UI elements, icons, or illustrations that do not serve a clear functional or informational purpose.
 * Visual embellishments added solely to make a section feel “designed.”
 * Generic SaaS/dashboard patterns that conflict with the **Modern Digital Atelier / Quiet Luxury / Executive Fintech** aesthetic.
+
+---
+
+## 8. Input, Textarea & Select Focus Rules
+
+**RULE: No blue border, no shadow glow, and no ring on any input, textarea, or select across the entire app on any browser.**
+
+This is a hard design system rule. When any input field is focused, the user sees **only** the blinking text cursor — nothing else changes visually.
+
+### What is enforced globally in `src/styles/base.css`:
+
+```css
+@layer base {
+  input, textarea, select {
+    outline: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+  *:focus-within { outline: none; }
+}
+```
+
+### Rules for agents & developers:
+
+- **NEVER add** `focus:border-[#...]`, `focus:ring-*`, `focus-within:border-[#...]`, `focus-within:ring-*`, or `focus:shadow-*` to any input, textarea, select, or their wrapper `div`.
+- **NEVER add** `focus:outline-*` other than `focus:outline-none` (though this is already globally reset).
+- **DO NOT** use `focus:bg-white` on wrapper divs to signal active state — the design system does not use focus-driven background changes on inputs.
+- The only permitted focus-related class on `<input>` elements is `focus:outline-none` for explicit clarity, though it is already handled globally.
+- Checkboxes (`<input type="checkbox">`) are exempt — they may retain `focus:ring-*` for their checkbox accent color.
+- Shadcn `<Button>` component `focus-visible:ring-*` is exempt — it applies only to buttons, not text inputs.

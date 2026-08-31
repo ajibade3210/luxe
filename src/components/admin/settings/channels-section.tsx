@@ -124,7 +124,7 @@ export function ChannelsSection({
                   value={googleReviewsLink}
                   onChange={e => setGoogleReviewsLink(e.target.value)}
                   placeholder="https://business.google.com/..."
-                  className="flex-1 bg-white border border-[#d1d5db] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] shadow-2xs"
+                  className="flex-1 bg-white border border-[#d1d5db] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none shadow-2xs"
                 />
                 <button
                   type="button"
@@ -217,7 +217,7 @@ export function ChannelsSection({
                           ? "social-box-invalid"
                           : isValid
                             ? "social-box-valid"
-                            : "bg-[#f9fafb] border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
+                            : "bg-[#f9fafb] border-[#e5e7eb]"
                       }`}
                     >
                       <span

@@ -140,7 +140,7 @@ export function ExpenseModal({
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="e.g. Bulk Velvet Fabric, Instagram Ads Drop, Packaging Boxes"
-              className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#191c1d] placeholder:text-[#9a918a] focus:outline-none focus:border-[#855e2e] transition-colors"
+              className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#191c1d] placeholder:text-[#9a918a] focus:outline-none transition-colors"
             />
           </div>
 
@@ -161,7 +161,7 @@ export function ExpenseModal({
                 value={amount}
                 onChange={e => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
                 placeholder="25000"
-                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs font-mono text-[#191c1d] placeholder:text-[#9a918a] focus:outline-none focus:border-[#855e2e] transition-colors"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs font-mono text-[#191c1d] placeholder:text-[#9a918a] focus:outline-none transition-colors"
               />
             </div>
 
@@ -176,7 +176,7 @@ export function ExpenseModal({
                 id="expense-category"
                 value={category}
                 onChange={e => setCategory(e.target.value as ExpenseCategory)}
-                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#191c1d] focus:outline-none focus:border-[#855e2e] transition-colors cursor-pointer"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#191c1d] focus:outline-none transition-colors cursor-pointer"
               >
                 {EXPENSE_CATEGORIES.map(cat => (
                   <option key={cat} value={cat}>
@@ -201,7 +201,7 @@ export function ExpenseModal({
                 required
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] focus:outline-none focus:border-[#855e2e] transition-colors"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] focus:outline-none transition-colors"
               />
             </div>
 
@@ -216,7 +216,7 @@ export function ExpenseModal({
                 id="expense-payment-method"
                 value={paymentMethod}
                 onChange={e => setPaymentMethod(e.target.value as ExpensePaymentMethod)}
-                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] focus:outline-none focus:border-[#855e2e] transition-colors cursor-pointer"
+                className="w-full px-3.5 py-2.5 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] focus:outline-none transition-colors cursor-pointer"
               >
                 {Object.entries(EXPENSE_PAYMENT_METHODS).map(([key, label]) => (
                   <option key={key} value={key}>
@@ -240,7 +240,7 @@ export function ExpenseModal({
               value={notes}
               onChange={e => setNotes(e.target.value)}
               placeholder="Supplier name, invoice receipt number, delivery destination..."
-              className="w-full px-3.5 py-2 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] placeholder:text-[#9a918a] focus:outline-none focus:border-[#855e2e] transition-colors resize-none"
+              className="w-full px-3.5 py-2 bg-white border border-[#ded5c8] rounded-xl text-xs text-[#1f1d1a] placeholder:text-[#9a918a] focus:outline-none transition-colors resize-none"
             />
           </div>
 

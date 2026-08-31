@@ -59,6 +59,14 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     setNewServiceCategory,
     newServiceDesc,
     setNewServiceDesc,
+    newServicePriceType,
+    setNewServicePriceType,
+    newServicePrice,
+    setNewServicePrice,
+    newServiceMinPrice,
+    setNewServiceMinPrice,
+    newServiceMaxPrice,
+    setNewServiceMaxPrice,
     editingServiceId,
     setEditingServiceId,
     portfolio,
@@ -186,6 +194,15 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           setNewServiceCategory={setNewServiceCategory}
           newServiceDesc={newServiceDesc}
           setNewServiceDesc={setNewServiceDesc}
+          newServicePriceType={newServicePriceType}
+          setNewServicePriceType={setNewServicePriceType}
+          newServicePrice={newServicePrice}
+          setNewServicePrice={setNewServicePrice}
+          newServiceMinPrice={newServiceMinPrice}
+          setNewServiceMinPrice={setNewServiceMinPrice}
+          newServiceMaxPrice={newServiceMaxPrice}
+          setNewServiceMaxPrice={setNewServiceMaxPrice}
+          currency={currency}
           addService={addService}
           categories={categories}
           addCategory={addPortfolioCategory}

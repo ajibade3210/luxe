@@ -86,7 +86,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Name *
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs transition-all">
                 <input
                   required
                   value={formData.name}
@@ -101,7 +101,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Email
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs transition-all">
                 <input
                   type="email"
                   value={formData.email || ""}
@@ -122,7 +122,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 WhatsApp Number
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs transition-all">
                 <input
                   value={formData.phone || ""}
                   onChange={e => {
@@ -139,7 +139,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Customer Status
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
                 <select
                   value={formData.isActive ? "active" : "inactive"}
                   onChange={e =>
@@ -160,7 +160,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Service Needed
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
                 <select
                   value={formData.service}
                   onChange={e => setFormData({ ...formData, service: e.target.value })}
@@ -179,7 +179,7 @@ export function CustomerAddModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Amount Budget (₦)
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-2.5 text-xs transition-all">
                 <input
                   type="number"
                   step="1000"

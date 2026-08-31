@@ -33,7 +33,7 @@ export function ExpenseListTable({
               value={selectedCategory}
               onChange={e => onCategoryChange(e.target.value as ExpenseCategory | "all")}
               aria-label="Filter expenses by category"
-              className="appearance-none pl-3.5 pr-8 py-2 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none focus:border-[#855e2e] transition-colors cursor-pointer shadow-2xs"
+              className="appearance-none pl-3.5 pr-8 py-2 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
               <option value="all">All Categories</option>
               {EXPENSE_CATEGORIES.map(cat => {

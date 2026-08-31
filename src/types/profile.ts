@@ -73,6 +73,11 @@ export interface ServiceItem {
   name: string;
   category: string;
   description: string;
+  price?: number | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  priceType?: "fixed" | "range";
+  isFeatured?: boolean;
 }
 
 export interface BusinessProfile {
@@ -170,6 +175,15 @@ export interface ServicesSectionProps {
   setNewServiceCategory: (v: string) => void;
   newServiceDesc: string;
   setNewServiceDesc: (v: string) => void;
+  newServicePriceType: "fixed" | "range";
+  setNewServicePriceType: (v: "fixed" | "range") => void;
+  newServicePrice: string;
+  setNewServicePrice: (v: string) => void;
+  newServiceMinPrice: string;
+  setNewServiceMinPrice: (v: string) => void;
+  newServiceMaxPrice: string;
+  setNewServiceMaxPrice: (v: string) => void;
+  currency?: string;
   addService: () => void;
   categories: string[];
   addCategory: (cat: string) => void;

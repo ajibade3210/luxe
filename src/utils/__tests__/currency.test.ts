@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CURRENCY_SYMBOLS, formatMoney } from "../currency";
+import { CURRENCY_SYMBOLS, formatMoney, formatServicePrice } from "../currency";
 
 describe("currency utilities", () => {
   it("provides correct currency symbols", () => {
@@ -42,5 +42,32 @@ describe("currency utilities", () => {
   it("gracefully handles invalid non-finite numbers", () => {
     expect(formatMoney(Number.NaN, "USD")).toBe("$0");
     expect(formatMoney(Number.POSITIVE_INFINITY, "NGN")).toBe("₦0");
+  });
+
+  describe("formatServicePrice", () => {
+    it("formats fixed price properly", () => {
+      expect(formatServicePrice({ price: 150000, priceType: "fixed" }, "NGN")).toBe("₦150,000");
+      expect(formatServicePrice({ price: 2500, priceType: "fixed" }, "USD")).toBe("$2,500");
+    });
+
+    it("formats price range with min and max", () => {
+      expect(
+        formatServicePrice({ minPrice: 100000, maxPrice: 350000, priceType: "range" }, "NGN")
+      ).toBe("₦100,000 – ₦350,000");
+    });
+
+    it("formats price range with single bound", () => {
+      expect(formatServicePrice({ minPrice: 50000, priceType: "range" }, "NGN")).toBe(
+        "From ₦50,000"
+      );
+      expect(formatServicePrice({ maxPrice: 200000, priceType: "range" }, "NGN")).toBe(
+        "Up to ₦200,000"
+      );
+    });
+
+    it("returns null for empty or zero prices", () => {
+      expect(formatServicePrice({}, "NGN")).toBeNull();
+      expect(formatServicePrice({ price: null }, "NGN")).toBeNull();
+    });
   });
 });

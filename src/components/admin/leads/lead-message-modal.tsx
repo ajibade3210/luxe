@@ -91,7 +91,7 @@ export function LeadMessageModal({
             value={messageText}
             onChange={e => setMessageText(e.target.value)}
             placeholder="Type your bespoke message or consultation reply here..."
-            className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-2xl p-4 text-xs text-[#191c1d] focus:border-[#855e2e] focus:ring-1 focus:ring-[#855e2e] focus:bg-white focus:outline-none transition-all"
+            className="w-full bg-[#faf8f5] border border-[#ded7cb] rounded-2xl p-4 text-xs text-[#191c1d] focus:outline-none transition-all"
           />
         </div>
 
