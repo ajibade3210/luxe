@@ -1,9 +1,33 @@
 import { describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/lib/api-client";
 import type { Lead } from "@/types";
-import { convertLeadToCustomer, createLead, getLeads, updateLeadStatus } from "../leads.service";
+import {
+  convertLeadToCustomer,
+  createLead,
+  getLeads,
+  submitPublicInquiry,
+  updateLeadStatus,
+} from "../leads.service";
 
 describe("leads service", () => {
+  it("submits a public storefront inquiry", async () => {
+    const mockResult = {
+      id: "inquiry-1",
+      status: "new",
+      createdAt: "2026-08-31T20:00:00Z",
+    };
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce(mockResult);
+
+    const result = await submitPublicInquiry("atelier-forma", {
+      name: "Amara Nwosu",
+      email: "amara@example.com",
+      service: "Bespoke Styling",
+      message: "Need a wedding stylist",
+    });
+
+    expect(result.id).toBe("inquiry-1");
+    expect(result.status).toBe("new");
+  });
   it("fetches list of initial leads", async () => {
     const mockLeads: Lead[] = [
       {

@@ -236,7 +236,7 @@ export function ElanEventsPage({
       const selectedService =
         quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "";
 
-      await submitConsultationInquiry({
+      await submitConsultationInquiry(profile.slug || slug, {
         name: quoteForm.name,
         email: quoteForm.email,
         phone: quoteForm.phone,

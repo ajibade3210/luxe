@@ -28,6 +28,23 @@ export interface CreateLeadInput {
   message: string;
 }
 
+export interface PublicInquiryInput {
+  name: string;
+  email: string;
+  phone?: string;
+  service?: string;
+  services?: string[];
+  eventDate?: string;
+  budget?: number | string;
+  message?: string;
+}
+
+export interface PublicInquiryResponse {
+  id: string;
+  status: string;
+  createdAt: string;
+}
+
 export interface LeadTableProps {
   items: Lead[];
   paginatedItems: Lead[];

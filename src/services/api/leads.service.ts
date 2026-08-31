@@ -1,23 +1,37 @@
 import { APP_CONFIG } from "@/constants";
 import { apiClient } from "@/lib/api-client";
 import { CreateLeadInputSchema } from "@/lib/schemas";
-import type { CreateLeadInput, Customer, Lead, LeadStatus } from "@/types";
+import type {
+  CreateLeadInput,
+  Customer,
+  Lead,
+  LeadStatus,
+  PublicInquiryInput,
+  PublicInquiryResponse,
+} from "@/types";
 
 /**
- * Creates a new consultation inquiry lead on the public storefront
+ * Submits a new consultation / booking / quotation inquiry from the public storefront
+ */
+export async function submitPublicInquiry(
+  slug: string,
+  input: PublicInquiryInput
+): Promise<PublicInquiryResponse> {
+  return apiClient.post<PublicInquiryResponse>(
+    `/leads/inquiry/${encodeURIComponent(slug)}`,
+    input
+  );
+}
+
+export const submitConsultationInquiry = submitPublicInquiry;
+
+/**
+ * Creates a new lead manually in the admin dashboard
  */
 export async function createLead(input: CreateLeadInput): Promise<Lead> {
   const validated = CreateLeadInputSchema.parse(input);
-  if (validated.businessId) {
-    return apiClient.post<Lead>(
-      `/studios/${encodeURIComponent(validated.businessId)}/inquiries`,
-      validated
-    );
-  }
   return apiClient.post<Lead>("/leads", validated);
 }
-
-export const submitConsultationInquiry = createLead;
 
 /**
  * Fetches all studio leads with optional search query and status filter
