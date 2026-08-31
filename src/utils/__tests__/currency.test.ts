@@ -9,23 +9,28 @@ describe("currency utilities", () => {
     expect(CURRENCY_SYMBOLS.EUR).toBe("€");
   });
 
-  it("formats NGN currency by default with zero decimals", () => {
+  it("formats NGN currency by default with two decimals for amounts above zero", () => {
     const formatted = formatMoney(50000);
-    expect(formatted).toContain("50,000");
+    expect(formatted).toContain("50,000.00");
     expect(formatted).toContain("₦");
   });
 
-  it("formats USD, GBP, and EUR accurately", () => {
+  it("formats zero with a single 0 and no decimals", () => {
+    expect(formatMoney(0)).toBe("₦0");
+    expect(formatMoney(0, "USD")).toBe("$0");
+  });
+
+  it("formats USD, GBP, and EUR accurately with .00 suffix", () => {
     const usd = formatMoney(1250, "USD");
-    expect(usd).toContain("1,250");
+    expect(usd).toContain("1,250.00");
     expect(usd).toContain("$");
 
     const gbp = formatMoney(800, "GBP");
-    expect(gbp).toContain("800");
+    expect(gbp).toContain("800.00");
     expect(gbp).toContain("£");
 
     const eur = formatMoney(950, "EUR");
-    expect(eur).toContain("950");
+    expect(eur).toContain("950.00");
     expect(eur).toContain("€");
   });
 

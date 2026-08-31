@@ -182,12 +182,12 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
       <div className="metrics">
         <Metric
           label="Total customers"
-          value={String(totalCustomers).padStart(2, "0")}
+          value={String(totalCustomers)}
           detail="Active relationships"
         />
         <Metric
           label="Active services"
-          value={String(activeServicesCount).padStart(2, "0")}
+          value={String(activeServicesCount)}
           detail="In progress"
         />
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />

@@ -121,12 +121,12 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
       <div className="metrics">
         <Metric
           label="Total leads"
-          value={String(metrics.total).padStart(2, "0")}
+          value={String(metrics.total)}
           detail="All time"
         />
         <Metric
           label="New today"
-          value={String(metrics.newToday).padStart(2, "0")}
+          value={String(metrics.newToday)}
           detail="Needs attention"
         />
         <Metric label="Conversion rate" value={`${metrics.conversion}%`} detail="Last 30 days" />

@@ -31,7 +31,7 @@ export const formatMoney = (
   }
 
   const locale = CURRENCY_LOCALES[currency] ?? DEFAULT_LOCALE;
-  const decimals = options?.decimals ?? DEFAULT_DECIMALS;
+  const decimals = options?.decimals ?? (Math.abs(n) > 0 ? 2 : 0);
 
   return new Intl.NumberFormat(locale, {
     style: "currency",
