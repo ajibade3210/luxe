@@ -1,4 +1,6 @@
-import { Edit3, Plus, Tag, Trash2, X } from "lucide-react";
+import { Edit3, PlusCircle, Tag, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { ConfirmModal } from "@/components/shared";
 import { MAX_SERVICE_NAME_LENGTH, MAX_SERVICES } from "@/constants";
 import type { CurrencyCode, ServicesSectionProps } from "@/types";
 import { CURRENCY_SYMBOLS, formatServicePrice } from "@/utils/currency";
@@ -37,6 +39,21 @@ export function ServicesSection({
   removeCategory,
 }: ServicesSectionProps) {
   const currencySymbol = CURRENCY_SYMBOLS[(currency as CurrencyCode) || "NGN"] || "₦";
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const pendingService = services.find(s => s.id === pendingRemoveId);
+
+  const handleConfirmRemove = async () => {
+    if (!pendingRemoveId) return;
+    setIsRemoving(true);
+    try {
+      await removeService(pendingRemoveId);
+    } finally {
+      setIsRemoving(false);
+      setPendingRemoveId(null);
+    }
+  };
 
   return (
     <>
@@ -61,8 +78,8 @@ export function ServicesSection({
             </div>
           )}
 
-          {/* Compact 2-Column Grid of Service Offerings */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-3.5">
+          {/* Compact 3-Column Grid of Service Offerings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
             {services.map((service, _i) => {
               const isEditing = editingServiceId === service.id;
               const formattedPrice = formatServicePrice(service, currency);
@@ -264,7 +281,7 @@ export function ServicesSection({
                       </button>
                       <button
                         type="button"
-                        onClick={() => removeService(service.id)}
+                        onClick={() => setPendingRemoveId(service.id)}
                         className="text-[#9ca3af] hover:text-[#dc2626] p-1 rounded transition-colors cursor-pointer"
                         title="Remove service"
                       >
@@ -282,22 +299,34 @@ export function ServicesSection({
                 </div>
               );
             })}
-          </div>
 
-          {/* Add Service Button / Trigger */}
-          {services.length >= MAX_SERVICES ? (
-            <div className="border border-[#e5e7eb] rounded-xl bg-[#fafaf9] p-3 text-center text-xs text-[#6b7280] italic">
-              Service capacity reached ({MAX_SERVICES}/{MAX_SERVICES})
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowAddService(true)}
-              className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-dashed border-[#d1d5db] hover:border-[#9ca3af] bg-[#fafaf9] hover:bg-white text-xs font-medium text-[#4b5563] cursor-pointer transition-colors shadow-2xs"
-            >
-              <Plus size={14} /> Add service
-            </button>
-          )}
+            {/* Add Service Card in Grid */}
+            {services.length < MAX_SERVICES ? (
+              <button
+                type="button"
+                onClick={() => setShowAddService(true)}
+                className="group flex flex-col items-center justify-center min-h-[140px] p-6 rounded-2xl border border-dashed border-[#d1d5db] hover:border-[#9ca3af] bg-[#fafaf9] hover:bg-white text-center transition-all cursor-pointer shadow-2xs gap-2"
+              >
+                <PlusCircle
+                  size={24}
+                  strokeWidth={1.5}
+                  className="text-[#6b7280] group-hover:text-[#111827] transition-colors"
+                />
+                <div className="space-y-0.5">
+                  <span className="block text-sm font-semibold text-[#1f2937] group-hover:text-black transition-colors">
+                    Add Service
+                  </span>
+                  <span className="block text-xs text-[#6b7280]">
+                    Create a new offering package
+                  </span>
+                </div>
+              </button>
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[140px] p-6 rounded-2xl border border-[#e5e7eb] bg-[#fafaf9] text-center text-xs text-[#6b7280] italic">
+                Service capacity reached ({MAX_SERVICES}/{MAX_SERVICES})
+              </div>
+            )}
+          </div>
         </div>
       </Card>
 
@@ -468,6 +497,15 @@ export function ServicesSection({
           </div>
         </div>
       )}
+      <ConfirmModal
+        isOpen={Boolean(pendingRemoveId)}
+        onClose={() => !isRemoving && setPendingRemoveId(null)}
+        onConfirm={handleConfirmRemove}
+        title="Remove service?"
+        description={`"${pendingService?.name}" will be permanently removed from your studio profile.`}
+        confirmLabel="Remove Service"
+        isLoading={isRemoving}
+      />
     </>
   );
 }

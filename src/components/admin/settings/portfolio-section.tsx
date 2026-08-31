@@ -1,7 +1,6 @@
 import {
   ArrowDown,
   ArrowUp,
-  Copy,
   GripVertical,
   ImagePlus,
   Images,
@@ -12,6 +11,8 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { ConfirmModal } from "@/components/shared";
 import { MAX_PORTFOLIO_PROJECTS } from "@/constants";
 import type { PortfolioSectionProps } from "@/types";
 import { Card } from "./card";
@@ -47,6 +48,21 @@ export function PortfolioSection({
   onToast,
 }: PortfolioSectionProps) {
   const galleryPhotos = newProject.gallery || [];
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const pendingProject = portfolio.find(p => p.id === pendingRemoveId);
+
+  const handleConfirmRemove = async () => {
+    if (!pendingRemoveId) return;
+    setIsRemoving(true);
+    try {
+      await removeProject(pendingRemoveId);
+    } finally {
+      setIsRemoving(false);
+      setPendingRemoveId(null);
+    }
+  };
 
   return (
     <>
@@ -142,7 +158,7 @@ export function PortfolioSection({
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeProject(proj.id)}
+                    onClick={() => setPendingRemoveId(proj.id)}
                     className="text-[#9ca3af] hover:text-[#dc2626] p-1.5 rounded transition-colors cursor-pointer shrink-0"
                     title="Remove project"
                   >
@@ -198,7 +214,7 @@ export function PortfolioSection({
                 />
                 <div>
                   <label className="block text-[#1f2937] font-medium text-xs mb-1">
-                    Location / Client
+                    Location
                   </label>
                   <input
                     type="text"
@@ -253,26 +269,6 @@ export function PortfolioSection({
                           <Trash2 size={12} /> Remove
                         </button>
                       </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 bg-[#f8f9fa] border border-[#e5e7eb] rounded p-1.5 text-[11px]">
-                      <span className="text-[#6b7280] font-medium shrink-0 pl-1">Cover URL:</span>
-                      <span className="font-mono text-[#191c1d] truncate flex-1 select-all">
-                        {newProject.image}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (navigator.clipboard && newProject.image) {
-                            navigator.clipboard.writeText(newProject.image);
-                            onToast("Image URL copied to clipboard");
-                          }
-                        }}
-                        className="shrink-0 text-[#6b7280] hover:text-[#0058be] p-1 cursor-pointer transition-colors"
-                        title="Copy image URL"
-                      >
-                        <Copy size={13} />
-                      </button>
                     </div>
                   </div>
                 ) : (
@@ -537,7 +533,7 @@ export function PortfolioSection({
                         </button>
                         <button
                           type="button"
-                          onClick={() => removeProject(proj.id)}
+                          onClick={() => setPendingRemoveId(proj.id)}
                           className="p-1.5 rounded hover:bg-[#fee2e2] text-[#9ca3af] hover:text-[#dc2626]"
                           title="Delete from gallery"
                         >
@@ -565,6 +561,15 @@ export function PortfolioSection({
           </div>
         </div>
       )}
+      <ConfirmModal
+        isOpen={Boolean(pendingRemoveId)}
+        onClose={() => !isRemoving && setPendingRemoveId(null)}
+        onConfirm={handleConfirmRemove}
+        title="Remove project?"
+        description={`"${pendingProject?.title}" will be permanently removed from your portfolio.`}
+        confirmLabel="Remove Project"
+        isLoading={isRemoving}
+      />
     </>
   );
 }

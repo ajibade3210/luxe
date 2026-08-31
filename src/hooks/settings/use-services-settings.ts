@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MAX_SERVICE_NAME_LENGTH, MAX_SERVICES } from "@/constants";
 import type { ServiceItem } from "@/types";
 
 interface UseServicesSettingsOptions {
   notify: (message: string) => void;
+  categories?: string[];
 }
 
-export function useServicesSettings({ notify }: UseServicesSettingsOptions) {
+export function useServicesSettings({ notify, categories }: UseServicesSettingsOptions) {
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [showAddService, setShowAddService] = useState(false);
   const [newServiceInput, setNewServiceInput] = useState("");
-  const [newServiceCategory, setNewServiceCategory] = useState("Bespoke");
+  const [newServiceCategory, setNewServiceCategory] = useState(categories?.[0] ?? "");
   const [newServiceDesc, setNewServiceDesc] = useState("");
   const [newServicePriceType, setNewServicePriceType] = useState<"fixed" | "range">("fixed");
   const [newServicePrice, setNewServicePrice] = useState("");
@@ -20,20 +21,27 @@ export function useServicesSettings({ notify }: UseServicesSettingsOptions) {
   const [newServiceMaxPrice, setNewServiceMaxPrice] = useState("");
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
 
-  const addService = () => {
+  // Sync default category once categories load from the profile
+  useEffect(() => {
+    if (categories?.[0] && !newServiceCategory) {
+      setNewServiceCategory(categories[0]);
+    }
+  }, [categories, newServiceCategory]);
+
+  const addService = (): ServiceItem | null => {
     const trimmedName = newServiceInput.trim();
-    if (!trimmedName) return;
+    if (!trimmedName) return null;
     if (trimmedName.length > MAX_SERVICE_NAME_LENGTH) {
       notify(`Service name cannot exceed ${MAX_SERVICE_NAME_LENGTH} characters`);
-      return;
+      return null;
     }
     if (services.length >= MAX_SERVICES) {
       notify(`Maximum limit of ${MAX_SERVICES} services reached`);
-      return;
+      return null;
     }
     if (services.some(s => s.name.toLowerCase() === trimmedName.toLowerCase())) {
       notify(`Service "${trimmedName}" already exists`);
-      return;
+      return null;
     }
 
     let parsedPrice: number | undefined;
@@ -76,6 +84,7 @@ export function useServicesSettings({ notify }: UseServicesSettingsOptions) {
     setNewServicePriceType("fixed");
     setShowAddService(false);
     notify(`Added service "${newSvc.name}"`);
+    return newSvc;
   };
 
   const removeService = (id: string) => {

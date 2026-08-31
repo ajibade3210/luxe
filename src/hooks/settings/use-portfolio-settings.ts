@@ -72,12 +72,12 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     notify(`Removed category "${cat}"`);
   };
 
-  const handleAddProject = (e: React.FormEvent) => {
+  const handleAddProject = (e: React.FormEvent): PortfolioProject | null => {
     e.preventDefault();
-    if (!newProject.title) return;
+    if (!newProject.title) return null;
     if (portfolio.length >= MAX_PORTFOLIO_PROJECTS) {
       notify(`Maximum limit of ${MAX_PORTFOLIO_PROJECTS} portfolio projects reached`);
-      return;
+      return null;
     }
     const coverImage = newProject.image || newProject.gallery?.[0] || DEFAULT_PORTFOLIO_IMAGE;
 
@@ -99,6 +99,7 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     setShowAddProjectModal(false);
     setNewProject(DEFAULT_NEW_PROJECT);
     notify(`Added project "${proj.title}" with ${galleryImages.length} images to gallery`);
+    return proj;
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

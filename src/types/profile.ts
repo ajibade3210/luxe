@@ -450,3 +450,13 @@ export interface ProfileIdentityCardProps {
 export interface ProfileSecurityCardProps {
   email: string;
 }
+
+export interface ConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  isLoading?: boolean;
+}

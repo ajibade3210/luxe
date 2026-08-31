@@ -59,8 +59,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
         {
           id: `svc-${Date.now()}`,
           customerId: lead.id,
-          name: lead.service ? `${lead.service} Production` : "Bespoke Service",
-          service: lead.service || "Bespoke Styling",
+          name: lead.service ? `${lead.service} Production` : lead.service || "",
+          service: lead.service || "",
           amount: lead.budget || APP_CONFIG.defaultLeadBudget,
           status: "pending",
           createdAt: new Date().toISOString(),

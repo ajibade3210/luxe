@@ -9,7 +9,7 @@ export function normalizeServices(raw: (string | ServiceItem)[] | undefined): Se
       return {
         id: `svc-legacy-${i}`,
         name: s,
-        category: "Bespoke",
+        category: "",
         description: "",
       } satisfies ServiceItem;
     }

@@ -47,7 +47,7 @@ export function StudioServicesSection({
                     }}
                     className="text-[10px] font-semibold uppercase tracking-[0.14em] px-3 py-1 rounded-full border inline-block shadow-2xs"
                   >
-                    {service.category || "Bespoke"}
+                    {service.category || ""}
                   </span>
 
                   {formattedPrice && (

@@ -241,7 +241,7 @@ export function ElanEventsPage({
     setQuoteSubmitting(true);
     try {
       const selectedService =
-        quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "Bespoke Service";
+        quoteForm.service || (profile.services as ServiceItem[])?.[0]?.name || "";
 
       await submitConsultationInquiry({
         name: quoteForm.name,
@@ -279,7 +279,7 @@ export function ElanEventsPage({
         name: "",
         email: "",
         phone: "",
-        service: (profile.services as ServiceItem[])?.[0]?.name || "Bespoke Service",
+        service: (profile.services as ServiceItem[])?.[0]?.name || "",
         eventDate: "",
         budget: "50000",
         message: "",

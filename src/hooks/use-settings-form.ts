@@ -1,9 +1,10 @@
 "use client";
 
+import type React from "react";
 import { useEffect, useState } from "react";
 import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
 import { logger } from "@/lib/logger";
-import type { ServiceItem, UseSettingsFormOptions } from "@/types";
+import type { PortfolioProject, ServiceItem, UseSettingsFormOptions } from "@/types";
 import {
   isValidPhone,
   isValidUrl,
@@ -19,8 +20,8 @@ import { useServicesSettings } from "./settings/use-services-settings";
 
 export function useSettingsForm({ notify }: UseSettingsFormOptions) {
   const branding = useBrandingSettings();
-  const services = useServicesSettings({ notify });
   const portfolio = usePortfolioSettings({ notify });
+  const services = useServicesSettings({ notify, categories: portfolio.categories });
   const appearance = useAppearanceSettings();
   const contact = useContactSettings({ notify });
 
@@ -173,7 +174,41 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     }
   }, []);
 
-  const handleSave = async (options?: { silent?: boolean }): Promise<boolean> => {
+  // Save on the fly: add service then immediately persist to API
+  const handleAddServiceAndSave = async () => {
+    const newSvc = services.addService();
+    if (!newSvc) return; // validation failed in addService
+    // Pass the new service directly — React state hasn't flushed yet
+    await handleSave({ silent: true, overrideServices: [...services.services, newSvc] });
+  };
+
+  // Save on the fly: add project then immediately persist to API
+  const handleAddProjectAndSave = async (e: React.FormEvent) => {
+    const newProj = portfolio.handleAddProject(e);
+    if (!newProj) return; // validation failed in handleAddProject
+    // Pass the new project directly — React state hasn't flushed yet
+    await handleSave({ silent: true, overridePortfolio: [newProj, ...portfolio.portfolio] });
+  };
+
+  // Remove service then immediately persist to API
+  const removeServiceAndSave = async (id: string) => {
+    services.removeService(id);
+    const remaining = services.services.filter(s => s.id !== id);
+    await handleSave({ silent: true, overrideServices: remaining });
+  };
+
+  // Remove project then immediately persist to API
+  const removeProjectAndSave = async (id: string) => {
+    portfolio.removeProject(id);
+    const remaining = portfolio.portfolio.filter(p => p.id !== id);
+    await handleSave({ silent: true, overridePortfolio: remaining });
+  };
+
+  const handleSave = async (options?: {
+    silent?: boolean;
+    overrideServices?: ServiceItem[];
+    overridePortfolio?: PortfolioProject[];
+  }): Promise<boolean> => {
     if (branding.website.trim() && !isValidUrl(branding.website)) {
       notify("Invalid website URL");
       return false;
@@ -231,7 +266,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
       contact.setChannels(updatedChannels);
 
-      const cleanedServices: ServiceItem[] = (services.services || [])
+      const cleanedServices: ServiceItem[] = (options?.overrideServices ?? services.services ?? [])
         .map(s => ({
           id: s.id || `svc-${Date.now()}`,
           name: (s.name || "").trim(),
@@ -247,6 +282,29 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         }))
         .filter(s => s.name.length > 0);
 
+      const cleanedPortfolio: PortfolioProject[] = (
+        options?.overridePortfolio ??
+        portfolio.portfolio ??
+        []
+      )
+        .map((p, idx) => ({
+          id: p.id || `p-${Date.now()}-${idx}`,
+          title: (p.title || "").trim(),
+          category: (p.category || "").trim() || "General",
+          location: (p.location || "").trim(),
+          description: (p.description || "").trim(),
+          image: p.image || "",
+          order: typeof p.order === "number" ? p.order : idx,
+          isCover: Boolean(p.isCover),
+          gallery: Array.isArray(p.gallery) ? p.gallery : [],
+          stats: p.stats || "",
+          client: p.client || "",
+          year: p.year || "",
+        }))
+        .filter(p => p.title.length > 0);
+
+      const cleanWhatsNumber = contact.whatsAppNumber?.trim() || "";
+
       const updated = await updateBusinessProfile({
         businessName: branding.name,
         slug: branding.slug,
@@ -258,7 +316,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         description: branding.about,
         logoUrl: portfolio.logoUrl,
         services: cleanedServices,
-        portfolio: portfolio.portfolio,
+        portfolio: cleanedPortfolio,
         portfolioCategories: portfolio.categories,
         socialChannels: updatedChannels,
         googleReviewsLink: contact.googleReviewsLink,
@@ -266,7 +324,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         timeFrom: contact.timeFrom,
         timeTo: contact.timeTo,
         byAppointmentOnly: contact.byAppointmentOnly,
-        whatsAppNumber: contact.whatsAppNumber,
+        whatsAppNumber: cleanWhatsNumber ? cleanWhatsNumber : undefined,
         emailAddress: contact.emailAddress,
         physicalAddress: contact.physicalAddress,
         showServices: contact.showServices,
@@ -375,8 +433,8 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setNewServiceMaxPrice: services.setNewServiceMaxPrice,
     editingServiceId: services.editingServiceId,
     setEditingServiceId: services.setEditingServiceId,
-    addService: services.addService,
-    removeService: services.removeService,
+    addService: handleAddServiceAndSave,
+    removeService: removeServiceAndSave,
     updateService: services.updateService,
 
     // Portfolio
@@ -397,8 +455,8 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setShowManageGalleryModal: portfolio.setShowManageGalleryModal,
     draggedProjectIndex: portfolio.draggedProjectIndex,
     dragOverProjectIndex: portfolio.dragOverProjectIndex,
-    removeProject: portfolio.removeProject,
-    handleAddProject: portfolio.handleAddProject,
+    removeProject: removeProjectAndSave,
+    handleAddProject: handleAddProjectAndSave,
     handleLogoUpload: portfolio.handleLogoUpload,
     handleProjectImageUpload: portfolio.handleProjectImageUpload,
     handleGalleryImagesUpload: portfolio.handleGalleryImagesUpload,
