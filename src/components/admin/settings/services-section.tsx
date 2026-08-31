@@ -2,6 +2,7 @@ import { Edit3, Plus, Trash2 } from "lucide-react";
 import { MAX_SERVICE_NAME_LENGTH, MAX_SERVICES } from "@/constants";
 import type { ServicesSectionProps } from "@/types";
 import { Card } from "./card";
+import { CategoryDropdown } from "./category-dropdown";
 import { Toggle } from "./toggle";
 
 export function ServicesSection({
@@ -21,6 +22,9 @@ export function ServicesSection({
   newServiceDesc,
   setNewServiceDesc,
   addService,
+  categories,
+  addCategory,
+  removeCategory,
 }: ServicesSectionProps) {
   return (
     <Card
@@ -71,26 +75,18 @@ export function ServicesSection({
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-semibold text-[#374151] uppercase tracking-wide block">
-                        Category
-                      </label>
-                      <input
-                        value={service.category}
-                        onChange={e =>
-                          updateService(service.id, {
-                            category: e.target.value,
-                          })
-                        }
-                        list="category-options"
-                        className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be]"
-                      />
-                      <datalist id="category-options">
-                        {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
-                          <option key={c} value={c} />
-                        ))}
-                      </datalist>
-                    </div>
+                    <CategoryDropdown
+                      value={service.category}
+                      onChange={cat =>
+                        updateService(service.id, {
+                          category: cat,
+                        })
+                      }
+                      categories={categories}
+                      onAddCategory={addCategory}
+                      onRemoveCategory={removeCategory}
+                      label="Category"
+                    />
                   </div>
 
                   <div className="space-y-1">
@@ -192,24 +188,14 @@ export function ServicesSection({
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-[#374151] uppercase tracking-wide block">
-                  Category
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Bespoke"
-                  value={newServiceCategory}
-                  onChange={e => setNewServiceCategory(e.target.value)}
-                  list="new-category-options"
-                  className="w-full rounded-lg border border-[#d1d5db] bg-white px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be]"
-                />
-                <datalist id="new-category-options">
-                  {["Bespoke", "Corporate", "Creative", "Concierge"].map(c => (
-                    <option key={c} value={c} />
-                  ))}
-                </datalist>
-              </div>
+              <CategoryDropdown
+                value={newServiceCategory}
+                onChange={cat => setNewServiceCategory(cat)}
+                categories={categories}
+                onAddCategory={addCategory}
+                onRemoveCategory={removeCategory}
+                label="Category"
+              />
             </div>
 
             <div className="space-y-1">

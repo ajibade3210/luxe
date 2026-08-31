@@ -1231,3 +1231,55 @@ blockquote {
     grid-column: auto;
   }
 }
+
+/* Social Channels Validation States */
+.social-item-valid {
+  border-color: #86efac;
+  background-color: #ffffff;
+}
+
+.social-item-valid:hover {
+  border-color: #4ade80;
+}
+
+.social-box-valid {
+  border-color: #22c55e;
+  background-color: #ffffff;
+}
+
+.social-prefix-valid {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.social-item-invalid {
+  border-color: #fca5a5;
+  background-color: #ffffff;
+}
+
+.social-box-invalid {
+  border-color: #ef4444;
+  background-color: #ffffff;
+}
+
+.social-prefix-invalid {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.social-error-text {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+div input.social-input-field,
+div input.social-input-field:focus,
+div input.social-input-field:focus-visible {
+  outline: none;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}

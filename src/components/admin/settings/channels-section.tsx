@@ -1,8 +1,9 @@
 import { RefreshCw, Star } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getSocialChannelStyle } from "@/components/studio/atelier/social-badge";
 import { SOCIAL_PREFIX_MAP } from "@/constants";
 import type { ChannelsSectionProps } from "@/types";
-import { isValidPhone, sanitizeHandle } from "@/utils";
+import { isValidPhone, isValidUrl, sanitizeHandle } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
@@ -18,6 +19,20 @@ export function ChannelsSection({
   toggleChannel,
   onToast,
 }: ChannelsSectionProps) {
+  const [debouncedHandles, setDebouncedHandles] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const current: Record<string, string> = {};
+      for (const c of channels) {
+        current[c.id] = c.handle || "";
+      }
+      setDebouncedHandles(current);
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [channels]);
+
   return (
     <>
       {/* Card 04: Review Management */}
@@ -135,59 +150,115 @@ export function ChannelsSection({
             const style = getSocialChannelStyle(channel.type);
             const prefix = SOCIAL_PREFIX_MAP[channel.type] || `${channel.type}.com/`;
             const displayHandle = sanitizeHandle(channel.handle, prefix);
-            const isWhatsApp = channel.type === "whatsapp";
-            const isWhatsAppInvalid =
-              isWhatsApp && Boolean(displayHandle.trim()) && !isValidPhone(displayHandle);
+            const typeLower = channel.type?.toLowerCase();
+            const isWhatsApp = typeLower === "whatsapp";
+            const isWebsite = typeLower === "website";
+            const trimmedHandle = displayHandle.trim();
+            const hasContent = Boolean(trimmedHandle);
+
+            // Check if user is actively typing in this input
+            const debouncedRaw = debouncedHandles[channel.id] ?? channel.handle ?? "";
+            const debouncedDisplayHandle = sanitizeHandle(debouncedRaw, prefix).trim();
+            const isTyping = displayHandle.trim() !== debouncedDisplayHandle;
+
+            let validationError = "";
+            let isValid = false;
+
+            if (hasContent) {
+              if (isWhatsApp) {
+                if (isValidPhone(trimmedHandle)) {
+                  isValid = true;
+                } else if (!isTyping && debouncedDisplayHandle) {
+                  // Only display error after the user has stopped typing
+                  validationError = "Invalid phone number (e.g. 0803 123 4567)";
+                }
+              } else if (isWebsite) {
+                if (isValidUrl(trimmedHandle)) {
+                  isValid = true;
+                } else if (!isTyping && debouncedDisplayHandle) {
+                  validationError = "Invalid website URL";
+                }
+              } else {
+                // For all other social channels, valid when 2 or more characters are entered
+                if (trimmedHandle.length >= 2) {
+                  isValid = true;
+                }
+              }
+            }
 
             return (
               <div
-                className={`p-2.5 sm:p-3 rounded-xl border bg-white flex items-center justify-between gap-3 shadow-2xs transition-all ${
-                  isWhatsAppInvalid ? "border-red-300" : "border-[#e5e7eb] hover:border-[#d1d5db]"
+                className={`p-1.5 sm:p-2 rounded-xl border bg-white flex flex-col justify-center gap-1 shadow-2xs transition-all ${
+                  validationError
+                    ? "social-item-invalid"
+                    : isValid
+                      ? "social-item-valid"
+                      : "border-[#e5e7eb] hover:border-[#d1d5db]"
                 }`}
                 key={channel.id}
               >
-                <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                  <div
-                    style={{
-                      backgroundColor: style.bg,
-                      borderColor: style.border,
-                      color: style.color,
-                    }}
-                    className="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 shadow-2xs"
-                  >
-                    <span className="scale-75 flex items-center justify-center">{style.icon}</span>
-                  </div>
-                  <div
-                    className={`flex items-center gap-1 flex-1 min-w-0 rounded-lg px-2.5 py-1.5 transition-colors shadow-2xs border ${
-                      isWhatsAppInvalid
-                        ? "border-red-300 bg-red-50/20 focus-within:border-red-500 focus-within:bg-white"
-                        : "bg-[#f9fafb] border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
-                    }`}
-                  >
-                    <span
-                      className={`text-xs font-medium select-none shrink-0 font-mono ${
-                        isWhatsAppInvalid ? "text-red-400" : "text-[#9ca3af]"
+                <div className="flex items-center justify-between gap-2 w-full">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div
+                      style={{
+                        backgroundColor: style.bg,
+                        borderColor: style.border,
+                        color: style.color,
+                      }}
+                      className="w-6 h-6 rounded-md border flex items-center justify-center shrink-0 shadow-2xs"
+                    >
+                      <span className="scale-[0.65] flex items-center justify-center">
+                        {style.icon}
+                      </span>
+                    </div>
+                    <div
+                      className={`flex items-center gap-1 flex-1 min-w-0 rounded-md px-2 py-0.5 h-7 transition-colors shadow-2xs border ${
+                        validationError
+                          ? "social-box-invalid"
+                          : isValid
+                            ? "social-box-valid"
+                            : "bg-[#f9fafb] border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
                       }`}
                     >
-                      {prefix}
-                    </span>
-                    <input
-                      type={isWhatsApp ? "tel" : "text"}
-                      value={displayHandle}
-                      onChange={e =>
-                        updateChannelHandle(channel.id, sanitizeHandle(e.target.value, prefix))
-                      }
-                      placeholder={isWhatsApp ? "0803 123 4567" : "handle"}
-                      title={
-                        isWhatsAppInvalid
-                          ? "Please enter a valid Nigerian phone number (e.g. 0803 123 4567 or +234 803 123 4567)"
-                          : undefined
-                      }
-                      className="w-full !text-xs text-[#191c1d] !border-0 !p-0 !outline-none placeholder:text-[#9ca3af] !bg-transparent font-medium !min-h-0 !h-auto !rounded-none"
-                    />
+                      <span
+                        className={`text-[10px] select-none shrink-0 font-mono transition-colors leading-none ${
+                          validationError
+                            ? "social-prefix-invalid"
+                            : isValid
+                              ? "social-prefix-valid"
+                              : "text-[#9ca3af] font-medium"
+                        }`}
+                      >
+                        {prefix}
+                      </span>
+                      <input
+                        type={isWhatsApp ? "tel" : isWebsite ? "url" : "text"}
+                        value={displayHandle}
+                        onChange={e =>
+                          updateChannelHandle(channel.id, sanitizeHandle(e.target.value, prefix))
+                        }
+                        placeholder={
+                          isWhatsApp ? "0803 123 4567" : isWebsite ? "sitename.com" : "handle"
+                        }
+                        style={{
+                          outline: "none",
+                          border: "none",
+                          boxShadow: "none",
+                          background: "transparent",
+                        }}
+                        className="social-input-field w-full text-[10px] text-[#191c1d] border-none p-0 outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 placeholder:text-[#9ca3af] bg-transparent font-medium min-h-0 h-auto rounded-none leading-none"
+                      />
+                    </div>
                   </div>
+                  <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
                 </div>
-                <Toggle on={channel.connected} onClick={() => toggleChannel(channel.id)} />
+
+                {validationError && (
+                  <div className="social-error-text pl-8 flex items-center gap-1.5 animate-in fade-in duration-150">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
+                    <span>{validationError}</span>
+                  </div>
+                )}
               </div>
             );
           })}

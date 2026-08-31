@@ -187,6 +187,9 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           newServiceDesc={newServiceDesc}
           setNewServiceDesc={setNewServiceDesc}
           addService={addService}
+          categories={categories}
+          addCategory={addPortfolioCategory}
+          removeCategory={removePortfolioCategory}
         />
 
         <PortfolioSection

@@ -175,17 +175,22 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
   const handleSave = async (options?: { silent?: boolean }): Promise<boolean> => {
     if (branding.website.trim() && !isValidUrl(branding.website)) {
-      notify("Please enter a valid website URL (e.g. sitename.com)");
+      notify("Invalid website URL");
       return false;
     }
 
     // Validate WhatsApp number if configured
-    const waChannel = contact.channels.find(c => c.type === "whatsapp");
+    const waChannel = contact.channels.find(c => c.type?.toLowerCase() === "whatsapp");
     const waHandle = waChannel?.handle?.trim();
     if (waHandle && !isValidPhone(waHandle)) {
-      notify(
-        "Please enter a valid Nigerian phone number for WhatsApp (e.g. 0803 123 4567 or +234 803 123 4567)"
-      );
+      notify("Invalid WhatsApp phone number");
+      return false;
+    }
+
+    const webChannel = contact.channels.find(c => c.type?.toLowerCase() === "website");
+    const webHandle = webChannel?.handle?.trim();
+    if (webHandle && !isValidUrl(webHandle)) {
+      notify("Invalid website URL");
       return false;
     }
 
@@ -197,7 +202,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
       // Ensure socialChannels has the latest website channel
       let updatedChannels = contact.channels.map(c => {
-        if (c.type === "website") {
+        if (c.type?.toLowerCase() === "website") {
           const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
           return {
             ...c,
@@ -209,7 +214,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         return c;
       });
 
-      if (normalizedWebsite && !updatedChannels.some(c => c.type === "website")) {
+      if (normalizedWebsite && !updatedChannels.some(c => c.type?.toLowerCase() === "website")) {
         const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
         updatedChannels = [
           ...updatedChannels,
@@ -263,9 +268,16 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         notify("Changes saved successfully");
       }
       return true;
-    } catch (err) {
+    } catch (err: unknown) {
       logger.error("Failed to save studio changes", err);
-      notify("Failed to save changes");
+      const errMsg =
+        err &&
+        typeof err === "object" &&
+        "message" in err &&
+        typeof (err as { message: unknown }).message === "string"
+          ? (err as { message: string }).message
+          : "Failed to save changes";
+      notify(errMsg);
       return false;
     } finally {
       setSaving(false);

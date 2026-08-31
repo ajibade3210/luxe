@@ -171,6 +171,20 @@ export interface ServicesSectionProps {
   newServiceDesc: string;
   setNewServiceDesc: (v: string) => void;
   addService: () => void;
+  categories: string[];
+  addCategory: (cat: string) => void;
+  removeCategory: (cat: string) => void;
+}
+
+export interface CategoryDropdownProps {
+  value?: string;
+  onChange: (category: string) => void;
+  categories: string[];
+  onAddCategory: (category: string) => void;
+  onRemoveCategory: (category: string) => void;
+  label?: string;
+  placeholder?: string;
+  maxCategories?: number;
 }
 
 export interface PortfolioSectionProps {
