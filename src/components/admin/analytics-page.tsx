@@ -16,18 +16,28 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
   const [data, setData] = useState<AnalyticsOverview | null>(null);
   const [slug, setSlug] = useState(getCurrentSession()?.studioSlug || APP_CONFIG.defaultSlug);
+  const [studioName, setStudioName] = useState(getCurrentSession()?.studioName || "Élan Atelier");
 
   useEffect(() => {
-    getBusinessProfile().then(profile => {
-      if (profile.slug) setSlug(profile.slug);
-    });
+    getBusinessProfile()
+      .then(profile => {
+        if (profile.slug) setSlug(profile.slug);
+        if (profile.businessName) setStudioName(profile.businessName);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
-    getAnalytics(timeframe).then(res => {
-      setData(res);
-    });
+    getAnalytics(timeframe)
+      .then(res => {
+        setData(res);
+      })
+      .catch(() => {});
   }, [timeframe]);
+
+  const displayStudioName = studioName.trim().toLowerCase().endsWith("studio")
+    ? studioName.trim()
+    : `${studioName.trim()} Studio`;
 
   if (!data) {
     return (
@@ -45,7 +55,7 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#191c1d] tracking-tight">
-            Welcome to Élan Atelier
+            Welcome to {displayStudioName}
           </h1>
         </div>
 

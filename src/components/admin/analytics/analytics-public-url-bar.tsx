@@ -31,11 +31,11 @@ export function AnalyticsPublicUrlBar({ slug, onNotify }: AnalyticsPublicUrlBarP
         </div>
       </div>
 
-      <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+      <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
         <button
           type="button"
           onClick={copyUrl}
-          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-[#faf8f5] hover:bg-[#f2ece3] text-[#191c1d] border border-[#ded7cb] px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-[#faf8f5] hover:bg-[#f2ece3] text-[#191c1d] border border-[#ded7cb] px-4 h-9 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
         >
           {copied ? (
             <>
@@ -53,7 +53,7 @@ export function AnalyticsPublicUrlBar({ slug, onNotify }: AnalyticsPublicUrlBarP
           href={`/${slug}?from=analytics`}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center justify-center gap-1.5 bg-[#191c1d] hover:bg-black !text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-[#191c1d] hover:bg-black !text-white px-4 h-9 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
         >
           <span>View Live</span>
           <ExternalLink size={12} className="text-white" />

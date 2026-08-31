@@ -130,7 +130,7 @@ export const MAX_FOOTER_TITLE_LENGTH = 100;
 export const MAX_FOOTER_DESC_LENGTH = 300;
 
 /** Default fallback business type across the app. */
-export const DEFAULT_BUSINESS_TYPE = "service" as const;
+export const DEFAULT_BUSINESS_TYPE = "sales" as const;
 
 /**
  * Maps each BusinessType to its public-facing CTA button label.

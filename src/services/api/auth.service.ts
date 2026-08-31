@@ -107,6 +107,36 @@ export async function getCurrentUser(): Promise<User> {
   };
 }
 
+export async function updateUserProfile(data: {
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  avatarUrl?: string;
+}): Promise<User> {
+  const me = await apiClient.patch<MeResponseDto>("/auth/me", data);
+  const fullName = [me.user.firstName, me.user.lastName].filter(Boolean).join(" ") || me.user.email;
+
+  createSession({
+    id: me.user.id,
+    name: fullName,
+    email: me.user.email,
+    role: me.user.role,
+    studioName: me.business?.name ?? "",
+    studioSlug: me.business?.slug ?? "",
+    avatarUrl: me.user.avatarUrl ?? undefined,
+  });
+
+  return {
+    id: me.user.id,
+    email: me.user.email,
+    name: fullName,
+    phone: me.user.phone ?? undefined,
+    avatar: me.user.avatarUrl ?? undefined,
+    role: me.user.role === "OWNER" || me.user.role === "ADMIN" ? "admin" : "user",
+  };
+}
+
 export async function signIn(email: string, password: string): Promise<UserSession> {
   // Tokens are delivered as HttpOnly cookies by the API — no token in the response body
   const authData = await apiClient.post<AuthResponseDto>("/auth/login", { email, password });

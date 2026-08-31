@@ -127,7 +127,7 @@ export interface IdentitySectionProps {
   website: string;
   setWebsite: (v: string) => void;
   email: string;
-  setEmail: (v: string) => void;
+  setEmail?: (v: string) => void;
   currency: CurrencyCode;
   setCurrency: (v: CurrencyCode) => void;
   businessType: BusinessType;
@@ -412,6 +412,7 @@ export interface ProfileIdentityCardProps {
   email: string;
   phone: string;
   avatar: string;
+  studioName?: string;
   onSave: (updates: { name: string; email: string; phone: string }) => Promise<void>;
 }
 

@@ -9,5 +9,6 @@ export * from "./feedback";
 export * from "./invoice";
 export * from "./landing";
 export * from "./lead";
+export * from "./logger";
 export * from "./profile";
 export * from "./valuation";

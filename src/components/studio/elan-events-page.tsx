@@ -21,14 +21,8 @@ import {
   submitConsultationInquiry,
   submitReview,
 } from "@/lib/api";
-import type {
-  BusinessProfile,
-  ButtonRadiusType,
-  ElanEventsPageProps,
-  PortfolioProject,
-  ServiceItem,
-} from "@/types";
-import { isDarkColor } from "@/utils/helpers";
+import type { BusinessProfile, ElanEventsPageProps, PortfolioProject, ServiceItem } from "@/types";
+import { getButtonRadiusClass, isDarkColor } from "@/utils/helpers";
 import { ConsultationModal } from "./atelier/consultation-modal";
 import { StudioPortfolioSection } from "./atelier/portfolio-section";
 import { ProjectModal } from "./atelier/project-modal";
@@ -201,20 +195,6 @@ export function ElanEventsPage({
     }
   }, [profile?.services, quoteForm.service]);
 
-  // Styling helpers
-  const getRadiusClass = (radius?: ButtonRadiusType) => {
-    switch (radius) {
-      case "Square":
-        return "rounded-none";
-      case "Rounded":
-        return "rounded-2xl";
-      case "Pill":
-        return "rounded-full";
-      default:
-        return "rounded-lg";
-    }
-  };
-
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -227,7 +207,7 @@ export function ElanEventsPage({
   const pageBgColor = profile?.colors?.pageBackground || "#faf8f5";
   const cardBgColor = profile?.colors?.cardBackground || "#faf6f0";
   const isCardDark = isDarkColor(cardBgColor);
-  const radiusClass = getRadiusClass(profile?.buttonRadius);
+  const radiusClass = getButtonRadiusClass(profile?.buttonRadius);
 
   // Check if WhatsApp is enabled in connected channels and has a valid number
   const whatsAppChannel = profile?.socialChannels?.find(c => c.type === "whatsapp");

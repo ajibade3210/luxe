@@ -1,7 +1,7 @@
-import { Copy, Loader2, Upload } from "lucide-react";
+import { ChevronDown, Loader2, Lock, Upload } from "lucide-react";
 import { BUSINESS_TYPE_CTA_MAP, BUSINESS_TYPE_LABELS } from "@/constants";
 import type { BusinessType, CurrencyCode, IdentitySectionProps } from "@/types";
-import { slugify } from "@/utils";
+import { isValidUrl, slugify } from "@/utils";
 import { Card } from "./card";
 
 export function IdentitySection({
@@ -17,7 +17,7 @@ export function IdentitySection({
   website,
   setWebsite,
   email,
-  setEmail,
+  setEmail: _setEmail,
   currency = "NGN",
   setCurrency,
   businessType,
@@ -25,10 +25,10 @@ export function IdentitySection({
   about,
   setAbout,
   logoUrl,
-  setLogoUrl,
+  setLogoUrl: _setLogoUrl,
   isUploadingLogo,
   handleLogoUpload,
-  onToast,
+  onToast: _onToast,
 }: IdentitySectionProps) {
   return (
     <Card
@@ -37,21 +37,46 @@ export function IdentitySection({
     >
       <div className="space-y-7">
         {/* Logo Upload Section */}
-        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-xl p-5 sm:p-6 shadow-2xs space-y-5">
-          <div className="border-b border-[#e5e7eb] pb-3.5 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
-                Business Brand Logo
-              </span>
-              <span className="text-xs text-[#6b7280] mt-0.5 block leading-relaxed">
-                Your official studio crest displayed on onboarding cards, concierge header, and
-                footer
-              </span>
+        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 sm:p-6 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt="Business Logo Preview"
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                ) : (
+                  <span className="font-sans font-bold text-2xl text-[#191c1d]">
+                    {name ? name.charAt(0).toUpperCase() : "S"}
+                  </span>
+                )}
+                {isUploadingLogo && (
+                  <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
+                    <Loader2 size={20} className="animate-spin text-[#0058be]" />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
+                  Business Brand Logo
+                </span>
+                <p className="text-xs text-[#6b7280] mt-0.5 max-w-md leading-relaxed">
+                  Your official studio crest displayed on onboarding cards, concierge header, and
+                  footer.
+                </p>
+                <span className="text-[10px] text-[#9ca3af] font-medium tracking-wider uppercase mt-1 block">
+                  PNG · SVG · JPG · WEBP
+                </span>
+              </div>
             </div>
-            <label className="cursor-pointer inline-flex items-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white px-4 py-2.5 rounded-lg text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
+
+            <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all shadow-xs shrink-0 select-none">
               <Upload size={14} className="text-white" />
               <span className="text-white">
-                {isUploadingLogo ? "Uploading..." : "Replace Logo"}
+                {isUploadingLogo ? "Uploading..." : logoUrl ? "Replace Logo" : "Upload Logo"}
               </span>
               <input
                 type="file"
@@ -61,72 +86,6 @@ export function IdentitySection({
                 disabled={isUploadingLogo}
               />
             </label>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5 sm:gap-6 items-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="Business Logo Preview"
-                    className="w-full h-full object-contain rounded-lg"
-                  />
-                ) : (
-                  <span className="font-sans font-bold text-2xl text-[#191c1d]">
-                    {name ? name.charAt(0) : "É"}
-                  </span>
-                )}
-                {isUploadingLogo && (
-                  <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                    <Loader2 size={20} className="animate-spin text-[#0058be]" />
-                  </div>
-                )}
-              </div>
-              <span className="text-[10px] text-[#6b7280] font-medium tracking-wider uppercase">
-                PNG · SVG · JPG
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <h4 className="text-xs font-bold text-[#111827]">Studio Brand Crest</h4>
-                <p className="text-xs text-[#6b7280] mt-0.5 leading-relaxed">
-                  Upload a new logo to automatically generate a CDN URL and update all live
-                  touchpoints.
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                <span className="text-xs font-semibold text-[#4b5563] block">
-                  Generated CDN Asset URL
-                </span>
-                <div className="relative flex items-center">
-                  <input
-                    type="text"
-                    value={logoUrl}
-                    onChange={e => setLogoUrl(e.target.value)}
-                    placeholder="https://cdn.accessa.ng/..."
-                    className="w-full text-xs font-mono bg-white border border-[#d1d5db] rounded-lg pl-3.5 pr-28 py-2 text-[#191c1d] focus:border-[#0058be] focus:outline-none shadow-2xs"
-                  />
-                  {logoUrl && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (navigator.clipboard) {
-                          navigator.clipboard.writeText(logoUrl);
-                          onToast("CDN Logo URL copied to clipboard!");
-                        }
-                      }}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-xs text-[#191c1d] hover:bg-[#e5e7eb] bg-[#f3f4f6] px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer border border-[#e5e7eb]"
-                    >
-                      <Copy size={12} />
-                      <span>Copy URL</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -196,26 +155,52 @@ export function IdentitySection({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Email
-            </label>
-            <input
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
-            />
+          <div className="space-y-2 opacity-60 cursor-not-allowed select-none">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-[#6b7280] tracking-wide block cursor-not-allowed">
+                Email
+              </label>
+              <span className="inline-flex items-center gap-1 text-[11px] text-[#6b7280] font-medium">
+                <Lock size={11} className="text-[#6b7280]" />
+                <span>Primary account email</span>
+              </span>
+            </div>
+            <div className="relative flex items-center">
+              <input
+                type="email"
+                value={email}
+                disabled
+                readOnly
+                className="w-full rounded-lg border border-[#d1d5db] bg-[#e5e7eb]/75 px-3.5 py-2.5 pr-10 text-xs sm:text-sm !text-[#6b7280] cursor-not-allowed select-none focus:outline-none shadow-none font-normal"
+              />
+              <div className="pointer-events-none absolute right-3 text-[#6b7280]">
+                <Lock size={14} />
+              </div>
+            </div>
           </div>
 
           {/* Row 4: Website & Currency */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Website
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+                Website
+              </label>
+              {website && !isValidUrl(website) && (
+                <span className="text-[11px] text-amber-600 font-medium">
+                  Enter a standard URL (e.g. sitename.com)
+                </span>
+              )}
+            </div>
             <input
+              type="text"
               value={website}
               onChange={e => setWebsite(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+              placeholder="e.g. sitename.com or https://sitename.com"
+              className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs transition-colors ${
+                website && !isValidUrl(website)
+                  ? "border-amber-400 focus:border-amber-500 bg-amber-50/20"
+                  : "border-[#d1d5db] focus:border-[#0058be]"
+              }`}
             />
           </div>
 
@@ -223,16 +208,21 @@ export function IdentitySection({
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               Currency
             </label>
-            <select
-              value={currency}
-              onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
-              className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none font-medium shadow-2xs"
-            >
-              <option value="NGN">₦ NGN</option>
-              <option value="USD">$ USD</option>
-              <option value="GBP">£ GBP</option>
-              <option value="EUR">€ EUR</option>
-            </select>
+            <div className="relative">
+              <select
+                value={currency}
+                onChange={e => setCurrency?.(e.target.value as CurrencyCode)}
+                className="w-full bg-white border border-[#d1d5db] rounded-lg px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none font-medium shadow-2xs appearance-none cursor-pointer"
+              >
+                <option value="NGN">₦ NGN</option>
+                <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
+                <option value="EUR">€ EUR</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-[#6b7280]">
+                <ChevronDown size={15} />
+              </div>
+            </div>
           </div>
 
           {/* Row 5: Business Type Button Group */}

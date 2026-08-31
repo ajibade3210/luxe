@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 import type { ProfileIdentityCardProps } from "@/types";
 
@@ -9,11 +9,11 @@ export function ProfileIdentityCard({
   email,
   phone,
   avatar,
+  studioName,
   onSave,
 }: ProfileIdentityCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(name);
-  const [editEmail, setEditEmail] = useState(email);
   const [editPhone, setEditPhone] = useState(phone);
   const [saving, setSaving] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -21,7 +21,6 @@ export function ProfileIdentityCard({
   // Sync edits if parent state changes
   const handleStartEdit = () => {
     setEditName(name);
-    setEditEmail(email);
     setEditPhone(phone);
     setIsEditing(true);
   };
@@ -29,7 +28,7 @@ export function ProfileIdentityCard({
   const handleSave = async () => {
     setSaving(true);
     try {
-      await onSave({ name: editName, email: editEmail, phone: editPhone });
+      await onSave({ name: editName, email, phone: editPhone });
       setIsEditing(false);
     } finally {
       setSaving(false);
@@ -69,7 +68,7 @@ export function ProfileIdentityCard({
           <div>
             <b className="text-base text-[#191c1d] font-bold block">{name || "Studio Director"}</b>
             <span className="text-xs text-[#5c5f60] mt-0.5 block">
-              Studio Director · Élan Events
+              {studioName || "Élan Events"}
             </span>
           </div>
         </div>
@@ -99,7 +98,7 @@ export function ProfileIdentityCard({
                   value={editName}
                   onChange={event => setEditName(event.target.value)}
                   placeholder="Elena Vance"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -108,13 +107,13 @@ export function ProfileIdentityCard({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
                 Email
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#f3efe8] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs opacity-80 cursor-not-allowed">
                 <input
                   type="email"
-                  value={editEmail}
-                  onChange={event => setEditEmail(event.target.value)}
-                  placeholder="elena@atelierforma.design"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  value={email}
+                  disabled
+                  readOnly
+                  className="w-full text-xs text-[#5c5f60] bg-transparent cursor-not-allowed outline-none border-none select-none focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -129,7 +128,7 @@ export function ProfileIdentityCard({
                   value={editPhone}
                   onChange={event => setEditPhone(event.target.value)}
                   placeholder="+234 800 FORMA VIP"
-                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2]"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
@@ -143,15 +142,13 @@ export function ProfileIdentityCard({
               disabled={saving}
               onClick={handleSave}
             >
-              <span>{saving ? "Saving…" : "Save profile changes"}</span>
-              <ArrowRight size={14} />
+              <span>{saving ? "Saving…" : "Save"}</span>
             </button>
             <button
               type="button"
               className="px-4 py-3 rounded-xl text-xs font-semibold text-[#665e57] hover:text-[#191c1d] hover:bg-[#faf7f2] transition-all cursor-pointer flex items-center gap-1.5"
               onClick={() => setIsEditing(false)}
             >
-              <X size={13} />
               <span>Cancel</span>
             </button>
           </div>

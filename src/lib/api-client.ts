@@ -5,6 +5,9 @@
  * No token is ever written to or read from localStorage or document.cookie by this client.
  */
 
+import { STORAGE_KEYS } from "@/constants";
+import { logger } from "./logger";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -33,6 +36,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 let isRefreshing = false;
+let isRedirectingToLogin = false;
 let refreshSubscribers: Array<() => void> = [];
 let refreshSubscriberRejects: Array<(err: ApiError) => void> = [];
 
@@ -55,6 +59,22 @@ function onRefreshFailed(err: ApiError) {
 function addRefreshSubscriber(resolve: () => void, reject: (err: ApiError) => void) {
   refreshSubscribers.push(resolve);
   refreshSubscriberRejects.push(reject);
+}
+
+function handleSessionExpired() {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(STORAGE_KEYS.session);
+    // biome-ignore lint/suspicious/noDocumentCookie: clear session cookie on expiry
+    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax`;
+    if (
+      !isRedirectingToLogin &&
+      !window.location.pathname.startsWith("/login") &&
+      !window.location.pathname.startsWith("/signup")
+    ) {
+      isRedirectingToLogin = true;
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    }
+  }
 }
 
 interface RequestOptions extends RequestInit {
@@ -134,20 +154,15 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
           }).catch(() => {});
           onRefreshFailed(sessionErr);
           isRefreshing = false;
-          if (typeof window !== "undefined") {
-            //  token expires and the refresh attempt fails, automatically kicking them back to /login
-            window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-          }
+          handleSessionExpired();
           throw sessionErr;
         } catch (err) {
           if (err instanceof ApiError) throw err;
           const sessionErr = new ApiError("Session expired. Please sign in again.", 401);
+          logger.warn("Token refresh attempt failed", err);
           onRefreshFailed(sessionErr);
           isRefreshing = false;
-          if (typeof window !== "undefined") {
-            //  error occured or refresh attempt failed, user will be kicked back to /login
-            window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-          }
+          handleSessionExpired();
           throw sessionErr;
         }
       } else {
@@ -170,6 +185,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     if (error instanceof ApiError) {
       throw error;
     }
+    logger.error("API request failed", error, { endpoint, url });
     throw new ApiError(error instanceof Error ? error.message : "Network error occurred", 500);
   }
 }
@@ -208,7 +224,18 @@ async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const errorMessage =
       data?.message || data?.error || `Request failed with status ${response.status}`;
-    throw new ApiError(errorMessage, response.status, data?.code, data?.errors || data?.details);
+    const apiError = new ApiError(
+      errorMessage,
+      response.status,
+      data?.code,
+      data?.errors || data?.details
+    );
+    if (response.status >= 500) {
+      logger.error(`API Error ${response.status}: ${errorMessage}`, apiError);
+    } else if (response.status !== 401) {
+      logger.warn(`API Warning ${response.status}: ${errorMessage}`, apiError);
+    }
+    throw apiError;
   }
 
   // If response is standard Fastify { status: true, data: T } or { success: true, data: T }, return data directly

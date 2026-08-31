@@ -258,20 +258,20 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
             <Save size={14} />
-            <span>{saving ? "Saving..." : "Save Changes"}</span>
+            <span>{saving ? "Saving..." : "Save"}</span>
           </button>
 
           <a
             href={`/${slug || APP_CONFIG.defaultSlug}?from=settings`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
           >
             <ExternalLink size={14} />
-            <span>View Live Studio</span>
+            <span>Live Studio</span>
           </a>
         </div>
       </div>

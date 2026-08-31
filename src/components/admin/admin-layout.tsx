@@ -196,7 +196,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         if (inits) setInitials(inits);
       }
       if (session.studioName) {
-        setUserRole(`Director · ${session.studioName}`);
+        setUserRole(`${session.studioName}`);
       }
     }
 
@@ -204,11 +204,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
       .then(profile => {
         if (profile?.slug) setSlug(profile.slug);
         if (profile?.businessName) {
-          setUserRole(prev =>
-            prev.startsWith("Director")
-              ? `Director · ${profile.businessName}`
-              : `Director · ${profile.businessName}`
-          );
+          setUserRole(profile.businessName);
         }
       })
       .catch(() => {});
