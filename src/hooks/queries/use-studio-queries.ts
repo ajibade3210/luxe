@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/query-keys";
 import { FEATURED_ORGANIZATIONS } from "@/constants/landing";
+import { queryKeys } from "@/lib/query-keys";
 import {
   checkSlugAvailability,
   connectSocialChannel,
