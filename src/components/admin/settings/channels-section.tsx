@@ -2,7 +2,7 @@ import { RefreshCw, Star } from "lucide-react";
 import { getSocialChannelStyle } from "@/components/studio/atelier/social-badge";
 import { SOCIAL_PREFIX_MAP } from "@/constants";
 import type { ChannelsSectionProps } from "@/types";
-import { sanitizeHandle } from "@/utils";
+import { isValidPhone, sanitizeHandle } from "@/utils";
 import { Card } from "./card";
 import { Toggle } from "./toggle";
 
@@ -135,9 +135,15 @@ export function ChannelsSection({
             const style = getSocialChannelStyle(channel.type);
             const prefix = SOCIAL_PREFIX_MAP[channel.type] || `${channel.type}.com/`;
             const displayHandle = sanitizeHandle(channel.handle, prefix);
+            const isWhatsApp = channel.type === "whatsapp";
+            const isWhatsAppInvalid =
+              isWhatsApp && Boolean(displayHandle.trim()) && !isValidPhone(displayHandle);
+
             return (
               <div
-                className="p-2.5 sm:p-3 rounded-xl border border-[#e5e7eb] bg-white flex items-center justify-between gap-3 shadow-2xs hover:border-[#d1d5db] transition-all"
+                className={`p-2.5 sm:p-3 rounded-xl border bg-white flex items-center justify-between gap-3 shadow-2xs transition-all ${
+                  isWhatsAppInvalid ? "border-red-300" : "border-[#e5e7eb] hover:border-[#d1d5db]"
+                }`}
                 key={channel.id}
               >
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -151,16 +157,32 @@ export function ChannelsSection({
                   >
                     <span className="scale-75 flex items-center justify-center">{style.icon}</span>
                   </div>
-                  <div className="flex items-center gap-1 flex-1 min-w-0 bg-[#f9fafb] border border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white rounded-lg px-2.5 py-1.5 transition-colors shadow-2xs">
-                    <span className="text-xs text-[#9ca3af] font-medium select-none shrink-0 font-mono">
+                  <div
+                    className={`flex items-center gap-1 flex-1 min-w-0 rounded-lg px-2.5 py-1.5 transition-colors shadow-2xs border ${
+                      isWhatsAppInvalid
+                        ? "border-red-300 bg-red-50/20 focus-within:border-red-500 focus-within:bg-white"
+                        : "bg-[#f9fafb] border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
+                    }`}
+                  >
+                    <span
+                      className={`text-xs font-medium select-none shrink-0 font-mono ${
+                        isWhatsAppInvalid ? "text-red-400" : "text-[#9ca3af]"
+                      }`}
+                    >
                       {prefix}
                     </span>
                     <input
+                      type={isWhatsApp ? "tel" : "text"}
                       value={displayHandle}
                       onChange={e =>
                         updateChannelHandle(channel.id, sanitizeHandle(e.target.value, prefix))
                       }
-                      placeholder="handle"
+                      placeholder={isWhatsApp ? "0803 123 4567" : "handle"}
+                      title={
+                        isWhatsAppInvalid
+                          ? "Please enter a valid Nigerian phone number (e.g. 0803 123 4567 or +234 803 123 4567)"
+                          : undefined
+                      }
                       className="w-full !text-xs text-[#191c1d] !border-0 !p-0 !outline-none placeholder:text-[#9ca3af] !bg-transparent font-medium !min-h-0 !h-auto !rounded-none"
                     />
                   </div>
@@ -174,3 +196,4 @@ export function ChannelsSection({
     </>
   );
 }
+

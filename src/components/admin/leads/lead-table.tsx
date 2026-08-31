@@ -20,9 +20,8 @@ export function LeadTable({
 }: LeadTableProps) {
   return (
     <div className="table-card">
-      <div className="table-head">
-        <h2>Recent inquiries</h2>
-        <div className="table-search-box">
+      <div className="table-head justify-end">
+        <div className="table-search-box ml-auto">
           <Search size={13} />
           <input
             type="text"

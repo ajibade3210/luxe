@@ -25,10 +25,8 @@ export function ExpenseListTable({
   return (
     <div className="table-card">
       {/* Table Head matching Leads and Customers */}
-      <div className="table-head">
-        <h2>All expenses</h2>
-
-        <div className="flex items-center gap-3">
+      <div className="table-head justify-end">
+        <div className="flex items-center gap-3 ml-auto">
           {/* Category Filter Dropdown */}
           <div className="relative">
             <select
@@ -89,7 +87,7 @@ export function ExpenseListTable({
               };
 
               return (
-                <tr key={expense.id} className="hover:bg-[#faf7f2]/50 transition-colors">
+                <tr key={expense.id} className="transition-colors">
                   <td className="whitespace-nowrap text-[#665e57] font-medium">
                     {formatDate(expense.date)}
                   </td>

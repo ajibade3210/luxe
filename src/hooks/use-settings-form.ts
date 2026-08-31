@@ -5,11 +5,13 @@ import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib
 import { logger } from "@/lib/logger";
 import type { UseSettingsFormOptions } from "@/types";
 import {
+  cleanPhoneForWhatsApp,
+  isValidPhone,
   isValidUrl,
   normalizeButtonRadius,
   normalizeWebsiteUrl,
   sanitizeHandle,
-} from "@/utils/helpers";
+} from "@/utils";
 import { useAppearanceSettings } from "./settings/use-appearance-settings";
 import { useBrandingSettings } from "./settings/use-branding-settings";
 import { useContactSettings } from "./settings/use-contact-settings";
@@ -177,6 +179,15 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
       notify("Please enter a valid website URL (e.g. sitename.com)");
       return false;
     }
+
+    // Validate WhatsApp number if configured
+    const waChannel = contact.channels.find(c => c.type === "whatsapp");
+    const waHandle = waChannel?.handle?.trim();
+    if (waHandle && !isValidPhone(waHandle)) {
+      notify("Please enter a valid Nigerian phone number for WhatsApp (e.g. 0803 123 4567 or +234 803 123 4567)");
+      return false;
+    }
+
     setSaving(true);
     try {
       const normalizedWebsite = branding.website.trim()

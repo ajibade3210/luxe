@@ -14,7 +14,7 @@ export const INVOICE_PAGE_CONFIG = {
   createInvoiceButtonLabel: "Create Invoice",
   exportCsvButtonLabel: "Export CSV",
   exportingLabel: "Exporting...",
-  tableTitle: "All invoices",
+  tableTitle: "Invoices",
   searchPlaceholder: "Search invoices...",
   emptyStateMessage: "Try adjusting your search query or add a new invoice",
   metricLabels: {

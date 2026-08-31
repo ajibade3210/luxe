@@ -33,10 +33,8 @@ export function InvoiceTable({
 }: InvoiceTableProps) {
   return (
     <div className="table-card">
-      <div className="table-head">
-        <h2>{INVOICE_PAGE_CONFIG.tableTitle}</h2>
-
-        <div className="flex items-center gap-3">
+      <div className="table-head justify-end">
+        <div className="flex items-center gap-3 ml-auto">
           {/* Status Filter Dropdown matching Expenses */}
           <div className="relative">
             <select
@@ -88,7 +86,7 @@ export function InvoiceTable({
               <tr
                 key={inv.id}
                 onClick={() => onSelectInvoice(inv)}
-                className="cursor-pointer hover:bg-[#fafaf7] transition-colors"
+                className="cursor-pointer transition-colors"
               >
                 <td>
                   <b className="font-mono text-xs text-[#191c1d] block">{inv.invoiceNumber}</b>
