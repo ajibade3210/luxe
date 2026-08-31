@@ -147,11 +147,10 @@ export function proxy(request: NextRequest) {
   const accessTokenCookie = request.cookies.get("shopwus_access_token")?.value;
   const sessionCookie = request.cookies.get(STORAGE_KEYS.session)?.value;
 
-  // In live API mode, a valid JWT access token is required for authentication.
-  // A raw session JSON cookie without a valid JWT token cannot authenticate live API requests.
+  // Live API authentication check: validates either HttpOnly JWT access token or valid synced session metadata
   const hasValidAccessToken = isValidJwt(accessTokenCookie);
-  const hasValidSessionJwt = sessionCookie?.split(".").length === 3 && isValidJwt(sessionCookie);
-  const isAuthenticated = hasValidAccessToken || hasValidSessionJwt;
+  const hasValidSession = isValidSession(sessionCookie);
+  const isAuthenticated = hasValidAccessToken || hasValidSession;
 
   const isProtectedRoute = PROTECTED_ROUTES.some(
     route => pathname === route || pathname.startsWith(`${route}/`)
@@ -166,8 +165,8 @@ export function proxy(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     const response = NextResponse.redirect(loginUrl);
-    // Clear any stale non-JWT session cookies
-    if (sessionCookie && !hasValidSessionJwt) {
+    // Clear any stale invalid session cookies
+    if (sessionCookie && !hasValidSession) {
       response.cookies.delete(STORAGE_KEYS.session);
     }
     return response;
