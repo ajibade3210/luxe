@@ -185,6 +185,9 @@ export interface CategoryDropdownProps {
   label?: string;
   placeholder?: string;
   maxCategories?: number;
+  size?: "sm" | "md";
+  labelClassName?: string;
+  buttonClassName?: string;
 }
 
 export interface PortfolioSectionProps {

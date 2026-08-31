@@ -181,11 +181,11 @@ export function PortfolioSection({
                   placeholder="e.g. Aethel Luxury Rebrand"
                   value={newProject.title || ""}
                   onChange={e => setNewProject({ ...newProject, title: e.target.value })}
-                  className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                  className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] h-[38px] transition-colors hover:border-[#d1d5db]"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
                 <CategoryDropdown
                   value={newProject.category}
                   onChange={cat => setNewProject(prev => ({ ...prev, category: cat }))}
@@ -193,6 +193,7 @@ export function PortfolioSection({
                   onAddCategory={addPortfolioCategory}
                   onRemoveCategory={removePortfolioCategory}
                   label="Category"
+                  size="md"
                 />
                 <div>
                   <label className="block text-[#1f2937] font-medium text-xs mb-1">
@@ -203,7 +204,7 @@ export function PortfolioSection({
                     placeholder="e.g. London & Lagos"
                     value={newProject.location || ""}
                     onChange={e => setNewProject({ ...newProject, location: e.target.value })}
-                    className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                    className="w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] h-[38px] transition-colors hover:border-[#d1d5db]"
                   />
                 </div>
               </div>

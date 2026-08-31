@@ -86,6 +86,7 @@ export function ServicesSection({
                       onAddCategory={addCategory}
                       onRemoveCategory={removeCategory}
                       label="Category"
+                      size="sm"
                     />
                   </div>
 
@@ -195,6 +196,7 @@ export function ServicesSection({
                 onAddCategory={addCategory}
                 onRemoveCategory={removeCategory}
                 label="Category"
+                size="sm"
               />
             </div>
 

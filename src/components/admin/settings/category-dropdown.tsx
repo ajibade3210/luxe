@@ -14,6 +14,9 @@ export function CategoryDropdown({
   label = "Category",
   placeholder = "Select Category",
   maxCategories = MAX_PORTFOLIO_CATEGORIES,
+  size = "md",
+  labelClassName,
+  buttonClassName,
 }: CategoryDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [newCatInput, setNewCatInput] = useState("");
@@ -42,10 +45,20 @@ export function CategoryDropdown({
     }
   };
 
+  const defaultLabelClass =
+    size === "sm"
+      ? "text-[11px] font-semibold text-[#374151] uppercase tracking-wide block mb-1"
+      : "block text-[#1f2937] font-medium text-xs mb-1";
+
+  const defaultButtonClass =
+    size === "sm"
+      ? "w-full bg-white border border-[#d1d5db] rounded-lg px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#9ca3af] transition-colors h-[32px]"
+      : "w-full bg-white border border-[#e5e7eb] rounded-lg px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#d1d5db] transition-colors h-[38px]";
+
   return (
-    <div className="relative space-y-1" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       {label && (
-        <label className="text-[11px] font-semibold text-[#374151] uppercase tracking-wide block">
+        <label className={labelClassName || defaultLabelClass}>
           {label} ({categories.length}/{maxCategories})
         </label>
       )}
@@ -53,14 +66,14 @@ export function CategoryDropdown({
       <button
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className="w-full bg-white border border-[#d1d5db] rounded-lg px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#0058be] flex items-center justify-between cursor-pointer hover:border-[#9ca3af] transition-colors"
+        className={buttonClassName || defaultButtonClass}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         <span className="font-medium truncate">{value || placeholder}</span>
         <ChevronDown
-          size={13}
-          className={`text-[#6b7280] transition-transform duration-200 ${
+          size={14}
+          className={`text-[#6b7280] transition-transform duration-200 shrink-0 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
