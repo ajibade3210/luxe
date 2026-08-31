@@ -11,7 +11,6 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
 
 const DEFAULT_CURRENCY: CurrencyCode = "NGN";
 const DEFAULT_LOCALE = "en-US";
-const DEFAULT_DECIMALS = 0;
 const FALLBACK_ZERO = "0";
 
 const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
