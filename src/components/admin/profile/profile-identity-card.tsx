@@ -37,12 +37,14 @@ export function ProfileIdentityCard({
 
   const isImageUrl =
     avatar &&
-    (avatar.startsWith("http://") || avatar.startsWith("https://") || avatar.startsWith("/"));
+    (avatar.startsWith("http://") ||
+      avatar.startsWith("https://") ||
+      avatar.startsWith("/"));
 
   const initials = name
     ? name
         .split(" ")
-        .map(w => w[0])
+        .map((w) => w[0])
         .join("")
         .toUpperCase()
         .slice(0, 2)
@@ -66,7 +68,9 @@ export function ProfileIdentityCard({
             )}
           </div>
           <div>
-            <b className="text-base text-[#191c1d] font-bold block">{name || "Studio Director"}</b>
+            <b className="text-base text-[#191c1d] font-bold block">
+              {name || "Studio Director"}
+            </b>
             <span className="text-xs text-[#5c5f60] mt-0.5 block">
               {studioName || "Élan Events"}
             </span>
@@ -96,7 +100,7 @@ export function ProfileIdentityCard({
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:ring-1 focus-within:ring-[#855e2e] focus-within:bg-white transition-all">
                 <input
                   value={editName}
-                  onChange={event => setEditName(event.target.value)}
+                  onChange={(event) => setEditName(event.target.value)}
                   placeholder="Elena Vance"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
                 />
@@ -126,7 +130,7 @@ export function ProfileIdentityCard({
                 <input
                   type="tel"
                   value={editPhone}
-                  onChange={event => setEditPhone(event.target.value)}
+                  onChange={(event) => setEditPhone(event.target.value)}
                   placeholder="+234 800 FORMA VIP"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
                 />

@@ -101,3 +101,11 @@ export interface PageTitleProps {
 export interface UseSettingsFormOptions {
   notify: (msg: string) => void;
 }
+
+export interface TableEmptyStateProps {
+  title?: string;
+  description?: string;
+  imageSrc?: string;
+  colSpan?: number;
+  className?: string;
+}

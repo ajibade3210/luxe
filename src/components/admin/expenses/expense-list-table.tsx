@@ -1,17 +1,10 @@
 "use client";
 
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Edit2,
-  Receipt,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Edit2, Search, Trash2 } from "lucide-react";
 import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_CONFIG, EXPENSE_PAYMENT_METHODS } from "@/constants";
 import type { ExpenseCategory, ExpenseListTableProps } from "@/types";
 import { formatDate, formatMoney } from "../admin-layout";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function ExpenseListTable({
   items,
@@ -151,17 +144,11 @@ export function ExpenseListTable({
             })}
 
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={6} className="text-center py-12 text-[#8c827a]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center mx-auto mb-2.5 text-[#a06840]">
-                    <Receipt size={18} />
-                  </div>
-                  <b className="text-xs text-[#191c1d] block">No expenses found</b>
-                  <span className="text-[11px] text-[#8c827a] block mt-0.5">
-                    Try adjusting your search query or category filter.
-                  </span>
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={6}
+                title="No expenses found"
+                description="Try adjusting your search query or add a new expense"
+              />
             )}
           </tbody>
         </table>

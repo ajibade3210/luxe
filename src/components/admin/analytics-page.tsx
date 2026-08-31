@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { APP_CONFIG } from "@/constants";
 import { getAnalytics, getBusinessProfile, getCurrentSession } from "@/lib/api";
@@ -53,7 +54,18 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
     <section className="content max-w-6xl mx-auto space-y-6 pb-16 font-sans">
       {/* Top Header & Timeframe Switch */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="shrink-0 pointer-events-none select-none -mr-1 sm:-mr-1.5">
+            <Image
+              src="/images/welcome-penguin.png"
+              alt="Welcome illustration"
+              width={160}
+              height={160}
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
+              priority
+              unoptimized
+            />
+          </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#191c1d] tracking-tight">
             Welcome to {displayStudioName}
           </h1>

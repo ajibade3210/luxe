@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import type { LeadTableProps } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function LeadTable({
   items,
@@ -72,11 +73,11 @@ export function LeadTable({
               </tr>
             ))}
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-[#8c827a] text-xs italic">
-                  No inquiries found.
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={5}
+                title="No inquiries found"
+                description="Try adjusting your search query or no inquiries yet"
+              />
             )}
           </tbody>
         </table>

@@ -123,8 +123,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           Studio Settings
         </h1>
         <p className="text-xs sm:text-sm text-[#6b7280] mt-2 leading-relaxed">
-          Configure your brand identity, services, portfolio, verified social badges, and visual
-          aesthetic.
+          Configure your brand identity, services, portfolio, verified social
+          badges, and visual aesthetic.
         </p>
       </div>
 
@@ -251,7 +251,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
       {/* Bottom Action Bar */}
       <div className="pt-6 border-t border-[#e5e7eb] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <p className="text-xs text-[#6b7280]">
-          Changes will immediately update your studio profile and public showcase.
+          Changes will immediately update your studio profile and public
+          showcase.
         </p>
         <div className="flex items-center gap-3">
           <button

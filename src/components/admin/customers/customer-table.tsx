@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import type { CustomerTableProps } from "@/types";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function CustomerTable({
   items,
@@ -167,11 +168,11 @@ export function CustomerTable({
               );
             })}
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-[#8c827a] text-xs italic">
-                  No customer records found.
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={5}
+                title="No customer records found"
+                description="Try adjusting your search query or add a new customer."
+              />
             )}
           </tbody>
         </table>

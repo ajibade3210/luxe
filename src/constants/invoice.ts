@@ -16,7 +16,7 @@ export const INVOICE_PAGE_CONFIG = {
   exportingLabel: "Exporting...",
   tableTitle: "All invoices",
   searchPlaceholder: "Search invoices...",
-  emptyStateMessage: "No invoices found.",
+  emptyStateMessage: "Try adjusting your search query or add a new invoice",
   metricLabels: {
     totalInvoiced: "Total Invoiced",
     paidRevenue: "Paid Revenue",

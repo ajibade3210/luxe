@@ -12,6 +12,7 @@ import {
 import { INVOICE_PAGE_CONFIG, INVOICE_STATUS_FILTERS } from "@/constants";
 import type { InvoiceStatusFilter, InvoiceTableProps } from "@/types";
 import { formatDate, formatMoney, formatStatusLabel } from "@/utils";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function InvoiceTable({
   items,
@@ -155,11 +156,11 @@ export function InvoiceTable({
             ))}
 
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={7} className="text-center py-10 text-[#8c827a] text-xs italic">
-                  {INVOICE_PAGE_CONFIG.emptyStateMessage}
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={7}
+                title="No invoices found"
+                description={INVOICE_PAGE_CONFIG.emptyStateMessage}
+              />
             )}
           </tbody>
         </table>
