@@ -42,14 +42,14 @@ export function sanitizeHandle(value: string, prefix = ""): string {
 }
 
 export function isValidUrl(url?: string | null): boolean {
-  if (!url || !url.trim()) return false;
+  if (!url?.trim()) return false;
   const trimmed = url.trim();
   const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/i;
   return urlPattern.test(trimmed);
 }
 
 export function normalizeWebsiteUrl(url?: string | null): string {
-  if (!url || !url.trim()) return "";
+  if (!url?.trim()) return "";
   const trimmed = url.trim();
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
   return `https://${trimmed}`;

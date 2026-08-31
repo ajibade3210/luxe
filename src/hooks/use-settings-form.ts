@@ -105,8 +105,8 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
           if (Array.isArray(profile.portfolioCategories)) {
             portfolio.setCategories(profile.portfolioCategories);
           }
-          
-          let initialChannels = Array.isArray(profile.socialChannels)
+
+          const initialChannels = Array.isArray(profile.socialChannels)
             ? [...profile.socialChannels]
             : [];
           if (rawWebsite) {

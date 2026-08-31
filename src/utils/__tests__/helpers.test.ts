@@ -92,4 +92,16 @@ describe("helper utilities", () => {
       expect(normalizeWebsiteUrl("")).toBe("");
     });
   });
+
+  describe("isDarkColor", () => {
+    it("correctly identifies dark and light hex colors", () => {
+      expect(isDarkColor("#10172A")).toBe(true);
+      expect(isDarkColor("#000000")).toBe(true);
+      expect(isDarkColor("#0E0E10")).toBe(true);
+      expect(isDarkColor("#FFFFFF")).toBe(false);
+      expect(isDarkColor("#FAF6F0")).toBe(false);
+      expect(isDarkColor("#F8FAFC")).toBe(false);
+      expect(isDarkColor("")).toBe(false);
+    });
+  });
 });
