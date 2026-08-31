@@ -44,8 +44,11 @@ export function sanitizeHandle(value: string, prefix = ""): string {
 export function isValidUrl(url?: string | null): boolean {
   if (!url?.trim()) return false;
   const trimmed = url.trim();
-  const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/i;
-  return urlPattern.test(trimmed);
+  const standardPattern =
+    /^(https?:\/\/)?([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/i;
+  const localhostPattern = /^(https?:\/\/)?localhost(:\d+)?(\/[^\s]*)?$/i;
+  const ipPattern = /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/[^\s]*)?$/i;
+  return standardPattern.test(trimmed) || localhostPattern.test(trimmed) || ipPattern.test(trimmed);
 }
 
 export function normalizeWebsiteUrl(url?: string | null): string {

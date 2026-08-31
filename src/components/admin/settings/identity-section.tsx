@@ -3,6 +3,7 @@ import { BUSINESS_TYPE_CTA_MAP, BUSINESS_TYPE_LABELS } from "@/constants";
 import type { BusinessType, CurrencyCode, IdentitySectionProps } from "@/types";
 import { isValidUrl, slugify } from "@/utils";
 import { Card } from "./card";
+import { GooglePlacesAutocompleteField } from "./google-places-autocomplete-field";
 
 export function IdentitySection({
   name,
@@ -148,10 +149,13 @@ export function IdentitySection({
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               Location
             </label>
-            <input
+            <GooglePlacesAutocompleteField
               value={location}
-              onChange={e => setLocation(e.target.value)}
-              className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs"
+              onChange={setLocation}
+              onPlaceSelected={place => {
+                setLocation(place.address || location);
+              }}
+              placeholder="e.g. Victoria Island, Lagos, Nigeria"
             />
           </div>
 

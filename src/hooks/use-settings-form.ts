@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
 import { logger } from "@/lib/logger";
 import type { UseSettingsFormOptions } from "@/types";
-import { normalizeButtonRadius, normalizeWebsiteUrl, sanitizeHandle } from "@/utils/helpers";
+import {
+  isValidUrl,
+  normalizeButtonRadius,
+  normalizeWebsiteUrl,
+  sanitizeHandle,
+} from "@/utils/helpers";
 import { useAppearanceSettings } from "./settings/use-appearance-settings";
 import { useBrandingSettings } from "./settings/use-branding-settings";
 import { useContactSettings } from "./settings/use-contact-settings";
@@ -167,7 +172,11 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     }
   }, []);
 
-  const handleSave = async () => {
+  const handleSave = async (options?: { silent?: boolean }): Promise<boolean> => {
+    if (branding.website.trim() && !isValidUrl(branding.website)) {
+      notify("Please enter a valid website URL (e.g. sitename.com)");
+      return false;
+    }
     setSaving(true);
     try {
       const normalizedWebsite = branding.website.trim()
@@ -175,7 +184,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         : "";
 
       // Ensure socialChannels has the latest website channel
-      const updatedChannels = contact.channels.map(c => {
+      let updatedChannels = contact.channels.map(c => {
         if (c.type === "website") {
           const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
           return {
@@ -187,6 +196,23 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         }
         return c;
       });
+
+      if (normalizedWebsite && !updatedChannels.some(c => c.type === "website")) {
+        const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
+        updatedChannels = [
+          ...updatedChannels,
+          {
+            id: "ch-website",
+            type: "website",
+            label: "Website",
+            handle: cleanHandle,
+            url: normalizedWebsite,
+            connected: Boolean(cleanHandle),
+          },
+        ];
+      }
+
+      contact.setChannels(updatedChannels);
 
       await updateBusinessProfile({
         businessName: branding.name,
@@ -221,19 +247,25 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         colors: appearance.colors,
         buttonRadius: appearance.radius,
       });
-      notify("Changes saved successfully");
+      if (!options?.silent) {
+        notify("Changes saved successfully");
+      }
+      return true;
     } catch (err) {
       logger.error("Failed to save studio changes", err);
       notify("Failed to save changes");
+      return false;
     } finally {
       setSaving(false);
     }
   };
 
   const handlePublish = async () => {
+    const success = await handleSave({ silent: true });
+    if (!success) return;
+
     setSaving(true);
     try {
-      await handleSave();
       await publishChanges();
       notify("Studio changes published live!");
     } catch (err) {
@@ -242,6 +274,10 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     } finally {
       setSaving(false);
     }
+  };
+
+  const onSave = async () => {
+    await handleSave();
   };
 
   return {
@@ -356,7 +392,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
 
     // Actions & State
     saving,
-    handleSave,
+    handleSave: onSave,
     handlePublish,
   };
 }

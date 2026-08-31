@@ -80,6 +80,9 @@ describe("helper utilities", () => {
       expect(isValidUrl("https://elanevents.com")).toBe(true);
       expect(isValidUrl("http://shop.elan-events.ng/catalog")).toBe(true);
       expect(isValidUrl("studio.design")).toBe(true);
+      expect(isValidUrl("http://localhost:3000/settingszx")).toBe(true);
+      expect(isValidUrl("localhost:3000")).toBe(true);
+      expect(isValidUrl("http://127.0.0.1:8080")).toBe(true);
       expect(isValidUrl("invalid-url")).toBe(false);
       expect(isValidUrl("not a url")).toBe(false);
       expect(isValidUrl("")).toBe(false);
