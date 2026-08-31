@@ -48,7 +48,8 @@ export function VendorNotFoundView() {
           </h1>
 
           <p className="text-sm sm:text-base text-[#5c5f60] max-w-md mx-auto leading-relaxed mt-3 mb-10 text-center">
-            The vendor workspace section you requested doesn't exist, has been moved, or is temporarily unavailable.
+            The vendor workspace section you requested doesn't exist, has been moved, or is
+            temporarily unavailable.
           </p>
 
           {/* Primary Action */}

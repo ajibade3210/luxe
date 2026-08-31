@@ -257,7 +257,11 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         </div>
         <nav>
           <Link
-            className={path === "/vendor/analytics" || path === "/vendor/overview" || path === "/vendor" ? "active" : ""}
+            className={
+              path === "/vendor/analytics" || path === "/vendor/overview" || path === "/vendor"
+                ? "active"
+                : ""
+            }
             href="/vendor/analytics"
           >
             <TrendingUp size={16} /> Analytics

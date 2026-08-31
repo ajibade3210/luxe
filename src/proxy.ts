@@ -173,8 +173,7 @@ export function proxy(request: NextRequest) {
 
   // 4. Redirect authenticated users away from login/signup to vendor dashboard
   if (isAuthRoute && isAuthenticated) {
-    const redirectTarget =
-      request.nextUrl.searchParams.get("redirect") || "/vendor/overview";
+    const redirectTarget = request.nextUrl.searchParams.get("redirect") || "/vendor/overview";
     const targetUrl = new URL(redirectTarget, request.url);
     return NextResponse.redirect(targetUrl);
   }

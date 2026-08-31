@@ -12,9 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      router.replace(
-        `/login?redirect=${encodeURIComponent(pathname || "/vendor/overview")}`
-      );
+      router.replace(`/login?redirect=${encodeURIComponent(pathname || "/vendor/overview")}`);
     } else {
       setAuthed(true);
     }
