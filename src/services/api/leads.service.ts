@@ -17,10 +17,7 @@ export async function submitPublicInquiry(
   slug: string,
   input: PublicInquiryInput
 ): Promise<PublicInquiryResponse> {
-  return apiClient.post<PublicInquiryResponse>(
-    `/leads/inquiry/${encodeURIComponent(slug)}`,
-    input
-  );
+  return apiClient.post<PublicInquiryResponse>(`/leads/inquiry/${encodeURIComponent(slug)}`, input);
 }
 
 export const submitConsultationInquiry = submitPublicInquiry;
