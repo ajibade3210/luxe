@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 import type { BusinessProfile, OrganizationPreview, ReviewItem, ServiceItem } from "@/types";
+import { slugify } from "@/utils";
 
 export function normalizeServices(raw: (string | ServiceItem)[] | undefined): ServiceItem[] {
   if (!Array.isArray(raw)) return [];
@@ -39,14 +40,9 @@ export async function getBusinessBySlug(slug: string): Promise<BusinessProfile |
 export async function checkSlugAvailability(
   slug: string
 ): Promise<{ available: boolean; slug: string }> {
-  const normalized = slug
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, "-")
-    .replace(/-+/g, "-");
-
-  return apiClient.get<{ available: boolean; slug: string }>(
-    `/studios/check-slug/${encodeURIComponent(normalized)}`
-  );
+  return apiClient.get<{ available: boolean; slug: string }>("/studios/check-slug", {
+    slug: slugify(slug),
+  });
 }
 
 export async function updateBusinessProfile(

@@ -1,6 +1,7 @@
 import { Copy, Loader2, Upload } from "lucide-react";
 import { BUSINESS_TYPE_CTA_MAP, BUSINESS_TYPE_LABELS } from "@/constants";
 import type { BusinessType, CurrencyCode, IdentitySectionProps } from "@/types";
+import { slugify } from "@/utils";
 import { Card } from "./card";
 
 export function IdentitySection({
@@ -148,14 +149,7 @@ export function IdentitySection({
             <div className="relative">
               <input
                 value={slug}
-                onChange={e =>
-                  setSlug(
-                    e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9-]/g, "-")
-                      .replace(/-+/g, "-")
-                  )
-                }
+                onChange={e => setSlug(slugify(e.target.value))}
                 placeholder="e.g. elan-events"
                 className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:border-[#0058be] focus:outline-none shadow-2xs pr-24"
               />
