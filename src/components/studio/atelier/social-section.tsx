@@ -32,12 +32,7 @@ export function StudioSocialSection({ profile, textColor }: StudioSocialSectionP
         </h2>
       </div>
 
-      <div
-        className="grid items-center justify-items-center gap-4 sm:gap-6 pt-2 w-full max-w-6xl"
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(${activeChannels.length <= 4 ? "120px" : "68px"}, 1fr))`,
-        }}
-      >
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
         {activeChannels.map(channel => {
           const style = getSocialChannelStyle(channel.type);
           const channelUrl = resolveChannelUrl(channel);
