@@ -17,7 +17,6 @@ import {
 import {
   createWhatsAppConsultationUrl,
   getBusinessBySlug,
-  getCustomers,
   submitConsultationInquiry,
   submitReview,
 } from "@/lib/api";
@@ -126,13 +125,7 @@ export function ElanEventsPage({
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-  const [customerCount, setCustomerCount] = useState<number>(14);
-
-  useEffect(() => {
-    getCustomers().then(res => {
-      if (res?.length) setCustomerCount(res.length);
-    });
-  }, []);
+  const customerCount = profile?.totalCustomers ?? 0;
 
   // Automatically trigger Get a Quote modal once after 1 minute of customer dwell time
   useEffect(() => {

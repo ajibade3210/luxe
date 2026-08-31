@@ -204,10 +204,18 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     await handleSave({ silent: true, overridePortfolio: remaining });
   };
 
+  // Auto-save on logo upload
+  const handleLogoUploadAndSave = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newLogoUrl = await portfolio.handleLogoUpload(e);
+    if (!newLogoUrl) return;
+    await handleSave({ silent: true, overrideLogoUrl: newLogoUrl });
+  };
+
   const handleSave = async (options?: {
     silent?: boolean;
     overrideServices?: ServiceItem[];
     overridePortfolio?: PortfolioProject[];
+    overrideLogoUrl?: string;
   }): Promise<boolean> => {
     if (branding.website.trim() && !isValidUrl(branding.website)) {
       notify("Invalid website URL");
@@ -314,7 +322,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         email: branding.email,
         currency: branding.currency,
         description: branding.about,
-        logoUrl: portfolio.logoUrl,
+        logoUrl: options?.overrideLogoUrl ?? portfolio.logoUrl,
         services: cleanedServices,
         portfolio: cleanedPortfolio,
         portfolioCategories: portfolio.categories,
@@ -457,7 +465,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     dragOverProjectIndex: portfolio.dragOverProjectIndex,
     removeProject: removeProjectAndSave,
     handleAddProject: handleAddProjectAndSave,
-    handleLogoUpload: portfolio.handleLogoUpload,
+    handleLogoUpload: handleLogoUploadAndSave,
     handleProjectImageUpload: portfolio.handleProjectImageUpload,
     handleGalleryImagesUpload: portfolio.handleGalleryImagesUpload,
     removeGalleryImageFromNewProject: portfolio.removeGalleryImageFromNewProject,

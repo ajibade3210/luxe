@@ -6,7 +6,7 @@ export async function uploadMediaFile(
   const formData = new FormData();
   formData.append("file", file);
 
-  const result = await apiClient.post<{ url: string }>("/media/upload/image", formData);
+  const result = await apiClient.post<{ url: string }>("/media/upload", formData);
 
   if (!result?.url) {
     throw new Error("Failed to upload media file: No URL returned from server");

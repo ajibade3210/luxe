@@ -41,12 +41,12 @@ export function IdentitySection({
         <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 sm:p-6 shadow-2xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-[#e5e7eb] bg-white p-2 flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+              <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Business Logo Preview"
-                    className="w-full h-full object-contain rounded-xl"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="font-sans font-bold text-2xl text-[#191c1d]">

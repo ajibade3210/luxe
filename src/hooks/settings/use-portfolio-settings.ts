@@ -102,16 +102,20 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     return proj;
   };
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<string | null> => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) return null;
     setIsUploadingLogo(true);
     try {
       const res = await uploadBusinessLogo(file);
       setLogoUrl(res.url);
       notify("Logo uploaded successfully");
+      return res.url;
     } catch {
       notify("Failed to upload logo");
+      return null;
     } finally {
       setIsUploadingLogo(false);
     }

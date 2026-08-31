@@ -116,6 +116,8 @@ export interface BusinessProfile {
   footerDescription?: string;
   showFooterCta?: boolean;
   businessType?: BusinessType;
+  totalCustomers?: number;
+  isVerified?: boolean;
   updatedAt: string;
 }
 
@@ -142,7 +144,7 @@ export interface IdentitySectionProps {
   logoUrl?: string;
   setLogoUrl: (v: string) => void;
   isUploadingLogo: boolean;
-  handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
   onToast: (msg: string) => void;
 }
 
