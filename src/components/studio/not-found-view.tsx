@@ -142,7 +142,7 @@ export function NotFoundView({ slug }: NotFoundViewProps) {
           </Link>
           <span className="text-[#dcd6cb]">·</span>
           <Link
-            href="/settings"
+            href="/vendor/settings"
             className="hover:text-[#191c1d] transition-colors text-decoration-none"
           >
             Studio Settings

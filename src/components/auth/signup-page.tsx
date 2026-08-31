@@ -76,7 +76,7 @@ export function SignupPage() {
         studioName: effectiveName,
       });
       await updateBusinessProfile({ businessName: effectiveName, slug: effectiveSlug });
-      router.push(`/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
+      router.push(`/vendor/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
     } catch (err) {
       setAuthError(err instanceof Error ? err.message : "Sign-up failed. Please try again.");
       setIsSubmitting(false);

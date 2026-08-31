@@ -91,6 +91,7 @@ export function ElanEventsPage({
         fromParam === "settings" ||
         fromParam === "admin" ||
         previewParam === "true" ||
+        referrer.includes("/vendor") ||
         referrer.includes("/settings") ||
         referrer.includes("/leads") ||
         referrer.includes("/customers")

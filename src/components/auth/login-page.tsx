@@ -43,8 +43,8 @@ export function LoginPage() {
         claimSlug: claimParam,
       });
       window.location.href = claimParam
-        ? `/settings?claim=${encodeURIComponent(claimParam)}`
-        : "/overview";
+        ? `/vendor/settings?claim=${encodeURIComponent(claimParam)}`
+        : "/vendor/overview";
     } catch (err) {
       setAuthError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
       setIsSubmitting(false);

@@ -257,24 +257,24 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         </div>
         <nav>
           <Link
-            className={path === "/analytics" || path === "/overview" ? "active" : ""}
-            href="/analytics"
+            className={path === "/vendor/analytics" || path === "/vendor/overview" || path === "/vendor" ? "active" : ""}
+            href="/vendor/analytics"
           >
             <TrendingUp size={16} /> Analytics
           </Link>
-          <Link className={path === "/leads" ? "active" : ""} href="/leads">
+          <Link className={path === "/vendor/leads" ? "active" : ""} href="/vendor/leads">
             <Users size={16} /> Leads{" "}
             {leadCount !== null && <span className="nav-count">{leadCount}</span>}
           </Link>
-          <Link className={path === "/customers" ? "active" : ""} href="/customers">
+          <Link className={path === "/vendor/customers" ? "active" : ""} href="/vendor/customers">
             <Users size={16} /> Customers{" "}
             {customerCount !== null && <span className="nav-count">{customerCount}</span>}
           </Link>
-          <Link className={path === "/invoices" ? "active" : ""} href="/invoices">
+          <Link className={path === "/vendor/invoices" ? "active" : ""} href="/vendor/invoices">
             <FileText size={16} /> Invoices{" "}
             {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
           </Link>
-          <Link className={path === "/expenses" ? "active" : ""} href="/expenses">
+          <Link className={path === "/vendor/expenses" ? "active" : ""} href="/vendor/expenses">
             <Receipt size={16} /> Expenses{" "}
             {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
           </Link>
@@ -286,7 +286,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
           >
             <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
           </a>
-          <Link className={path === "/settings" ? "active" : ""} href="/settings">
+          <Link className={path === "/vendor/settings" ? "active" : ""} href="/vendor/settings">
             <Settings size={16} /> Settings
           </Link>
         </nav>
@@ -294,14 +294,14 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
         <div className="mt-auto pt-3 border-t border-[#e5e7eb]">
           <div
             className={`group relative flex items-center justify-between p-2 rounded-xl transition-all ${
-              path === "/profile"
+              path === "/vendor/profile"
                 ? "bg-white text-[#191c1d] shadow-2xs border border-[#e5e7eb]"
                 : "hover:bg-white/90 hover:shadow-2xs border border-transparent hover:border-[#e5e7eb]/80"
             }`}
           >
             <Link
               className="flex items-center gap-2.5 min-w-0 flex-1 text-decoration-none"
-              href="/profile"
+              href="/vendor/profile"
               aria-label="Open director profile and studio equity"
               title="Director Profile & Studio Equity"
             >

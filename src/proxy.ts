@@ -2,7 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { STORAGE_KEYS } from "@/constants";
 import type { DecodedJwtHeader, DecodedJwtPayload } from "@/types";
 
-const PROTECTED_ROUTES = [
+const PROTECTED_ROUTES = ["/vendor"];
+
+const LEGACY_DASHBOARD_ROUTES = [
+  "/vendors",
   "/overview",
   "/customers",
   "/leads",
@@ -32,19 +35,6 @@ function decodeBase64Url(base64Url: string): string {
 
 /**
  * Validates the structure, claims, and expiration of a JWT on Next.js Edge Runtime.
- *
- * ⚠️  TRUST BOUNDARY NOTE:
- * This function does NOT verify the JWT signature — the Web Crypto API could do
- * it, but the secret would have to be embedded in the client bundle, which is
- * worse than not verifying at all.
- *
- * This is intentional: middleware redirects are a UX convenience only.
- * A determined user can craft a structurally valid token and bypass the redirect.
- * That is acceptable because every API request is independently authenticated
- * and authorised by the backend (src/middlewares/auth.ts) using the real secret.
- * The UI they reach without a real session will show empty/errored data.
- *
- * Do NOT treat this function as a security gate.
  */
 export function isValidJwt(token?: string | null): boolean {
   if (!token || typeof token !== "string") return false;
@@ -53,21 +43,18 @@ export function isValidJwt(token?: string | null): boolean {
   if (parts.length !== 3) return false;
 
   try {
-    // 1. Validate Header
     const headerJson = decodeBase64Url(parts[0]);
     const header = JSON.parse(headerJson) as DecodedJwtHeader;
     if (!header || typeof header !== "object" || !header.alg) {
       return false;
     }
 
-    // 2. Validate Payload
     const payloadJson = decodeBase64Url(parts[1]);
     const payload = JSON.parse(payloadJson) as DecodedJwtPayload;
     if (!payload || typeof payload !== "object") {
       return false;
     }
 
-    // 3. Must contain a valid user identity claim
     const hasIdentifier =
       (typeof payload.userId === "string" && payload.userId.length > 0) ||
       (typeof payload.id === "string" && payload.id.length > 0);
@@ -76,15 +63,13 @@ export function isValidJwt(token?: string | null): boolean {
       return false;
     }
 
-    // 4. Validate Expiry Claim (with 30s clock skew margin)
     if (typeof payload.exp === "number") {
       const nowSeconds = Math.floor(Date.now() / 1000);
       if (payload.exp + 30 <= nowSeconds) {
-        return false; // Token has expired
+        return false;
       }
     }
 
-    // 5. Validate Issued-At Claim (prevent tokens claiming future issue)
     if (typeof payload.iat === "number") {
       const nowSeconds = Math.floor(Date.now() / 1000);
       if (payload.iat > nowSeconds + 120) {
@@ -92,7 +77,6 @@ export function isValidJwt(token?: string | null): boolean {
       }
     }
 
-    // 6. Signature part must not be empty
     if (!parts[2] || parts[2].trim().length === 0) {
       return false;
     }
@@ -112,7 +96,6 @@ export function isValidSession(cookieValue?: string | null): boolean {
   try {
     const raw = decodeURIComponent(cookieValue.trim());
 
-    // If it's a JWT directly
     if (raw.split(".").length === 3) {
       return isValidJwt(raw);
     }
@@ -128,7 +111,6 @@ export function isValidSession(cookieValue?: string | null): boolean {
 
     if (!hasValidIdentity) return false;
 
-    // Check optional expiresAt timestamp
     if (parsed.expiresAt) {
       const expTime = new Date(parsed.expiresAt).getTime();
       if (Number.isFinite(expTime) && expTime <= Date.now()) {
@@ -147,12 +129,28 @@ export function proxy(request: NextRequest) {
   const accessTokenCookie = request.cookies.get("shopwus_access_token")?.value;
   const sessionCookie = request.cookies.get(STORAGE_KEYS.session)?.value;
 
-  // Live API authentication check: validates either HttpOnly JWT access token or valid synced session metadata
+  // Live API authentication check
   const hasValidAccessToken = isValidJwt(accessTokenCookie);
   const hasValidSession = isValidSession(sessionCookie);
   const isAuthenticated = hasValidAccessToken || hasValidSession;
 
-  // const isAuthenticated = true;
+  // 1. Redirect legacy top-level dashboard routes to /vendor/*
+  const legacyMatch = LEGACY_DASHBOARD_ROUTES.find(
+    route => pathname === route || pathname.startsWith(`${route}/`)
+  );
+  if (legacyMatch) {
+    const cleanSubpath = pathname.startsWith("/vendors")
+      ? pathname.replace(/^\/vendors/, "")
+      : pathname;
+    const targetUrl = new URL(`/vendor${cleanSubpath}${request.nextUrl.search}`, request.url);
+    return NextResponse.redirect(targetUrl);
+  }
+
+  // 2. Redirect /vendor root to /vendor/overview
+  if (pathname === "/vendor") {
+    const targetUrl = new URL("/vendor/overview", request.url);
+    return NextResponse.redirect(targetUrl);
+  }
 
   const isProtectedRoute = PROTECTED_ROUTES.some(
     route => pathname === route || pathname.startsWith(`${route}/`)
@@ -162,21 +160,21 @@ export function proxy(request: NextRequest) {
     route => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  // 1. Guard protected admin routes: redirect unauthenticated requests to login
+  // 3. Guard protected vendor routes: redirect unauthenticated requests to login
   if (isProtectedRoute && !isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     const response = NextResponse.redirect(loginUrl);
-    // Clear any stale invalid session cookies
     if (sessionCookie && !hasValidSession) {
       response.cookies.delete(STORAGE_KEYS.session);
     }
     return response;
   }
 
-  // 2. Redirect authenticated users away from login/signup to admin dashboard
+  // 4. Redirect authenticated users away from login/signup to vendor dashboard
   if (isAuthRoute && isAuthenticated) {
-    const redirectTarget = request.nextUrl.searchParams.get("redirect") || "/overview";
+    const redirectTarget =
+      request.nextUrl.searchParams.get("redirect") || "/vendor/overview";
     const targetUrl = new URL(redirectTarget, request.url);
     return NextResponse.redirect(targetUrl);
   }
@@ -186,6 +184,10 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/vendor/:path*",
+    "/vendor",
+    "/vendors/:path*",
+    "/vendors",
     "/overview/:path*",
     "/overview",
     "/customers/:path*",
