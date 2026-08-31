@@ -213,9 +213,7 @@ export function PortfolioSection({
                   size="md"
                 />
                 <div>
-                  <label className="block text-[#1f2937] font-medium text-xs mb-1">
-                    Location
-                  </label>
+                  <label className="block text-[#1f2937] font-medium text-xs mb-1">Location</label>
                   <input
                     type="text"
                     placeholder="e.g. London & Lagos"
