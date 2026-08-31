@@ -4,10 +4,11 @@ import {
   ArrowRight,
   Bell,
   Check,
-  ChevronRight,
   ExternalLink,
   Eye,
   FileText,
+  Loader2,
+  LogOut,
   Menu,
   Receipt,
   Search,
@@ -16,17 +17,15 @@ import {
   Users,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
 import {
+  clearSession,
   getBusinessProfile,
   getCurrentSession,
-  getCustomers,
-  getExpenses,
-  getInvoices,
-  getLeads,
   publishChanges,
 } from "@/lib/api";
 import type {
@@ -75,6 +74,83 @@ export function Toast({ message, onClose }: ToastProps) {
   );
 }
 
+export function LogoutConfirmModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isLoggingOut) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isLoggingOut, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await clearSession();
+    } finally {
+      window.location.href = "/login";
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+      onClick={() => !isLoggingOut && onClose()}
+    >
+      <div
+        className="bg-white border border-[#eee7dc] rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <div>
+          <h3 className="text-lg font-serif font-bold text-[#1f1d1a]">Log out?</h3>
+          <p className="text-xs text-[#665e57] mt-1 leading-relaxed">
+            Are you sure you want to sign out of your account?
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2.5 pt-2">
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            onClick={onClose}
+            className="bg-white hover:bg-[#f8f4ed] text-[#2a1d15] border border-[#ded5c8] hover:border-[#c59a78] px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            onClick={handleLogout}
+            className="bg-[#191c1d] hover:bg-black !text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+          >
+            {isLoggingOut ? (
+              <>
+                <Loader2 size={13} className="animate-spin" />
+                <span>Logging out…</span>
+              </>
+            ) : (
+              <span>Log out</span>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Metric({ label, value, detail }: MetricProps) {
   const isLong = typeof value === "string" && value.length > 12;
   return (
@@ -105,26 +181,48 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   // Always start with the stable default so SSR and the initial client render agree,
   // then immediately update from the session cache and/or API.
   const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
-  const [leadCount, setLeadCount] = useState(0);
-  const [customerCount, setCustomerCount] = useState(0);
-  const [invoiceCount, setInvoiceCount] = useState(0);
-  const [expenseCount, setExpenseCount] = useState(0);
+  const [userName, setUserName] = useState<string>("Elena Vance");
+  const [userRole, setUserRole] = useState<string>("Lead Brand Designer");
+  const [initials, setInitials] = useState<string>("EV");
+  const [leadCount, setLeadCount] = useState<number | null>(null);
+  const [customerCount, setCustomerCount] = useState<number | null>(null);
+  const [invoiceCount, setInvoiceCount] = useState<number | null>(null);
+  const [expenseCount, setExpenseCount] = useState<number | null>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
-    // Hydrate slug from session cache first (instant), then confirm from API.
-    const cached = getCurrentSession()?.studioSlug;
-    if (cached) setSlug(cached);
+    // Hydrate user and slug from session cache first (instant), then confirm from API if needed.
+    const session = getCurrentSession();
+    if (session) {
+      if (session.studioSlug) setSlug(session.studioSlug);
+      if (session.name) {
+        setUserName(session.name);
+        const inits = session.name
+          .split(" ")
+          .map(p => p[0])
+          .filter(Boolean)
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+        if (inits) setInitials(inits);
+      }
+      if (session.studioName) {
+        setUserRole(`Director · ${session.studioName}`);
+      }
+    }
 
     getBusinessProfile()
       .then(profile => {
         if (profile?.slug) setSlug(profile.slug);
+        if (profile?.businessName) {
+          setUserRole(prev =>
+            prev.startsWith("Director")
+              ? `Director · ${profile.businessName}`
+              : `Director · ${profile.businessName}`
+          );
+        }
       })
       .catch(() => {});
-
-    getLeads().then(res => setLeadCount(res.length));
-    getCustomers().then(res => setCustomerCount(res.length));
-    getInvoices().then(res => setInvoiceCount(res.length));
-    getExpenses().then(res => setExpenseCount(res.length));
 
     const handleLeadsUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<Lead[]>;
@@ -164,71 +262,94 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   }, []);
 
   return (
-    <aside className={`sidebar ${open ? "is-open" : ""}`}>
-      <div className="sidebar-top">
-        <Brand />
-        <button className="mobile-close" onClick={onClose}>
-          <X />
-        </button>
-      </div>
-      <nav>
-        <a
-          className={path === "/analytics" || path === "/overview" ? "active" : ""}
-          href="/analytics"
-        >
-          <TrendingUp size={16} /> Analytics
-        </a>
-        <a className={path === "/leads" ? "active" : ""} href="/leads">
-          <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
-        </a>
-        <a className={path === "/customers" ? "active" : ""} href="/customers">
-          <Users size={16} /> Customers <span className="nav-count">{customerCount}</span>
-        </a>
-        <a className={path === "/invoices" ? "active" : ""} href="/invoices">
-          <FileText size={16} /> Invoices <span className="nav-count">{invoiceCount}</span>
-        </a>
-        <a className={path === "/expenses" ? "active" : ""} href="/expenses">
-          <Receipt size={16} /> Expenses <span className="nav-count">{expenseCount}</span>
-        </a>
-        <a
-          className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
-          href={`/${slug}?from=settings`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
-        </a>
-        <a className={path === "/settings" ? "active" : ""} href="/settings">
-          <Settings size={16} /> Settings
-        </a>
-      </nav>
+    <>
+      <aside className={`sidebar ${open ? "is-open" : ""}`}>
+        <div className="sidebar-top">
+          <Brand />
+          <button className="mobile-close" onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <nav>
+          <Link
+            className={path === "/analytics" || path === "/overview" ? "active" : ""}
+            href="/analytics"
+          >
+            <TrendingUp size={16} /> Analytics
+          </Link>
+          <Link className={path === "/leads" ? "active" : ""} href="/leads">
+            <Users size={16} /> Leads {leadCount !== null && <span className="nav-count">{leadCount}</span>}
+          </Link>
+          <Link className={path === "/customers" ? "active" : ""} href="/customers">
+            <Users size={16} /> Customers {customerCount !== null && <span className="nav-count">{customerCount}</span>}
+          </Link>
+          <Link className={path === "/invoices" ? "active" : ""} href="/invoices">
+            <FileText size={16} /> Invoices {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
+          </Link>
+          <Link className={path === "/expenses" ? "active" : ""} href="/expenses">
+            <Receipt size={16} /> Expenses {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
+          </Link>
+          <a
+            className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
+            href={`/${slug}?from=settings`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
+          </a>
+          <Link className={path === "/settings" ? "active" : ""} href="/settings">
+            <Settings size={16} /> Settings
+          </Link>
+        </nav>
 
-      <div className="mt-auto pt-4 border-t border-[#e5e7eb]">
-        <a
-          className={`flex items-center gap-3 p-3 rounded-xl text-decoration-none transition-all cursor-pointer ${
-            path === "/profile"
-              ? "bg-white text-[#191c1d] shadow-2xs"
-              : "hover:bg-white/80 hover:shadow-2xs text-[#191c1d]"
-          }`}
-          href="/profile"
-          aria-label="Open director profile and studio equity"
-          title="Director Profile & Studio Equity"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shrink-0 shadow-2xs">
-            EV
+        <div className="mt-auto pt-3 border-t border-[#e5e7eb]">
+          <div
+            className={`group relative flex items-center justify-between p-2 rounded-xl transition-all ${
+              path === "/profile"
+                ? "bg-white text-[#191c1d] shadow-2xs border border-[#e5e7eb]"
+                : "hover:bg-white/90 hover:shadow-2xs border border-transparent hover:border-[#e5e7eb]/80"
+            }`}
+          >
+            <Link
+              className="flex items-center gap-2.5 min-w-0 flex-1 text-decoration-none"
+              href="/profile"
+              aria-label="Open director profile and studio equity"
+              title="Director Profile & Studio Equity"
+            >
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shadow-2xs">
+                  {initials}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#16a34a] ring-2 ring-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <b className="text-xs font-semibold text-[#191c1d] block leading-tight truncate capitalize">
+                  {userName}
+                </b>
+                <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
+                  {userRole}
+                </span>
+              </div>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setShowLogoutModal(true)}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#9ca3af] hover:text-[#ef4444] hover:bg-red-50/80 transition-all shrink-0 cursor-pointer ml-1"
+              aria-label="Log out"
+              title="Log out"
+            >
+              <LogOut size={14} />
+            </button>
           </div>
-          <div className="min-w-0 flex-1">
-            <b className="text-xs font-bold text-[#191c1d] block leading-tight truncate">
-              Elena Vance
-            </b>
-            <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
-              Lead Brand Designer
-            </span>
-          </div>
-          <ChevronRight size={14} className="text-[#9ca3af] shrink-0" />
-        </a>
-      </div>
-    </aside>
+        </div>
+      </aside>
+
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+      />
+    </>
   );
 }
 

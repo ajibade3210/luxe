@@ -8,11 +8,9 @@ import { isAuthenticated } from "@/lib/api";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(true);
 
   useEffect(() => {
-    setMounted(true);
     if (!isAuthenticated()) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname || "/overview")}`);
     } else {
@@ -20,8 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [pathname, router]);
 
-  // Don't render protected dashboard content until authenticated
-  if (!mounted || !authed) {
+  if (!authed) {
     return null;
   }
 
