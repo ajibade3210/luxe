@@ -97,15 +97,15 @@ export function InvoicePreview({
         <div className="grid grid-cols-3 gap-2 text-[11px] border-b border-[#f3f4f6] pb-4">
           <div>
             <span className="text-[#9ca3af] block">Issue Date</span>
-            <b className="text-[#111827] block mt-0.5">{issueDate}</b>
+            <b className="text-[#111827] block mt-0.5">{issueDate || "---"}</b>
           </div>
           <div>
             <span className="text-[#9ca3af] block">Due Date</span>
-            <b className="text-[#111827] block mt-0.5">{dueDate}</b>
+            <b className="text-[#111827] block mt-0.5">{dueDate || "---"}</b>
           </div>
           <div>
             <span className="text-[#9ca3af] block">Payment Terms</span>
-            <b className="text-[#111827] block mt-0.5">{paymentTerms}</b>
+            <b className="text-[#111827] block mt-0.5">{paymentTerms || "---"}</b>
           </div>
         </div>
 
@@ -182,23 +182,34 @@ export function InvoicePreview({
           </div>
         </div>
 
-        {/* Bank Details */}
-        <div className="bg-[#fafaf9] rounded-2xl p-3.5 border border-[#f3f4f6] space-y-1 text-[11px]">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-            Remittance Banking Details
-          </span>
-          <div className="text-[#4b5563] text-[10px] space-y-0.5 pt-0.5">
-            <div>
-              Bank Name: <b className="text-[#111827]">Standard Chartered Bank</b>
-            </div>
-            <div>
-              Account Name: <b className="text-[#111827]">Élan Events Atelier Ltd</b>
-            </div>
-            <div>
-              Account Number: <b className="text-[#111827] font-mono">0039281745</b>
+        {/* Bank Details: Render only if configured on vendor profile */}
+        {(businessProfile?.bankName ||
+          businessProfile?.accountName ||
+          businessProfile?.accountNumber) && (
+          <div className="bg-[#fafaf9] rounded-2xl p-3.5 border border-[#f3f4f6] space-y-1 text-[11px]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+              Remittance Banking Details
+            </span>
+            <div className="text-[#4b5563] text-[10px] space-y-0.5 pt-0.5">
+              {businessProfile.bankName && (
+                <div>
+                  Bank Name: <b className="text-[#111827]">{businessProfile.bankName}</b>
+                </div>
+              )}
+              {businessProfile.accountName && (
+                <div>
+                  Account Name: <b className="text-[#111827]">{businessProfile.accountName}</b>
+                </div>
+              )}
+              {businessProfile.accountNumber && (
+                <div>
+                  Account Number:{" "}
+                  <b className="text-[#111827] font-mono">{businessProfile.accountNumber}</b>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
         {notes && <div className="text-[10px] text-[#6b7280] italic">Note: {notes}</div>}
       </div>

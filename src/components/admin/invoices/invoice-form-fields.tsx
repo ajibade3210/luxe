@@ -119,13 +119,14 @@ export function InvoiceFormFields({
 
         <div>
           <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">
-            Payment Terms *
+            Payment Terms
           </label>
           <select
             value={paymentTerms}
             onChange={e => setPaymentTerms(e.target.value as PaymentTerms)}
             className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:outline-none transition-all"
           >
+            <option value="">---</option>
             {PAYMENT_TERMS_OPTIONS.map(opt => (
               <option key={opt} value={opt}>
                 {opt}
@@ -143,10 +144,10 @@ export function InvoiceFormFields({
             onChange={e => setCurrency(e.target.value as CurrencyCode)}
             className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:outline-none transition-all"
           >
-            <option value="NGN">NGN (₦) · Naira</option>
-            <option value="USD">USD ($) · Dollar</option>
-            <option value="GBP">GBP (£) · Pound</option>
-            <option value="EUR">EUR (€) · Euro</option>
+            <option value="NGN">NGN (₦)</option>
+            <option value="USD">USD ($)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="EUR">EUR (€)</option>
           </select>
         </div>
       </div>

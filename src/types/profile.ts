@@ -112,6 +112,9 @@ export interface BusinessProfile {
   colors: ColorScheme;
   buttonRadius: ButtonRadiusType;
   currency?: CurrencyCode;
+  bankName?: string | null;
+  accountName?: string | null;
+  accountNumber?: string | null;
   portfolioCategories?: string[];
   showServices?: boolean;
   showPortfolio?: boolean;
@@ -457,7 +460,17 @@ export interface ProfileIdentityCardProps {
   phone: string;
   avatar: string;
   studioName?: string;
-  onSave: (updates: { name: string; email: string; phone: string }) => Promise<void>;
+  bankName?: string | null;
+  accountName?: string | null;
+  accountNumber?: string | null;
+  onSave: (updates: {
+    name: string;
+    email: string;
+    phone: string;
+    bankName?: string | null;
+    accountName?: string | null;
+    accountNumber?: string | null;
+  }) => Promise<void>;
 }
 
 export interface ProfileSecurityCardProps {

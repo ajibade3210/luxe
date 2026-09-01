@@ -24,7 +24,7 @@ export interface Invoice {
   billingAddress: string;
   issueDate: string;
   dueDate: string;
-  paymentTerms: PaymentTerms;
+  paymentTerms?: PaymentTerms | string;
   currency?: CurrencyCode;
   items: InvoiceItem[];
   subtotal: number;
@@ -50,7 +50,7 @@ export interface InvoiceInput {
   billingAddress: string;
   issueDate: string;
   dueDate: string;
-  paymentTerms: PaymentTerms;
+  paymentTerms?: PaymentTerms | string;
   currency?: CurrencyCode;
   items: InvoiceItem[];
   subtotal: number;
@@ -103,7 +103,7 @@ export interface InvoiceFormFieldsProps {
   billingAddress: string;
   issueDate: string;
   dueDate: string;
-  paymentTerms: PaymentTerms;
+  paymentTerms: PaymentTerms | "";
   currency: CurrencyCode;
   items: InvoiceItem[];
   discount: number;
@@ -115,7 +115,7 @@ export interface InvoiceFormFieldsProps {
   setBillingAddress: (v: string) => void;
   setIssueDate: (v: string) => void;
   setDueDate: (v: string) => void;
-  setPaymentTerms: (v: PaymentTerms) => void;
+  setPaymentTerms: (v: PaymentTerms | "") => void;
   setCurrency: (v: CurrencyCode) => void;
   setDiscount: (v: number) => void;
   setTaxRate: (v: number) => void;
@@ -151,7 +151,7 @@ export interface InvoicePreviewProps {
   billingAddress: string;
   issueDate: string;
   dueDate: string;
-  paymentTerms: PaymentTerms;
+  paymentTerms: PaymentTerms | "" | string;
   currency: CurrencyCode;
   items: InvoiceItem[];
   subtotal: number;

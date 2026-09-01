@@ -145,7 +145,8 @@ export async function getInvoicePdfUrl(id: string): Promise<string> {
 export async function downloadInvoicePdf(invoice: Invoice | string): Promise<void> {
   const id = typeof invoice === "string" ? invoice : invoice.id;
   const invoiceNumber = typeof invoice === "string" ? invoice : invoice.invoiceNumber;
-  const url = await getInvoicePdfUrl(id);
+  const url =
+    typeof invoice !== "string" && invoice.pdfUrl ? invoice.pdfUrl : await getInvoicePdfUrl(id);
 
   if (typeof window !== "undefined") {
     const link = document.createElement("a");
@@ -160,8 +161,6 @@ export async function downloadInvoicePdf(invoice: Invoice | string): Promise<voi
         link.parentNode.removeChild(link);
       }
     }, 100);
-    // Directly navigate if popup blocked
-    window.location.assign(url);
   }
 }
 

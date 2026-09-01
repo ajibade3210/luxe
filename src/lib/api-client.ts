@@ -103,8 +103,11 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     }
   }
 
+  const hasBody = customConfig.body !== undefined && customConfig.body !== null;
+  const isFormData = customConfig.body instanceof FormData;
+
   const headers: HeadersInit = {
-    ...(customConfig.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+    ...(hasBody && !isFormData ? { "Content-Type": "application/json" } : {}),
     ...customConfig.headers,
   };
 

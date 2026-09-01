@@ -256,18 +256,23 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         onConfirm={handleResendInvoice}
       />
 
-      <InvoiceModal
-        isOpen={showInvoiceModal}
-        onClose={() => {
-          setShowInvoiceModal(false);
-          setInvoiceModalCustomer(undefined);
-          setInvoiceModalInvoice(undefined);
-        }}
-        onToast={notify}
-        initialCustomer={invoiceModalCustomer}
-        existingInvoice={invoiceModalInvoice}
-        allCustomers={items}
-      />
+      {showInvoiceModal && (
+        <InvoiceModal
+          isOpen={showInvoiceModal}
+          onClose={() => {
+            setShowInvoiceModal(false);
+            setInvoiceModalCustomer(undefined);
+            setInvoiceModalInvoice(undefined);
+          }}
+          onToast={notify}
+          onInvoiceSaved={() => {
+            reloadCustomers();
+          }}
+          initialCustomer={invoiceModalCustomer}
+          existingInvoice={invoiceModalInvoice}
+          allCustomers={items}
+        />
+      )}
 
       <CustomerImportModal
         isOpen={showImportModal}

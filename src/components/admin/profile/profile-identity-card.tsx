@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ProfileIdentityCardProps } from "@/types";
 
 export function ProfileIdentityCard({
@@ -10,25 +10,51 @@ export function ProfileIdentityCard({
   phone,
   avatar,
   studioName,
+  bankName,
+  accountName,
+  accountNumber,
   onSave,
 }: ProfileIdentityCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(name);
   const [editPhone, setEditPhone] = useState(phone);
+  const [editBankName, setEditBankName] = useState(bankName || "");
+  const [editAccountName, setEditAccountName] = useState(accountName || "");
+  const [editAccountNumber, setEditAccountNumber] = useState(accountNumber || "");
   const [saving, setSaving] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
 
   // Sync edits if parent state changes
+  useEffect(() => {
+    if (!isEditing) {
+      setEditName(name);
+      setEditPhone(phone);
+      setEditBankName(bankName || "");
+      setEditAccountName(accountName || "");
+      setEditAccountNumber(accountNumber || "");
+    }
+  }, [name, phone, bankName, accountName, accountNumber, isEditing]);
+
   const handleStartEdit = () => {
     setEditName(name);
     setEditPhone(phone);
+    setEditBankName(bankName || "");
+    setEditAccountName(accountName || "");
+    setEditAccountNumber(accountNumber || "");
     setIsEditing(true);
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await onSave({ name: editName, email, phone: editPhone });
+      await onSave({
+        name: editName,
+        email,
+        phone: editPhone,
+        bankName: editBankName,
+        accountName: editAccountName,
+        accountNumber: editAccountNumber,
+      });
       setIsEditing(false);
     } finally {
       setSaving(false);
@@ -132,6 +158,56 @@ export function ProfileIdentityCard({
                 />
               </div>
             </div>
+
+            {/* Banking Remittance Details */}
+            <div className="md:col-span-2 pt-2 border-t border-[#f0e8dc]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#855e2e] block mb-3">
+                Remittance Banking Details (For Invoices)
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+                    Bank Name
+                  </label>
+                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                    <input
+                      value={editBankName}
+                      onChange={event => setEditBankName(event.target.value)}
+                      placeholder="e.g. Standard Chartered"
+                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+                    Account Name
+                  </label>
+                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                    <input
+                      value={editAccountName}
+                      onChange={event => setEditAccountName(event.target.value)}
+                      placeholder="e.g. Élan Atelier Ltd"
+                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
+                    Account Number
+                  </label>
+                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                    <input
+                      value={editAccountNumber}
+                      onChange={event => setEditAccountNumber(event.target.value)}
+                      placeholder="e.g. 0039281745"
+                      className="w-full text-xs text-[#191c1d] font-mono placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Localized Action Buttons */}
@@ -154,32 +230,56 @@ export function ProfileIdentityCard({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
-          <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
-              Full name
-            </span>
-            <strong className="text-xs font-bold text-[#191c1d] block mt-1">
-              {name || "Elena Vance"}
-            </strong>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-1">
+            <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
+                Full name
+              </span>
+              <strong className="text-xs font-bold text-[#191c1d] block mt-1">
+                {name || "Elena Vance"}
+              </strong>
+            </div>
+
+            <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
+                Email address
+              </span>
+              <strong className="text-xs font-bold text-[#191c1d] block mt-1 truncate">
+                {email || "elena@atelierforma.design"}
+              </strong>
+            </div>
+
+            <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
+                Phone number
+              </span>
+              <strong className="text-xs font-bold text-[#191c1d] block mt-1">
+                {phone || "+234 800 ELAN VIP"}
+              </strong>
+            </div>
           </div>
 
-          <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
-              Email address
+          <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+              Remittance Banking Details
             </span>
-            <strong className="text-xs font-bold text-[#191c1d] block mt-1 truncate">
-              {email || "elena@atelierforma.design"}
-            </strong>
-          </div>
-
-          <div className="p-4 bg-[#faf8f5] border border-[#eee7dc] rounded-2xl">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c827a] block">
-              Phone number
-            </span>
-            <strong className="text-xs font-bold text-[#191c1d] block mt-1">
-              {phone || "+234 800 ELAN VIP"}
-            </strong>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-[#191c1d]">
+              <div>
+                <span className="text-[10px] text-[#8c827a] block">Bank Name</span>
+                <span className="font-semibold block mt-0.5">{bankName || "---"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-[#8c827a] block">Account Name</span>
+                <span className="font-semibold block mt-0.5">{accountName || "---"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] text-[#8c827a] block">Account Number</span>
+                <span className="font-mono font-semibold block mt-0.5">
+                  {accountNumber || "---"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -60,19 +60,38 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
       });
   }, []);
 
-  const handleSaveProfile = async (updates: { name: string; email: string; phone: string }) => {
+  const handleSaveProfile = async (updates: {
+    name: string;
+    email: string;
+    phone: string;
+    bankName?: string | null;
+    accountName?: string | null;
+    accountNumber?: string | null;
+  }) => {
     try {
-      await Promise.all([
+      const [, updatedBusiness] = await Promise.all([
         updateUserProfile({
           name: updates.name,
           phone: updates.phone,
         }),
         updateBusinessProfile({
           phone: updates.phone,
+          bankName: updates.bankName,
+          accountName: updates.accountName,
+          accountNumber: updates.accountNumber,
         }),
       ]);
       setName(updates.name);
       setPhone(updates.phone);
+      if (updatedBusiness) {
+        setBusinessProfile(prev => ({
+          ...prev,
+          ...updatedBusiness,
+          bankName: updates.bankName,
+          accountName: updates.accountName,
+          accountNumber: updates.accountNumber,
+        }));
+      }
       notify("Profile credentials updated successfully");
     } catch (err) {
       logger.error("Failed to update profile credentials", err);
@@ -131,6 +150,9 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
         phone={phone}
         avatar={avatar}
         studioName={studioName}
+        bankName={businessProfile?.bankName}
+        accountName={businessProfile?.accountName}
+        accountNumber={businessProfile?.accountNumber}
         onSave={handleSaveProfile}
       />
 
