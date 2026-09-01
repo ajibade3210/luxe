@@ -13,6 +13,7 @@ import {
   Receipt,
   Search,
   Settings,
+  Store,
   TrendingUp,
   Users,
   X,
@@ -178,6 +179,11 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   const [invoiceCount, setInvoiceCount] = useState<number | null>(null);
   const [expenseCount, setExpenseCount] = useState<number | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(() => path === "/vendor/settings");
+
+  useEffect(() => {
+    setOnlineStoreExpanded(path === "/vendor/settings");
+  }, [path]);
 
   useEffect(() => {
     // Hydrate user and slug from session cache first (instant), then confirm from API if needed.
@@ -282,17 +288,44 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
             <Receipt size={16} /> Expenses{" "}
             {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
           </Link>
-          <a
-            className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
-            href={`/${slug}?from=settings`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
-          </a>
-          <Link className={path === "/vendor/settings" ? "active" : ""} href="/vendor/settings">
-            <Settings size={16} /> Settings
-          </Link>
+          {/* Online Store Section */}
+          <div className="flex flex-col">
+            <button
+              type="button"
+              className={`nav-item justify-between ${
+                onlineStoreExpanded || path === "/vendor/settings" ? "active" : ""
+              }`}
+              onClick={() => setOnlineStoreExpanded(prev => !prev)}
+            >
+              <div className="flex items-center gap-[12px] min-w-0">
+                <Store size={16} className="shrink-0" />
+                <span className="truncate">Online Store</span>
+              </div>
+
+              <a
+                href={`/${slug}?from=settings`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="!p-1 !h-auto !w-auto !gap-0 rounded text-[#9ca3af] hover:text-[#191c1d] transition-colors shrink-0 ml-auto"
+                title="View Online Store"
+                aria-label="View Online Store"
+              >
+                <Eye size={15} />
+              </a>
+            </button>
+
+            {onlineStoreExpanded && (
+              <div className="flex flex-col mt-1 pl-7">
+                <Link
+                  href="/vendor/settings"
+                  className={path === "/vendor/settings" ? "active" : ""}
+                >
+                  Preferences
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div className="mt-auto pt-3 border-t border-[#e5e7eb]">
@@ -343,8 +376,11 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   );
 }
 
-export function Header({ onMenu, onToast }: AdminHeaderProps) {
+export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
   const [busy, setBusy] = useState(false);
+  const pathname = usePathname();
+  const currentPath = path || pathname || "";
+  const isSettingsPage = currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
   // Start with the stable default so SSR and the initial client render agree.
   const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
 
@@ -370,30 +406,34 @@ export function Header({ onMenu, onToast }: AdminHeaderProps) {
         <input aria-label="Search" placeholder="Search anything..." />
       </div>
       <div className="header-actions">
-        <a
-          href={`/${slug}?from=settings`}
-          target="_blank"
-          rel="noreferrer"
-          className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#0058be] text-[#191c1d]"
-          style={{ fontSize: "11px", padding: "9px 14px" }}
-        >
-          <Eye size={14} className="text-[#0058be]" /> Profile View
-        </a>
-        <button className="icon-button" aria-label="Notifications">
+        {isSettingsPage && (
+          <>
+            <a
+              href={`/${slug}?from=settings`}
+              target="_blank"
+              rel="noreferrer"
+              className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#191c1d] text-[#191c1d]"
+              style={{ fontSize: "11px", padding: "9px 14px" }}
+            >
+              <Eye size={14} className="text-[#191c1d]" /> Profile View
+            </a>
+            <button
+              className="publish bg-[#000000] hover:bg-[#262626]"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                await publishChanges();
+                setBusy(false);
+                onToast("Changes published successfully");
+              }}
+            >
+              {busy ? "Publishing…" : "Publish changes"}
+              <ArrowRight size={15} />
+            </button>
+          </>
+        )}
+        <button className="icon-button" aria-label="Notifications" title="Notifications">
           <Bell size={17} />
-        </button>
-        <button
-          className="publish bg-[#000000] hover:bg-[#262626]"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true);
-            await publishChanges();
-            setBusy(false);
-            onToast("Changes published successfully");
-          }}
-        >
-          {busy ? "Publishing…" : "Publish changes"}
-          <ArrowRight size={15} />
         </button>
       </div>
     </header>
@@ -416,7 +456,7 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
       <div className="admin">
         <Sidebar path={currentPath} open={open} onClose={() => setOpen(false)} />
         <div className="admin-main">
-          <Header onMenu={() => setOpen(true)} onToast={handleToast} />
+          <Header onMenu={() => setOpen(true)} onToast={handleToast} path={currentPath} />
           {children}
         </div>
         {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}

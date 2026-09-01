@@ -58,6 +58,7 @@ export interface AdminSidebarProps {
 export interface AdminHeaderProps {
   onMenu: () => void;
   onToast: (s: string) => void;
+  path?: string;
 }
 
 export interface AnalyticsPageProps {
