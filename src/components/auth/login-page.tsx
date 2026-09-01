@@ -9,7 +9,6 @@ import {
   Globe,
   HelpCircle,
   Loader2,
-  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -138,11 +137,6 @@ export function LoginPage() {
                 )}
               </div>
             )}
-
-            {/* Security Badge */}
-            <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] pt-2">
-              <Shield size={14} className="text-[#10b981]" />
-            </div>
           </div>
 
           {/* Bottom Links */}
