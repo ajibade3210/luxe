@@ -90,9 +90,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
       </div>
 
       {/* Studio Equity & Business Valuation Estimator */}
-      {valuation && (
-        <ValuationCard valuation={valuation} onRefresh={handleRefreshValuation} onToast={notify} />
-      )}
+      <ValuationCard valuation={valuation} onRefresh={handleRefreshValuation} onToast={notify} />
 
       {/* Director Identity Panel */}
       <ProfileIdentityCard

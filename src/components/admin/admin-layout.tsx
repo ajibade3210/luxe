@@ -20,17 +20,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import { clearSession, getBusinessProfile, getCurrentSession, publishChanges } from "@/lib/api";
+import { APP_CONFIG } from "@/constants";
+import {
+  useCustomersQuery,
+  useExpensesQuery,
+  useInvoicesQuery,
+  useLeadsQuery,
+  useStudioProfileQuery,
+} from "@/hooks/queries";
+import { clearSession, getCurrentSession, publishChanges } from "@/lib/api";
 import type {
   AdminHeaderProps,
   AdminLayoutProps,
   AdminSidebarProps,
   AdminToastContextType,
-  Customer,
-  Expense,
-  Invoice,
-  Lead,
   MetricProps,
   PageTitleProps,
   ToastProps,
@@ -166,91 +169,38 @@ export function PageTitle({ title, action, children }: PageTitleProps) {
 }
 
 export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
-  // Always start with the stable default so SSR and the initial client render agree,
-  // then immediately update from the session cache and/or API.
-  const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
-  const [userName, setUserName] = useState<string>("Elena Vance");
-  const [userRole, setUserRole] = useState<string>("Lead Brand Designer");
-  const [initials, setInitials] = useState<string>("EV");
-  const [leadCount, setLeadCount] = useState<number | null>(null);
-  const [customerCount, setCustomerCount] = useState<number | null>(null);
-  const [invoiceCount, setInvoiceCount] = useState<number | null>(null);
-  const [expenseCount, setExpenseCount] = useState<number | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(
     () => path === "/vendor/settings"
   );
 
+  const { data: profile } = useStudioProfileQuery();
+  const { data: leads } = useLeadsQuery();
+  const { data: customers } = useCustomersQuery();
+  const { data: invoices } = useInvoicesQuery();
+  const { data: expenses } = useExpensesQuery();
+
+  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
+  const userName = session?.name || profile?.businessName || "Vendor";
+  const userRole = profile?.businessName || session?.studioName || "Store Owner";
+  const initials =
+    userName
+      .split(" ")
+      .map(p => p[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "SW";
+
+  const leadCount = leads?.length ?? null;
+  const customerCount = customers?.length ?? null;
+  const invoiceCount = invoices?.length ?? null;
+  const expenseCount = expenses?.length ?? null;
+
   useEffect(() => {
     setOnlineStoreExpanded(path === "/vendor/settings");
   }, [path]);
-
-  useEffect(() => {
-    // Hydrate user and slug from session cache first (instant), then confirm from API if needed.
-    const session = getCurrentSession();
-    if (session) {
-      if (session.studioSlug) setSlug(session.studioSlug);
-      if (session.name) {
-        setUserName(session.name);
-        const inits = session.name
-          .split(" ")
-          .map(p => p[0])
-          .filter(Boolean)
-          .slice(0, 2)
-          .join("")
-          .toUpperCase();
-        if (inits) setInitials(inits);
-      }
-      if (session.studioName) {
-        setUserRole(`${session.studioName}`);
-      }
-    }
-
-    getBusinessProfile()
-      .then(profile => {
-        if (profile?.slug) setSlug(profile.slug);
-        if (profile?.businessName) {
-          setUserRole(profile.businessName);
-        }
-      })
-      .catch(() => {});
-
-    const handleLeadsUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Lead[]>;
-      if (customEvent.detail) {
-        setLeadCount(customEvent.detail.length);
-      }
-    };
-    const handleCustomersUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Customer[]>;
-      if (customEvent.detail) {
-        setCustomerCount(customEvent.detail.length);
-      }
-    };
-    const handleInvoicesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoiceCount(customEvent.detail.length);
-      }
-    };
-    const handleExpensesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Expense[]>;
-      if (customEvent.detail) {
-        setExpenseCount(customEvent.detail.length);
-      }
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-    window.addEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-    return () => {
-      window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-    };
-  }, []);
 
   return (
     <>
@@ -382,20 +332,10 @@ export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
   const currentPath = path || pathname || "";
   const isSettingsPage =
     currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
-  // Start with the stable default so SSR and the initial client render agree.
-  const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
 
-  useEffect(() => {
-    const cached = getCurrentSession()?.studioSlug;
-    if (cached) setSlug(cached);
-    else {
-      getBusinessProfile()
-        .then(profile => {
-          if (profile?.slug) setSlug(profile.slug);
-        })
-        .catch(() => {});
-    }
-  }, []);
+  const { data: profile } = useStudioProfileQuery();
+  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
 
   return (
     <header className="admin-header">

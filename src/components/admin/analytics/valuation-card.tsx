@@ -11,7 +11,37 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showHealthModal, setShowHealthModal] = useState(false);
 
-  if (!valuation) return null;
+  const asOfDate = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date());
+
+  if (!valuation) {
+    return (
+      <div className="bg-white border border-[#eee7dc] rounded-2xl p-6 sm:p-7 relative overflow-hidden flex flex-col justify-between min-h-[170px] shadow-2xs animate-pulse">
+        <div className="relative z-10 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className="h-3 w-56 bg-[#f0ebe3] rounded-md" />
+              <div className="w-5 h-5 rounded-full bg-[#f0ebe3]" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-24 bg-[#f0ebe3] rounded-lg" />
+              <div className="h-3 w-28 bg-[#f0ebe3] rounded-md" />
+            </div>
+          </div>
+          <div className="h-10 sm:h-12 w-64 sm:w-80 bg-[#e8dfd2] rounded-xl" />
+          <div className="h-3.5 w-full max-w-md bg-[#f0ebe3] rounded-md" />
+        </div>
+        <Landmark
+          size={120}
+          strokeWidth={1}
+          className="absolute right-6 top-1/2 -translate-y-1/2 text-[#191c1d]/[0.03] pointer-events-none select-none"
+        />
+      </div>
+    );
+  }
 
   const handleRefresh = async () => {
     if (!onRefresh) return;
@@ -20,12 +50,6 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
     setIsRefreshing(false);
     onToast?.("Valuation model updated with real-time sales and expense records.");
   };
-
-  const asOfDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date());
 
   return (
     <>
