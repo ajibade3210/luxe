@@ -1,4 +1,9 @@
-import type { ExpenseCategory, InvoiceStatus, LeadStatus, Timeframe } from "@/types";
+import type {
+  ExpenseCategory,
+  InvoiceStatus,
+  LeadFilterStatus,
+  Timeframe,
+} from "@/types";
 
 export const queryKeys = {
   // Authentication & Session
@@ -46,7 +51,7 @@ export const queryKeys = {
   // Leads
   leads: {
     all: ["leads"] as const,
-    list: (query?: string, status?: LeadStatus) =>
+    list: (query?: string, status?: LeadFilterStatus) =>
       ["leads", "list", { query: query ?? "", status }] as const,
     detail: (id: string) => ["leads", "detail", id] as const,
     summary: () => ["leads", "summary"] as const,

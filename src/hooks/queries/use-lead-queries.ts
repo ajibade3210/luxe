@@ -11,9 +11,9 @@ import {
   getLeadsSummary,
   updateLeadStatus,
 } from "@/services/api/leads.service";
-import type { CreateLeadInput, LeadStatus } from "@/types";
+import type { CreateLeadInput, LeadFilterStatus, LeadStatus } from "@/types";
 
-export function useLeadsQuery(query?: string, status?: LeadStatus) {
+export function useLeadsQuery(query?: string, status?: LeadFilterStatus) {
   return useQuery({
     queryKey: queryKeys.leads.list(query, status),
     queryFn: () => getLeads(query, status),

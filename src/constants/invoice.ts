@@ -1,7 +1,7 @@
 import type { InvoiceStatusFilter } from "@/types";
 
 export const INVOICE_STATUS_FILTERS: { key: InvoiceStatusFilter; label: string }[] = [
-  { key: "all", label: "All Statuses" },
+  { key: "all", label: "All" },
   { key: "paid", label: "Paid" },
   { key: "sent", label: "Sent" },
   { key: "draft", label: "Draft" },

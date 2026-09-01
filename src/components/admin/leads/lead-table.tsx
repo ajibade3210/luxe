@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { LeadTableProps } from "@/types";
+import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import type { LeadFilterStatus, LeadTableProps } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
 import { TableEmptyState } from "../common/table-empty-state";
 
@@ -10,6 +10,8 @@ export function LeadTable({
   paginatedItems,
   searchQuery,
   onSearch,
+  statusFilter = "all",
+  onStatusFilterChange,
   onSelectLead,
   currentPage,
   totalPages,
@@ -21,14 +23,38 @@ export function LeadTable({
   return (
     <div className="table-card">
       <div className="table-head justify-end">
-        <div className="table-search-box ml-auto">
-          <Search size={13} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => onSearch(e.target.value)}
-            placeholder="Search..."
-          />
+        <div className="flex items-center gap-3 ml-auto">
+          {/* Status Filter Dropdown matching Invoices and Expenses */}
+          <div className="relative">
+            <select
+              value={statusFilter}
+              onChange={e => onStatusFilterChange?.(e.target.value as LeadFilterStatus)}
+              aria-label="Filter inquiries by status"
+              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+            >
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="qualified">Qualified</option>
+              <option value="converted">Converted</option>
+            </select>
+            <ChevronDown
+              size={13}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
+            />
+          </div>
+
+          {/* Search Box */}
+          <div className="table-search-box">
+            <Search size={13} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => onSearch(e.target.value)}
+              placeholder="Search leads..."
+            />
+          </div>
         </div>
       </div>
       <div className="table-wrap">

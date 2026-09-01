@@ -6,6 +6,7 @@ import type { Expense, ExpenseCategory, ExpenseInput } from "@/types";
 import {
   useCreateExpenseMutation,
   useDeleteExpenseMutation,
+  useExpenseCategoriesQuery,
   useExpenseSummaryQuery,
   useExpensesQuery,
   useUpdateExpenseMutation,
@@ -26,6 +27,7 @@ export function useExpenses(notify?: (message: string) => void) {
     categoryFilter
   );
   const { data: summary = null, isLoading: isLoadingSummary } = useExpenseSummaryQuery();
+  const { data: categories = [] } = useExpenseCategoriesQuery();
 
   const createMutation = useCreateExpenseMutation();
   const updateMutation = useUpdateExpenseMutation();
@@ -106,6 +108,7 @@ export function useExpenses(notify?: (message: string) => void) {
     expenses,
     paginatedItems,
     summary,
+    categories,
     searchQuery,
     categoryFilter,
     currentPage,

@@ -16,6 +16,7 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
     expenses,
     paginatedItems,
     summary,
+    categories,
     searchQuery,
     categoryFilter,
     currentPage,
@@ -92,6 +93,7 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
         paginatedItems={paginatedItems}
         searchQuery={searchQuery}
         selectedCategory={categoryFilter}
+        categories={categories}
         onSearch={handleSearch}
         onCategoryChange={handleCategoryFilter}
         onEdit={handleOpenEdit}

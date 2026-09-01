@@ -45,11 +45,15 @@ export interface PublicInquiryResponse {
   createdAt: string;
 }
 
+export type LeadFilterStatus = "all" | "active" | "new" | "contacted" | "qualified" | "converted";
+
 export interface LeadTableProps {
   items: Lead[];
   paginatedItems: Lead[];
   searchQuery: string;
   onSearch: (query: string) => void;
+  statusFilter?: LeadFilterStatus;
+  onStatusFilterChange?: (status: LeadFilterStatus) => void;
   onSelectLead: (id: string) => void;
   currentPage: number;
   totalPages: number;

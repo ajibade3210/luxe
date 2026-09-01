@@ -12,11 +12,14 @@ import type {
  * Fetch all customers with optional search query and active status filter
  */
 export async function getCustomers(query?: string, isActive?: boolean): Promise<Customer[]> {
-  const data = await apiClient.get<Customer[] | { customers: Customer[] }>("/customers", {
+  const data = await apiClient.get<
+    Customer[] | { items?: Customer[]; customers?: Customer[]; data?: Customer[] }
+  >("/customers", {
     q: query,
     isActive,
   });
-  return Array.isArray(data) ? data : data?.customers || [];
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.customers || data?.data || [];
 }
 
 export interface CustomersSummary {

@@ -5,6 +5,7 @@ import type {
   CreateLeadInput,
   Customer,
   Lead,
+  LeadFilterStatus,
   LeadStatus,
   PublicInquiryInput,
   PublicInquiryResponse,
@@ -33,12 +34,15 @@ export async function createLead(input: CreateLeadInput): Promise<Lead> {
 /**
  * Fetches all studio leads with optional search query and status filter
  */
-export async function getLeads(query?: string, status?: LeadStatus): Promise<Lead[]> {
-  const response = await apiClient.get<Lead[] | { leads: Lead[] }>("/leads", {
+export async function getLeads(query?: string, status?: LeadFilterStatus): Promise<Lead[]> {
+  const response = await apiClient.get<
+    Lead[] | { items?: Lead[]; leads?: Lead[]; data?: Lead[] }
+  >("/leads", {
     q: query,
-    status,
+    status: status === "all" ? undefined : status,
   });
-  return Array.isArray(response) ? response : response?.leads || [];
+  if (Array.isArray(response)) return response;
+  return response?.items || response?.leads || response?.data || [];
 }
 
 export interface LeadsSummary {
@@ -71,10 +75,17 @@ export async function updateLeadStatus(id: string, status: LeadStatus): Promise<
  * 1-Click Convert Lead to Customer & Prepare Initial Service Scope
  */
 export async function convertLeadToCustomer(
-  leadId: string
+  leadId: string,
+  options: {
+    serviceName?: string;
+    service?: string;
+    amount?: number | string;
+    createDraftInvoice?: boolean;
+  } = {}
 ): Promise<{ customer: Customer; lead: Lead }> {
   return apiClient.post<{ customer: Customer; lead: Lead }>(
-    `/leads/${encodeURIComponent(leadId)}/convert`
+    `/leads/${encodeURIComponent(leadId)}/convert`,
+    options
   );
 }
 

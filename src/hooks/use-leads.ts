@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { exportLeadsCSV } from "@/services/api/leads.service";
-import type { Lead } from "@/types";
+import type { Lead, LeadFilterStatus } from "@/types";
 import {
   useConvertLeadMutation,
   useLeadsQuery,
@@ -13,17 +13,23 @@ import {
 export function useLeads(notify?: (message: string) => void) {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<LeadFilterStatus>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { data: items = [], isLoading } = useLeadsQuery(searchQuery);
+  const { data: items = [], isLoading } = useLeadsQuery(searchQuery, statusFilter);
   const { data: summary } = useLeadsSummaryQuery();
   const convertMutation = useConvertLeadMutation();
   const updateStatusMutation = useUpdateLeadStatusMutation();
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
+    setCurrentPage(1);
+  };
+
+  const handleStatusFilterChange = (status: LeadFilterStatus) => {
+    setStatusFilter(status);
     setCurrentPage(1);
   };
 
@@ -68,9 +74,10 @@ export function useLeads(notify?: (message: string) => void) {
 
   const metrics = useMemo(() => {
     if (summary) return summary;
+    const unconverted = items.filter(l => l.status !== "converted");
     return {
-      total: items.length,
-      newToday: items.filter(l => l.status === "new").length,
+      total: unconverted.length,
+      newToday: unconverted.filter(l => l.status === "new").length,
       conversion: Math.round(
         (items.filter(l => l.status === "converted").length / (items.length || 1)) * 100
       ),
@@ -94,6 +101,8 @@ export function useLeads(notify?: (message: string) => void) {
     isConverting: convertMutation.isPending,
     isLoading,
     metrics,
+    statusFilter,
+    handleStatusFilterChange,
     handleSearch,
     handleExport,
     handleConvertToCustomer,

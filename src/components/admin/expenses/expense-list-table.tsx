@@ -11,6 +11,7 @@ export function ExpenseListTable({
   paginatedItems,
   searchQuery,
   selectedCategory,
+  categories = [],
   onSearch,
   onCategoryChange,
   onEdit,
@@ -33,17 +34,27 @@ export function ExpenseListTable({
               value={selectedCategory}
               onChange={e => onCategoryChange(e.target.value as ExpenseCategory | "all")}
               aria-label="Filter expenses by category"
-              className="appearance-none pl-3.5 pr-8 py-2 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
-              <option value="all">All Categories</option>
-              {EXPENSE_CATEGORIES.map(cat => {
-                const cfg = EXPENSE_CATEGORY_CONFIG[cat];
-                return (
-                  <option key={cat} value={cat}>
-                    {cfg.label}
-                  </option>
-                );
-              })}
+              <option value="all">All</option>
+              {categories && categories.length > 0
+                ? categories.map(cat => {
+                    const cfg = EXPENSE_CATEGORY_CONFIG[cat.category as ExpenseCategory];
+                    const label = cat.label || cfg?.label || cat.category;
+                    return (
+                      <option key={cat.category} value={cat.category}>
+                        {label}
+                      </option>
+                    );
+                  })
+                : EXPENSE_CATEGORIES.map(cat => {
+                    const cfg = EXPENSE_CATEGORY_CONFIG[cat];
+                    return (
+                      <option key={cat} value={cat}>
+                        {cfg.label}
+                      </option>
+                    );
+                  })}
             </select>
             <ChevronDown
               size={13}

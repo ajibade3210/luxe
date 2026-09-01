@@ -31,6 +31,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
     isExporting,
     isConverting,
     metrics,
+    statusFilter,
+    handleStatusFilterChange,
     handleSearch,
     handleExport,
     handleConvertToCustomer,
@@ -129,6 +131,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
         paginatedItems={paginatedItems}
         searchQuery={searchQuery}
         onSearch={handleSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
         onSelectLead={setSelectedLeadId}
         currentPage={currentPage}
         totalPages={totalPages}

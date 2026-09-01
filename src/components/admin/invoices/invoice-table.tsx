@@ -41,7 +41,7 @@ export function InvoiceTable({
               value={statusFilter}
               onChange={e => onStatusFilterChange(e.target.value as InvoiceStatusFilter)}
               aria-label="Filter invoices by status"
-              className="appearance-none pl-3.5 pr-8 py-2 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
               {INVOICE_STATUS_FILTERS.map(f => (
                 <option key={f.key} value={f.key}>

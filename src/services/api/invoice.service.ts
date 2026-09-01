@@ -8,10 +8,13 @@ import { CURRENCY_SYMBOLS } from "@/utils";
  * 1. Get All Invoices (Searchable, Filterable by status & customerId)
  */
 export async function getInvoices(status?: InvoiceStatus): Promise<Invoice[]> {
-  const data = await apiClient.get<Invoice[] | { invoices: Invoice[] }>("/invoices", {
+  const data = await apiClient.get<
+    Invoice[] | { items?: Invoice[]; invoices?: Invoice[]; data?: Invoice[] }
+  >("/invoices", {
     status,
   });
-  return Array.isArray(data) ? data : data?.invoices || [];
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.invoices || data?.data || [];
 }
 
 export interface InvoicesSummary {
@@ -38,10 +41,13 @@ export async function getInvoiceById(id: string): Promise<Invoice> {
  * 3. Get Invoices for a specific Customer / Lead
  */
 export async function getInvoicesByCustomerId(customerId: string): Promise<Invoice[]> {
-  const data = await apiClient.get<Invoice[] | { invoices: Invoice[] }>("/invoices", {
+  const data = await apiClient.get<
+    Invoice[] | { items?: Invoice[]; invoices?: Invoice[]; data?: Invoice[] }
+  >("/invoices", {
     customerId,
   });
-  return Array.isArray(data) ? data : data?.invoices || [];
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.invoices || data?.data || [];
 }
 
 /**

@@ -50,6 +50,32 @@ describe("leads service", () => {
     expect(list[0].name).toBe("Victoria Beckham");
   });
 
+  it("fetches paginated leads wrapped in items object", async () => {
+    const mockPaginated = {
+      items: [
+        {
+          id: "lead-99",
+          businessId: "atelier-forma",
+          name: "Sola Allyson",
+          email: "sola@couture.com",
+          service: "Event Design",
+          status: "new" as const,
+          createdAt: "2026-08-20T10:00:00Z",
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+      totalPages: 1,
+    };
+    vi.spyOn(apiClient, "get").mockResolvedValueOnce(mockPaginated);
+
+    const list = await getLeads();
+    expect(Array.isArray(list)).toBe(true);
+    expect(list.length).toBe(1);
+    expect(list[0].name).toBe("Sola Allyson");
+  });
+
   it("creates a new consultation lead", async () => {
     const newLead: Lead = {
       id: "lead-2",

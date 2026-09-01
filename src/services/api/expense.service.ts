@@ -15,11 +15,14 @@ export async function getExpenses(
   query?: string,
   category?: ExpenseCategory | "all"
 ): Promise<Expense[]> {
-  const data = await apiClient.get<Expense[] | { expenses: Expense[] }>("/expenses", {
+  const data = await apiClient.get<
+    Expense[] | { items?: Expense[]; expenses?: Expense[]; data?: Expense[] }
+  >("/expenses", {
     q: query,
     category: category && category !== "all" ? category : undefined,
   });
-  return Array.isArray(data) ? data : data?.expenses || [];
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.expenses || data?.data || [];
 }
 
 /**
