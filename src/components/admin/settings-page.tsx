@@ -91,7 +91,10 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     setByAppointmentOnly,
     logoUrl,
     setLogoUrl,
+    bannerUrl,
+    setBannerUrl,
     isUploadingLogo,
+    isUploadingBanner,
     isUploadingProjectImage,
     isUploadingGalleryImages,
     colors,
@@ -112,6 +115,7 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     removeProject,
     handleAddProject,
     handleLogoUpload,
+    handleBannerUpload,
     handleProjectImageUpload,
     handleGalleryImagesUpload,
     removeGalleryImageFromNewProject,
@@ -162,6 +166,10 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           setLogoUrl={setLogoUrl}
           isUploadingLogo={isUploadingLogo}
           handleLogoUpload={handleLogoUpload}
+          bannerUrl={bannerUrl}
+          setBannerUrl={setBannerUrl}
+          isUploadingBanner={isUploadingBanner}
+          handleBannerUpload={handleBannerUpload}
           onToast={notify}
         />
 

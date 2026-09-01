@@ -22,6 +22,9 @@ export function SignupPage() {
 
   const [selectedPlan, setSelectedPlan] = useState("");
   const [selectedCycle, setSelectedCycle] = useState("");
+  const [businessType, setBusinessType] = useState<"service" | "sales" | "retail" | "ecommerce">(
+    "sales"
+  );
 
   // Read URL query params on mount
   useEffect(() => {
@@ -30,9 +33,16 @@ export function SignupPage() {
       const claim = params.get("claim") || "";
       const planParam = params.get("plan") || "";
       const cycleParam = params.get("cycle") || "";
+      const typeParam = params.get("type") || params.get("businessType") || "";
 
       if (planParam) setSelectedPlan(planParam);
       if (cycleParam) setSelectedCycle(cycleParam);
+      if (
+        typeParam &&
+        ["service", "sales", "retail", "ecommerce"].includes(typeParam.toLowerCase())
+      ) {
+        setBusinessType(typeParam.toLowerCase() as "service" | "sales" | "retail" | "ecommerce");
+      }
 
       if (claim) {
         const clean = claim.toLowerCase().replace(/[^a-z0-9-]/g, "");
@@ -75,7 +85,11 @@ export function SignupPage() {
         slug: effectiveSlug,
         studioName: effectiveName,
       });
-      await updateBusinessProfile({ businessName: effectiveName, slug: effectiveSlug });
+      await updateBusinessProfile({
+        businessName: effectiveName,
+        slug: effectiveSlug,
+        businessType,
+      });
       router.push(`/vendor/settings?claimed=${encodeURIComponent(effectiveSlug)}`);
     } catch (err) {
       setAuthError(err instanceof Error ? err.message : "Sign-up failed. Please try again.");
@@ -186,6 +200,37 @@ export function SignupPage() {
                   placeholder="e.g. Élan Events Atelier"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#94a3b8] outline-none"
                 />
+              </div>
+            </div>
+
+            {/* Business Type Selector */}
+            <div>
+              <label className="block text-xs font-semibold text-[#191c1d] mb-2">
+                Business Type
+              </label>
+              <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Business Type">
+                {[
+                  { key: "service", label: "Service" },
+                  { key: "sales", label: "Sales" },
+                  { key: "retail", label: "Retail" },
+                  { key: "ecommerce", label: "Ecommerce" },
+                ].map(item => {
+                  const isSelected = businessType === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() => setBusinessType(item.key as typeof businessType)}
+                      className={`py-2.5 px-2 rounded-xl text-xs font-medium border text-center transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#191c1d] text-white border-[#191c1d] shadow-2xs"
+                          : "bg-white text-[#374151] border-[#e2e8f0] hover:bg-[#f8fafc]"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -106,6 +106,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
           branding.setAbout(profile.description || "");
           branding.setBusinessType(profile.businessType || "sales");
           if (profile.logoUrl) portfolio.setLogoUrl(profile.logoUrl);
+          if (profile.bannerUrl) portfolio.setBannerUrl(profile.bannerUrl);
 
           if (Array.isArray(profile.services)) services.setServices(profile.services);
           if (Array.isArray(profile.portfolio)) portfolio.setPortfolio(profile.portfolio);
@@ -211,11 +212,19 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     await handleSave({ silent: true, overrideLogoUrl: newLogoUrl });
   };
 
+  // Auto-save on banner upload
+  const handleBannerUploadAndSave = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newBannerUrl = await portfolio.handleBannerUpload(e);
+    if (!newBannerUrl) return;
+    await handleSave({ silent: true, overrideBannerUrl: newBannerUrl });
+  };
+
   const handleSave = async (options?: {
     silent?: boolean;
     overrideServices?: ServiceItem[];
     overridePortfolio?: PortfolioProject[];
     overrideLogoUrl?: string;
+    overrideBannerUrl?: string;
   }): Promise<boolean> => {
     if (branding.website.trim() && !isValidUrl(branding.website)) {
       notify("Invalid website URL");
@@ -323,6 +332,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         currency: branding.currency,
         description: branding.about,
         logoUrl: options?.overrideLogoUrl ?? portfolio.logoUrl,
+        bannerUrl: options?.overrideBannerUrl ?? portfolio.bannerUrl,
         services: cleanedServices,
         portfolio: cleanedPortfolio,
         portfolioCategories: portfolio.categories,
@@ -456,7 +466,10 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setNewProject: portfolio.setNewProject,
     logoUrl: portfolio.logoUrl,
     setLogoUrl: portfolio.setLogoUrl,
+    bannerUrl: portfolio.bannerUrl,
+    setBannerUrl: portfolio.setBannerUrl,
     isUploadingLogo: portfolio.isUploadingLogo,
+    isUploadingBanner: portfolio.isUploadingBanner,
     isUploadingProjectImage: portfolio.isUploadingProjectImage,
     isUploadingGalleryImages: portfolio.isUploadingGalleryImages,
     showManageGalleryModal: portfolio.showManageGalleryModal,
@@ -466,6 +479,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     removeProject: removeProjectAndSave,
     handleAddProject: handleAddProjectAndSave,
     handleLogoUpload: handleLogoUploadAndSave,
+    handleBannerUpload: handleBannerUploadAndSave,
     handleProjectImageUpload: portfolio.handleProjectImageUpload,
     handleGalleryImagesUpload: portfolio.handleGalleryImagesUpload,
     removeGalleryImageFromNewProject: portfolio.removeGalleryImageFromNewProject,

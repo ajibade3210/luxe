@@ -24,7 +24,9 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
   const [newProject, setNewProject] = useState<Partial<PortfolioProject>>(DEFAULT_NEW_PROJECT);
 
   const [logoUrl, setLogoUrl] = useState<string>("");
+  const [bannerUrl, setBannerUrl] = useState<string>("");
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [isUploadingProjectImage, setIsUploadingProjectImage] = useState(false);
   const [isUploadingGalleryImages, setIsUploadingGalleryImages] = useState(false);
 
@@ -118,6 +120,25 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
       return null;
     } finally {
       setIsUploadingLogo(false);
+    }
+  };
+
+  const handleBannerUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<string | null> => {
+    const file = e.target.files?.[0];
+    if (!file) return null;
+    setIsUploadingBanner(true);
+    try {
+      const res = await uploadPortfolioImage(file);
+      setBannerUrl(res.url);
+      notify("Store banner uploaded successfully");
+      return res.url;
+    } catch {
+      notify("Failed to upload store banner");
+      return null;
+    } finally {
+      setIsUploadingBanner(false);
     }
   };
 
@@ -264,7 +285,10 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     setNewProject,
     logoUrl,
     setLogoUrl,
+    bannerUrl,
+    setBannerUrl,
     isUploadingLogo,
+    isUploadingBanner,
     isUploadingProjectImage,
     isUploadingGalleryImages,
     showManageGalleryModal,
@@ -276,6 +300,7 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     removePortfolioCategory,
     handleAddProject,
     handleLogoUpload,
+    handleBannerUpload,
     handleProjectImageUpload,
     handleGalleryImagesUpload,
     removeGalleryImageFromNewProject,

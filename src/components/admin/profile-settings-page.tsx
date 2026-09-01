@@ -10,9 +10,10 @@ import {
   updateUserProfile,
 } from "@/lib/api";
 import { logger } from "@/lib/logger";
-import type { BusinessValuation, ProfileSettingsPageProps } from "@/types";
+import type { BusinessProfile, BusinessValuation, ProfileSettingsPageProps } from "@/types";
 import { useAdminToast } from "./admin-layout";
 import { ValuationCard } from "./analytics/valuation-card";
+import { ProfileHeaderCard } from "./profile/profile-header-card";
 import { ProfileIdentityCard } from "./profile/profile-identity-card";
 import { ProfileSecurityCard } from "./profile/profile-security-card";
 
@@ -24,6 +25,7 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
   const [phone, setPhone] = useState("");
   const [avatar, setAvatar] = useState("");
   const [studioName, setStudioName] = useState(getCurrentSession()?.studioName || "");
+  const [businessProfile, setBusinessProfile] = useState<Partial<BusinessProfile> | null>(null);
   const [valuation, setValuation] = useState<BusinessValuation | null>(null);
 
   useEffect(() => {
@@ -39,8 +41,11 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
       });
     getBusinessProfile()
       .then(profile => {
-        if (profile?.businessName) {
-          setStudioName(profile.businessName);
+        if (profile) {
+          setBusinessProfile(profile);
+          if (profile.businessName) {
+            setStudioName(profile.businessName);
+          }
         }
       })
       .catch(err => {
@@ -80,6 +85,33 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
     setValuation(updated);
   };
 
+  const handleUpdateHeader = async (
+    headerUrl: string,
+    headerType: "AUTO" | "CUSTOM",
+    includeHeaderInInvoice: boolean,
+    includeHeaderInEmail: boolean
+  ) => {
+    try {
+      const updated = await updateBusinessProfile({
+        emailHeaderUrl: headerUrl,
+        headerType,
+        includeHeaderInInvoice,
+        includeHeaderInEmail,
+      });
+      setBusinessProfile(prev => ({
+        ...prev,
+        ...updated,
+        emailHeaderUrl: headerUrl,
+        headerType,
+        includeHeaderInInvoice,
+        includeHeaderInEmail,
+      }));
+    } catch (err) {
+      logger.error("Failed to update email header", err);
+      throw err;
+    }
+  };
+
   return (
     <section className="content profile-content max-w-5xl mx-auto space-y-7 pb-16">
       {/* Page Title */}
@@ -100,6 +132,13 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
         avatar={avatar}
         studioName={studioName}
         onSave={handleSaveProfile}
+      />
+
+      {/* Email & Document Header Banner Panel */}
+      <ProfileHeaderCard
+        business={businessProfile}
+        onUpdateHeader={handleUpdateHeader}
+        onToast={notify}
       />
 
       {/* Authentication & Security Panel */}

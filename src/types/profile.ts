@@ -92,6 +92,11 @@ export interface BusinessProfile {
   email: string;
   phone: string;
   logoUrl?: string;
+  bannerUrl?: string;
+  emailHeaderUrl?: string;
+  headerType?: "AUTO" | "CUSTOM";
+  includeHeaderInInvoice?: boolean;
+  includeHeaderInEmail?: boolean;
   googleReviewsLink?: string;
   services: ServiceItem[];
   socialChannels: SocialChannel[];
@@ -137,14 +142,18 @@ export interface IdentitySectionProps {
   setEmail?: (v: string) => void;
   currency: CurrencyCode;
   setCurrency: (v: CurrencyCode) => void;
-  businessType: BusinessType;
-  setBusinessType: (v: BusinessType) => void;
+  businessType?: BusinessType;
+  setBusinessType?: (v: BusinessType) => void;
   about: string;
   setAbout: (v: string) => void;
   logoUrl?: string;
   setLogoUrl: (v: string) => void;
   isUploadingLogo: boolean;
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
+  bannerUrl?: string;
+  setBannerUrl?: (v: string) => void;
+  isUploadingBanner?: boolean;
+  handleBannerUpload?: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
   onToast: (msg: string) => void;
 }
 
@@ -461,4 +470,34 @@ export interface ConfirmModalProps {
   description: string;
   confirmLabel?: string;
   isLoading?: boolean;
+}
+
+export interface ProfileHeaderCardProps {
+  business: Partial<BusinessProfile> | null;
+  onUpdateHeader: (
+    headerUrl: string,
+    headerType: "AUTO" | "CUSTOM",
+    includeHeaderInInvoice: boolean,
+    includeHeaderInEmail: boolean
+  ) => Promise<void>;
+  onToast: (msg: string) => void;
+}
+
+export interface EditHeaderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  businessName: string;
+  tagline: string;
+  logoUrl?: string;
+  currentHeaderUrl?: string;
+  currentHeaderType?: "AUTO" | "CUSTOM";
+  initialIncludeInInvoice?: boolean;
+  initialIncludeInEmail?: boolean;
+  onSaveHeader: (
+    headerUrl: string,
+    headerType: "AUTO" | "CUSTOM",
+    includeHeaderInInvoice: boolean,
+    includeHeaderInEmail: boolean
+  ) => Promise<void>;
+  onToast: (msg: string) => void;
 }

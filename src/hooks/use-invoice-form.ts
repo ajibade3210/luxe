@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   createWhatsAppInvoiceUrl,
   deleteInvoice,
   downloadInvoicePdf,
+  getBusinessProfile,
+  getCurrentSession,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
   resendInvoice,
@@ -73,10 +75,31 @@ export function useInvoiceForm({
   );
   const [discount, setDiscount] = useState<number>(existingInvoice?.discount || 0);
   const [taxRate, setTaxRate] = useState<number>(existingInvoice?.taxRate || 0);
-  const [notes, setNotes] = useState<string>(
-    existingInvoice?.notes ||
-      "Thank you for your trust in Élan Atelier. Please complete the payment before the due date."
-  );
+  const [notes, setNotes] = useState<string>(() => {
+    if (existingInvoice?.notes) return existingInvoice.notes;
+    const sessionStudio = getCurrentSession()?.studioName;
+    return `Thank you for your trust in ${sessionStudio || "our business"}. Please complete the payment before the due date.`;
+  });
+
+  useEffect(() => {
+    if (!existingInvoice?.notes) {
+      getBusinessProfile()
+        .then(profile => {
+          if (profile?.businessName) {
+            setNotes(prev => {
+              if (
+                prev.includes("Thank you for your trust in") &&
+                (prev.includes("our business") || prev.includes("Élan Atelier"))
+              ) {
+                return `Thank you for your trust in ${profile.businessName}. Please complete the payment before the due date.`;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [existingInvoice?.notes]);
 
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isSending, setIsSending] = useState(false);

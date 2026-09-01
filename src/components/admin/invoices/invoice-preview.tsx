@@ -1,7 +1,9 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import type { InvoicePreviewProps } from "@/types";
+import { useEffect, useState } from "react";
+import { getBusinessProfile } from "@/lib/api";
+import type { BusinessProfile, InvoicePreviewProps } from "@/types";
 import { formatMoney } from "@/utils";
 
 export function InvoicePreview({
@@ -22,6 +24,21 @@ export function InvoicePreview({
   copiedLink,
   onCopyLink,
 }: InvoicePreviewProps) {
+  const [businessProfile, setBusinessProfile] = useState<Partial<BusinessProfile> | null>(null);
+
+  useEffect(() => {
+    getBusinessProfile()
+      .then(profile => {
+        if (profile) setBusinessProfile(profile);
+      })
+      .catch(() => {
+        // Fallback gracefully to default placeholders
+      });
+  }, []);
+
+  const hasHeaderBanner =
+    businessProfile?.includeHeaderInInvoice !== false && Boolean(businessProfile?.emailHeaderUrl);
+
   return (
     <div className="lg:col-span-5 space-y-4">
       <div className="flex items-center justify-between">
@@ -50,19 +67,51 @@ export function InvoicePreview({
       {/* Stationery Card */}
       <div className="bg-white border border-[#e5e7eb] rounded-3xl p-6 sm:p-7 shadow-lg space-y-6 text-xs text-[#374151]">
         {/* Logo & Header */}
-        <div className="flex items-center justify-between border-b border-[#f3f4f6] pb-4">
-          <div className="w-10 h-10 rounded-2xl bg-[#111827] text-white flex items-center justify-center font-serif font-bold text-base shadow-xs">
-            É
+        {hasHeaderBanner ? (
+          <div className="space-y-3 border-b border-[#f3f4f6] pb-4">
+            <div className="w-full aspect-[10/3] rounded-2xl overflow-hidden border border-[#e5e7eb] bg-[#f8fafc] flex items-center justify-center">
+              <img
+                src={businessProfile!.emailHeaderUrl!}
+                alt="Invoice Header Banner"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+                {existingInvoice?.status?.toUpperCase() || "DRAFT"}
+              </span>
+              <span className="text-xs font-mono font-bold text-[#111827] block">
+                {existingInvoice?.invoiceNumber || "INV-2026-DRAFT"}
+              </span>
+            </div>
           </div>
-          <div className="text-right">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
-              {existingInvoice?.status?.toUpperCase() || "DRAFT"}
-            </span>
-            <span className="text-xs font-mono font-bold text-[#111827] block">
-              {existingInvoice?.invoiceNumber || "INV-2026-DRAFT"}
-            </span>
+        ) : (
+          <div className="flex items-center justify-between border-b border-[#f3f4f6] pb-4">
+            <div className="w-10 h-10 rounded-2xl bg-[#111827] text-white flex items-center justify-center font-serif font-bold text-base shadow-xs overflow-hidden">
+              {businessProfile?.logoUrl ? (
+                <img
+                  src={businessProfile.logoUrl}
+                  alt="Business Logo"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span>
+                  {businessProfile?.businessName
+                    ? businessProfile.businessName.charAt(0).toUpperCase()
+                    : "É"}
+                </span>
+              )}
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+                {existingInvoice?.status?.toUpperCase() || "DRAFT"}
+              </span>
+              <span className="text-xs font-mono font-bold text-[#111827] block">
+                {existingInvoice?.invoiceNumber || "INV-2026-DRAFT"}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Meta block */}
         <div className="grid grid-cols-3 gap-2 text-[11px] border-b border-[#f3f4f6] pb-4">
@@ -84,9 +133,11 @@ export function InvoicePreview({
         <div className="space-y-3 border-b border-[#f3f4f6] pb-4 text-[11px]">
           <div>
             <span className="text-[#9ca3af] block">Billed by:</span>
-            <b className="text-[#111827] block mt-0.5">Élan Atelier Limited</b>
+            <b className="text-[#111827] block mt-0.5">
+              {businessProfile?.businessName || "Élan Atelier Limited"}
+            </b>
             <span className="text-[#6b7280] block text-[10px] mt-0.5">
-              Plot 14, Victoria Island Waterfront, Lagos, Nigeria
+              {businessProfile?.location || "Plot 14, Victoria Island Waterfront, Lagos, Nigeria"}
             </span>
           </div>
 

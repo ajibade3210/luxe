@@ -1,6 +1,5 @@
 import { ChevronDown, Loader2, Lock, Upload } from "lucide-react";
-import { BUSINESS_TYPE_CTA_MAP, BUSINESS_TYPE_LABELS } from "@/constants";
-import type { BusinessType, CurrencyCode, IdentitySectionProps } from "@/types";
+import type { CurrencyCode, IdentitySectionProps } from "@/types";
 import { isValidUrl, slugify } from "@/utils";
 import { Card } from "./card";
 import { GooglePlacesAutocompleteField } from "./google-places-autocomplete-field";
@@ -21,14 +20,18 @@ export function IdentitySection({
   setEmail: _setEmail,
   currency = "NGN",
   setCurrency,
-  businessType,
-  setBusinessType,
+  businessType: _businessType,
+  setBusinessType: _setBusinessType,
   about,
   setAbout,
   logoUrl,
   setLogoUrl: _setLogoUrl,
   isUploadingLogo,
   handleLogoUpload,
+  bannerUrl,
+  setBannerUrl: _setBannerUrl,
+  isUploadingBanner,
+  handleBannerUpload,
   onToast: _onToast,
 }: IdentitySectionProps) {
   return (
@@ -37,56 +40,121 @@ export function IdentitySection({
       description="The foundation of your public customer-facing presence."
     >
       <div className="space-y-7">
-        {/* Logo Upload Section */}
-        <div className="bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 sm:p-6 shadow-2xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            <div className="flex items-center gap-4 sm:gap-5">
-              <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
-                {logoUrl ? (
+        {/* Visual Brand Assets: Logo & Storefront Hero Banner (1:3 Grid Ratio) */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+          {/* Logo Upload Card (1 part) */}
+          <div className="lg:col-span-1 bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 shadow-2xs flex flex-col justify-between">
+            <div className="flex flex-col items-start gap-4">
+              <div className="flex items-center gap-4">
+                <div className="relative w-16 h-16 rounded-2xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+                  {logoUrl ? (
+                    <img
+                      src={logoUrl}
+                      alt="Business Logo Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="font-sans font-bold text-xl text-[#191c1d]">
+                      {name ? name.charAt(0).toUpperCase() : "S"}
+                    </span>
+                  )}
+                  {isUploadingLogo && (
+                    <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
+                      <Loader2 size={18} className="animate-spin text-[#0058be]" />
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
+                    Brand Logo
+                  </span>
+                  <span className="text-[10px] text-[#9ca3af] font-medium tracking-wider uppercase mt-0.5 block">
+                    PNG · SVG · JPG
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#6b7280] leading-relaxed">
+                Your official studio crest displayed across your storefront.
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex justify-end">
+              <label className="w-full cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
+                <Upload size={13} className="text-white" />
+                <span className="text-white">
+                  {isUploadingLogo ? "Uploading..." : logoUrl ? "Replace Logo" : "Upload Logo"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                  disabled={isUploadingLogo}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Storefront Hero Banner Upload Card (3 parts) */}
+          <div className="lg:col-span-3 bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
+                    Storefront Banner
+                  </span>
+                  <p className="text-xs text-[#6b7280] mt-0.5">
+                    Your widescreen hero banner displayed atop your public storefront.
+                  </p>
+                </div>
+                <span className="text-[10px] text-[#9ca3af] font-medium uppercase shrink-0">
+                  ~16:9 or 1920×500px
+                </span>
+              </div>
+
+              <div className="relative w-full h-28 sm:h-32 rounded-xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs overflow-hidden group">
+                {bannerUrl ? (
                   <img
-                    src={logoUrl}
-                    alt="Business Logo Preview"
+                    src={bannerUrl}
+                    alt="Storefront Banner Preview"
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="font-sans font-bold text-2xl text-[#191c1d]">
-                    {name ? name.charAt(0).toUpperCase() : "S"}
-                  </span>
+                  <div className="text-center px-4">
+                    <span className="text-xs text-[#9ca3af] font-medium">
+                      No storefront banner uploaded yet
+                    </span>
+                  </div>
                 )}
-                {isUploadingLogo && (
+                {isUploadingBanner && (
                   <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                    <Loader2 size={20} className="animate-spin text-[#0058be]" />
+                    <Loader2 size={18} className="animate-spin text-[#0058be]" />
                   </div>
                 )}
               </div>
-
-              <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0058be] block">
-                  Business Brand Logo
-                </span>
-                <p className="text-xs text-[#6b7280] mt-0.5 max-w-md leading-relaxed">
-                  Your official studio crest displayed on onboarding cards, concierge header, and
-                  footer.
-                </p>
-                <span className="text-[10px] text-[#9ca3af] font-medium tracking-wider uppercase mt-1 block">
-                  PNG · SVG · JPG · WEBP
-                </span>
-              </div>
             </div>
 
-            <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all shadow-xs shrink-0 select-none">
-              <Upload size={14} className="text-white" />
-              <span className="text-white">
-                {isUploadingLogo ? "Uploading..." : logoUrl ? "Replace Logo" : "Upload Logo"}
-              </span>
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                className="hidden"
-                onChange={handleLogoUpload}
-                disabled={isUploadingLogo}
-              />
-            </label>
+            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex justify-end">
+              <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
+                <Upload size={13} className="text-white" />
+                <span className="text-white">
+                  {isUploadingBanner
+                    ? "Uploading..."
+                    : bannerUrl
+                      ? "Replace Banner"
+                      : "Upload Banner"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  className="hidden"
+                  onChange={handleBannerUpload}
+                  disabled={isUploadingBanner}
+                />
+              </label>
+            </div>
           </div>
         </div>
 
@@ -229,37 +297,7 @@ export function IdentitySection({
             </div>
           </div>
 
-          {/* Row 5: Business Type Button Group */}
-          <div className="md:col-span-2 space-y-2.5">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">
-              Business Type
-            </label>
-            <div
-              className="flex flex-wrap items-center gap-2"
-              role="radiogroup"
-              aria-label="Business Type"
-            >
-              {(Object.keys(BUSINESS_TYPE_CTA_MAP) as BusinessType[]).map(type => {
-                const isSelected = businessType === type;
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => setBusinessType(type)}
-                    className={`px-4 py-2 rounded-lg text-xs font-medium border transition-all cursor-pointer shadow-2xs ${
-                      isSelected
-                        ? "border-[#111827] bg-[#111827] text-white shadow-xs font-semibold"
-                        : "border-[#e5e7eb] bg-white text-[#4b5563] hover:border-[#d1d5db] hover:bg-[#fafaf9]"
-                    }`}
-                  >
-                    {BUSINESS_TYPE_LABELS[type]}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Row 6: About textarea */}
+          {/* Row 5: About textarea */}
           <div className="md:col-span-2 space-y-2">
             <label className="text-xs font-semibold text-[#374151] tracking-wide block">
               About store
