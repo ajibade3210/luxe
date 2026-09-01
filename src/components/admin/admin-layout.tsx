@@ -180,7 +180,12 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   const { data: invoices } = useInvoicesQuery();
   const { data: expenses } = useExpensesQuery();
 
-  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const [session, setSession] = useState<ReturnType<typeof getCurrentSession>>(null);
+
+  useEffect(() => {
+    setSession(getCurrentSession());
+  }, []);
+
   const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
   const userName = session?.name || profile?.businessName || "Vendor";
   const userRole = profile?.businessName || session?.studioName || "Store Owner";
@@ -334,7 +339,12 @@ export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
     currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
 
   const { data: profile } = useStudioProfileQuery();
-  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const [session, setSession] = useState<ReturnType<typeof getCurrentSession>>(null);
+
+  useEffect(() => {
+    setSession(getCurrentSession());
+  }, []);
+
   const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
 
   return (
