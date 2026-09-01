@@ -35,12 +35,13 @@ export async function createLead(input: CreateLeadInput): Promise<Lead> {
  * Fetches all studio leads with optional search query and status filter
  */
 export async function getLeads(query?: string, status?: LeadFilterStatus): Promise<Lead[]> {
-  const response = await apiClient.get<
-    Lead[] | { items?: Lead[]; leads?: Lead[]; data?: Lead[] }
-  >("/leads", {
-    q: query,
-    status: status === "all" ? undefined : status,
-  });
+  const response = await apiClient.get<Lead[] | { items?: Lead[]; leads?: Lead[]; data?: Lead[] }>(
+    "/leads",
+    {
+      q: query,
+      status: status === "all" ? undefined : status,
+    }
+  );
   if (Array.isArray(response)) return response;
   return response?.items || response?.leads || response?.data || [];
 }

@@ -1,9 +1,4 @@
-import type {
-  ExpenseCategory,
-  InvoiceStatus,
-  LeadFilterStatus,
-  Timeframe,
-} from "@/types";
+import type { ExpenseCategory, InvoiceStatus, LeadFilterStatus, Timeframe } from "@/types";
 
 export const queryKeys = {
   // Authentication & Session
