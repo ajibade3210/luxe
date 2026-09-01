@@ -142,7 +142,6 @@ export function LoginPage() {
             {/* Security Badge */}
             <div className="flex items-center justify-center gap-2 text-xs text-[#64748b] pt-2">
               <Shield size={14} className="text-[#10b981]" />
-              <span>Bank-grade 256-bit Google OAuth</span>
             </div>
           </div>
 
