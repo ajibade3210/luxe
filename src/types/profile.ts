@@ -150,10 +150,12 @@ export interface IdentitySectionProps {
   setLogoUrl: (v: string) => void;
   isUploadingLogo: boolean;
   handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
+  handleDeleteLogo?: () => Promise<void> | void;
   bannerUrl?: string;
   setBannerUrl?: (v: string) => void;
   isUploadingBanner?: boolean;
   handleBannerUpload?: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
+  handleDeleteBanner?: () => Promise<void> | void;
   onToast: (msg: string) => void;
 }
 

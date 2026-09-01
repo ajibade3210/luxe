@@ -212,11 +212,25 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     await handleSave({ silent: true, overrideLogoUrl: newLogoUrl });
   };
 
+  // Auto-save on logo delete
+  const handleDeleteLogoAndSave = async () => {
+    portfolio.handleDeleteLogo();
+    await handleSave({ silent: true, overrideLogoUrl: "" });
+    notify("Logo removed successfully");
+  };
+
   // Auto-save on banner upload
   const handleBannerUploadAndSave = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newBannerUrl = await portfolio.handleBannerUpload(e);
     if (!newBannerUrl) return;
     await handleSave({ silent: true, overrideBannerUrl: newBannerUrl });
+  };
+
+  // Auto-save on banner delete
+  const handleDeleteBannerAndSave = async () => {
+    portfolio.handleDeleteBanner();
+    await handleSave({ silent: true, overrideBannerUrl: "" });
+    notify("Store banner removed successfully");
   };
 
   const handleSave = async (options?: {
@@ -479,7 +493,9 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     removeProject: removeProjectAndSave,
     handleAddProject: handleAddProjectAndSave,
     handleLogoUpload: handleLogoUploadAndSave,
+    handleDeleteLogo: handleDeleteLogoAndSave,
     handleBannerUpload: handleBannerUploadAndSave,
+    handleDeleteBanner: handleDeleteBannerAndSave,
     handleProjectImageUpload: portfolio.handleProjectImageUpload,
     handleGalleryImagesUpload: portfolio.handleGalleryImagesUpload,
     removeGalleryImageFromNewProject: portfolio.removeGalleryImageFromNewProject,

@@ -67,20 +67,10 @@ export function EditHeaderModal({
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, 1200, 360);
 
-    // Left Logo Container: Dark rounded box (#26282B)
     const boxX = 30;
     const boxY = 30;
     const boxSize = 300;
     const radius = 28;
-
-    ctx.beginPath();
-    if (typeof ctx.roundRect === "function") {
-      ctx.roundRect(boxX, boxY, boxSize, boxSize, [radius]);
-    } else {
-      ctx.rect(boxX, boxY, boxSize, boxSize);
-    }
-    ctx.fillStyle = "#26282B";
-    ctx.fill();
 
     const titleText = (headerTitle || "Business Name").trim().toUpperCase();
     const captionText = (headerCaption || "Shop With Us").trim();
@@ -113,13 +103,23 @@ export function EditHeaderModal({
     };
 
     const drawMonogram = () => {
+      ctx.save();
+      ctx.beginPath();
+      if (typeof ctx.roundRect === "function") {
+        ctx.roundRect(boxX, boxY, boxSize, boxSize, [radius]);
+      } else {
+        ctx.rect(boxX, boxY, boxSize, boxSize);
+      }
+      ctx.fillStyle = "#26282B";
+      ctx.fill();
+
       const initial = (titleText.charAt(0) || "S").toUpperCase();
       ctx.fillStyle = "#ffffff";
       ctx.font = "800 140px 'Inter', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(initial, boxX + boxSize / 2, boxY + boxSize / 2);
-      ctx.textAlign = "start";
+      ctx.restore();
       drawTextGroup();
     };
 
@@ -128,14 +128,21 @@ export function EditHeaderModal({
       img.crossOrigin = "anonymous";
       img.src = customLogoUrl;
       img.onload = () => {
-        // Fit logo nicely inside box
-        const maxLogoSize = 220;
-        const scale = Math.min(maxLogoSize / img.width, maxLogoSize / img.height, 1);
+        ctx.save();
+        ctx.beginPath();
+        if (typeof ctx.roundRect === "function") {
+          ctx.roundRect(boxX, boxY, boxSize, boxSize, [radius]);
+        } else {
+          ctx.rect(boxX, boxY, boxSize, boxSize);
+        }
+        ctx.clip();
+        const scale = Math.max(boxSize / img.width, boxSize / img.height);
         const w = img.width * scale;
         const h = img.height * scale;
         const x = boxX + (boxSize - w) / 2;
         const y = boxY + (boxSize - h) / 2;
         ctx.drawImage(img, x, y, w, h);
+        ctx.restore();
         drawTextGroup();
       };
       img.onerror = () => {

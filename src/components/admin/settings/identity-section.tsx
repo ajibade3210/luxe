@@ -1,4 +1,4 @@
-import { ChevronDown, Loader2, Lock, Upload } from "lucide-react";
+import { ChevronDown, Loader2, Lock, Trash2, Upload } from "lucide-react";
 import type { CurrencyCode, IdentitySectionProps } from "@/types";
 import { isValidUrl, slugify } from "@/utils";
 import { Card } from "./card";
@@ -28,10 +28,12 @@ export function IdentitySection({
   setLogoUrl: _setLogoUrl,
   isUploadingLogo,
   handleLogoUpload,
+  handleDeleteLogo,
   bannerUrl,
   setBannerUrl: _setBannerUrl,
   isUploadingBanner,
   handleBannerUpload,
+  handleDeleteBanner,
   onToast: _onToast,
 }: IdentitySectionProps) {
   return (
@@ -46,7 +48,7 @@ export function IdentitySection({
           <div className="lg:col-span-1 bg-[#fafaf9] border border-[#e5e7eb] rounded-2xl p-5 shadow-2xs flex flex-col justify-between">
             <div className="flex flex-col items-start gap-4">
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-2xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-[#e5e7eb] bg-[#f3f4f6] flex items-center justify-center shadow-xs shrink-0 overflow-hidden group">
                   {logoUrl ? (
                     <img
                       src={logoUrl}
@@ -54,13 +56,13 @@ export function IdentitySection({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="font-sans font-bold text-xl text-[#191c1d]">
+                    <span className="font-sans font-bold text-2xl sm:text-3xl text-[#191c1d]">
                       {name ? name.charAt(0).toUpperCase() : "S"}
                     </span>
                   )}
                   {isUploadingLogo && (
                     <div className="absolute inset-0 bg-white/85 backdrop-blur-xs flex items-center justify-center">
-                      <Loader2 size={18} className="animate-spin text-[#0058be]" />
+                      <Loader2 size={22} className="animate-spin text-[#0058be]" />
                     </div>
                   )}
                 </div>
@@ -80,11 +82,23 @@ export function IdentitySection({
               </p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex justify-end">
-              <label className="w-full cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
+            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex items-center justify-end gap-2">
+              {logoUrl && handleDeleteLogo && (
+                <button
+                  type="button"
+                  onClick={handleDeleteLogo}
+                  disabled={isUploadingLogo}
+                  aria-label="Delete Logo"
+                  className="cursor-pointer inline-flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/80 px-3 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none disabled:opacity-50"
+                >
+                  <Trash2 size={13} />
+                  <span>Delete</span>
+                </button>
+              )}
+              <label className="flex-1 cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
                 <Upload size={13} className="text-white" />
                 <span className="text-white">
-                  {isUploadingLogo ? "Uploading..." : logoUrl ? "Replace Logo" : "Upload Logo"}
+                  {isUploadingLogo ? "Uploading..." : logoUrl ? "Replace" : "Upload Logo"}
                 </span>
                 <input
                   type="file"
@@ -136,7 +150,19 @@ export function IdentitySection({
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex justify-end">
+            <div className="mt-4 pt-3 border-t border-[#e5e7eb]/60 flex items-center justify-end gap-2">
+              {bannerUrl && handleDeleteBanner && (
+                <button
+                  type="button"
+                  onClick={handleDeleteBanner}
+                  disabled={isUploadingBanner}
+                  aria-label="Delete Banner"
+                  className="cursor-pointer inline-flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/80 px-3.5 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none disabled:opacity-50"
+                >
+                  <Trash2 size={13} />
+                  <span>Delete</span>
+                </button>
+              )}
               <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-9 rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 select-none">
                 <Upload size={13} className="text-white" />
                 <span className="text-white">

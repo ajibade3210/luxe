@@ -115,7 +115,9 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
     removeProject,
     handleAddProject,
     handleLogoUpload,
+    handleDeleteLogo,
     handleBannerUpload,
+    handleDeleteBanner,
     handleProjectImageUpload,
     handleGalleryImagesUpload,
     removeGalleryImageFromNewProject,
@@ -166,10 +168,12 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           setLogoUrl={setLogoUrl}
           isUploadingLogo={isUploadingLogo}
           handleLogoUpload={handleLogoUpload}
+          handleDeleteLogo={handleDeleteLogo}
           bannerUrl={bannerUrl}
           setBannerUrl={setBannerUrl}
           isUploadingBanner={isUploadingBanner}
           handleBannerUpload={handleBannerUpload}
+          handleDeleteBanner={handleDeleteBanner}
           onToast={notify}
         />
 

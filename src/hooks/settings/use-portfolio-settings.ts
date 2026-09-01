@@ -142,6 +142,14 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     }
   };
 
+  const handleDeleteLogo = () => {
+    setLogoUrl("");
+  };
+
+  const handleDeleteBanner = () => {
+    setBannerUrl("");
+  };
+
   const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -300,7 +308,9 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
     removePortfolioCategory,
     handleAddProject,
     handleLogoUpload,
+    handleDeleteLogo,
     handleBannerUpload,
+    handleDeleteBanner,
     handleProjectImageUpload,
     handleGalleryImagesUpload,
     removeGalleryImageFromNewProject,
