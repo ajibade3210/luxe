@@ -41,6 +41,23 @@ export function sanitizeHandle(value: string, prefix = ""): string {
   return v;
 }
 
+export function isValidUrl(url?: string | null): boolean {
+  if (!url?.trim()) return false;
+  const trimmed = url.trim();
+  const standardPattern =
+    /^(https?:\/\/)?([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/i;
+  const localhostPattern = /^(https?:\/\/)?localhost(:\d+)?(\/[^\s]*)?$/i;
+  const ipPattern = /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/[^\s]*)?$/i;
+  return standardPattern.test(trimmed) || localhostPattern.test(trimmed) || ipPattern.test(trimmed);
+}
+
+export function normalizeWebsiteUrl(url?: string | null): string {
+  if (!url?.trim()) return "";
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 export function isValidTimeFormat(val: string): boolean {
   if (!val) return false;
   const trimmed = val.trim().toUpperCase();
@@ -115,4 +132,29 @@ export function isDarkColor(hex?: string): boolean {
   // Perceived brightness formula (YIQ)
   const yiq = (r * 299 + g * 587 + b * 114) / 1000;
   return yiq < 135;
+}
+
+export function normalizeButtonRadius(
+  radius?: string | null
+): "Square" | "Subtle" | "Rounded" | "Pill" {
+  if (!radius) return "Subtle";
+  const val = radius.toLowerCase().trim();
+  if (val === "0px" || val === "square" || val === "none") return "Square";
+  if (val === "12px" || val === "16px" || val === "rounded") return "Rounded";
+  if (val === "9999px" || val === "pill" || val === "full") return "Pill";
+  return "Subtle";
+}
+
+export function getButtonRadiusClass(radius?: string | null): string {
+  const normalized = normalizeButtonRadius(radius);
+  switch (normalized) {
+    case "Square":
+      return "rounded-none";
+    case "Rounded":
+      return "rounded-2xl";
+    case "Pill":
+      return "rounded-full";
+    default:
+      return "rounded-lg";
+  }
 }

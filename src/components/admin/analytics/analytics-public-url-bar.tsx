@@ -1,0 +1,64 @@
+import { Check, Copy, ExternalLink, Globe } from "lucide-react";
+import { useState } from "react";
+import type { AnalyticsPublicUrlBarProps } from "@/types";
+
+export function AnalyticsPublicUrlBar({ slug, onNotify }: AnalyticsPublicUrlBarProps) {
+  const [copied, setCopied] = useState(false);
+  const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/${slug}`;
+
+  const copyUrl = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+      onNotify?.("Public shop URL copied to clipboard!");
+    }
+  };
+
+  return (
+    <div className="bg-white border border-[#eee7dc] rounded-2xl p-4 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-8 h-8 rounded-lg bg-[#faf8f5] border border-[#e8e2d8] flex items-center justify-center shrink-0 text-[#855e2e]">
+          <Globe size={15} />
+        </div>
+        <div className="min-w-0">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] block">
+            Public Shop URL
+          </span>
+          <span className="text-xs text-[#444748] font-mono block truncate max-w-xs sm:max-w-md">
+            {publicUrl}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+        <button
+          type="button"
+          onClick={copyUrl}
+          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-[#faf8f5] hover:bg-[#f2ece3] text-[#191c1d] border border-[#ded7cb] px-4 h-9 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+        >
+          {copied ? (
+            <>
+              <Check size={13} className="text-[#059669]" />
+              <span className="text-[#059669]">Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy size={13} />
+              <span>Copy Link</span>
+            </>
+          )}
+        </button>
+        <a
+          href={`/${slug}?from=analytics`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-[#191c1d] hover:bg-black !text-white px-4 h-9 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+        >
+          <span>View Live</span>
+          <ExternalLink size={12} className="text-white" />
+        </a>
+      </div>
+    </div>
+  );
+}

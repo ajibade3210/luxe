@@ -2,22 +2,23 @@
 
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { featuredOrganizations } from "@/lib/mock-data";
+import { useFeaturedStudiosQuery } from "@/hooks/queries/use-studio-queries";
 import type { HeroRotatingCardProps } from "@/types";
 
 export function HeroRotatingCard({
-  organizations = featuredOrganizations,
-  intervalMs = 6000, // 6 seconds per rotation
+  organizations: initialOrgs,
+  intervalMs = 6000,
 }: HeroRotatingCardProps) {
+  const { data: queryOrgs } = useFeaturedStudiosQuery();
+  const orgs = (initialOrgs && initialOrgs.length > 0 ? initialOrgs : queryOrgs) || [];
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const orgs = organizations && organizations.length > 0 ? organizations : featuredOrganizations;
   const currentOrg = orgs[currentIndex] || orgs[0];
 
-  // Function to switch to next organization with smooth transition
   const handleNext = useCallback(() => {
     setIsAnimating(true);
     setTimeout(() => {
@@ -46,7 +47,6 @@ export function HeroRotatingCard({
     [currentIndex]
   );
 
-  // Auto rotation timer with pause on hover
   useEffect(() => {
     if (isPaused || orgs.length <= 1) return;
 
@@ -58,6 +58,14 @@ export function HeroRotatingCard({
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isPaused, intervalMs, orgs.length, handleNext]);
+
+  if (!currentOrg) {
+    return (
+      <div className="hero-card-container relative">
+        <div className="profile-card block relative overflow-hidden animate-pulse bg-black/5 min-h-[380px] rounded-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -72,7 +80,7 @@ export function HeroRotatingCard({
       >
         {/* Top Floating Badge */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/90 backdrop-blur-md border border-[#e8dfd3] shadow-xs text-[10px] font-medium text-[#191c1d]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#855e2e]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#855e2e] animate-pulse" />
           <span>Spotlight</span>
         </div>
 
@@ -82,11 +90,17 @@ export function HeroRotatingCard({
             isAnimating ? "opacity-30 scale-95" : "opacity-100 scale-100"
           }`}
         >
-          <img
-            src={currentOrg.logoUrl}
-            alt={`${currentOrg.name} logo`}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
+          {currentOrg.logoUrl ? (
+            <img
+              src={currentOrg.logoUrl}
+              alt={`${currentOrg.name} logo`}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center font-serif text-2xl italic font-bold text-[#191c1d]">
+              {currentOrg.name}
+            </div>
+          )}
         </div>
 
         {/* Dynamic Studio Meta */}
@@ -103,7 +117,7 @@ export function HeroRotatingCard({
         {/* Card Footer with Custom Domain & CTA */}
         <div className="profile-foot">
           <span>{currentOrg.badge}</span>
-          <span className="text-[#0058be] font-medium group-hover:translate-x-0.5 transition-transform">
+          <span className="text-[#0058be] font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
             View live profile <ArrowRight size={14} />
           </span>
         </div>
@@ -115,7 +129,7 @@ export function HeroRotatingCard({
         <div className="flex items-center gap-1.5">
           {orgs.map((org, idx) => (
             <button
-              key={org.id}
+              key={org.id || `org-${idx}`}
               type="button"
               onClick={e => {
                 e.preventDefault();

@@ -237,7 +237,7 @@ export function CustomerBroadcastModal({
               value={subject}
               onChange={e => setSubject(e.target.value)}
               placeholder="e.g. Autumn Gala Atelier Invitations"
-              className="w-full px-3.5 py-2.5 bg-white border border-[#ded7cb] focus:border-[#855e2e] rounded-xl text-xs text-[#191c1d] focus:outline-none transition-colors"
+              className="w-full px-3.5 py-2.5 bg-white border border-[#ded7cb] rounded-xl text-xs text-[#191c1d] focus:outline-none transition-colors"
             />
           </div>
         )}
@@ -248,7 +248,7 @@ export function CustomerBroadcastModal({
             <span className="text-[#8c827a] font-normal lowercase">(optional)</span>
           </label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center bg-white border border-[#ded7cb] focus-within:border-[#855e2e] rounded-xl overflow-hidden transition-colors shadow-2xs">
+            <div className="flex-1 flex items-center bg-white border border-[#ded7cb] rounded-xl overflow-hidden transition-colors shadow-2xs">
               <span className="pl-3.5 pr-2 text-[#8c827a] flex items-center justify-center shrink-0">
                 <ImageIcon size={15} />
               </span>
@@ -309,9 +309,7 @@ export function CustomerBroadcastModal({
             value={message}
             onChange={e => setMessage(e.target.value)}
             className={`w-full p-3.5 bg-white border rounded-xl text-xs text-[#191c1d] focus:outline-none transition-colors leading-relaxed ${
-              isOverLimit
-                ? "border-red-500 focus:border-red-500"
-                : "border-[#ded7cb] focus:border-[#855e2e]"
+              isOverLimit ? "border-red-500 focus:border-red-500" : "border-[#ded7cb]"
             }`}
             placeholder="Type your bespoke broadcast message here..."
           />

@@ -1,20 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CUSTOM_EVENTS } from "@/constants";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { queryKeys } from "@/lib/query-keys";
+import { exportCustomersCSV } from "@/services/api/customer.service";
+import type { NewCustomerInput, ServiceStatus } from "@/types";
 import {
-  addServiceToCustomer,
-  createCustomer,
-  deleteCustomerService,
-  deleteInvoice,
-  exportCustomersCSV,
-  getCustomers,
-  getInvoices,
-  resendInvoice,
-  toggleCustomerActiveStatus,
-  updateCustomerServiceStatus,
-} from "@/lib/api";
-import type { Customer, Invoice, NewCustomerInput, ServiceStatus } from "@/types";
+  useAddCustomerServiceMutation,
+  useCreateCustomerMutation,
+  useCustomersQuery,
+  useCustomersSummaryQuery,
+  useDeleteCustomerServiceMutation,
+  useDeleteInvoiceMutation,
+  useInvoicesQuery,
+  useResendInvoiceMutation,
+  useToggleCustomerStatusMutation,
+  useUpdateCustomerServiceStatusMutation,
+} from "./queries";
 
 export const AVAILABLE_SERVICES = [
   "Full Wedding Production & Styling",
@@ -26,54 +28,37 @@ export const AVAILABLE_SERVICES = [
 ] as const;
 
 export function useCustomers(onToast?: (message: string) => void) {
-  const [items, setItems] = useState<Customer[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isExporting, setIsExporting] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    getCustomers(searchQuery)
-      .then(setItems)
-      .catch(() => setItems([]));
-    getInvoices()
-      .then(setInvoices)
-      .catch(() => setInvoices([]));
+  const queryClient = useQueryClient();
+  const { data: customersData = [], isLoading: isLoadingCustomers } =
+    useCustomersQuery(searchQuery);
+  const { data: summary } = useCustomersSummaryQuery();
+  const { data: invoicesData = [], isLoading: isLoadingInvoices } = useInvoicesQuery();
 
-    const handleCustomersUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Customer[]>;
-      if (customEvent.detail) {
-        setItems(customEvent.detail);
-      }
-    };
+  const createCustomerMutation = useCreateCustomerMutation();
+  const addServiceMutation = useAddCustomerServiceMutation();
+  const deleteServiceMutation = useDeleteCustomerServiceMutation();
+  const updateServiceStatusMutation = useUpdateCustomerServiceStatusMutation();
+  const toggleStatusMutation = useToggleCustomerStatusMutation();
+  const resendInvoiceMutation = useResendInvoiceMutation();
+  const deleteInvoiceMutation = useDeleteInvoiceMutation();
 
-    const handleInvoicesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoices(customEvent.detail);
-      }
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-
-    return () => {
-      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-    };
-  }, [searchQuery]);
+  const items = customersData;
+  const invoices = invoicesData;
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
     setCurrentPage(1);
-    getCustomers(val).then(setItems);
   };
 
   const reloadCustomers = () => {
-    getCustomers(searchQuery).then(setItems);
+    queryClient.invalidateQueries({ queryKey: queryKeys.customers.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
   };
 
   const handleExport = async () => {
@@ -99,17 +84,13 @@ export function useCustomers(onToast?: (message: string) => void) {
       return false;
     }
 
-    setIsSubmitting(true);
     try {
-      const newCustomer = await createCustomer(formData);
-      setItems(prev => [newCustomer, ...prev]);
+      const newCustomer = await createCustomerMutation.mutateAsync(formData);
       onToast?.(`Customer "${newCustomer.name}" added successfully.`);
       return true;
     } catch {
       onToast?.("Failed to create customer.");
       return false;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -119,33 +100,35 @@ export function useCustomers(onToast?: (message: string) => void) {
     data: { name: string; service: string; amount: number; status: ServiceStatus }
   ) => {
     if (!data.name) {
-      onToast?.("Please enter a service name.");
+      onToast?.("Service name is required.");
       return false;
     }
 
     try {
-      const updatedCust = await addServiceToCustomer(customerId, data);
-      setItems(prev => prev.map(c => (c.id === updatedCust.id ? updatedCust : c)));
-      onToast?.(`Service "${data.name}" added to ${customerName}.`);
+      await addServiceMutation.mutateAsync({
+        customerId,
+        input: {
+          name: data.name,
+          service: data.service,
+          amount: data.amount,
+          status: data.status,
+        },
+      });
+      onToast?.(`Service scope added for ${customerName}.`);
       return true;
     } catch {
-      onToast?.("Failed to add service.");
+      onToast?.("Failed to add service scope.");
       return false;
     }
   };
 
-  const handleDeleteService = async (
-    customerId: string,
-    serviceId: string,
-    serviceName: string
-  ) => {
+  const handleDeleteService = async (customerId: string, serviceId: string) => {
     try {
-      const updated = await deleteCustomerService(customerId, serviceId);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      onToast?.(`Service "${serviceName}" removed.`);
+      await deleteServiceMutation.mutateAsync({ customerId, serviceId });
+      onToast?.("Service scope removed.");
       return true;
     } catch {
-      onToast?.("Failed to remove service.");
+      onToast?.("Failed to remove service scope.");
       return false;
     }
   };
@@ -153,14 +136,11 @@ export function useCustomers(onToast?: (message: string) => void) {
   const handleUpdateServiceStatus = async (
     customerId: string,
     serviceId: string,
-    status: ServiceStatus,
-    serviceName: string,
-    statusLabel: string
+    status: ServiceStatus
   ) => {
     try {
-      const updated = await updateCustomerServiceStatus(customerId, serviceId, status);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      onToast?.(`Service "${serviceName}" marked as ${statusLabel}.`);
+      await updateServiceStatusMutation.mutateAsync({ customerId, serviceId, status });
+      onToast?.(`Service status updated to ${status}.`);
       return true;
     } catch {
       onToast?.("Failed to update service status.");
@@ -170,9 +150,8 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleToggleCustomerStatus = async (customerId: string, isActive: boolean) => {
     try {
-      const updated = await toggleCustomerActiveStatus(customerId, isActive);
-      setItems(prev => prev.map(c => (c.id === customerId ? updated : c)));
-      onToast?.(`Customer "${updated.name}" is now ${isActive ? "Active" : "Inactive"}.`);
+      const updated = await toggleStatusMutation.mutateAsync({ id: customerId, isActive });
+      onToast?.(`Customer "${updated.name}" is now ${isActive ? "Active" : "Archived"}.`);
       return true;
     } catch {
       onToast?.("Failed to update customer status.");
@@ -182,8 +161,8 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleResendInvoice = async (invoiceId: string) => {
     try {
-      const res = await resendInvoice(invoiceId);
-      onToast?.(`Invoice ${res.invoiceNumber} re-sent to ${res.customerEmail}.`);
+      const res = await resendInvoiceMutation.mutateAsync(invoiceId);
+      onToast?.(`Invoice #${res.invoiceNumber} resent to ${res.customerEmail}.`);
       return true;
     } catch {
       onToast?.("Failed to resend invoice.");
@@ -193,12 +172,11 @@ export function useCustomers(onToast?: (message: string) => void) {
 
   const handleDeleteDraftInvoice = async (invoiceId: string) => {
     try {
-      await deleteInvoice(invoiceId);
-      onToast?.("Draft invoice deleted successfully.");
+      await deleteInvoiceMutation.mutateAsync(invoiceId);
+      onToast?.("Draft invoice deleted.");
       return true;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to delete draft.";
-      onToast?.(msg);
+    } catch {
+      onToast?.("Failed to delete draft invoice.");
       return false;
     }
   };
@@ -214,11 +192,12 @@ export function useCustomers(onToast?: (message: string) => void) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedItems = items.slice(startIndex, startIndex + pageSize);
-  const totalRevenue = items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
-  const activeServicesCount = items.reduce(
-    (acc, c) => acc + c.services.filter(s => s.status === "active").length,
-    0
-  );
+  const totalCustomers = summary?.total ?? items.length;
+  const totalRevenue =
+    summary?.totalRevenue ?? items.reduce((acc, c) => acc + (c.totalRevenue || 0), 0);
+  const activeServicesCount =
+    summary?.activeServicesCount ??
+    items.reduce((acc, c) => acc + c.services.filter(s => s.status === "active").length, 0);
 
   return {
     items,
@@ -236,10 +215,12 @@ export function useCustomers(onToast?: (message: string) => void) {
     totalPages,
     startIndex,
     paginatedItems,
+    totalCustomers,
     totalRevenue,
     activeServicesCount,
     isExporting,
-    isSubmitting,
+    isSubmitting: createCustomerMutation.isPending,
+    isLoading: isLoadingCustomers || isLoadingInvoices,
     handleSearch,
     reloadCustomers,
     handleExport,

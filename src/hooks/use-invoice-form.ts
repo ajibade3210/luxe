@@ -63,7 +63,7 @@ export function useInvoiceForm({
     existingInvoice?.items || [
       {
         id: "item-1",
-        description: initialCustomer?.services[0]?.name || "Bespoke Event Production & Styling",
+        description: initialCustomer?.services[0]?.name || "",
         quantity: 1,
         unit: "package",
         unitPrice: initialCustomer?.services[0]?.amount || 45000,

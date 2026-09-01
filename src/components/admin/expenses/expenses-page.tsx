@@ -16,6 +16,7 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
     expenses,
     paginatedItems,
     summary,
+    categories,
     searchQuery,
     categoryFilter,
     currentPage,
@@ -72,12 +73,12 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
         />
         <Metric
           label="Logged records"
-          value={String(summary?.expenseCount || 0).padStart(2, "0")}
+          value={String(summary?.expenseCount || 0)}
           detail="Expense entries"
         />
         <Metric
           label="Top expense category"
-          value={summary?.topCategory?.label || "None"}
+          value={summary?.topCategory?.label || "N/A"}
           detail={
             summary?.topCategory
               ? `${formatMoney(summary.topCategory.amount)} (${summary.topCategory.percentage}%)`
@@ -92,6 +93,7 @@ export function ExpensesPage({ onToast }: ExpensesPageProps) {
         paginatedItems={paginatedItems}
         searchQuery={searchQuery}
         selectedCategory={categoryFilter}
+        categories={categories}
         onSearch={handleSearch}
         onCategoryChange={handleCategoryFilter}
         onEdit={handleOpenEdit}

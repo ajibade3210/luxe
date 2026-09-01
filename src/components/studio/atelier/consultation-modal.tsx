@@ -69,7 +69,7 @@ export function ConsultationModal({
               placeholder="e.g. Folashade Adeleke"
               value={quoteForm.name}
               onChange={e => setQuoteForm({ ...quoteForm, name: e.target.value })}
-              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
             />
           </div>
 
@@ -82,7 +82,7 @@ export function ConsultationModal({
                 placeholder="folashade@example.com"
                 value={quoteForm.email}
                 onChange={e => setQuoteForm({ ...quoteForm, email: e.target.value })}
-                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
               />
             </div>
 
@@ -93,7 +93,7 @@ export function ConsultationModal({
                 placeholder="+234 800 000 0000"
                 value={quoteForm.phone}
                 onChange={e => setQuoteForm({ ...quoteForm, phone: e.target.value })}
-                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
               />
             </div>
           </div>
@@ -104,7 +104,7 @@ export function ConsultationModal({
               <select
                 value={quoteForm.service}
                 onChange={e => setQuoteForm({ ...quoteForm, service: e.target.value })}
-                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
               >
                 {(profile.services || []).map(s => (
                   <option key={s.id} value={s.name}>
@@ -120,7 +120,7 @@ export function ConsultationModal({
                 type="date"
                 value={quoteForm.eventDate}
                 onChange={e => setQuoteForm({ ...quoteForm, eventDate: e.target.value })}
-                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+                className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export function ConsultationModal({
               placeholder={messagePlaceholder}
               value={quoteForm.message}
               onChange={e => setQuoteForm({ ...quoteForm, message: e.target.value })}
-              className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+              className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none resize-none"
             />
           </div>
 

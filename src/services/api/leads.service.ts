@@ -1,147 +1,104 @@
-import { APP_CONFIG, CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
-import { leads as defaultLeads } from "@/lib/mock-data";
+import { APP_CONFIG } from "@/constants";
+import { apiClient } from "@/lib/api-client";
 import { CreateLeadInputSchema } from "@/lib/schemas";
-import type { CreateLeadInput, Customer, Lead, LeadStatus } from "@/types";
-import { createCustomer } from "./customer.service";
-
-const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
-
-let memoryLeads: Lead[] = [...defaultLeads];
-
-export function loadPersistedLeads(): Lead[] {
-  if (typeof window !== "undefined") {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.leads);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          memoryLeads = parsed;
-          return memoryLeads;
-        }
-      }
-    } catch {
-      // Fallback to memory
-    }
-  }
-  return memoryLeads;
-}
-
-export function savePersistedLeads(data: Lead[]): void {
-  memoryLeads = [...data];
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(STORAGE_KEYS.leads, JSON.stringify(data));
-      window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.leadsUpdated, { detail: data }));
-    } catch {
-      // Storage quota safe
-    }
-  }
-}
+import type {
+  CreateLeadInput,
+  Customer,
+  Lead,
+  LeadFilterStatus,
+  LeadStatus,
+  PublicInquiryInput,
+  PublicInquiryResponse,
+} from "@/types";
 
 /**
- * Creates a new consultation inquiry lead.
- * Swappable with: `await fetch('/api/v1/leads', { method: 'POST', body: JSON.stringify(input) })`
+ * Submits a new consultation / booking / quotation inquiry from the public storefront
+ */
+export async function submitPublicInquiry(
+  slug: string,
+  input: PublicInquiryInput
+): Promise<PublicInquiryResponse> {
+  return apiClient.post<PublicInquiryResponse>(`/leads/inquiry/${encodeURIComponent(slug)}`, input);
+}
+
+export const submitConsultationInquiry = submitPublicInquiry;
+
+/**
+ * Creates a new lead manually in the admin dashboard
  */
 export async function createLead(input: CreateLeadInput): Promise<Lead> {
-  const validatedInput = CreateLeadInputSchema.parse(input);
-  await delay(300);
-  const currentLeads = loadPersistedLeads();
-  const newLead: Lead = {
-    id: `l-${Date.now()}`,
-    businessId: validatedInput.businessId || "elan-events",
-    ...validatedInput,
-    status: "new",
-    createdAt: new Date().toISOString(),
-  };
-  currentLeads.unshift(newLead);
-  savePersistedLeads(currentLeads);
-  return newLead;
+  const validated = CreateLeadInputSchema.parse(input);
+  return apiClient.post<Lead>("/leads", validated);
 }
 
-export const submitConsultationInquiry = createLead;
+/**
+ * Fetches all studio leads with optional search query and status filter
+ */
+export async function getLeads(query?: string, status?: LeadFilterStatus): Promise<Lead[]> {
+  const response = await apiClient.get<Lead[] | { items?: Lead[]; leads?: Lead[]; data?: Lead[] }>(
+    "/leads",
+    {
+      q: query,
+      status: status === "all" ? undefined : status,
+    }
+  );
+  if (Array.isArray(response)) return response;
+  return response?.items || response?.leads || response?.data || [];
+}
+
+export interface LeadsSummary {
+  total: number;
+  newToday: number;
+  conversion: number;
+}
+
+export async function getLeadsSummary(): Promise<LeadsSummary> {
+  return apiClient.get<LeadsSummary>("/leads/summary");
+}
 
 /**
- * Fetches all leads with optional search query.
- * Swappable with: `await fetch('/api/v1/leads' + (query ? `?q=${encodeURIComponent(query)}` : '')).then(r => r.json())`
+ * Retrieves a single lead by ID
  */
-export async function getLeads(query?: string): Promise<Lead[]> {
-  await delay(100);
-  const leads = loadPersistedLeads();
-  if (!query?.trim()) {
-    return leads;
-  }
-  const q = query.toLowerCase().trim();
-  return leads.filter(l => {
-    const matchesBasic =
-      l.name.toLowerCase().includes(q) ||
-      l.email.toLowerCase().includes(q) ||
-      l.phone?.toLowerCase().includes(q) ||
-      l.service?.toLowerCase().includes(q) ||
-      l.message?.toLowerCase().includes(q) ||
-      l.status.toLowerCase().includes(q);
+export async function getLeadById(id: string): Promise<Lead> {
+  return apiClient.get<Lead>(`/leads/${encodeURIComponent(id)}`);
+}
 
-    const matchesServices = l.services?.some(s => s.toLowerCase().includes(q));
-
-    return matchesBasic || matchesServices;
+/**
+ * Updates a lead workflow status
+ */
+export async function updateLeadStatus(id: string, status: LeadStatus): Promise<Lead> {
+  return apiClient.patch<Lead>(`/leads/${encodeURIComponent(id)}/status`, {
+    status,
   });
 }
 
 /**
- * Updates a lead workflow status.
- * Swappable with: `await fetch('/api/v1/leads/' + id, { method: 'PATCH', body: JSON.stringify({ status }) })`
- */
-export async function updateLeadStatus(id: string, status: LeadStatus): Promise<Lead | undefined> {
-  await delay(250);
-  const currentLeads = loadPersistedLeads();
-  const lead = currentLeads.find(l => l.id === id);
-  if (lead) {
-    lead.status = status;
-    savePersistedLeads(currentLeads);
-  }
-  return lead;
-}
-
-/**
- * 1-Click Convert Lead to Customer & Prepare Invoice
- * Backend swap:
- * `const res = await fetch(`/api/leads/${leadId}/convert`, { method: 'POST' }); return res.json();`
+ * 1-Click Convert Lead to Customer & Prepare Initial Service Scope
  */
 export async function convertLeadToCustomer(
-  leadId: string
+  leadId: string,
+  options: {
+    serviceName?: string;
+    service?: string;
+    amount?: number | string;
+    createDraftInvoice?: boolean;
+  } = {}
 ): Promise<{ customer: Customer; lead: Lead }> {
-  await delay(250);
-
-  const leads = loadPersistedLeads();
-  const targetIndex = leads.findIndex(l => l.id === leadId);
-  if (targetIndex < 0) {
-    throw new Error(`Lead with ID ${leadId} not found.`);
-  }
-
-  const [targetLead] = leads.splice(targetIndex, 1);
-  targetLead.status = "converted";
-  savePersistedLeads(leads);
-
-  const serviceName = targetLead.service
-    ? targetLead.service.toLowerCase().includes("production")
-      ? targetLead.service
-      : `${targetLead.service} Production`
-    : "Bespoke Service";
-
-  const customer = await createCustomer({
-    name: targetLead.name,
-    email: targetLead.email,
-    phone: targetLead.phone,
-    serviceName,
-    service: targetLead.service || "Bespoke Styling",
-    amount: targetLead.budget || APP_CONFIG.defaultLeadBudget,
-    status: "pending",
-  });
-
-  return { customer, lead: targetLead };
+  return apiClient.post<{ customer: Customer; lead: Lead }>(
+    `/leads/${encodeURIComponent(leadId)}/convert`,
+    options
+  );
 }
 
 /**
- * Generates pre-formatted WhatsApp brief for immediate client-to-studio routing.
+ * Deletes a lead
+ */
+export async function deleteLead(id: string): Promise<{ success: boolean; id: string }> {
+  return apiClient.delete(`/leads/${encodeURIComponent(id)}`);
+}
+
+/**
+ * Generates pre-formatted WhatsApp brief for direct client-to-studio routing
  */
 export function createWhatsAppConsultationUrl(params: {
   studioPhone?: string;
@@ -182,56 +139,24 @@ _Sent via ${params.studioName} on ${appName}_`;
 }
 
 /**
- * Export Leads / Inquiries List as CSV
- * When connecting to real backend, easily swap with:
- * `window.location.href = '/api/leads/export?format=csv'`
+ * Export Leads List as CSV
  */
 export async function exportLeadsCSV(): Promise<{ count: number; filename: string }> {
-  await delay(350);
+  const csvData = await apiClient.get<string>("/leads/export");
+  const filename = `shopwus-leads-${new Date().toISOString().split("T")[0]}.csv`;
 
-  const leads = await getLeads();
-
-  if (typeof window === "undefined") {
-    return { count: leads.length, filename: "leads.csv" };
+  if (typeof window !== "undefined") {
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
-  const headers = [
-    "ID",
-    "Client Name",
-    "Email",
-    "Phone",
-    "Service Requested",
-    "Estimated Date",
-    "Target Budget",
-    "Inquiry Status",
-    "Submitted At",
-    "Message / Vision",
-  ];
-
-  const rows = leads.map(l => [
-    l.id,
-    `"${l.name}"`,
-    l.email,
-    l.phone || "N/A",
-    `"${l.service || "Bespoke"}"`,
-    l.eventDate || "Flexible",
-    l.budget ? `₦${Number(l.budget).toLocaleString()}` : "Custom",
-    l.status,
-    l.createdAt,
-    `"${(l.message || "").replace(/"/g, '""')}"`,
-  ]);
-
-  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  const filename = `elan-atelier-leads-${new Date().toISOString().split("T")[0]}.csv`;
-  link.setAttribute("href", url);
-  link.setAttribute("download", filename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-
-  return { count: leads.length, filename };
+  const count = typeof csvData === "string" ? Math.max(csvData.split("\n").length - 1, 0) : 0;
+  return { count, filename };
 }

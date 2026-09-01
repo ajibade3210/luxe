@@ -11,7 +11,6 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
 
 const DEFAULT_CURRENCY: CurrencyCode = "NGN";
 const DEFAULT_LOCALE = "en-US";
-const DEFAULT_DECIMALS = 0;
 const FALLBACK_ZERO = "0";
 
 const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
@@ -31,7 +30,7 @@ export const formatMoney = (
   }
 
   const locale = CURRENCY_LOCALES[currency] ?? DEFAULT_LOCALE;
-  const decimals = options?.decimals ?? DEFAULT_DECIMALS;
+  const decimals = options?.decimals ?? (Math.abs(n) > 0 ? 2 : 0);
 
   return new Intl.NumberFormat(locale, {
     style: "currency",
@@ -58,4 +57,37 @@ export const formatCompactMoney = (
     return `${sym}${val}K`;
   }
   return `${sym}${n}`;
+};
+
+export const formatServicePrice = (
+  service: {
+    price?: number | null;
+    minPrice?: number | null;
+    maxPrice?: number | null;
+    priceType?: "fixed" | "range" | string | null;
+  },
+  currency: CurrencyCode | string = DEFAULT_CURRENCY
+): string | null => {
+  const code = (currency || DEFAULT_CURRENCY) as CurrencyCode;
+  const sym = CURRENCY_SYMBOLS[code] ?? "₦";
+
+  if (service.priceType === "range" || (service.minPrice && service.maxPrice)) {
+    const min = service.minPrice ?? service.price;
+    const max = service.maxPrice;
+    if (min && max) {
+      return `${sym}${Number(min).toLocaleString()} – ${sym}${Number(max).toLocaleString()}`;
+    }
+    if (min) {
+      return `From ${sym}${Number(min).toLocaleString()}`;
+    }
+    if (max) {
+      return `Up to ${sym}${Number(max).toLocaleString()}`;
+    }
+  }
+
+  if (service.price !== undefined && service.price !== null && Number(service.price) > 0) {
+    return `${sym}${Number(service.price).toLocaleString()}`;
+  }
+
+  return null;
 };

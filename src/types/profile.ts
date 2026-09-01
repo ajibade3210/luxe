@@ -73,6 +73,11 @@ export interface ServiceItem {
   name: string;
   category: string;
   description: string;
+  price?: number | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  priceType?: "fixed" | "range";
+  isFeatured?: boolean;
 }
 
 export interface BusinessProfile {
@@ -111,6 +116,8 @@ export interface BusinessProfile {
   footerDescription?: string;
   showFooterCta?: boolean;
   businessType?: BusinessType;
+  totalCustomers?: number;
+  isVerified?: boolean;
   updatedAt: string;
 }
 
@@ -127,7 +134,7 @@ export interface IdentitySectionProps {
   website: string;
   setWebsite: (v: string) => void;
   email: string;
-  setEmail: (v: string) => void;
+  setEmail?: (v: string) => void;
   currency: CurrencyCode;
   setCurrency: (v: CurrencyCode) => void;
   businessType: BusinessType;
@@ -137,7 +144,7 @@ export interface IdentitySectionProps {
   logoUrl?: string;
   setLogoUrl: (v: string) => void;
   isUploadingLogo: boolean;
-  handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void> | void;
   onToast: (msg: string) => void;
 }
 
@@ -170,7 +177,33 @@ export interface ServicesSectionProps {
   setNewServiceCategory: (v: string) => void;
   newServiceDesc: string;
   setNewServiceDesc: (v: string) => void;
+  newServicePriceType: "fixed" | "range";
+  setNewServicePriceType: (v: "fixed" | "range") => void;
+  newServicePrice: string;
+  setNewServicePrice: (v: string) => void;
+  newServiceMinPrice: string;
+  setNewServiceMinPrice: (v: string) => void;
+  newServiceMaxPrice: string;
+  setNewServiceMaxPrice: (v: string) => void;
+  currency?: string;
   addService: () => void;
+  categories: string[];
+  addCategory: (cat: string) => void;
+  removeCategory: (cat: string) => void;
+}
+
+export interface CategoryDropdownProps {
+  value?: string;
+  onChange: (category: string) => void;
+  categories: string[];
+  onAddCategory: (category: string) => void;
+  onRemoveCategory: (category: string) => void;
+  label?: string;
+  placeholder?: string;
+  maxCategories?: number;
+  size?: "sm" | "md";
+  labelClassName?: string;
+  buttonClassName?: string;
 }
 
 export interface PortfolioSectionProps {
@@ -405,4 +438,27 @@ export interface StudioFooterProps {
 export interface ElanEventsPageProps {
   initialProfile?: BusinessProfile;
   slug?: string;
+}
+
+export interface ProfileIdentityCardProps {
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  studioName?: string;
+  onSave: (updates: { name: string; email: string; phone: string }) => Promise<void>;
+}
+
+export interface ProfileSecurityCardProps {
+  email: string;
+}
+
+export interface ConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  isLoading?: boolean;
 }

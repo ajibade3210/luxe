@@ -1,634 +1,525 @@
 "use client";
 
+import type React from "react";
 import { useEffect, useState } from "react";
+import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
+import { logger } from "@/lib/logger";
+import type { PortfolioProject, ServiceItem, UseSettingsFormOptions } from "@/types";
 import {
-  DEFAULT_BUSINESS_TYPE,
-  DEFAULT_FOOTER_DESCRIPTION,
-  DEFAULT_FOOTER_EYEBROW,
-  DEFAULT_FOOTER_TITLE,
-  DEFAULT_NEW_PROJECT,
-  DEFAULT_PORTFOLIO_CATEGORIES,
-  DEFAULT_PORTFOLIO_IMAGE,
-  MAX_CATEGORY_NAME_LENGTH,
-  MAX_PORTFOLIO_CATEGORIES,
-  MAX_PORTFOLIO_PROJECTS,
-  MAX_SERVICE_NAME_LENGTH,
-  MAX_SERVICES,
-} from "@/constants";
-import {
-  checkSlugAvailability,
-  getBusinessProfile,
-  publishChanges,
-  updateBusinessProfile,
-  uploadBusinessLogo,
-  uploadPortfolioImage,
-} from "@/lib/api";
-import { businessProfile as initialMockProfile } from "@/lib/mock-data";
-import type {
-  BusinessType,
-  ButtonRadiusType,
-  ColorScheme,
-  CurrencyCode,
-  PortfolioProject,
-  ServiceItem,
-  SocialChannel,
-  UseSettingsFormOptions,
-} from "@/types";
+  isValidPhone,
+  isValidUrl,
+  normalizeButtonRadius,
+  normalizeWebsiteUrl,
+  sanitizeHandle,
+} from "@/utils";
+import { useAppearanceSettings } from "./settings/use-appearance-settings";
+import { useBrandingSettings } from "./settings/use-branding-settings";
+import { useContactSettings } from "./settings/use-contact-settings";
+import { usePortfolioSettings } from "./settings/use-portfolio-settings";
+import { useServicesSettings } from "./settings/use-services-settings";
 
 export function useSettingsForm({ notify }: UseSettingsFormOptions) {
-  // Main settings state
-  const [name, setName] = useState(initialMockProfile.businessName);
-  const [slug, setSlug] = useState(initialMockProfile.slug);
-  const [tagline, setTagline] = useState(
-    initialMockProfile.tagline ||
-      "We design unforgettable weddings, corporate events, and private celebrations."
-  );
-  const [location, setLocation] = useState(initialMockProfile.location);
-  const [website, setWebsite] = useState(initialMockProfile.website);
-  const [email, setEmail] = useState(initialMockProfile.email);
-  const [currency, setCurrency] = useState<CurrencyCode>(initialMockProfile.currency || "NGN");
-  const [about, setAbout] = useState(initialMockProfile.description);
-  const [businessType, setBusinessType] = useState<BusinessType>(
-    initialMockProfile.businessType || DEFAULT_BUSINESS_TYPE
-  );
+  const branding = useBrandingSettings();
+  const portfolio = usePortfolioSettings({ notify });
+  const services = useServicesSettings({ notify, categories: portfolio.categories });
+  const appearance = useAppearanceSettings();
+  const contact = useContactSettings({ notify });
 
-  // Section Visibility Toggles
-  const [showServices, setShowServices] = useState<boolean>(
-    initialMockProfile.showServices ?? true
-  );
-  const [showPortfolio, setShowPortfolio] = useState<boolean>(
-    initialMockProfile.showPortfolio ?? true
-  );
-  const [showReviews, setShowReviews] = useState<boolean>(initialMockProfile.showReviews ?? true);
-
-  // Services
-  const [services, setServices] = useState<ServiceItem[]>(
-    (initialMockProfile.services as ServiceItem[]) || []
-  );
-  const [showAddService, setShowAddService] = useState(false);
-  const [newServiceInput, setNewServiceInput] = useState("");
-  const [newServiceCategory, setNewServiceCategory] = useState("Bespoke");
-  const [newServiceDesc, setNewServiceDesc] = useState("");
-  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
-
-  // Portfolio
-  const [portfolio, setPortfolio] = useState<PortfolioProject[]>(
-    initialMockProfile.portfolio || []
-  );
-  const [categories, setCategories] = useState<string[]>(
-    initialMockProfile.portfolioCategories || [...DEFAULT_PORTFOLIO_CATEGORIES]
-  );
-  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-  const [newProject, setNewProject] = useState<Partial<PortfolioProject>>(DEFAULT_NEW_PROJECT);
-
-  // Google Reviews & Reputation
-  const [googleReviewsLink, setGoogleReviewsLink] = useState(
-    initialMockProfile.googleReviewsLink || "https://business.google.com/atelier-forma"
-  );
-  const [isSyncingReviews, setIsSyncingReviews] = useState(false);
-
-  // Social Channels
-  const [channels, setChannels] = useState<SocialChannel[]>(
-    initialMockProfile.socialChannels || []
-  );
-
-  // Operating details
-  const [hours, setHours] = useState(initialMockProfile.operatingHours || "Mon–Fri");
-  const [timeFrom, setTimeFrom] = useState(initialMockProfile.timeFrom || "09:00 AM");
-  const [timeTo, setTimeTo] = useState(initialMockProfile.timeTo || "06:00 PM");
-  const [byAppointmentOnly, setByAppointmentOnly] = useState(
-    initialMockProfile.byAppointmentOnly ?? false
-  );
-  const [whatsAppNumber, setWhatsAppNumber] = useState(
-    initialMockProfile.whatsAppNumber || "+234 800 ELAN VIP"
-  );
-  const [emailAddress, setEmailAddress] = useState(
-    initialMockProfile.emailAddress || "hello@elanevents.com"
-  );
-  const [physicalAddress, setPhysicalAddress] = useState(
-    initialMockProfile.physicalAddress || "Victoria Island, Lagos, Nigeria"
-  );
-
-  // Business Logo
-  const [logoUrl, setLogoUrl] = useState<string>(
-    initialMockProfile.logoUrl ||
-      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png"
-  );
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
-  const [isUploadingProjectImage, setIsUploadingProjectImage] = useState(false);
-
-  // Appearance
-  const [colors, setColors] = useState<ColorScheme>(
-    initialMockProfile.colors || {
-      primary: "#000000",
-      secondary: "#0058BE",
-      button: "#000000",
-      pageBackground: "#FAF8F5",
-      cardBackground: "#FAF6F0",
-      text: "#191C1D",
-    }
-  );
-  const [radius, setRadius] = useState<ButtonRadiusType>(
-    initialMockProfile.buttonRadius || "Subtle"
-  );
-
-  // Footer CTA Banner
-  const [footerEyebrow, setFooterEyebrow] = useState(
-    initialMockProfile.footerEyebrow || DEFAULT_FOOTER_EYEBROW
-  );
-  const [footerTitle, setFooterTitle] = useState(
-    initialMockProfile.footerTitle || DEFAULT_FOOTER_TITLE
-  );
-  const [footerDescription, setFooterDescription] = useState(
-    initialMockProfile.footerDescription || DEFAULT_FOOTER_DESCRIPTION
-  );
-  const [showFooterCta, setShowFooterCta] = useState(initialMockProfile.showFooterCta ?? true);
-
-  // Gallery Drag & Drop Reordering State
-  const [showManageGalleryModal, setShowManageGalleryModal] = useState(false);
-  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
-  const [dragOverProjectIndex, setDragOverProjectIndex] = useState<number | null>(null);
-
-  // Validation & saving state
-  const [slugStatus, setSlugStatus] = useState<"checking" | "available" | "taken" | "idle">(
-    "available"
-  );
   const [saving, setSaving] = useState(false);
 
-  // Load freshest profile on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const claim = params.get("claim");
-      if (claim) {
-        setSlug(claim);
-        setName(
-          `${claim
-            .split("-")
-            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ")} Atelier`
+  // Synchronize website input with social channels website section
+  const handleWebsiteChange = (newWebsite: string) => {
+    branding.setWebsite(newWebsite);
+    const cleanHandle = sanitizeHandle(newWebsite, "https://");
+    contact.setChannels(prev => {
+      const idx = prev.findIndex(c => c.type === "website");
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = {
+          ...updated[idx],
+          handle: cleanHandle,
+          url: normalizeWebsiteUrl(newWebsite),
+          connected: Boolean(cleanHandle),
+        };
+        return updated;
+      }
+      return [
+        ...prev,
+        {
+          id: "ch-website",
+          type: "website",
+          label: "Website",
+          handle: cleanHandle,
+          url: normalizeWebsiteUrl(newWebsite),
+          connected: Boolean(cleanHandle),
+        },
+      ];
+    });
+  };
+
+  const handleUpdateChannelHandle = (id: string, handle: string) => {
+    contact.updateChannelHandle(id, handle);
+    const targetChannel = contact.channels.find(c => c.id === id);
+    if (targetChannel?.type === "website") {
+      const cleanHandle = sanitizeHandle(handle, "https://");
+      branding.setWebsite(cleanHandle ? normalizeWebsiteUrl(cleanHandle) : "");
+    }
+  };
+
+  const handleToggleChannel = (id: string) => {
+    contact.toggleChannel(id);
+    const targetChannel = contact.channels.find(c => c.id === id);
+    if (targetChannel?.type === "website") {
+      if (!targetChannel.connected && branding.website) {
+        const cleanHandle = sanitizeHandle(branding.website, "https://");
+        contact.setChannels(prev =>
+          prev.map(c =>
+            c.id === id
+              ? {
+                  ...c,
+                  handle: cleanHandle,
+                  url: normalizeWebsiteUrl(branding.website),
+                  connected: true,
+                }
+              : c
+          )
         );
       }
     }
+  };
 
-    getBusinessProfile().then(data => {
-      setName(data.businessName);
-      setSlug(data.slug);
-      setTagline(data.tagline || "");
-      setLocation(data.location || "");
-      setWebsite(data.website || "");
-      if (data.email) setEmail(data.email);
-      if (data.currency) setCurrency(data.currency);
-      if (data.description) setAbout(data.description);
-      if (data.logoUrl) setLogoUrl(data.logoUrl);
-      if (data.services) {
-        setServices(data.services);
-      }
-      if (data.portfolio) setPortfolio(data.portfolio);
-      if (data.portfolioCategories && data.portfolioCategories.length > 0) {
-        setCategories(data.portfolioCategories);
-      }
-      if (data.socialChannels) setChannels(data.socialChannels);
-      if (data.googleReviewsLink) setGoogleReviewsLink(data.googleReviewsLink);
-      if (data.operatingHours) setHours(data.operatingHours);
-      if (data.timeFrom) setTimeFrom(data.timeFrom);
-      if (data.timeTo) setTimeTo(data.timeTo);
-      if (data.byAppointmentOnly !== undefined) {
-        setByAppointmentOnly(data.byAppointmentOnly);
-      }
-      if (data.whatsAppNumber) setWhatsAppNumber(data.whatsAppNumber);
-      if (data.emailAddress) setEmailAddress(data.emailAddress);
-      if (data.physicalAddress) setPhysicalAddress(data.physicalAddress);
-      if (data.showServices !== undefined) setShowServices(data.showServices);
-      if (data.showPortfolio !== undefined) setShowPortfolio(data.showPortfolio);
-      if (data.showReviews !== undefined) setShowReviews(data.showReviews);
-      if (data.footerEyebrow !== undefined) setFooterEyebrow(data.footerEyebrow);
-      if (data.footerTitle !== undefined) setFooterTitle(data.footerTitle);
-      if (data.footerDescription !== undefined) setFooterDescription(data.footerDescription);
-      if (data.showFooterCta !== undefined) setShowFooterCta(data.showFooterCta);
-      if (data.colors) setColors(data.colors);
-      if (data.buttonRadius) setRadius(data.buttonRadius);
-      if (data.businessType) setBusinessType(data.businessType);
-    });
+  // Load freshest profile on mount
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initial load on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getBusinessProfile()
+        .then(profile => {
+          if (!profile) return;
+          branding.setName(profile.businessName || "");
+          branding.setSlug(profile.slug || "");
+          branding.setTagline(profile.tagline || "");
+          branding.setLocation(profile.location || "");
+          const rawWebsite = profile.website || "";
+          branding.setWebsite(rawWebsite);
+          branding.setEmail(profile.email || "");
+          branding.setCurrency(profile.currency || "NGN");
+          branding.setAbout(profile.description || "");
+          branding.setBusinessType(profile.businessType || "sales");
+          if (profile.logoUrl) portfolio.setLogoUrl(profile.logoUrl);
+
+          if (Array.isArray(profile.services)) services.setServices(profile.services);
+          if (Array.isArray(profile.portfolio)) portfolio.setPortfolio(profile.portfolio);
+          if (Array.isArray(profile.portfolioCategories)) {
+            portfolio.setCategories(profile.portfolioCategories);
+          }
+
+          const initialChannels = Array.isArray(profile.socialChannels)
+            ? [...profile.socialChannels]
+            : [];
+          if (rawWebsite) {
+            const cleanHandle = sanitizeHandle(rawWebsite, "https://");
+            const wIdx = initialChannels.findIndex(c => c.type === "website");
+            if (wIdx >= 0) {
+              initialChannels[wIdx] = {
+                ...initialChannels[wIdx],
+                handle: cleanHandle,
+                url: normalizeWebsiteUrl(rawWebsite),
+                connected: true,
+              };
+            } else {
+              initialChannels.push({
+                id: "ch-website",
+                type: "website",
+                label: "Website",
+                handle: cleanHandle,
+                url: normalizeWebsiteUrl(rawWebsite),
+                connected: true,
+              });
+            }
+          }
+          contact.setChannels(initialChannels);
+
+          if (profile.operatingHours) contact.setHours(profile.operatingHours);
+          if (profile.timeFrom) contact.setTimeFrom(profile.timeFrom);
+          if (profile.timeTo) contact.setTimeTo(profile.timeTo);
+          if (profile.byAppointmentOnly !== undefined) {
+            contact.setByAppointmentOnly(profile.byAppointmentOnly);
+          }
+          if (profile.whatsAppNumber) contact.setWhatsAppNumber(profile.whatsAppNumber);
+          if (profile.emailAddress) contact.setEmailAddress(profile.emailAddress);
+          if (profile.physicalAddress) contact.setPhysicalAddress(profile.physicalAddress);
+          if (profile.googleReviewsLink) {
+            contact.setGoogleReviewsLink(profile.googleReviewsLink);
+          }
+          if (profile.showServices !== undefined) contact.setShowServices(profile.showServices);
+          if (profile.showPortfolio !== undefined) contact.setShowPortfolio(profile.showPortfolio);
+          if (profile.showReviews !== undefined) contact.setShowReviews(profile.showReviews);
+          if (profile.footerEyebrow) contact.setFooterEyebrow(profile.footerEyebrow);
+          if (profile.footerTitle) contact.setFooterTitle(profile.footerTitle);
+          if (profile.footerDescription) {
+            contact.setFooterDescription(profile.footerDescription);
+          }
+          if (profile.showFooterCta !== undefined) {
+            contact.setShowFooterCta(profile.showFooterCta);
+          }
+
+          if (profile.colors) appearance.setColors(profile.colors);
+          if (profile.buttonRadius) {
+            appearance.setRadius(normalizeButtonRadius(profile.buttonRadius));
+          }
+        })
+        .catch(err => {
+          logger.warn("Failed to load business profile on mount", err);
+        });
+    }
   }, []);
 
-  // Slug Availability Debounced Check
-  useEffect(() => {
-    if (!slug) {
-      setSlugStatus("idle");
-      return;
+  // Save on the fly: add service then immediately persist to API
+  const handleAddServiceAndSave = async () => {
+    const newSvc = services.addService();
+    if (!newSvc) return; // validation failed in addService
+    // Pass the new service directly — React state hasn't flushed yet
+    await handleSave({ silent: true, overrideServices: [...services.services, newSvc] });
+  };
+
+  // Save on the fly: add project then immediately persist to API
+  const handleAddProjectAndSave = async (e: React.FormEvent) => {
+    const newProj = portfolio.handleAddProject(e);
+    if (!newProj) return; // validation failed in handleAddProject
+    // Pass the new project directly — React state hasn't flushed yet
+    await handleSave({ silent: true, overridePortfolio: [newProj, ...portfolio.portfolio] });
+  };
+
+  // Remove service then immediately persist to API
+  const removeServiceAndSave = async (id: string) => {
+    services.removeService(id);
+    const remaining = services.services.filter(s => s.id !== id);
+    await handleSave({ silent: true, overrideServices: remaining });
+  };
+
+  // Remove project then immediately persist to API
+  const removeProjectAndSave = async (id: string) => {
+    portfolio.removeProject(id);
+    const remaining = portfolio.portfolio.filter(p => p.id !== id);
+    await handleSave({ silent: true, overridePortfolio: remaining });
+  };
+
+  // Auto-save on logo upload
+  const handleLogoUploadAndSave = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newLogoUrl = await portfolio.handleLogoUpload(e);
+    if (!newLogoUrl) return;
+    await handleSave({ silent: true, overrideLogoUrl: newLogoUrl });
+  };
+
+  const handleSave = async (options?: {
+    silent?: boolean;
+    overrideServices?: ServiceItem[];
+    overridePortfolio?: PortfolioProject[];
+    overrideLogoUrl?: string;
+  }): Promise<boolean> => {
+    if (branding.website.trim() && !isValidUrl(branding.website)) {
+      notify("Invalid website URL");
+      return false;
     }
-    setSlugStatus("checking");
-    const t = setTimeout(async () => {
-      const res = await checkSlugAvailability(slug);
-      setSlugStatus(res.available ? "available" : "taken");
-    }, 300);
-    return () => clearTimeout(t);
-  }, [slug]);
 
-  // Handlers
-  const addService = () => {
-    const trimmedName = newServiceInput.trim();
-    if (!trimmedName) return;
-    if (trimmedName.length > MAX_SERVICE_NAME_LENGTH) {
-      notify(`Service name cannot exceed ${MAX_SERVICE_NAME_LENGTH} characters`);
-      return;
+    // Validate WhatsApp number if configured
+    const waChannel = contact.channels.find(c => c.type?.toLowerCase() === "whatsapp");
+    const waHandle = waChannel?.handle?.trim();
+    if (waHandle && !isValidPhone(waHandle)) {
+      notify("Invalid WhatsApp phone number");
+      return false;
     }
-    if (services.length >= MAX_SERVICES) {
-      notify(`Maximum limit of ${MAX_SERVICES} services reached`);
-      return;
+
+    const webChannel = contact.channels.find(c => c.type?.toLowerCase() === "website");
+    const webHandle = webChannel?.handle?.trim();
+    if (webHandle && !isValidUrl(webHandle)) {
+      notify("Invalid website URL");
+      return false;
     }
-    if (services.some(s => s.name.toLowerCase() === trimmedName.toLowerCase())) {
-      notify(`Service "${trimmedName}" already exists`);
-      return;
-    }
-    const newSvc: ServiceItem = {
-      id: `svc-${Date.now()}`,
-      name: trimmedName,
-      category: newServiceCategory.trim() || "Bespoke",
-      description: newServiceDesc.trim(),
-    };
-    setServices(prev => [...prev, newSvc]);
-    setNewServiceInput("");
-    setNewServiceDesc("");
-    setShowAddService(false);
-    notify(`Added service "${newSvc.name}"`);
-  };
 
-  const removeService = (id: string) => {
-    setServices(prev => prev.filter(s => s.id !== id));
-    notify("Service removed");
-  };
-
-  const updateService = (id: string, patch: Partial<ServiceItem>) => {
-    setServices(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)));
-  };
-
-  const toggleChannel = (id: string) => {
-    setChannels(prev => prev.map(c => (c.id === id ? { ...c, connected: !c.connected } : c)));
-    notify("Channel status toggled");
-  };
-
-  const updateChannelHandle = (id: string, handle: string) => {
-    setChannels(prev => prev.map(c => (c.id === id ? { ...c, handle } : c)));
-  };
-
-  const removeProject = (id: string) => {
-    setPortfolio(prev => prev.filter(p => p.id !== id));
-    notify("Project removed from gallery");
-  };
-
-  const addPortfolioCategory = (cat: string) => {
-    const trimmed = cat.trim();
-    if (!trimmed) return;
-    if (trimmed.length > MAX_CATEGORY_NAME_LENGTH) {
-      notify(`Category name cannot exceed ${MAX_CATEGORY_NAME_LENGTH} characters`);
-      return;
-    }
-    if (categories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
-      notify(`Category "${trimmed}" already exists`);
-      return;
-    }
-    if (categories.length >= MAX_PORTFOLIO_CATEGORIES) {
-      notify(`Maximum limit of ${MAX_PORTFOLIO_CATEGORIES} categories reached`);
-      return;
-    }
-    const updated = [...categories, trimmed];
-    setCategories(updated);
-    setNewProject(prev => ({ ...prev, category: trimmed }));
-    notify(`Added category "${trimmed}"`);
-  };
-
-  const removePortfolioCategory = (cat: string) => {
-    if (categories.length <= 1) {
-      notify("You must keep at least one category");
-      return;
-    }
-    const updated = categories.filter(c => c !== cat);
-    setCategories(updated);
-    if (newProject.category === cat) {
-      setNewProject(prev => ({ ...prev, category: updated[0] || "General" }));
-    }
-    notify(`Removed category "${cat}"`);
-  };
-
-  const [isUploadingGalleryImages, setIsUploadingGalleryImages] = useState(false);
-
-  const handleAddProject = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProject.title) return;
-    if (portfolio.length >= MAX_PORTFOLIO_PROJECTS) {
-      notify(`Maximum limit of ${MAX_PORTFOLIO_PROJECTS} portfolio projects reached`);
-      return;
-    }
-    const coverImage = newProject.image || newProject.gallery?.[0] || DEFAULT_PORTFOLIO_IMAGE;
-
-    const galleryImages =
-      newProject.gallery && newProject.gallery.length > 0 ? newProject.gallery : [coverImage];
-
-    const proj: PortfolioProject = {
-      id: `p-${Date.now()}`,
-      title: newProject.title || "Untitled Project",
-      category: newProject.category || "Brand Identity",
-      location: newProject.location || "Lagos & London",
-      description: newProject.description || "",
-      image: coverImage,
-      gallery: galleryImages,
-      client: newProject.client || undefined,
-      year: newProject.year || "2026",
-    };
-    setPortfolio(prev => [proj, ...prev]);
-    setShowAddProjectModal(false);
-    setNewProject(DEFAULT_NEW_PROJECT);
-    notify(`Added project "${proj.title}" with ${galleryImages.length} images to gallery`);
-  };
-
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setIsUploadingLogo(true);
-    try {
-      const res = await uploadBusinessLogo(file);
-      setLogoUrl(res.url);
-      notify("Logo uploaded successfully");
-    } catch {
-      notify("Failed to upload logo");
-    } finally {
-      setIsUploadingLogo(false);
-    }
-  };
-
-  const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setIsUploadingProjectImage(true);
-    try {
-      const res = await uploadPortfolioImage(file);
-      setNewProject(prev => {
-        const updatedGallery =
-          prev.gallery && prev.gallery.length > 0 ? [res.url, ...prev.gallery.slice(1)] : [res.url];
-        return { ...prev, image: res.url, gallery: updatedGallery };
-      });
-      notify("Project cover image uploaded successfully");
-    } catch {
-      notify("Failed to upload project image");
-    } finally {
-      setIsUploadingProjectImage(false);
-    }
-  };
-
-  const handleGalleryImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    setIsUploadingGalleryImages(true);
-    try {
-      const uploadPromises = Array.from(files).map(file => uploadPortfolioImage(file));
-      const results = await Promise.all(uploadPromises);
-      const newUrls = results.map(r => r.url);
-      setNewProject(prev => ({
-        ...prev,
-        gallery: [...(prev.gallery || (prev.image ? [prev.image] : [])), ...newUrls],
-      }));
-      notify(`Uploaded ${results.length} gallery ${results.length === 1 ? "image" : "images"}`);
-    } catch {
-      notify("Failed to upload gallery images");
-    } finally {
-      setIsUploadingGalleryImages(false);
-    }
-  };
-
-  const removeGalleryImageFromNewProject = (index: number) => {
-    setNewProject(prev => {
-      const currentGallery = prev.gallery || [];
-      const removedUrl = currentGallery[index];
-      const updated = currentGallery.filter((_, i) => i !== index);
-      const isRemovingCover = prev.image && removedUrl === prev.image;
-      return {
-        ...prev,
-        image: isRemovingCover ? updated[0] || "" : prev.image,
-        gallery: updated,
-      };
-    });
-  };
-
-  const moveProject = (index: number, direction: "up" | "down") => {
-    if (direction === "up") {
-      if (index <= 0) return;
-      setPortfolio(prev => {
-        const copy = [...prev];
-        const temp = copy[index - 1];
-        copy[index - 1] = copy[index];
-        copy[index] = temp;
-        return copy;
-      });
-    } else {
-      if (index >= portfolio.length - 1) return;
-      setPortfolio(prev => {
-        const copy = [...prev];
-        const temp = copy[index + 1];
-        copy[index + 1] = copy[index];
-        copy[index] = temp;
-        return copy;
-      });
-    }
-  };
-
-  const handleDragStart = (index: number) => {
-    setDraggedProjectIndex(index);
-  };
-
-  const handleDragEnter = (index: number) => {
-    if (draggedProjectIndex !== null && draggedProjectIndex !== index) {
-      setDragOverProjectIndex(index);
-    }
-  };
-
-  const handleDragEnd = () => {
-    if (
-      draggedProjectIndex !== null &&
-      dragOverProjectIndex !== null &&
-      draggedProjectIndex !== dragOverProjectIndex
-    ) {
-      setPortfolio(prev => {
-        const copy = [...prev];
-        const [draggedItem] = copy.splice(draggedProjectIndex, 1);
-        copy.splice(dragOverProjectIndex, 0, draggedItem);
-        return copy;
-      });
-      notify("Gallery project order updated");
-    }
-    setDraggedProjectIndex(null);
-    setDragOverProjectIndex(null);
-  };
-
-  const handleSyncReviews = async () => {
-    setIsSyncingReviews(true);
-    notify("Syncing Google reviews...");
-    setTimeout(() => {
-      setIsSyncingReviews(false);
-      notify("Google reviews synced successfully");
-    }, 1200);
-  };
-
-  const handleSave = async () => {
     setSaving(true);
     try {
-      await updateBusinessProfile({
-        businessName: name,
-        slug,
-        tagline,
-        location,
-        website,
-        email,
-        currency,
-        description: about,
-        logoUrl,
-        services,
-        portfolio,
-        portfolioCategories: categories,
-        socialChannels: channels,
-        googleReviewsLink,
-        operatingHours: hours,
-        timeFrom,
-        timeTo,
-        byAppointmentOnly,
-        whatsAppNumber,
-        emailAddress,
-        physicalAddress,
-        showServices,
-        showPortfolio,
-        showReviews,
-        footerEyebrow,
-        footerTitle,
-        footerDescription,
-        showFooterCta,
-        businessType,
-        colors,
-        buttonRadius: radius,
+      const normalizedWebsite = branding.website.trim()
+        ? normalizeWebsiteUrl(branding.website)
+        : "";
+
+      // Ensure socialChannels has the latest website channel
+      let updatedChannels = contact.channels.map(c => {
+        if (c.type?.toLowerCase() === "website") {
+          const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
+          return {
+            ...c,
+            handle: cleanHandle,
+            url: normalizedWebsite,
+            connected: Boolean(cleanHandle),
+          };
+        }
+        return c;
       });
-      notify("Changes saved successfully");
-    } catch {
-      notify("Failed to save changes");
+
+      if (normalizedWebsite && !updatedChannels.some(c => c.type?.toLowerCase() === "website")) {
+        const cleanHandle = sanitizeHandle(normalizedWebsite, "https://");
+        updatedChannels = [
+          ...updatedChannels,
+          {
+            id: "ch-website",
+            type: "website",
+            label: "Website",
+            handle: cleanHandle,
+            url: normalizedWebsite,
+            connected: Boolean(cleanHandle),
+          },
+        ];
+      }
+
+      contact.setChannels(updatedChannels);
+
+      const cleanedServices: ServiceItem[] = (options?.overrideServices ?? services.services ?? [])
+        .map(s => ({
+          id: s.id || `svc-${Date.now()}`,
+          name: (s.name || "").trim(),
+          category: (s.category || "").trim() || "General",
+          description: (s.description || "").trim(),
+          price: typeof s.price === "number" && !Number.isNaN(s.price) ? s.price : undefined,
+          minPrice:
+            typeof s.minPrice === "number" && !Number.isNaN(s.minPrice) ? s.minPrice : undefined,
+          maxPrice:
+            typeof s.maxPrice === "number" && !Number.isNaN(s.maxPrice) ? s.maxPrice : undefined,
+          priceType: s.priceType,
+          isFeatured: Boolean(s.isFeatured),
+        }))
+        .filter(s => s.name.length > 0);
+
+      const cleanedPortfolio: PortfolioProject[] = (
+        options?.overridePortfolio ??
+        portfolio.portfolio ??
+        []
+      )
+        .map((p, idx) => ({
+          id: p.id || `p-${Date.now()}-${idx}`,
+          title: (p.title || "").trim(),
+          category: (p.category || "").trim() || "General",
+          location: (p.location || "").trim(),
+          description: (p.description || "").trim(),
+          image: p.image || "",
+          order: typeof p.order === "number" ? p.order : idx,
+          isCover: Boolean(p.isCover),
+          gallery: Array.isArray(p.gallery) ? p.gallery : [],
+          stats: p.stats || "",
+          client: p.client || "",
+          year: p.year || "",
+        }))
+        .filter(p => p.title.length > 0);
+
+      const cleanWhatsNumber = contact.whatsAppNumber?.trim() || "";
+
+      const updated = await updateBusinessProfile({
+        businessName: branding.name,
+        slug: branding.slug,
+        tagline: branding.tagline,
+        location: branding.location,
+        website: normalizedWebsite,
+        email: branding.email,
+        currency: branding.currency,
+        description: branding.about,
+        logoUrl: options?.overrideLogoUrl ?? portfolio.logoUrl,
+        services: cleanedServices,
+        portfolio: cleanedPortfolio,
+        portfolioCategories: portfolio.categories,
+        socialChannels: updatedChannels,
+        googleReviewsLink: contact.googleReviewsLink,
+        operatingHours: contact.hours,
+        timeFrom: contact.timeFrom,
+        timeTo: contact.timeTo,
+        byAppointmentOnly: contact.byAppointmentOnly,
+        whatsAppNumber: cleanWhatsNumber ? cleanWhatsNumber : undefined,
+        emailAddress: contact.emailAddress,
+        physicalAddress: contact.physicalAddress,
+        showServices: contact.showServices,
+        showPortfolio: contact.showPortfolio,
+        showReviews: contact.showReviews,
+        footerEyebrow: contact.footerEyebrow,
+        footerTitle: contact.footerTitle,
+        footerDescription: contact.footerDescription,
+        showFooterCta: contact.showFooterCta,
+        businessType: branding.businessType,
+        colors: appearance.colors,
+        buttonRadius: appearance.radius,
+      });
+
+      if (updated) {
+        if (Array.isArray(updated.services)) {
+          services.setServices(updated.services);
+        }
+        if (Array.isArray(updated.portfolio)) {
+          portfolio.setPortfolio(updated.portfolio);
+        }
+        if (Array.isArray(updated.portfolioCategories)) {
+          portfolio.setCategories(updated.portfolioCategories);
+        }
+      }
+
+      if (!options?.silent) {
+        notify("Changes saved successfully");
+      }
+      return true;
+    } catch (err: unknown) {
+      logger.error("Failed to save studio changes", err);
+      const errMsg =
+        err &&
+        typeof err === "object" &&
+        "message" in err &&
+        typeof (err as { message: unknown }).message === "string"
+          ? (err as { message: string }).message
+          : "Failed to save changes";
+      notify(errMsg);
+      return false;
     } finally {
       setSaving(false);
     }
   };
 
   const handlePublish = async () => {
+    const success = await handleSave({ silent: true });
+    if (!success) return;
+
     setSaving(true);
     try {
-      await handleSave();
       await publishChanges();
       notify("Studio changes published live!");
-    } catch {
+    } catch (err) {
+      logger.error("Failed to publish studio changes", err);
       notify("Failed to publish changes");
     } finally {
       setSaving(false);
     }
   };
 
+  const onSave = async () => {
+    await handleSave();
+  };
+
   return {
-    name,
-    setName,
-    slug,
-    setSlug,
-    tagline,
-    setTagline,
-    location,
-    setLocation,
-    website,
-    setWebsite,
-    email,
-    setEmail,
-    currency,
-    setCurrency,
-    about,
-    setAbout,
-    businessType,
-    setBusinessType,
-    showServices,
-    setShowServices,
-    showPortfolio,
-    setShowPortfolio,
-    showReviews,
-    setShowReviews,
-    footerEyebrow,
-    setFooterEyebrow,
-    footerTitle,
-    setFooterTitle,
-    footerDescription,
-    setFooterDescription,
-    showFooterCta,
-    setShowFooterCta,
-    services,
-    showAddService,
-    setShowAddService,
-    newServiceInput,
-    setNewServiceInput,
-    newServiceCategory,
-    setNewServiceCategory,
-    newServiceDesc,
-    setNewServiceDesc,
-    editingServiceId,
-    setEditingServiceId,
-    portfolio,
-    categories,
-    addPortfolioCategory,
-    removePortfolioCategory,
-    showAddProjectModal,
-    setShowAddProjectModal,
-    newProject,
-    setNewProject,
-    googleReviewsLink,
-    setGoogleReviewsLink,
-    isSyncingReviews,
-    channels,
-    hours,
-    setHours,
-    timeFrom,
-    setTimeFrom,
-    timeTo,
-    setTimeTo,
-    byAppointmentOnly,
-    setByAppointmentOnly,
-    whatsAppNumber,
-    setWhatsAppNumber,
-    emailAddress,
-    setEmailAddress,
-    physicalAddress,
-    setPhysicalAddress,
-    logoUrl,
-    setLogoUrl,
-    isUploadingLogo,
-    isUploadingProjectImage,
-    isUploadingGalleryImages,
-    colors,
-    setColors,
-    radius,
-    setRadius,
-    showManageGalleryModal,
-    setShowManageGalleryModal,
-    draggedProjectIndex,
-    dragOverProjectIndex,
-    slugStatus,
+    // Branding
+    name: branding.name,
+    setName: branding.setName,
+    slug: branding.slug,
+    setSlug: branding.setSlug,
+    tagline: branding.tagline,
+    setTagline: branding.setTagline,
+    location: branding.location,
+    setLocation: branding.setLocation,
+    website: branding.website,
+    setWebsite: handleWebsiteChange,
+    email: branding.email,
+    setEmail: branding.setEmail,
+    currency: branding.currency,
+    setCurrency: branding.setCurrency,
+    about: branding.about,
+    setAbout: branding.setAbout,
+    businessType: branding.businessType,
+    setBusinessType: branding.setBusinessType,
+    slugStatus: branding.slugStatus,
+
+    // Services
+    services: services.services,
+    showAddService: services.showAddService,
+    setShowAddService: services.setShowAddService,
+    newServiceInput: services.newServiceInput,
+    setNewServiceInput: services.setNewServiceInput,
+    newServiceCategory: services.newServiceCategory,
+    setNewServiceCategory: services.setNewServiceCategory,
+    newServiceDesc: services.newServiceDesc,
+    setNewServiceDesc: services.setNewServiceDesc,
+    newServicePriceType: services.newServicePriceType,
+    setNewServicePriceType: services.setNewServicePriceType,
+    newServicePrice: services.newServicePrice,
+    setNewServicePrice: services.setNewServicePrice,
+    newServiceMinPrice: services.newServiceMinPrice,
+    setNewServiceMinPrice: services.setNewServiceMinPrice,
+    newServiceMaxPrice: services.newServiceMaxPrice,
+    setNewServiceMaxPrice: services.setNewServiceMaxPrice,
+    editingServiceId: services.editingServiceId,
+    setEditingServiceId: services.setEditingServiceId,
+    addService: handleAddServiceAndSave,
+    removeService: removeServiceAndSave,
+    updateService: services.updateService,
+
+    // Portfolio
+    portfolio: portfolio.portfolio,
+    categories: portfolio.categories,
+    addPortfolioCategory: portfolio.addPortfolioCategory,
+    removePortfolioCategory: portfolio.removePortfolioCategory,
+    showAddProjectModal: portfolio.showAddProjectModal,
+    setShowAddProjectModal: portfolio.setShowAddProjectModal,
+    newProject: portfolio.newProject,
+    setNewProject: portfolio.setNewProject,
+    logoUrl: portfolio.logoUrl,
+    setLogoUrl: portfolio.setLogoUrl,
+    isUploadingLogo: portfolio.isUploadingLogo,
+    isUploadingProjectImage: portfolio.isUploadingProjectImage,
+    isUploadingGalleryImages: portfolio.isUploadingGalleryImages,
+    showManageGalleryModal: portfolio.showManageGalleryModal,
+    setShowManageGalleryModal: portfolio.setShowManageGalleryModal,
+    draggedProjectIndex: portfolio.draggedProjectIndex,
+    dragOverProjectIndex: portfolio.dragOverProjectIndex,
+    removeProject: removeProjectAndSave,
+    handleAddProject: handleAddProjectAndSave,
+    handleLogoUpload: handleLogoUploadAndSave,
+    handleProjectImageUpload: portfolio.handleProjectImageUpload,
+    handleGalleryImagesUpload: portfolio.handleGalleryImagesUpload,
+    removeGalleryImageFromNewProject: portfolio.removeGalleryImageFromNewProject,
+    moveProject: portfolio.moveProject,
+    handleDragStart: portfolio.handleDragStart,
+    handleDragEnter: portfolio.handleDragEnter,
+    handleDragEnd: portfolio.handleDragEnd,
+
+    // Contact & Social & Toggles
+    hours: contact.hours,
+    setHours: contact.setHours,
+    timeFrom: contact.timeFrom,
+    setTimeFrom: contact.setTimeFrom,
+    timeTo: contact.timeTo,
+    setTimeTo: contact.setTimeTo,
+    byAppointmentOnly: contact.byAppointmentOnly,
+    setByAppointmentOnly: contact.setByAppointmentOnly,
+    whatsAppNumber: contact.whatsAppNumber,
+    setWhatsAppNumber: contact.setWhatsAppNumber,
+    emailAddress: contact.emailAddress,
+    setEmailAddress: contact.setEmailAddress,
+    physicalAddress: contact.physicalAddress,
+    setPhysicalAddress: contact.setPhysicalAddress,
+    channels: contact.channels,
+    googleReviewsLink: contact.googleReviewsLink,
+    setGoogleReviewsLink: contact.setGoogleReviewsLink,
+    isSyncingReviews: contact.isSyncingReviews,
+    showServices: contact.showServices,
+    setShowServices: contact.setShowServices,
+    showPortfolio: contact.showPortfolio,
+    setShowPortfolio: contact.setShowPortfolio,
+    showReviews: contact.showReviews,
+    setShowReviews: contact.setShowReviews,
+    footerEyebrow: contact.footerEyebrow,
+    setFooterEyebrow: contact.setFooterEyebrow,
+    footerTitle: contact.footerTitle,
+    setFooterTitle: contact.setFooterTitle,
+    footerDescription: contact.footerDescription,
+    setFooterDescription: contact.setFooterDescription,
+    showFooterCta: contact.showFooterCta,
+    setShowFooterCta: contact.setShowFooterCta,
+    toggleChannel: handleToggleChannel,
+    updateChannelHandle: handleUpdateChannelHandle,
+    handleSyncReviews: contact.handleSyncReviews,
+
+    // Appearance
+    colors: appearance.colors,
+    setColors: appearance.setColors,
+    radius: appearance.radius,
+    setRadius: appearance.setRadius,
+
+    // Actions & State
     saving,
-    addService,
-    removeService,
-    updateService,
-    toggleChannel,
-    updateChannelHandle,
-    removeProject,
-    handleAddProject,
-    handleLogoUpload,
-    handleProjectImageUpload,
-    handleGalleryImagesUpload,
-    removeGalleryImageFromNewProject,
-    moveProject,
-    handleDragStart,
-    handleDragEnter,
-    handleDragEnd,
-    handleSyncReviews,
-    handleSave,
+    handleSave: onSave,
     handlePublish,
   };
 }

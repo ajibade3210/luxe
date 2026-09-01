@@ -107,7 +107,8 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
               {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionTitle}
             </h4>
-            <span className="text-[11px] text-[#8c827a] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ecfdf5] text-[#047857] border border-[#a7f3d0]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
               {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionSubtitle}
             </span>
           </div>
@@ -158,12 +159,34 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
           <h5 className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
             {VALUATION_HEALTH_MODAL_CONFIG.growthLeversTitle}
           </h5>
-          <div className="space-y-1.5">
-            {valuation.growthLevers.map(lever => (
-              <p key={lever} className="text-xs text-[#665e57] leading-relaxed">
-                {lever}
-              </p>
-            ))}
+          <div className="space-y-2">
+            {valuation.growthLevers?.map((lever, idx) => {
+              if (typeof lever === "string") {
+                return (
+                  <p key={`lever-str-${idx}`} className="text-xs text-[#665e57] leading-relaxed">
+                    {lever}
+                  </p>
+                );
+              }
+              return (
+                <div
+                  key={`lever-obj-${lever.title || idx}`}
+                  className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 text-xs"
+                >
+                  <div>
+                    <span className="font-bold text-[#191c1d] block">{lever.title}</span>
+                    <span className="text-[#665e57] text-[11px] leading-relaxed block mt-0.5">
+                      {lever.description}
+                    </span>
+                  </div>
+                  {lever.impactMultiple && (
+                    <span className="shrink-0 font-semibold text-[#855e2e] bg-[#f0e8dc] px-2 py-0.5 rounded-md text-[10px] self-start">
+                      {lever.impactMultiple}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

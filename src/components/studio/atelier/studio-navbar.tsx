@@ -67,7 +67,7 @@ export function StudioNavbar({
                 <Share2 size={12} /> Share profile
               </button>
               <a
-                href="/settings"
+                href="/vendor/settings"
                 className={`font-medium transition-colors hidden sm:inline ${
                   isDarkPage
                     ? "text-white/70 hover:text-white"

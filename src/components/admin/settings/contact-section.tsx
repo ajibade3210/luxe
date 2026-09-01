@@ -144,9 +144,7 @@ export function ContactSection({
             <div className="flex items-center gap-2">
               <div
                 className={`flex items-center bg-[#f9fafb] border rounded-lg px-3 py-2 transition-colors shadow-2xs flex-1 ${
-                  isFromValid
-                    ? "border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
-                    : "border-amber-400 bg-amber-50/40"
+                  isFromValid ? "border-[#e5e7eb]" : "border-amber-400 bg-amber-50/40"
                 }`}
               >
                 <input
@@ -162,9 +160,7 @@ export function ContactSection({
               <span className="text-xs text-[#9ca3af] font-semibold shrink-0">to</span>
               <div
                 className={`flex items-center bg-[#f9fafb] border rounded-lg px-3 py-2 transition-colors shadow-2xs flex-1 ${
-                  isToValid
-                    ? "border-[#e5e7eb] focus-within:border-[#0058be] focus-within:bg-white"
-                    : "border-amber-400 bg-amber-50/40"
+                  isToValid ? "border-[#e5e7eb]" : "border-amber-400 bg-amber-50/40"
                 }`}
               >
                 <input

@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
+import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,7 +36,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased font-sans bg-[#f8f9fa] text-[#191c1d]" suppressHydrationWarning>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

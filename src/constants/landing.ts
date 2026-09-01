@@ -234,3 +234,71 @@ export const LANDING_FAQS = [
       "Yes, we offer a 14-day complimentary trial with complete access to all studio tools, 3D cards, invoicing, and expense bookkeeping with zero initial commitment. You can upgrade or cancel at any time.",
   },
 ] as const;
+
+export const FEATURED_ORGANIZATIONS: readonly {
+  id: string;
+  name: string;
+  slug: string;
+  eyebrow: string;
+  tagline: string;
+  logoUrl: string;
+  badge: string;
+}[] = [
+  {
+    id: "org-1",
+    name: "Élan Events",
+    slug: "elan-events",
+    eyebrow: "Luxury Event Studio · Lagos",
+    tagline: "We design unforgettable weddings, corporate events, and private celebrations.",
+    logoUrl:
+      "https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png",
+    badge: "Bespoke Experiences",
+  },
+  {
+    id: "org-2",
+    name: "Maison Bell Events",
+    slug: "maison-bell-events",
+    eyebrow: "Haute Couture & Bridal · Paris / London",
+    tagline: "Editorial wedding design and high-society galas across Europe's finest landmarks.",
+    logoUrl: "https://cdn.logosystem.co/logos/the-huntington.webp",
+    badge: "Haute Couture",
+  },
+  {
+    id: "org-3",
+    name: "Lumio Atelier",
+    slug: "lumio-atelier",
+    eyebrow: "Spatial Design & Light · Milan",
+    tagline: "Architectural lighting, experiential banquets, and modern spatial art for galas.",
+    logoUrl: "https://cdn.logosystem.co/logos/hatil.webp",
+    badge: "Architectural Design",
+  },
+  {
+    id: "org-4",
+    name: "Meridian Celebrations",
+    slug: "meridian-celebrations",
+    eyebrow: "Destination Galas · Lake Como / Amalfi",
+    tagline:
+      "Multi-day lakeside celebrations and private yacht receptions for discerning clientele.",
+    logoUrl: "https://cdn.logosystem.co/logos/mila.webp",
+    badge: "Destination Estate",
+  },
+  {
+    id: "org-5",
+    name: "Arcwell Bespoke",
+    slug: "arcwell-bespoke",
+    eyebrow: "Private Estate Soirées · New York",
+    tagline:
+      "Discreet milestone celebrations, black-tie dinners, and bespoke artistic productions.",
+    logoUrl: "https://cdn.logosystem.co/logos/fourthfloor.webp",
+    badge: "White-Glove Concierge",
+  },
+  {
+    id: "org-6",
+    name: "Solace Studios",
+    slug: "solace-studios",
+    eyebrow: "Ultra-Luxury Gala Productions · Dubai",
+    tagline: "Iconic corporate galas and royal wedding productions curated with quiet elegance.",
+    logoUrl: "https://cdn.logosystem.co/logos/renforce.webp",
+    badge: "Grand Productions",
+  },
+];

@@ -1,14 +1,17 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import type { LeadTableProps } from "@/types";
+import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import type { LeadFilterStatus, LeadTableProps } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function LeadTable({
   items,
   paginatedItems,
   searchQuery,
   onSearch,
+  statusFilter = "all",
+  onStatusFilterChange,
   onSelectLead,
   currentPage,
   totalPages,
@@ -19,16 +22,39 @@ export function LeadTable({
 }: LeadTableProps) {
   return (
     <div className="table-card">
-      <div className="table-head">
-        <h2>Recent inquiries</h2>
-        <div className="table-search-box">
-          <Search size={13} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => onSearch(e.target.value)}
-            placeholder="Search..."
-          />
+      <div className="table-head justify-end">
+        <div className="flex items-center gap-3 ml-auto">
+          {/* Status Filter Dropdown matching Invoices and Expenses */}
+          <div className="relative">
+            <select
+              value={statusFilter}
+              onChange={e => onStatusFilterChange?.(e.target.value as LeadFilterStatus)}
+              aria-label="Filter inquiries by status"
+              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+            >
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="qualified">Qualified</option>
+              <option value="converted">Converted</option>
+            </select>
+            <ChevronDown
+              size={13}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
+            />
+          </div>
+
+          {/* Search Box */}
+          <div className="table-search-box">
+            <Search size={13} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => onSearch(e.target.value)}
+              placeholder="Search leads..."
+            />
+          </div>
         </div>
       </div>
       <div className="table-wrap">
@@ -72,11 +98,11 @@ export function LeadTable({
               </tr>
             ))}
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-[#8c827a] text-xs italic">
-                  No inquiries found.
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={5}
+                title="No inquiries found"
+                description="Try adjusting your search query or no inquiries yet"
+              />
             )}
           </tbody>
         </table>

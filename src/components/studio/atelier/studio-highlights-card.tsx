@@ -94,7 +94,7 @@ export function StudioHighlightsCard({
 
   const status = getStoreStatus();
   const address = profile.physicalAddress || profile.location;
-  const hasSubstantialCustomers = totalCustomers >= 10;
+  const hasSubstantialCustomers = totalCustomers > 0;
 
   // Check if WhatsApp is enabled in settings (connected toggle and valid phone number)
   const whatsAppChannel = profile.socialChannels?.find(c => c.type === "whatsapp");
@@ -113,22 +113,40 @@ export function StudioHighlightsCard({
     >
       {/* Top Bar: Verification and Patron Metrics */}
       <div className="flex items-center justify-between">
-        <div
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-2xs ${
-            isDark
-              ? "bg-white/10 border border-white/15 text-white"
-              : "bg-white border border-[#e2d5c5]"
-          }`}
-        >
-          <ShieldCheck size={14} className={isDark ? "text-cyan-400" : "text-[#0058be]"} />
-          <span
-            className={`text-[11px] font-semibold tracking-wide ${
-              isDark ? "text-white" : "text-[#1c1917]"
+        {profile.isVerified !== false ? (
+          <div
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-2xs ${
+              isDark
+                ? "bg-white/10 border border-white/15 text-white"
+                : "bg-white border border-[#e2d5c5]"
             }`}
           >
-            Verified Atelier
-          </span>
-        </div>
+            <ShieldCheck size={14} className={isDark ? "text-cyan-400" : "text-[#0058be]"} />
+            <span
+              className={`text-[11px] font-semibold tracking-wide ${
+                isDark ? "text-white" : "text-[#1c1917]"
+              }`}
+            >
+              Verified Storefront
+            </span>
+          </div>
+        ) : (
+          <div
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-2xs ${
+              isDark
+                ? "bg-white/5 border border-white/10 text-white/80"
+                : "bg-white border border-[#e2d5c5]/80 text-[#665e57]"
+            }`}
+          >
+            <span
+              className={`text-[11px] font-semibold tracking-wide ${
+                isDark ? "text-white/80" : "text-[#665e57]"
+              }`}
+            >
+              Official Storefront
+            </span>
+          </div>
+        )}
 
         {hasSubstantialCustomers ? (
           <div
@@ -142,7 +160,8 @@ export function StudioHighlightsCard({
             <span
               className={`text-[11px] font-semibold ${isDark ? "text-white" : "text-[#1c1917]"}`}
             >
-              {totalCustomers}+ Clients Served
+              {totalCustomers >= 10 ? `${totalCustomers}+` : totalCustomers} Client
+              {totalCustomers === 1 ? "" : "s"} Served
             </span>
           </div>
         ) : (

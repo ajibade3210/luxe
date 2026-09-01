@@ -1,23 +1,17 @@
 "use client";
 
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Edit2,
-  Receipt,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Edit2, Search, Trash2 } from "lucide-react";
 import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_CONFIG, EXPENSE_PAYMENT_METHODS } from "@/constants";
 import type { ExpenseCategory, ExpenseListTableProps } from "@/types";
 import { formatDate, formatMoney } from "../admin-layout";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function ExpenseListTable({
   items,
   paginatedItems,
   searchQuery,
   selectedCategory,
+  categories = [],
   onSearch,
   onCategoryChange,
   onEdit,
@@ -32,27 +26,35 @@ export function ExpenseListTable({
   return (
     <div className="table-card">
       {/* Table Head matching Leads and Customers */}
-      <div className="table-head">
-        <h2>All expenses</h2>
-
-        <div className="flex items-center gap-3">
+      <div className="table-head justify-end">
+        <div className="flex items-center gap-3 ml-auto">
           {/* Category Filter Dropdown */}
           <div className="relative">
             <select
               value={selectedCategory}
               onChange={e => onCategoryChange(e.target.value as ExpenseCategory | "all")}
               aria-label="Filter expenses by category"
-              className="appearance-none pl-3.5 pr-8 py-2 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none focus:border-[#855e2e] transition-colors cursor-pointer shadow-2xs"
+              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
-              <option value="all">All Categories</option>
-              {EXPENSE_CATEGORIES.map(cat => {
-                const cfg = EXPENSE_CATEGORY_CONFIG[cat];
-                return (
-                  <option key={cat} value={cat}>
-                    {cfg.label}
-                  </option>
-                );
-              })}
+              <option value="all">All</option>
+              {categories && categories.length > 0
+                ? categories.map(cat => {
+                    const cfg = EXPENSE_CATEGORY_CONFIG[cat.category as ExpenseCategory];
+                    const label = cat.label || cfg?.label || cat.category;
+                    return (
+                      <option key={cat.category} value={cat.category}>
+                        {label}
+                      </option>
+                    );
+                  })
+                : EXPENSE_CATEGORIES.map(cat => {
+                    const cfg = EXPENSE_CATEGORY_CONFIG[cat];
+                    return (
+                      <option key={cat} value={cat}>
+                        {cfg.label}
+                      </option>
+                    );
+                  })}
             </select>
             <ChevronDown
               size={13}
@@ -96,7 +98,7 @@ export function ExpenseListTable({
               };
 
               return (
-                <tr key={expense.id} className="hover:bg-[#faf7f2]/50 transition-colors">
+                <tr key={expense.id} className="transition-colors">
                   <td className="whitespace-nowrap text-[#665e57] font-medium">
                     {formatDate(expense.date)}
                   </td>
@@ -151,17 +153,11 @@ export function ExpenseListTable({
             })}
 
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={6} className="text-center py-12 text-[#8c827a]">
-                  <div className="w-10 h-10 rounded-2xl bg-[#faf5ee] border border-[#f0e4d4] flex items-center justify-center mx-auto mb-2.5 text-[#a06840]">
-                    <Receipt size={18} />
-                  </div>
-                  <b className="text-xs text-[#191c1d] block">No expenses found</b>
-                  <span className="text-[11px] text-[#8c827a] block mt-0.5">
-                    Try adjusting your search query or category filter.
-                  </span>
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={6}
+                title="No expenses found"
+                description="Try adjusting your search query or add a new expense"
+              />
             )}
           </tbody>
         </table>

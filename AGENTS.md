@@ -20,6 +20,9 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 
 # CORE RULES
 
+- **STANDALONE & INDEPENDENT DEPLOYMENT:**
+  `shopwus-web` is a 100% standalone, independently deployed project. It MUST NOT depend on `shopwus-api` or any shared root monorepo packages. All types, DTOs, schemas, and API client interfaces must remain completely self-contained within this repository. No workspace symlinks, shared packages, or cross-project dependencies are permitted.
+
 - **DESIGN SYSTEM COMPLIANCE & CONSISTENCY (`DESIGN.md`):** Whatever we design must fit and strictly stick to our design system (tokens, components, typography, button variants, and spacing) documented in `DESIGN.md`. All visual and component decisions must treat `DESIGN.md` as the ground truth. If any requested change or new element deviates from our design system, you MUST warn the user before implementing.
 - **COMPONENT INTERFACES IN TYPE SECTION:** Check for components with interface declarations and move the interface to the type section (`src/types/{domain}.ts`). No component prop interfaces or hook options should be declared inline in component files.
 - **STRICT ARCHITECTURAL PLACEMENT:** Moving forward, EVERYTHING in the codebase MUST be defined strictly in its appropriate designated section without exception:
@@ -89,7 +92,22 @@ Everything in the codebase must live strictly in its appropriate architectural s
 - **Channel Character Capping:** Enforces strict anti-spam limits (500 chars for WhatsApp & Both, 2,000 chars for Email) with real-time countdown meters and optional media/image URL attachments.
 - **Multi-Channel Dispatch Engine:** Supports WhatsApp Forwarding Intent (`https://api.whatsapp.com/send?text=...`), individual 1-click WhatsApp dispatches (`https://wa.me/...`), discreet Email BCC (`mailto:?bcc=...`), and mock backend async service logging.
 
-### 6. Verification Workflow Before Responding
+### 6. Input Focus Reset (Design System Rule)
+**NEVER add focus rings, shadows, or colored borders to any input, textarea, or select — anywhere in the app.**
+
+This is enforced globally in `src/styles/base.css` via `@layer base`:
+```css
+input, textarea, select { outline: none; box-shadow: none; -webkit-box-shadow: none; }
+```
+
+**Banned classes on inputs and their wrapper divs:**
+- `focus:ring-*`, `focus:border-[#...]`, `focus:shadow-*`
+- `focus-within:ring-*`, `focus-within:border-[#...]`, `focus-within:bg-white`
+
+**Exempt:** Checkboxes (`focus:ring-*` for accent colour) and the shadcn `<Button>` (`focus-visible:ring-*`).
+See `DESIGN.md §8` for the full rule.
+
+### 7. Verification Workflow Before Responding
 1. `pnpm check` (Biome linting & formatting).
 2. `pnpm type-check` (`tsc --noEmit` with 0 type errors and zero `any`).
 3. `pnpm test` (Vitest unit test suite).

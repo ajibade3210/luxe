@@ -1,7 +1,7 @@
-export { socialChannels } from "@/lib/mock-data";
 export * from "./analytics.service";
 export * from "./auth.service";
 export * from "./blog.service";
+export * from "./broadcast.service";
 export * from "./customer.service";
 export * from "./expense.service";
 export * from "./feedback.service";

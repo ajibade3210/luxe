@@ -24,18 +24,18 @@ export function BrandLogo({
       gap: "gap-2.5",
     },
     md: {
-      box: "w-8 h-8 min-w-[32px] min-h-[32px]",
-      imageSize: 32,
-      text: "text-lg font-bold tracking-tight",
-      sub: "text-[11px]",
-      gap: "gap-2.5",
-    },
-    lg: {
       box: "w-10 h-10 min-w-[40px] min-h-[40px]",
       imageSize: 40,
+      text: "text-xl font-bold tracking-tight",
+      sub: "text-[11px]",
+      gap: "gap-3",
+    },
+    lg: {
+      box: "w-12 h-12 min-w-[48px] min-h-[48px]",
+      imageSize: 48,
       text: "text-2xl font-bold tracking-tight",
       sub: "text-xs",
-      gap: "gap-3",
+      gap: "gap-3.5",
     },
   }[size];
 

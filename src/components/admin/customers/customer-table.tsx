@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import type { CustomerTableProps } from "@/types";
+import { TableEmptyState } from "../common/table-empty-state";
 
 export function CustomerTable({
   items,
@@ -29,7 +30,6 @@ export function CustomerTable({
     <div className="table-card">
       <div className="table-head">
         <div className="flex items-center gap-3">
-          <h2>All customers</h2>
           {selectedCustomerIds.length > 0 && (
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#faf7f2] text-[#855e2e] border border-[#e8ded1]">
               {selectedCustomerIds.length} selected
@@ -37,7 +37,7 @@ export function CustomerTable({
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto">
           {selectedCustomerIds.length > 0 && (
             <div className="flex items-center gap-2 animate-in fade-in duration-150">
               <button
@@ -167,11 +167,11 @@ export function CustomerTable({
               );
             })}
             {paginatedItems.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-[#8c827a] text-xs italic">
-                  No customer records found.
-                </td>
-              </tr>
+              <TableEmptyState
+                colSpan={5}
+                title="No customer records found"
+                description="Try adjusting your search query or add a new customer."
+              />
             )}
           </tbody>
         </table>

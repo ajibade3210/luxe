@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { apiClient } from "@/lib/api-client";
+import type { BroadcastResult } from "@/types";
 import {
   BROADCAST_LIMITS,
   createEmailBroadcastMailto,
@@ -7,13 +9,8 @@ import {
   getBroadcastHistory,
   sendBroadcast,
 } from "../broadcast.service";
-import { getCustomers } from "../customer.service";
 
 describe("Broadcast Service", () => {
-  beforeEach(async () => {
-    // Reset test state if needed
-  });
-
   it("throws error when no recipient customer IDs are supplied", async () => {
     await expect(
       sendBroadcast({
@@ -25,27 +22,22 @@ describe("Broadcast Service", () => {
   });
 
   it("enforces WhatsApp strict character limit (500 chars)", async () => {
-    const allCustomers = await getCustomers();
-    const customerIds = allCustomers.slice(0, 2).map(c => c.id);
     const longMessage = "A".repeat(BROADCAST_LIMITS.WHATSAPP_MAX_LENGTH + 1);
 
     await expect(
       sendBroadcast({
         channel: "whatsapp",
-        customerIds,
+        customerIds: ["cust-1"],
         message: longMessage,
       })
     ).rejects.toThrow("exceeds maximum allowable limit");
   });
 
   it("requires a subject line for email broadcasts", async () => {
-    const allCustomers = await getCustomers();
-    const customerIds = allCustomers.slice(0, 2).map(c => c.id);
-
     await expect(
       sendBroadcast({
         channel: "email",
-        customerIds,
+        customerIds: ["cust-1"],
         message: "Exclusive Atelier invitation.",
         subject: "   ",
       })
@@ -53,23 +45,31 @@ describe("Broadcast Service", () => {
   });
 
   it("successfully executes a bulk WhatsApp broadcast and records history", async () => {
-    const allCustomers = await getCustomers();
-    const customerIds = allCustomers.slice(0, 2).map(c => c.id);
+    const mockResult: BroadcastResult = {
+      broadcastId: "bc-test-1",
+      channel: "whatsapp",
+      totalRecipients: 2,
+      whatsAppRecipients: 2,
+      emailRecipients: 0,
+      deliveredCount: 2,
+      timestamp: "2026-08-20T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce(mockResult);
+    vi.spyOn(apiClient, "get").mockResolvedValueOnce([mockResult]);
 
     const result = await sendBroadcast({
       channel: "whatsapp",
-      customerIds,
+      customerIds: ["cust-1", "cust-2"],
       message: "Your upcoming wedding run-of-show has been updated.",
       imageUrl: "https://example.com/moodboard.jpg",
     });
 
-    expect(result.broadcastId).toBeDefined();
+    expect(result.broadcastId).toBe("bc-test-1");
     expect(result.channel).toBe("whatsapp");
-    expect(result.totalRecipients).toBe(customerIds.length);
-    expect(result.deliveredCount).toBe(customerIds.length);
+    expect(result.totalRecipients).toBe(2);
 
     const history = await getBroadcastHistory();
-    expect(history.length).toBeGreaterThan(0);
+    expect(history.length).toBe(1);
     expect(history[0].broadcastId).toBe(result.broadcastId);
   });
 

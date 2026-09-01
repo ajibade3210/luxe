@@ -96,7 +96,7 @@ export const VALUATION_HEALTH_PILLARS = [
     description:
       "Repeat customers in your database. Adds direct brand equity and boosts your profit multiple.",
     actionLabel: "View Clients",
-    actionHref: "/customers",
+    actionHref: "/vendor/customers",
     iconName: "Users",
   },
   {
@@ -105,7 +105,7 @@ export const VALUATION_HEALTH_PILLARS = [
     title: "Inbound Inquiries",
     description: "Quotes and consultation requests. Proves ongoing buyer demand for your studio.",
     actionLabel: "Manage Leads",
-    actionHref: "/leads",
+    actionHref: "/vendor/leads",
     iconName: "TrendingUp",
   },
 ] as const;

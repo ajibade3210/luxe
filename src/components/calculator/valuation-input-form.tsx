@@ -69,7 +69,7 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
           <label className="text-xs sm:text-sm font-bold text-[#1f1d1a] block">
             Annual Revenue
           </label>
-          <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] focus-within:bg-white border border-[#e8dfd2] focus-within:border-[#9e633d] rounded-xl px-4 py-3 transition-all">
+          <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] border border-[#e8dfd2] rounded-xl px-4 py-3 transition-all">
             <span className="text-xs sm:text-sm font-bold text-[#8c827a] font-sans mr-2.5 select-none shrink-0">
               {sym}
             </span>
@@ -97,7 +97,7 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
           <label className="text-xs sm:text-sm font-bold text-[#1f1d1a] block">
             Annual Expenses
           </label>
-          <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] focus-within:bg-white border border-[#e8dfd2] focus-within:border-[#9e633d] rounded-xl px-4 py-3 transition-all">
+          <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] border border-[#e8dfd2] rounded-xl px-4 py-3 transition-all">
             <span className="text-xs sm:text-sm font-bold text-[#8c827a] font-sans mr-2.5 select-none shrink-0">
               {sym}
             </span>
@@ -126,7 +126,7 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
         <label className="text-xs sm:text-sm font-bold text-[#1f1d1a] block">
           Net Assets (Cash, Stock & Equipment)
         </label>
-        <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] focus-within:bg-white border border-[#e8dfd2] focus-within:border-[#9e633d] rounded-xl px-4 py-3 transition-all">
+        <div className="flex items-center w-full bg-[#faf7f2] hover:bg-[#f6f2ea] border border-[#e8dfd2] rounded-xl px-4 py-3 transition-all">
           <span className="text-xs sm:text-sm font-bold text-[#8c827a] font-sans mr-2.5 select-none shrink-0">
             {sym}
           </span>

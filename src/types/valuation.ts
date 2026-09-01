@@ -18,6 +18,12 @@ export interface ValuationDriver {
   detail: string;
 }
 
+export interface ValuationGrowthLever {
+  title: string;
+  description: string;
+  impactMultiple?: string;
+}
+
 export interface BusinessValuation {
   estimatedLow: number;
   estimatedHigh: number;
@@ -31,7 +37,7 @@ export interface BusinessValuation {
   profitMargin: number;
   activeCustomerCount: number;
   drivers: ValuationDriver[];
-  growthLevers: string[];
+  growthLevers: Array<string | ValuationGrowthLever>;
   calculatedAt: string;
 }
 
@@ -64,6 +70,8 @@ export interface PublicValuationInputs {
   annualExpenses: number;
   netAssets: number;
   customerRetentionRate: number;
+  email?: string;
+  phone?: string;
 }
 
 export interface PublicValuationResult {

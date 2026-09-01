@@ -89,7 +89,7 @@ export function CustomerServiceModal({
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
               Service Name *
             </label>
-            <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+            <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs transition-all">
               <input
                 required
                 value={formData.name}
@@ -134,7 +134,7 @@ export function CustomerServiceModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Budget / Value (₦)
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs transition-all">
                 <input
                   type="number"
                   step="1000"
@@ -155,7 +155,7 @@ export function CustomerServiceModal({
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
                 Status
               </label>
-              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs focus-within:border-[#855e2e] focus-within:bg-white transition-all">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3 py-2 text-xs transition-all">
                 <select
                   value={formData.status}
                   onChange={e =>

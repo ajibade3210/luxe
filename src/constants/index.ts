@@ -17,28 +17,12 @@ export const APP_CONFIG = {
 
 export const STORAGE_KEYS = {
   profile: "shopwus_business_profile",
-  profileVersion: "shopwus_profile_version",
   leads: "shopwus_leads_data",
   session: "shopwus_auth_session",
   autoQuoteModalSeen: "shopwus_auto_quote_modal_seen",
 } as const;
 
 export const AUTO_QUOTE_MODAL_DELAY_MS = 60_000; // 1 minute dwell time
-
-export const PROFILE_VERSION = 7; // v7: service tier limits and character capping
-
-export const RESERVED_SLUGS = [
-  "admin",
-  "login",
-  "signup",
-  "leads",
-  "customers",
-  "settings",
-  "api",
-  "profile",
-  "analytics",
-  "overview",
-] as const;
 
 export const CUSTOM_EVENTS = {
   leadsUpdated: "shopwus_leads_updated",
@@ -49,16 +33,6 @@ export const CUSTOM_EVENTS = {
   authChanged: "shopwus_auth_changed",
   broadcastSent: "shopwus_broadcast_sent",
   valuationUpdated: "shopwus_valuation_updated",
-} as const;
-
-export const API_ENDPOINTS = {
-  leads: "/api/leads",
-  customers: "/api/customers",
-  invoices: "/api/invoices",
-  expenses: "/api/expenses",
-  analytics: "/api/analytics",
-  profile: "/api/profile",
-  auth: "/api/auth",
 } as const;
 
 export const SOCIAL_PLATFORMS = [
@@ -156,7 +130,7 @@ export const MAX_FOOTER_TITLE_LENGTH = 100;
 export const MAX_FOOTER_DESC_LENGTH = 300;
 
 /** Default fallback business type across the app. */
-export const DEFAULT_BUSINESS_TYPE = "service" as const;
+export const DEFAULT_BUSINESS_TYPE = "sales" as const;
 
 /**
  * Maps each BusinessType to its public-facing CTA button label.

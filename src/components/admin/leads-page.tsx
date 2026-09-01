@@ -31,6 +31,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
     isExporting,
     isConverting,
     metrics,
+    statusFilter,
+    handleStatusFilterChange,
     handleSearch,
     handleExport,
     handleConvertToCustomer,
@@ -59,8 +61,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
         {
           id: `svc-${Date.now()}`,
           customerId: lead.id,
-          name: lead.service ? `${lead.service} Production` : "Bespoke Service",
-          service: lead.service || "Bespoke Styling",
+          name: lead.service ? `${lead.service} Production` : lead.service || "",
+          service: lead.service || "",
           amount: lead.budget || APP_CONFIG.defaultLeadBudget,
           status: "pending",
           createdAt: new Date().toISOString(),
@@ -119,16 +121,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
       />
 
       <div className="metrics">
-        <Metric
-          label="Total leads"
-          value={String(metrics.total).padStart(2, "0")}
-          detail="All time"
-        />
-        <Metric
-          label="New today"
-          value={String(metrics.newToday).padStart(2, "0")}
-          detail="Needs attention"
-        />
+        <Metric label="Total leads" value={String(metrics.total)} detail="All time" />
+        <Metric label="New today" value={String(metrics.newToday)} detail="Needs attention" />
         <Metric label="Conversion rate" value={`${metrics.conversion}%`} detail="Last 30 days" />
       </div>
 
@@ -137,6 +131,8 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
         paginatedItems={paginatedItems}
         searchQuery={searchQuery}
         onSearch={handleSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
         onSelectLead={setSelectedLeadId}
         currentPage={currentPage}
         totalPages={totalPages}

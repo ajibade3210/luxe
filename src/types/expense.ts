@@ -80,6 +80,7 @@ export interface ExpenseListTableProps {
   paginatedItems: Expense[];
   searchQuery: string;
   selectedCategory: ExpenseCategory | "all";
+  categories?: ExpenseCategorySummary[];
   onSearch: (query: string) => void;
   onCategoryChange: (category: ExpenseCategory | "all") => void;
   onEdit: (expense: Expense) => void;

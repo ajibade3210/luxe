@@ -4,18 +4,14 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "cdn.accessa.ng",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.logosystem.co",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
 };
 
-export default nextConfig
+export default nextConfig;

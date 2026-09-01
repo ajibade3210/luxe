@@ -5,12 +5,12 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
   {
     title: "Platform Suite",
     links: [
-      { label: "Client Inquiries & CRM", href: "/leads" },
-      { label: "Bespoke Proposal Engine", href: "/settings" },
-      { label: "Visual Moodboards & Decks", href: "/settings" },
-      { label: "Contracts & Milestones", href: "/customers" },
-      { label: "Live Run of Show", href: "/settings" },
-      { label: "Multi-Channel Sync", href: "/settings" },
+      { label: "Client Inquiries & CRM", href: "/vendor/leads" },
+      { label: "Bespoke Proposal Engine", href: "/vendor/settings" },
+      { label: "Visual Moodboards & Decks", href: "/vendor/settings" },
+      { label: "Contracts & Milestones", href: "/vendor/customers" },
+      { label: "Live Run of Show", href: "/vendor/settings" },
+      { label: "Multi-Channel Sync", href: "/vendor/settings" },
       { label: "Client VIP Portals", href: "/elan-events" },
     ],
   },

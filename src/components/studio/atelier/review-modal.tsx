@@ -46,7 +46,7 @@ export function ReviewModal({
               placeholder="e.g. Folashade Adeleke"
               value={reviewForm.author}
               onChange={e => setReviewForm({ ...reviewForm, author: e.target.value })}
-              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
             />
           </div>
 
@@ -57,7 +57,7 @@ export function ReviewModal({
               placeholder="e.g. Wedding, Milestone Gala, Corporate"
               value={reviewForm.eventType}
               onChange={e => setReviewForm({ ...reviewForm, eventType: e.target.value })}
-              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be]"
+              className="w-full bg-white border border-[#e5e7eb] rounded px-3.5 py-2.5 text-xs text-[#191c1d] focus:outline-none"
             />
           </div>
 
@@ -87,7 +87,7 @@ export function ReviewModal({
               placeholder="Tell us about the artistry, communication, and execution..."
               value={reviewForm.comment}
               onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
-              className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none focus:border-[#0058be] resize-none"
+              className="w-full bg-white border border-[#e5e7eb] rounded p-3.5 text-xs text-[#191c1d] focus:outline-none resize-none"
             />
           </div>
 

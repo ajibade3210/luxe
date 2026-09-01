@@ -57,7 +57,7 @@ export function InvoiceFormFields({
           <select
             value={customerId}
             onChange={e => handleCustomerChange(e.target.value)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:outline-none transition-all"
           >
             <option value="">Select customer relationship...</option>
             {allCustomers.map(c => (
@@ -72,7 +72,7 @@ export function InvoiceFormFields({
             value={customerName}
             onChange={e => setCustomerName(e.target.value)}
             placeholder="e.g. PT Nusantara Digital Solusi"
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:outline-none transition-all"
           />
         )}
       </div>
@@ -86,7 +86,7 @@ export function InvoiceFormFields({
           value={billingAddress}
           onChange={e => setBillingAddress(e.target.value)}
           placeholder="Jl. Jendral Sudirman No. 45 Jakarta Selatan"
-          className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+          className="w-full bg-white border border-[#d1d5db] rounded-xl px-4 py-3 text-xs text-[#111827] focus:outline-none transition-all"
         />
       </div>
 
@@ -100,7 +100,7 @@ export function InvoiceFormFields({
             required
             value={issueDate}
             onChange={e => setIssueDate(e.target.value)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:outline-none transition-all"
           />
         </div>
 
@@ -113,7 +113,7 @@ export function InvoiceFormFields({
             required
             value={dueDate}
             onChange={e => setDueDate(e.target.value)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:outline-none transition-all"
           />
         </div>
 
@@ -124,7 +124,7 @@ export function InvoiceFormFields({
           <select
             value={paymentTerms}
             onChange={e => setPaymentTerms(e.target.value as PaymentTerms)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs text-[#111827] focus:outline-none transition-all"
           >
             {PAYMENT_TERMS_OPTIONS.map(opt => (
               <option key={opt} value={opt}>
@@ -141,7 +141,7 @@ export function InvoiceFormFields({
           <select
             value={currency}
             onChange={e => setCurrency(e.target.value as CurrencyCode)}
-            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:border-[#111827] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#d1d5db] rounded-xl px-3 py-2 text-xs font-semibold text-[#111827] focus:outline-none transition-all"
           >
             <option value="NGN">NGN (₦) · Naira</option>
             <option value="USD">USD ($) · Dollar</option>

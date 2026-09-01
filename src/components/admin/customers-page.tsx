@@ -32,6 +32,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
     totalPages,
     startIndex,
     paginatedItems,
+    totalCustomers,
     totalRevenue,
     activeServicesCount,
     isExporting,
@@ -82,10 +83,6 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
   };
 
   const handleOpenBroadcastModal = () => {
-    if (selectedCustomerIds.length === 0) {
-      // Default to all active customers if none explicitly checked
-      setSelectedCustomerIds(activeCustomers.map(c => c.id));
-    }
     setShowBroadcastModal(true);
   };
 
@@ -153,10 +150,10 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
                         setShowMoreMenu(false);
                         setShowImportModal(true);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer"
                     >
                       <Upload size={14} className="text-[#855e2e]" />
-                      <span>Import</span>
+                      <span>Import CSV</span>
                     </button>
 
                     <button
@@ -166,7 +163,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
                         handleExport();
                       }}
                       disabled={isExporting}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left disabled:opacity-50"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer disabled:opacity-50"
                     >
                       <Download
                         size={14}
@@ -185,14 +182,10 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
       <div className="metrics">
         <Metric
           label="Total customers"
-          value={String(items.length).padStart(2, "0")}
+          value={String(totalCustomers)}
           detail="Active relationships"
         />
-        <Metric
-          label="Active services"
-          value={String(activeServicesCount).padStart(2, "0")}
-          detail="In progress"
-        />
+        <Metric label="Active services" value={String(activeServicesCount)} detail="In progress" />
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />
       </div>
 

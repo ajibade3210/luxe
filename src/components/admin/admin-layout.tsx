@@ -4,33 +4,36 @@ import {
   ArrowRight,
   Bell,
   Check,
-  ChevronRight,
-  ExternalLink,
   Eye,
   FileText,
+  Loader2,
+  LogOut,
   Menu,
   Receipt,
   Search,
-  Settings,
+  Store,
   TrendingUp,
   Users,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
-import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
-import { getCustomers, getExpenses, getInvoices, getLeads, publishChanges } from "@/lib/api";
-import { businessProfile } from "@/lib/mock-data";
+import { APP_CONFIG } from "@/constants";
+import {
+  useCustomersQuery,
+  useExpensesQuery,
+  useInvoicesQuery,
+  useLeadsQuery,
+  useStudioProfileQuery,
+} from "@/hooks/queries";
+import { clearSession, getCurrentSession, publishChanges } from "@/lib/api";
 import type {
   AdminHeaderProps,
   AdminLayoutProps,
   AdminSidebarProps,
   AdminToastContextType,
-  Customer,
-  Expense,
-  Invoice,
-  Lead,
   MetricProps,
   PageTitleProps,
   ToastProps,
@@ -68,6 +71,77 @@ export function Toast({ message, onClose }: ToastProps) {
   );
 }
 
+export function LogoutConfirmModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isLoggingOut) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isLoggingOut, onClose]);
+
+  if (!isOpen) return null;
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await clearSession();
+    } finally {
+      window.location.href = "/login";
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+      onClick={() => !isLoggingOut && onClose()}
+    >
+      <div
+        className="bg-white border border-[#eee7dc] rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <div>
+          <h3 className="text-lg font-serif font-bold text-[#1f1d1a]">Log out?</h3>
+          <p className="text-xs text-[#665e57] mt-1 leading-relaxed">
+            Are you sure you want to sign out of your account?
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2.5 pt-2">
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            onClick={onClose}
+            className="bg-white hover:bg-[#f8f4ed] text-[#2a1d15] border border-[#ded5c8] hover:border-[#c59a78] px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            onClick={handleLogout}
+            className="bg-[#191c1d] hover:bg-black !text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+          >
+            {isLoggingOut ? (
+              <>
+                <Loader2 size={13} className="animate-spin" />
+                <span>Logging out…</span>
+              </>
+            ) : (
+              <span>Log out</span>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Metric({ label, value, detail }: MetricProps) {
   const isLong = typeof value === "string" && value.length > 12;
   return (
@@ -95,127 +169,174 @@ export function PageTitle({ title, action, children }: PageTitleProps) {
 }
 
 export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
-  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
-  const [leadCount, setLeadCount] = useState(5);
-  const [customerCount, setCustomerCount] = useState(3);
-  const [invoiceCount, setInvoiceCount] = useState(0);
-  const [expenseCount, setExpenseCount] = useState(5);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(
+    () => path === "/vendor/settings"
+  );
+
+  const { data: profile } = useStudioProfileQuery();
+  const { data: leads } = useLeadsQuery();
+  const { data: customers } = useCustomersQuery();
+  const { data: invoices } = useInvoicesQuery();
+  const { data: expenses } = useExpensesQuery();
+
+  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
+  const userName = session?.name || profile?.businessName || "Vendor";
+  const userRole = profile?.businessName || session?.studioName || "Store Owner";
+  const initials =
+    userName
+      .split(" ")
+      .map(p => p[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "SW";
+
+  const leadCount = leads?.length ?? null;
+  const customerCount = customers?.length ?? null;
+  const invoiceCount = invoices?.length ?? null;
+  const expenseCount = expenses?.length ?? null;
 
   useEffect(() => {
-    getLeads().then(res => setLeadCount(res.length));
-    getCustomers().then(res => setCustomerCount(res.length));
-    getInvoices().then(res => setInvoiceCount(res.length));
-    getExpenses().then(res => setExpenseCount(res.length));
-
-    const handleLeadsUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Lead[]>;
-      if (customEvent.detail) {
-        setLeadCount(customEvent.detail.length);
-      }
-    };
-    const handleCustomersUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Customer[]>;
-      if (customEvent.detail) {
-        setCustomerCount(customEvent.detail.length);
-      }
-    };
-    const handleInvoicesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Invoice[]>;
-      if (customEvent.detail) {
-        setInvoiceCount(customEvent.detail.length);
-      }
-    };
-    const handleExpensesUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent<Expense[]>;
-      if (customEvent.detail) {
-        setExpenseCount(customEvent.detail.length);
-      }
-    };
-
-    window.addEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-    window.addEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-    window.addEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-    window.addEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-    return () => {
-      window.removeEventListener(CUSTOM_EVENTS.leadsUpdated, handleLeadsUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.customersUpdated, handleCustomersUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.invoicesUpdated, handleInvoicesUpdate);
-      window.removeEventListener(CUSTOM_EVENTS.expensesUpdated, handleExpensesUpdate);
-    };
-  }, []);
+    setOnlineStoreExpanded(path === "/vendor/settings");
+  }, [path]);
 
   return (
-    <aside className={`sidebar ${open ? "is-open" : ""}`}>
-      <div className="sidebar-top">
-        <Brand />
-        <button className="mobile-close" onClick={onClose}>
-          <X />
-        </button>
-      </div>
-      <nav>
-        <a
-          className={path === "/analytics" || path === "/overview" ? "active" : ""}
-          href="/analytics"
-        >
-          <TrendingUp size={16} /> Analytics
-        </a>
-        <a className={path === "/leads" ? "active" : ""} href="/leads">
-          <Users size={16} /> Leads <span className="nav-count">{leadCount}</span>
-        </a>
-        <a className={path === "/customers" ? "active" : ""} href="/customers">
-          <Users size={16} /> Customers <span className="nav-count">{customerCount}</span>
-        </a>
-        <a className={path === "/invoices" ? "active" : ""} href="/invoices">
-          <FileText size={16} /> Invoices <span className="nav-count">{invoiceCount}</span>
-        </a>
-        <a className={path === "/expenses" ? "active" : ""} href="/expenses">
-          <Receipt size={16} /> Expenses <span className="nav-count">{expenseCount}</span>
-        </a>
-        <a
-          className="text-[#0058be] hover:bg-[#0058be]/10 font-medium"
-          href={`/${slug}?from=settings`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Eye size={15} /> Profile View <ExternalLink size={13} className="ml-auto opacity-70" />
-        </a>
-        <a className={path === "/settings" ? "active" : ""} href="/settings">
-          <Settings size={16} /> Settings
-        </a>
-      </nav>
+    <>
+      <aside className={`sidebar ${open ? "is-open" : ""}`}>
+        <div className="sidebar-top">
+          <Brand />
+          <button className="mobile-close" onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <nav>
+          <Link
+            className={
+              path === "/vendor/analytics" || path === "/vendor/overview" || path === "/vendor"
+                ? "active"
+                : ""
+            }
+            href="/vendor/analytics"
+          >
+            <TrendingUp size={16} /> Analytics
+          </Link>
+          <Link className={path === "/vendor/leads" ? "active" : ""} href="/vendor/leads">
+            <Users size={16} /> Leads{" "}
+            {leadCount !== null && <span className="nav-count">{leadCount}</span>}
+          </Link>
+          <Link className={path === "/vendor/customers" ? "active" : ""} href="/vendor/customers">
+            <Users size={16} /> Customers{" "}
+            {customerCount !== null && <span className="nav-count">{customerCount}</span>}
+          </Link>
+          <Link className={path === "/vendor/invoices" ? "active" : ""} href="/vendor/invoices">
+            <FileText size={16} /> Invoices{" "}
+            {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
+          </Link>
+          <Link className={path === "/vendor/expenses" ? "active" : ""} href="/vendor/expenses">
+            <Receipt size={16} /> Expenses{" "}
+            {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
+          </Link>
+          {/* Online Store Section */}
+          <div className="flex flex-col">
+            <button
+              type="button"
+              className={`nav-item justify-between ${
+                onlineStoreExpanded || path === "/vendor/settings" ? "active" : ""
+              }`}
+              onClick={() => setOnlineStoreExpanded(prev => !prev)}
+            >
+              <div className="flex items-center gap-[12px] min-w-0">
+                <Store size={16} className="shrink-0" />
+                <span className="truncate">Online Store</span>
+              </div>
 
-      <div className="mt-auto pt-4 border-t border-[#e5e7eb]">
-        <a
-          className={`flex items-center gap-3 p-3 rounded-xl text-decoration-none transition-all cursor-pointer ${
-            path === "/profile"
-              ? "bg-white text-[#191c1d] shadow-2xs"
-              : "hover:bg-white/80 hover:shadow-2xs text-[#191c1d]"
-          }`}
-          href="/profile"
-          aria-label="Open director profile and studio equity"
-          title="Director Profile & Studio Equity"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shrink-0 shadow-2xs">
-            EV
+              <a
+                href={`/${slug}?from=settings`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="!p-1 !h-auto !w-auto !gap-0 rounded text-[#9ca3af] hover:text-[#191c1d] transition-colors shrink-0 ml-auto"
+                title="View Online Store"
+                aria-label="View Online Store"
+              >
+                <Eye size={15} />
+              </a>
+            </button>
+
+            {onlineStoreExpanded && (
+              <div className="flex flex-col mt-1 pl-7">
+                <Link
+                  href="/vendor/settings"
+                  className={path === "/vendor/settings" ? "active" : ""}
+                >
+                  Preferences
+                </Link>
+              </div>
+            )}
           </div>
-          <div className="min-w-0 flex-1">
-            <b className="text-xs font-bold text-[#191c1d] block leading-tight truncate">
-              Elena Vance
-            </b>
-            <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
-              Lead Brand Designer
-            </span>
+        </nav>
+
+        <div className="mt-auto pt-3 border-t border-[#e5e7eb]">
+          <div
+            className={`group relative flex items-center justify-between p-2 rounded-xl transition-all ${
+              path === "/vendor/profile"
+                ? "bg-white text-[#191c1d] shadow-2xs border border-[#e5e7eb]"
+                : "hover:bg-white/90 hover:shadow-2xs border border-transparent hover:border-[#e5e7eb]/80"
+            }`}
+          >
+            <Link
+              className="flex items-center gap-2.5 min-w-0 flex-1 text-decoration-none"
+              href="/vendor/profile"
+              aria-label="Open director profile and studio equity"
+              title="Director Profile & Studio Equity"
+            >
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shadow-2xs">
+                  {initials}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#16a34a] ring-2 ring-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <b className="text-xs font-semibold text-[#191c1d] block leading-tight truncate capitalize">
+                  {userName}
+                </b>
+                <span className="text-[10px] text-[#6b7280] block leading-tight mt-0.5 truncate">
+                  {userRole}
+                </span>
+              </div>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setShowLogoutModal(true)}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#9ca3af] hover:text-[#ef4444] hover:bg-red-50/80 transition-all shrink-0 cursor-pointer ml-1"
+              aria-label="Log out"
+              title="Log out"
+            >
+              <LogOut size={14} />
+            </button>
           </div>
-          <ChevronRight size={14} className="text-[#9ca3af] shrink-0" />
-        </a>
-      </div>
-    </aside>
+        </div>
+      </aside>
+
+      <LogoutConfirmModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
+    </>
   );
 }
 
-export function Header({ onMenu, onToast }: AdminHeaderProps) {
+export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
   const [busy, setBusy] = useState(false);
-  const slug = businessProfile.slug || APP_CONFIG.defaultSlug;
+  const pathname = usePathname();
+  const currentPath = path || pathname || "";
+  const isSettingsPage =
+    currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
+
+  const { data: profile } = useStudioProfileQuery();
+  const session = typeof window !== "undefined" ? getCurrentSession() : null;
+  const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
+
   return (
     <header className="admin-header">
       <button className="mobile-menu" onClick={onMenu}>
@@ -226,30 +347,34 @@ export function Header({ onMenu, onToast }: AdminHeaderProps) {
         <input aria-label="Search" placeholder="Search anything..." />
       </div>
       <div className="header-actions">
-        <a
-          href={`/${slug}?from=settings`}
-          target="_blank"
-          rel="noreferrer"
-          className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#0058be] text-[#191c1d]"
-          style={{ fontSize: "11px", padding: "9px 14px" }}
-        >
-          <Eye size={14} className="text-[#0058be]" /> Profile View
-        </a>
-        <button className="icon-button" aria-label="Notifications">
+        {isSettingsPage && (
+          <>
+            <a
+              href={`/${slug}?from=settings`}
+              target="_blank"
+              rel="noreferrer"
+              className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#191c1d] text-[#191c1d]"
+              style={{ fontSize: "11px", padding: "9px 14px" }}
+            >
+              <Eye size={14} className="text-[#191c1d]" /> Profile View
+            </a>
+            <button
+              className="publish bg-[#000000] hover:bg-[#262626]"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                await publishChanges();
+                setBusy(false);
+                onToast("Changes published successfully");
+              }}
+            >
+              {busy ? "Publishing…" : "Publish changes"}
+              <ArrowRight size={15} />
+            </button>
+          </>
+        )}
+        <button className="icon-button" aria-label="Notifications" title="Notifications">
           <Bell size={17} />
-        </button>
-        <button
-          className="publish bg-[#000000] hover:bg-[#262626]"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true);
-            await publishChanges();
-            setBusy(false);
-            onToast("Changes published successfully");
-          }}
-        >
-          {busy ? "Publishing…" : "Publish changes"}
-          <ArrowRight size={15} />
         </button>
       </div>
     </header>
@@ -272,7 +397,7 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
       <div className="admin">
         <Sidebar path={currentPath} open={open} onClose={() => setOpen(false)} />
         <div className="admin-main">
-          <Header onMenu={() => setOpen(true)} onToast={handleToast} />
+          <Header onMenu={() => setOpen(true)} onToast={handleToast} path={currentPath} />
           {children}
         </div>
         {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}

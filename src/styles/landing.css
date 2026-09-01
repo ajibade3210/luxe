@@ -24,10 +24,10 @@
   display: flex;
   align-items: center;
   justify-self: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--ink);
-  font-size: 17px;
-  letter-spacing: -0.04em;
+  font-size: 20px;
+  letter-spacing: -0.03em;
   font-weight: 700;
 }
 
@@ -319,24 +319,28 @@ em {
   display: flex;
   width: max-content;
   gap: 16px;
-  animation: marquee-right 29s linear infinite;
+  animation: marquee-left 32s linear infinite;
+  will-change: transform;
 }
 
 .logo-marquee-reverse .logo-track {
-  animation-name: marquee-left;
-  animation-duration: 34s;
+  animation-name: marquee-right;
+  animation-duration: 36s;
+  will-change: transform;
 }
 
 .business-logo {
   position: relative;
-  display: block;
-  width: 168px;
-  height: 142px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 172px;
+  height: 156px;
   padding: 0;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
+  border-radius: 16px;
+  background: #ffffff;
   color: var(--ink);
   text-decoration: none;
   transition:
@@ -344,12 +348,13 @@ em {
     border-color 0.25s ease,
     box-shadow 0.25s ease;
   flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .business-logo:hover {
-  transform: translateY(-3px);
-  border-color: rgba(25, 28, 29, 0.25);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+  border-color: rgba(25, 28, 29, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .business-logo img {
@@ -357,11 +362,15 @@ em {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  opacity: 0.9;
 }
 
 .business-logo:hover img {
-  transform: scale(1.05);
+  transform: scale(1.04);
+  opacity: 1;
 }
 
 .logo-marquee:hover .logo-track {

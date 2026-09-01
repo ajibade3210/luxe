@@ -1,566 +1,194 @@
-/**
- * Invoice Domain Service
- * Handles invoice creation, draft persistence, dispatching, resending, and deletion.
- * Every action includes a 1-line swap for real REST/GraphQL backend APIs.
- */
-
-import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
+import { APP_CONFIG } from "@/constants";
+import { apiClient } from "@/lib/api-client";
 import { InvoiceInputSchema } from "@/lib/schemas";
 import type { Invoice, InvoiceInput, InvoiceStatus } from "@/types";
 import { CURRENCY_SYMBOLS } from "@/utils";
 
-const INITIAL_INVOICES: Invoice[] = [
-  {
-    id: "inv-101",
-    invoiceNumber: "INV-2026-001",
-    customerId: "c1",
-    customerName: "Amara & David Sterling",
-    customerEmail: "amara@sterling.com",
-    billingAddress: "42 Victoria Island Boulevard, Lagos, Nigeria",
-    issueDate: "2026-08-20",
-    dueDate: "2026-09-03",
-    paymentTerms: "Net 14",
-    currency: "NGN",
-    items: [
-      {
-        id: "item-1",
-        description: "Full Wedding Production & Creative Scenography",
-        quantity: 1,
-        unit: "package",
-        unitPrice: 38000,
-        amount: 38000,
-      },
-      {
-        id: "item-2",
-        description: "Bespoke Floral Installation & Lighting Architecture",
-        quantity: 1,
-        unit: "package",
-        unitPrice: 7000,
-        amount: 7000,
-      },
-    ],
-    subtotal: 45000,
-    discount: 0,
-    taxRate: 0,
-    taxAmount: 0,
-    total: 45000,
-    notes:
-      "Thank you for your trust in Élan Atelier. Initial retainer deposit confirmed; balance due prior to production commencement.",
-    status: "paid",
-    sentAt: "2026-08-20T10:15:00Z",
-    createdAt: "2026-08-20T09:00:00Z",
-    updatedAt: "2026-08-20T10:15:00Z",
-  },
-  {
-    id: "inv-102",
-    invoiceNumber: "INV-2026-002",
-    customerId: "c2",
-    customerName: "Tunde & Folake Balogun",
-    customerEmail: "tunde@balogun.ng",
-    billingAddress: "15 Ikoyi Crescent, Ikoyi, Lagos",
-    issueDate: "2026-08-24",
-    dueDate: "2026-09-07",
-    paymentTerms: "Net 14",
-    items: [
-      {
-        id: "item-3",
-        description: "Executive Corporate Gala Production & Hospitality Curation",
-        quantity: 1,
-        unit: "event",
-        unitPrice: 35000,
-        amount: 35000,
-      },
-    ],
-    subtotal: 35000,
-    discount: 0,
-    taxRate: 0,
-    taxAmount: 0,
-    total: 35000,
-    notes: "Please remit payment to the specified studio account before the due date.",
-    status: "sent",
-    currency: "NGN",
-    sentAt: "2026-08-24T14:30:00Z",
-    createdAt: "2026-08-24T11:00:00Z",
-    updatedAt: "2026-08-24T14:30:00Z",
-  },
-];
-
-let persistedInvoices: Invoice[] = [...INITIAL_INVOICES];
-
-const delay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
-
-const notifyInvoicesUpdated = () => {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(
-      new CustomEvent(CUSTOM_EVENTS.invoicesUpdated, { detail: persistedInvoices })
-    );
-  }
-};
-
 /**
- * 1. Get All Invoices (Searchable, Filterable)
- * Backend swap:
- * `const res = await fetch('/api/invoices' + (status ? '?status=' + status : '')); return res.json();`
+ * 1. Get All Invoices (Searchable, Filterable by status & customerId)
  */
 export async function getInvoices(status?: InvoiceStatus): Promise<Invoice[]> {
-  await delay(100);
-  if (!status) return persistedInvoices;
-  return persistedInvoices.filter(i => i.status === status);
+  const data = await apiClient.get<
+    Invoice[] | { items?: Invoice[]; invoices?: Invoice[]; data?: Invoice[] }
+  >("/invoices", {
+    status,
+  });
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.invoices || data?.data || [];
+}
+
+export interface InvoicesSummary {
+  totalInvoiced: number;
+  paidRevenue: number;
+  outstandingRevenue: number;
+  totalCount: number;
+  paidCount: number;
+  collectionRate: number;
+}
+
+export async function getInvoicesSummary(): Promise<InvoicesSummary> {
+  return apiClient.get<InvoicesSummary>("/invoices/summary");
 }
 
 /**
  * 2. Get Single Invoice by ID
- * Backend swap:
- * `const res = await fetch('/api/invoices/' + id); return res.json();`
  */
-export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
-  await delay(80);
-  return persistedInvoices.find(i => i.id === id);
+export async function getInvoiceById(id: string): Promise<Invoice> {
+  return apiClient.get<Invoice>(`/invoices/${encodeURIComponent(id)}`);
 }
 
 /**
  * 3. Get Invoices for a specific Customer / Lead
- * Backend swap:
- * `const res = await fetch('/api/customers/' + customerId + '/invoices'); return res.json();`
  */
 export async function getInvoicesByCustomerId(customerId: string): Promise<Invoice[]> {
-  await delay(100);
-  return persistedInvoices.filter(i => i.customerId === customerId);
+  const data = await apiClient.get<
+    Invoice[] | { items?: Invoice[]; invoices?: Invoice[]; data?: Invoice[] }
+  >("/invoices", {
+    customerId,
+  });
+  if (Array.isArray(data)) return data;
+  return data?.items || data?.invoices || data?.data || [];
 }
 
 /**
  * 4. Create or Save Draft Invoice
- * Backend swap:
- * `const res = await fetch('/api/invoices/draft', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
  */
 export async function saveInvoiceDraft(input: InvoiceInput): Promise<Invoice> {
-  const validatedInput = InvoiceInputSchema.parse(input);
-  await delay(200);
-
-  let existingIdx = validatedInput.id
-    ? persistedInvoices.findIndex(i => i.id === validatedInput.id)
-    : -1;
-
-  // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
-  if (existingIdx < 0 && validatedInput.customerId?.startsWith("l")) {
-    existingIdx = persistedInvoices.findIndex(
-      i =>
-        i.customerId === validatedInput.customerId ||
-        i.customerEmail === validatedInput.customerEmail
-    );
-  }
-
-  const now = new Date().toISOString();
-
-  if (existingIdx >= 0) {
-    const existing = persistedInvoices[existingIdx];
-    const updated: Invoice = {
-      ...existing,
-      ...validatedInput,
-      id: existing.id,
-      invoiceNumber: existing.invoiceNumber,
-      currency: validatedInput.currency || existing.currency || "NGN",
+  const validated = InvoiceInputSchema.parse(input);
+  if (validated.id && !validated.id.startsWith("inv-new-")) {
+    return apiClient.put<Invoice>(`/invoices/${encodeURIComponent(validated.id)}`, {
+      ...validated,
       status: "draft",
-      updatedAt: now,
-    };
-    persistedInvoices[existingIdx] = updated;
-    notifyInvoicesUpdated();
-    return updated;
+    });
   }
-
-  const newId = `inv-${Date.now()}`;
-  const newInvoiceNumber =
-    validatedInput.invoiceNumber ||
-    `INV-${new Date().getFullYear()}-${String(persistedInvoices.length + 1).padStart(3, "0")}`;
-
-  const newInvoice: Invoice = {
-    id: newId,
-    businessId: validatedInput.businessId || "elan-events",
-    invoiceNumber: newInvoiceNumber,
-    customerId: validatedInput.customerId,
-    customerName: validatedInput.customerName,
-    customerEmail: validatedInput.customerEmail,
-    billingAddress: validatedInput.billingAddress,
-    issueDate: validatedInput.issueDate,
-    dueDate: validatedInput.dueDate,
-    paymentTerms: validatedInput.paymentTerms,
-    currency: validatedInput.currency || "NGN",
-    items: validatedInput.items,
-    subtotal: validatedInput.subtotal,
-    discount: validatedInput.discount,
-    taxRate: validatedInput.taxRate,
-    taxAmount: validatedInput.taxAmount,
-    total: validatedInput.total,
-    notes: validatedInput.notes,
+  return apiClient.post<Invoice>("/invoices", {
+    ...validated,
     status: "draft",
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  persistedInvoices = [newInvoice, ...persistedInvoices];
-  notifyInvoicesUpdated();
-  return newInvoice;
+  });
 }
 
 /**
- * 5. Send Invoice (Save and mark status as 'sent')
- * Backend swap:
- * `const res = await fetch('/api/invoices/send', { method: 'POST', body: JSON.stringify(input) }); return res.json();`
+ * 5. Send Invoice (Creates/updates and triggers email dispatch)
  */
 export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
-  const validatedInput = InvoiceInputSchema.parse(input);
-  await delay(300);
-
-  let existingIdx = validatedInput.id
-    ? persistedInvoices.findIndex(i => i.id === validatedInput.id)
-    : -1;
-
-  // RULE: If invoice is for a Lead (lead IDs start with 'l'), override and replace the last invoice for that lead
-  if (existingIdx < 0 && validatedInput.customerId?.startsWith("l")) {
-    existingIdx = persistedInvoices.findIndex(
-      i =>
-        i.customerId === validatedInput.customerId ||
-        i.customerEmail === validatedInput.customerEmail
-    );
-  }
-
-  const now = new Date().toISOString();
-
-  if (existingIdx >= 0) {
-    const existing = persistedInvoices[existingIdx];
-    const updated: Invoice = {
-      ...existing,
-      ...validatedInput,
-      id: existing.id,
-      invoiceNumber: existing.invoiceNumber,
-      currency: validatedInput.currency || existing.currency || "NGN",
+  const validated = InvoiceInputSchema.parse(input);
+  if (validated.id && !validated.id.startsWith("inv-new-")) {
+    await apiClient.put<Invoice>(`/invoices/${encodeURIComponent(validated.id)}`, {
+      ...validated,
       status: "sent",
-      sentAt: now,
-      updatedAt: now,
-    };
-    persistedInvoices[existingIdx] = updated;
-    notifyInvoicesUpdated();
-    return updated;
+    });
+    return apiClient.post<Invoice>(`/invoices/${encodeURIComponent(validated.id)}/send`);
   }
-
-  const newId = `inv-${Date.now()}`;
-  const newInvoiceNumber =
-    input.invoiceNumber ||
-    `INV-${new Date().getFullYear()}-${String(persistedInvoices.length + 1).padStart(3, "0")}`;
-
-  const newInvoice: Invoice = {
-    id: newId,
-    businessId: validatedInput.businessId || "elan-events",
-    invoiceNumber: newInvoiceNumber,
-    customerId: input.customerId,
-    customerName: input.customerName,
-    customerEmail: input.customerEmail,
-    billingAddress: input.billingAddress,
-    issueDate: input.issueDate,
-    dueDate: input.dueDate,
-    paymentTerms: input.paymentTerms,
-    currency: input.currency || "NGN",
-    items: input.items,
-    subtotal: input.subtotal,
-    discount: input.discount,
-    taxRate: input.taxRate,
-    taxAmount: input.taxAmount,
-    total: input.total,
-    notes: input.notes,
+  const created = await apiClient.post<Invoice>("/invoices", {
+    ...validated,
     status: "sent",
-    sentAt: now,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  persistedInvoices = [newInvoice, ...persistedInvoices];
-  notifyInvoicesUpdated();
-  return newInvoice;
+  });
+  return created;
 }
 
 /**
  * 6. Resend Invoice (Re-dispatch email delivery to customer)
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}/resend`, { method: 'POST' }); return res.json();`
  */
 export async function resendInvoice(id: string): Promise<Invoice> {
-  await delay(250);
-
-  const idx = persistedInvoices.findIndex(i => i.id === id);
-  if (idx < 0) {
-    throw new Error(`Invoice with id ${id} not found.`);
-  }
-
-  const now = new Date().toISOString();
-  const updated: Invoice = {
-    ...persistedInvoices[idx],
-    status: "sent",
-    sentAt: now,
-    updatedAt: now,
-  };
-
-  persistedInvoices[idx] = updated;
-  notifyInvoicesUpdated();
-  return updated;
+  return apiClient.post<Invoice>(`/invoices/${encodeURIComponent(id)}/send`);
 }
 
 /**
- * 7. Delete Invoice (Only permitted if invoice is NOT SENT / is 'draft')
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}`, { method: 'DELETE' }); return res.json();`
+ * 7. Delete Invoice
  */
 export async function deleteInvoice(id: string): Promise<{ success: boolean; id: string }> {
-  await delay(200);
-
-  const target = persistedInvoices.find(i => i.id === id);
-  if (!target) {
-    throw new Error(`Invoice ${id} not found.`);
-  }
-
-  if (target.status !== "draft") {
-    throw new Error(
-      `Cannot delete an invoice with status '${target.status}'. Only unsent draft invoices can be deleted.`
-    );
-  }
-
-  persistedInvoices = persistedInvoices.filter(i => i.id !== id);
-  notifyInvoicesUpdated();
-  return { success: true, id };
+  return apiClient.delete(`/invoices/${encodeURIComponent(id)}`);
 }
 
 /**
  * 8. Mark Invoice as Paid
- * Transitions invoice to 'paid' status.
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}/pay`, { method: 'POST' }); return res.json();`
  */
 export async function markInvoiceAsPaid(id: string): Promise<Invoice> {
-  await delay(200);
-
-  const idx = persistedInvoices.findIndex(i => i.id === id);
-  if (idx < 0) {
-    throw new Error(`Invoice with id ${id} not found.`);
-  }
-
-  const now = new Date().toISOString();
-  const updated: Invoice = {
-    ...persistedInvoices[idx],
+  return apiClient.patch<Invoice>(`/invoices/${encodeURIComponent(id)}/status`, {
     status: "paid",
-    updatedAt: now,
-  };
-
-  persistedInvoices[idx] = updated;
-  notifyInvoicesUpdated();
-  return updated;
+  });
 }
 
 /**
  * 9. Mark Invoice as Unpaid
- * Reverts invoice from 'paid' back to 'sent' or 'draft'.
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}/unpay`, { method: 'POST' }); return res.json();`
  */
 export async function markInvoiceAsUnpaid(id: string): Promise<Invoice> {
-  await delay(200);
-
-  const idx = persistedInvoices.findIndex(i => i.id === id);
-  if (idx < 0) {
-    throw new Error(`Invoice with id ${id} not found.`);
-  }
-
-  const now = new Date().toISOString();
-  const current = persistedInvoices[idx];
-  const targetStatus: InvoiceStatus = current.sentAt ? "sent" : "draft";
-
-  const updated: Invoice = {
-    ...current,
-    status: targetStatus,
-    updatedAt: now,
-  };
-
-  persistedInvoices[idx] = updated;
-  notifyInvoicesUpdated();
-  return updated;
+  return apiClient.patch<Invoice>(`/invoices/${encodeURIComponent(id)}/status`, {
+    status: "sent",
+  });
 }
 
 /**
- * 8. Generate Invoice PDF URL
- * Backend generates the PDF and returns a hosted or blob URL.
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}/pdf`); const data = await res.json(); return data.url;`
+ * 10. Generate Invoice PDF URL (Streamed directly from backend Puppeteer engine)
  */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
 export async function generateInvoicePdfUrl(id: string): Promise<string> {
-  await delay(300);
-  const target = persistedInvoices.find(i => i.id === id);
-  const invoiceNum = target ? escapeHtml(target.invoiceNumber) : "INV-2026";
-
-  if (typeof window === "undefined") {
-    return `https://shopwus.com/invoices/${invoiceNum}.pdf`;
-  }
-
-  // Create an interactive printable document blob URL
-  const sym = CURRENCY_SYMBOLS[target?.currency || "NGN"] || "₦";
-  const customerName = escapeHtml(target?.customerName || "Client");
-  const billingAddress = escapeHtml(target?.billingAddress || "");
-  const issueDate = escapeHtml(target?.issueDate || "");
-  const dueDate = escapeHtml(target?.dueDate || "");
-  const paymentTerms = escapeHtml(target?.paymentTerms || "Net 14");
-  const statusLabel = escapeHtml(target?.status || "INVOICE");
-
-  const htmlContent = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Invoice ${invoiceNum} - Élan Atelier</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #111827; margin: 40px; }
-    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #f3f4f6; padding-bottom: 20px; }
-    .title { font-size: 24px; font-weight: bold; }
-    .badge { color: #855e2e; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-    .meta { margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 12px; }
-    .table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-    .table th, .table td { text-align: left; padding: 10px; border-bottom: 1px solid #f3f4f6; font-size: 12px; }
-    .total-box { margin-top: 20px; text-align: right; font-size: 14px; font-weight: bold; }
-    .bank-box { margin-top: 30px; background: #fafaf9; padding: 16px; border-radius: 12px; font-size: 11px; border: 1px solid #eee7dc; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div>
-      <div class="title">Élan Atelier</div>
-      <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Luxury Event Scenography & Production</div>
-    </div>
-    <div style="text-align: right;">
-      <div class="badge">${statusLabel}</div>
-      <div style="font-size: 16px; font-weight: bold; margin-top: 4px;">${invoiceNum}</div>
-    </div>
-  </div>
-  <div class="meta">
-    <div><b>Billed by:</b><br/>Élan Atelier Limited<br/>Victoria Island, Lagos</div>
-    <div><b>Billed to:</b><br/>${customerName}<br/>${billingAddress}</div>
-    <div><b>Dates:</b><br/>Issue: ${issueDate}<br/>Due: ${dueDate}<br/>Terms: ${paymentTerms}</div>
-  </div>
-  <table class="table">
-    <thead>
-      <tr style="color: #6b7280;">
-        <th>Item Description</th>
-        <th>QTY</th>
-        <th>Rate</th>
-        <th style="text-align: right;">Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${(target?.items || [])
-        .map(
-          item => `
-        <tr>
-          <td><b>${escapeHtml(item.description)}</b></td>
-          <td>${item.quantity}</td>
-          <td>${sym}${item.unitPrice.toLocaleString()}</td>
-          <td style="text-align: right;">${sym}${item.amount.toLocaleString()}</td>
-        </tr>
-      `
-        )
-        .join("")}
-    </tbody>
-  </table>
-  <div class="total-box">
-    <div>Total Due: ${sym}${(target?.total || 0).toLocaleString()}</div>
-  </div>
-  <div class="bank-box">
-    <b>Remittance Banking Details</b><br/>
-    Bank: Standard Chartered Bank · Account Name: Élan Events Atelier Ltd · Account Number: 0039281745
-  </div>
-  <script>window.print();</script>
-</body>
-</html>`;
-
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  return URL.createObjectURL(blob);
-}
-
-/**
- * 9. Trigger Direct PDF Download / Print View
- */
-export async function downloadInvoicePdf(id: string): Promise<void> {
-  const url = await generateInvoicePdfUrl(id);
+  const pdfBlob = await apiClient.get<Blob>(`/invoices/${encodeURIComponent(id)}/pdf`);
   if (typeof window !== "undefined") {
-    const printWindow = window.open(url, "_blank");
-    if (!printWindow) {
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `invoice-${id}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
+    return URL.createObjectURL(pdfBlob);
+  }
+  return `/api/v1/invoices/${id}/pdf`;
+}
+
+/**
+ * 11. Download Invoice PDF in browser
+ */
+export async function downloadInvoicePdf(invoice: Invoice | string): Promise<void> {
+  const id = typeof invoice === "string" ? invoice : invoice.id;
+  const invoiceNumber = typeof invoice === "string" ? invoice : invoice.invoiceNumber;
+  const url = await generateInvoicePdfUrl(id);
+
+  if (typeof window !== "undefined") {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${invoiceNumber}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }
 
 /**
- * 10. Generate WhatsApp Invoice Link with Remittance Info & Public View Link
+ * 12. Generates pre-formatted WhatsApp brief for billing notice
  */
-export function createWhatsAppInvoiceUrl(
-  invoice: Invoice,
-  studioPhone?: string,
-  studioName = "Élan Atelier"
-): string {
+export function createWhatsAppInvoiceUrl(invoice: Invoice, studioPhone?: string): string {
   const defaultPhone = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
-  const rawPhone = (invoice.customerId || studioPhone || defaultPhone).replace(/[^0-9]/g, "");
+  const rawPhone = (studioPhone || defaultPhone).replace(/[^0-9]/g, "");
   const targetPhone = rawPhone.length >= 7 ? rawPhone : defaultPhone;
   const sym = CURRENCY_SYMBOLS[invoice.currency || "NGN"] || "₦";
 
-  const publicUrl = `${typeof window !== "undefined" ? window.location.origin : APP_CONFIG.baseUrl}/invoices/${invoice.invoiceNumber}`;
-
-  const message = `✨ *Invoice ${invoice.invoiceNumber} — ${studioName}*
+  const message = `📄 *Invoice ${invoice.invoiceNumber} — ${APP_CONFIG.name}*
 ━━━━━━━━━━━━━━━━━━━━━
-Dear *${invoice.customerName}*,
-
-Here are your invoice details for *${invoice.items[0]?.description || "Atelier Services"}*:
-
-💰 *Total Amount Due:* ${sym}${Number(invoice.total).toLocaleString()}
+👤 *Billed To:* ${invoice.customerName}
+💰 *Total Due:* ${sym}${invoice.total.toLocaleString()}
 📅 *Due Date:* ${invoice.dueDate}
-📄 *Payment Terms:* ${invoice.paymentTerms}
+⏳ *Payment Terms:* ${invoice.paymentTerms}
 
-🔗 *View / Download Invoice:*
-${publicUrl}
-
-🏦 *Remittance Banking Details:*
-• Bank Name: Standard Chartered Bank
-• Account Name: Élan Events Atelier Ltd
-• Account Number: 0039281745
-
-Please review and notify us once payment is remitted. Thank you for your partnership!
-━━━━━━━━━━━━━━━━━━━━━
-_Sent via ${studioName}_`;
+Thank you for choosing ${APP_CONFIG.name}. Please confirm receipt of your invoice.
+━━━━━━━━━━━━━━━━━━━━━`;
 
   return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
 }
 
 /**
- * 11. Send Invoice Via Email Dispatch
- * Backend swap:
- * `const res = await fetch(`/api/invoices/${id}/send-email`, { method: 'POST' }); return res.json();`
+ * 13. Export Invoices Ledger as CSV
  */
-export async function sendInvoiceViaEmail(
-  id: string
-): Promise<{ success: boolean; recipient: string; invoiceNumber: string }> {
-  await delay(350);
-  const target = persistedInvoices.find(i => i.id === id);
-  if (!target) throw new Error(`Invoice ${id} not found.`);
+export async function exportInvoicesCSV(): Promise<{ count: number; filename: string }> {
+  const csvData = await apiClient.get<string>("/invoices/export");
+  const filename = `shopwus-invoices-${new Date().toISOString().split("T")[0]}.csv`;
 
-  return {
-    success: true,
-    recipient: target.customerEmail,
-    invoiceNumber: target.invoiceNumber,
-  };
+  if (typeof window !== "undefined") {
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  const count = typeof csvData === "string" ? Math.max(csvData.split("\n").length - 1, 0) : 0;
+  return { count, filename };
 }

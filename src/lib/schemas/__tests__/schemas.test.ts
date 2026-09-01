@@ -124,4 +124,18 @@ describe("Runtime Schema Validation (Zod)", () => {
       expect(() => InvoiceInputSchema.parse(invalidInvoice)).toThrow();
     });
   });
+
+  describe("Reserved Slug Guard", () => {
+    it("flags system reserved paths as unavailable", async () => {
+      const { isReservedSlug } = await import("@/constants/reserved-slugs");
+      expect(isReservedSlug("vendor")).toBe(true);
+      expect(isReservedSlug("vendors")).toBe(true);
+      expect(isReservedSlug("admin")).toBe(true);
+      expect(isReservedSlug("invoices")).toBe(true);
+      expect(isReservedSlug("leads")).toBe(true);
+      expect(isReservedSlug("login")).toBe(true);
+      expect(isReservedSlug("signup")).toBe(true);
+      expect(isReservedSlug("custom-atelier-2026")).toBe(false);
+    });
+  });
 });

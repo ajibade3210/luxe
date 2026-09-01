@@ -1,7 +1,7 @@
 import type { InvoiceStatusFilter } from "@/types";
 
 export const INVOICE_STATUS_FILTERS: { key: InvoiceStatusFilter; label: string }[] = [
-  { key: "all", label: "All Statuses" },
+  { key: "all", label: "All" },
   { key: "paid", label: "Paid" },
   { key: "sent", label: "Sent" },
   { key: "draft", label: "Draft" },
@@ -14,9 +14,9 @@ export const INVOICE_PAGE_CONFIG = {
   createInvoiceButtonLabel: "Create Invoice",
   exportCsvButtonLabel: "Export CSV",
   exportingLabel: "Exporting...",
-  tableTitle: "All invoices",
+  tableTitle: "Invoices",
   searchPlaceholder: "Search invoices...",
-  emptyStateMessage: "No invoices found.",
+  emptyStateMessage: "Try adjusting your search query or add a new invoice",
   metricLabels: {
     totalInvoiced: "Total Invoiced",
     paidRevenue: "Paid Revenue",

@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   isDarkColor,
   isValidTimeFormat,
+  isValidUrl,
   normalizeTimeInput,
+  normalizeWebsiteUrl,
   sanitizeHandle,
   slugify,
   truncateText,
@@ -68,6 +70,29 @@ describe("helper utilities", () => {
       expect(normalizeTimeInput("18:00", "06:00 PM")).toBe("06:00 PM");
       expect(normalizeTimeInput("6pm", "06:00 PM")).toBe("06:00 PM");
       expect(normalizeTimeInput("invalid", "09:00 AM")).toBe("09:00 AM");
+    });
+  });
+
+  describe("url validation and normalization", () => {
+    it("validates standard website URL formats", () => {
+      expect(isValidUrl("elanevents.com")).toBe(true);
+      expect(isValidUrl("www.elanevents.com")).toBe(true);
+      expect(isValidUrl("https://elanevents.com")).toBe(true);
+      expect(isValidUrl("http://shop.elan-events.ng/catalog")).toBe(true);
+      expect(isValidUrl("studio.design")).toBe(true);
+      expect(isValidUrl("http://localhost:3000/settingszx")).toBe(true);
+      expect(isValidUrl("localhost:3000")).toBe(true);
+      expect(isValidUrl("http://127.0.0.1:8080")).toBe(true);
+      expect(isValidUrl("invalid-url")).toBe(false);
+      expect(isValidUrl("not a url")).toBe(false);
+      expect(isValidUrl("")).toBe(false);
+    });
+
+    it("normalizes website URL with https protocol", () => {
+      expect(normalizeWebsiteUrl("elanevents.com")).toBe("https://elanevents.com");
+      expect(normalizeWebsiteUrl("https://elanevents.com")).toBe("https://elanevents.com");
+      expect(normalizeWebsiteUrl("http://elanevents.com")).toBe("http://elanevents.com");
+      expect(normalizeWebsiteUrl("")).toBe("");
     });
   });
 

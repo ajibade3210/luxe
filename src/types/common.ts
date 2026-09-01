@@ -58,6 +58,7 @@ export interface AdminSidebarProps {
 export interface AdminHeaderProps {
   onMenu: () => void;
   onToast: (s: string) => void;
+  path?: string;
 }
 
 export interface AnalyticsPageProps {
@@ -100,4 +101,12 @@ export interface PageTitleProps {
 
 export interface UseSettingsFormOptions {
   notify: (msg: string) => void;
+}
+
+export interface TableEmptyStateProps {
+  title?: string;
+  description?: string;
+  imageSrc?: string;
+  colSpan?: number;
+  className?: string;
 }

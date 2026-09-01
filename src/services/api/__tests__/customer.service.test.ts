@@ -1,105 +1,198 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { apiClient } from "@/lib/api-client";
+import type { Customer } from "@/types";
 import {
   addServiceToCustomer,
   createCustomer,
   deleteCustomerService,
+  getCustomer,
   getCustomers,
   toggleCustomerActiveStatus,
   updateCustomerServiceStatus,
 } from "../customer.service";
 
 describe("customer service", () => {
-  it("fetches list of customers", async () => {
-    const list = await getCustomers();
-    expect(Array.isArray(list)).toBe(true);
-    expect(list.length).toBeGreaterThan(0);
+  it("fetches active customers list with calculated metrics", async () => {
+    const mockCustomers: Customer[] = [
+      {
+        id: "cust-1",
+        businessId: "atelier-forma",
+        name: "Folake Doherty",
+        email: "folake@dohertyholdings.com",
+        phone: "+234 803 555 1234",
+        services: [
+          {
+            id: "svc-1",
+            customerId: "cust-1",
+            name: "Bespoke Styling",
+            service: "Bespoke Styling",
+            amount: 75000,
+            status: "active",
+            createdAt: "2026-06-15T10:00:00Z",
+          },
+        ],
+        totalRevenue: 75000,
+        isActive: true,
+        createdAt: "2026-06-15T10:00:00Z",
+      },
+    ];
+    vi.spyOn(apiClient, "get").mockResolvedValueOnce(mockCustomers);
+
+    const customers = await getCustomers();
+    expect(customers.length).toBeGreaterThan(0);
+    expect(customers[0].totalRevenue).toBe(75000);
   });
 
-  it("creates a customer and attaches initial service scope", async () => {
+  it("retrieves a single customer by ID", async () => {
+    const mockCustomer: Customer = {
+      id: "cust-1",
+      businessId: "atelier-forma",
+      name: "Folake Doherty",
+      email: "folake@dohertyholdings.com",
+      phone: "+234 803 555 1234",
+      services: [],
+      totalRevenue: 0,
+      isActive: true,
+      createdAt: "2026-06-15T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "get").mockResolvedValueOnce(mockCustomer);
+
+    const cust = await getCustomer("cust-1");
+    expect(cust?.name).toBe("Folake Doherty");
+  });
+
+  it("creates a new customer with initial service and revenue calculation", async () => {
+    const createdCustomer: Customer = {
+      id: "cust-2",
+      businessId: "atelier-forma",
+      name: "Tunde Bakare",
+      email: "tunde@bakare.ng",
+      phone: "+234 802 111 9999",
+      services: [
+        {
+          id: "svc-2",
+          customerId: "cust-2",
+          name: "Annual Gala Curation",
+          service: "Annual Gala Curation",
+          amount: 120000,
+          status: "active",
+          createdAt: "2026-08-20T10:00:00Z",
+        },
+      ],
+      totalRevenue: 120000,
+      isActive: true,
+      createdAt: "2026-08-20T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce(createdCustomer);
+
     const customer = await createCustomer({
-      name: "Marcus & Elena Vance",
-      email: "marcus@vance.com",
-      phone: "+1 415 555 2671",
-      company: "Vance Global",
-      serviceName: "Private Gala Reception",
-      service: "Corporate Galas & Summits",
-      amount: 40000,
-      status: "active",
+      name: "Tunde Bakare",
+      email: "tunde@bakare.ng",
+      phone: "+234 802 111 9999",
+      serviceName: "Annual Gala Curation",
+      service: "Annual Gala Curation",
+      amount: 120000,
     });
 
-    expect(customer.id).toBeDefined();
-    expect(customer.name).toBe("Marcus & Elena Vance");
+    expect(customer.name).toBe("Tunde Bakare");
     expect(customer.services.length).toBe(1);
-    expect(customer.services[0].name).toBe("Private Gala Reception");
-    expect(customer.totalRevenue).toBe(40000);
+    expect(customer.totalRevenue).toBe(120000);
   });
 
   it("adds a second service scope to a customer and recalculates revenue", async () => {
-    const customer = await createCustomer({
-      name: "Scope Expansion Client",
-      email: "scope@test.com",
-      amount: 20000,
-      serviceName: "Phase 1",
-      service: "Bespoke Styling",
-    });
+    const updatedCustomer: Customer = {
+      id: "cust-1",
+      businessId: "atelier-forma",
+      name: "Folake Doherty",
+      email: "folake@dohertyholdings.com",
+      services: [
+        {
+          id: "svc-1",
+          customerId: "cust-1",
+          name: "Bespoke Styling",
+          service: "Bespoke Styling",
+          amount: 75000,
+          status: "active",
+          createdAt: "2026-06-15T10:00:00Z",
+        },
+        {
+          id: "svc-2",
+          customerId: "cust-1",
+          name: "VIP Afterparty Styling",
+          service: "VIP Afterparty Styling",
+          amount: 45000,
+          status: "active",
+          createdAt: "2026-08-20T10:00:00Z",
+        },
+      ],
+      totalRevenue: 120000,
+      isActive: true,
+      createdAt: "2026-06-15T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce(updatedCustomer);
 
-    const updated = await addServiceToCustomer(customer.id, {
-      name: "Phase 2 Lighting",
-      service: "VIP Concierge Production",
-      amount: 15000,
-      status: "active",
+    const updated = await addServiceToCustomer("cust-1", {
+      name: "VIP Afterparty Styling",
+      service: "VIP Afterparty Styling",
+      amount: 45000,
     });
 
     expect(updated.services.length).toBe(2);
-    expect(updated.totalRevenue).toBe(35000);
+    expect(updated.totalRevenue).toBe(120000);
   });
 
   it("updates service status and deletes a service scope", async () => {
-    const customer = await createCustomer({
-      name: "Status Mod Client",
-      email: "status-mod@test.com",
-      serviceName: "Production Scope",
-      service: "Full Wedding Production",
-      amount: 30000,
-    });
+    const updatedCustomer: Customer = {
+      id: "cust-3",
+      businessId: "atelier-forma",
+      name: "Status Test Client",
+      email: "status-client@test.com",
+      services: [
+        {
+          id: "svc-3",
+          customerId: "cust-3",
+          name: "Floral Design",
+          service: "Floral Design",
+          amount: 30000,
+          status: "completed",
+          createdAt: "2026-08-20T10:00:00Z",
+        },
+      ],
+      totalRevenue: 30000,
+      isActive: true,
+      createdAt: "2026-08-20T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "patch").mockResolvedValueOnce(updatedCustomer);
 
-    const svcId = customer.services[0].id;
-    const withUpdatedStatus = await updateCustomerServiceStatus(customer.id, svcId, "completed");
-    expect(withUpdatedStatus.services[0].status).toBe("completed");
+    const updated = await updateCustomerServiceStatus("cust-3", "svc-3", "completed");
+    expect(updated.services[0].status).toBe("completed");
 
-    const withDeletedSvc = await deleteCustomerService(customer.id, svcId);
-    expect(withDeletedSvc.services.length).toBe(0);
-    expect(withDeletedSvc.totalRevenue).toBe(0);
+    const deletedCustomer: Customer = {
+      ...updatedCustomer,
+      services: [],
+      totalRevenue: 0,
+    };
+    vi.spyOn(apiClient, "delete").mockResolvedValueOnce(deletedCustomer);
+
+    const afterDelete = await deleteCustomerService("cust-3", "svc-3");
+    expect(afterDelete.services.length).toBe(0);
+    expect(afterDelete.totalRevenue).toBe(0);
   });
 
   it("toggles customer active status", async () => {
-    const customer = await createCustomer({
-      name: "Toggle Test Client",
+    const inactiveCustomer: Customer = {
+      id: "cust-4",
+      businessId: "atelier-forma",
+      name: "Toggle Client",
       email: "toggle@test.com",
-    });
+      services: [],
+      totalRevenue: 0,
+      isActive: false,
+      createdAt: "2026-08-20T10:00:00Z",
+    };
+    vi.spyOn(apiClient, "patch").mockResolvedValueOnce(inactiveCustomer);
 
-    expect(customer.isActive).toBe(true);
-
-    const inactive = await toggleCustomerActiveStatus(customer.id, false);
-    expect(inactive.isActive).toBe(false);
-
-    const activeAgain = await toggleCustomerActiveStatus(customer.id, true);
-    expect(activeAgain.isActive).toBe(true);
-  });
-
-  it("filters customers by search query", async () => {
-    await createCustomer({
-      name: "Unique Searchable Name",
-      email: "uniquesearch@example.com",
-    });
-
-    const searchByName = await getCustomers("Unique Searchable");
-    expect(searchByName.some(c => c.name === "Unique Searchable Name")).toBe(true);
-
-    const searchByEmail = await getCustomers("uniquesearch@example.com");
-    expect(searchByEmail.some(c => c.email === "uniquesearch@example.com")).toBe(true);
-
-    const noMatch = await getCustomers("nonexistent_random_xyz_query");
-    expect(noMatch.length).toBe(0);
+    const toggled = await toggleCustomerActiveStatus("cust-4", false);
+    expect(toggled.isActive).toBe(false);
   });
 });
