@@ -111,18 +111,18 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
             <button
               type="button"
               onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white h-10 px-4 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
             >
               <Plus size={14} />
               <span>Add Customer</span>
             </button>
 
             {/* More Actions Menu Button & Dropdown */}
-            <div className="relative">
+            <div className="relative flex items-center">
               <button
                 type="button"
                 onClick={() => setShowMoreMenu(prev => !prev)}
-                className="inline-flex items-center justify-center w-9 h-9 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs"
+                className="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs"
                 title="More actions"
               >
                 <MoreHorizontal size={15} />
