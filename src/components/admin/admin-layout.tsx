@@ -4,7 +4,6 @@ import {
   ArrowRight,
   Bell,
   Check,
-  ExternalLink,
   Eye,
   FileText,
   Loader2,
@@ -12,7 +11,6 @@ import {
   Menu,
   Receipt,
   Search,
-  Settings,
   Store,
   TrendingUp,
   Users,
@@ -179,7 +177,9 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   const [invoiceCount, setInvoiceCount] = useState<number | null>(null);
   const [expenseCount, setExpenseCount] = useState<number | null>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(() => path === "/vendor/settings");
+  const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(
+    () => path === "/vendor/settings"
+  );
 
   useEffect(() => {
     setOnlineStoreExpanded(path === "/vendor/settings");
@@ -380,7 +380,8 @@ export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
   const [busy, setBusy] = useState(false);
   const pathname = usePathname();
   const currentPath = path || pathname || "";
-  const isSettingsPage = currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
+  const isSettingsPage =
+    currentPath === "/vendor/settings" || currentPath === "/vendor/preferences";
   // Start with the stable default so SSR and the initial client render agree.
   const [slug, setSlug] = useState<string>(APP_CONFIG.defaultSlug);
 
