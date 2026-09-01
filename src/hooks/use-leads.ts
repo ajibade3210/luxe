@@ -53,7 +53,11 @@ export function useLeads(notify?: (message: string) => void) {
     try {
       const { customer } = await convertMutation.mutateAsync({ id: leadId });
       setSelectedLeadId(null);
-      notify?.(`Lead converted to customer and moved to customer register: ${customer.name}.`);
+      if (customer.isExistingCustomer) {
+        notify?.(`Service attached to existing customer profile: ${customer.name}.`);
+      } else {
+        notify?.(`Lead converted to customer and registered in directory: ${customer.name}.`);
+      }
       return true;
     } catch {
       notify?.("Failed to convert lead to customer.");

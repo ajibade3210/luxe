@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { ConfirmModal } from "@/components/shared";
 import { useInvoiceForm } from "@/hooks/use-invoice-form";
 import type { InvoiceModalProps } from "@/types";
 import { InvoiceFormFields } from "./invoice-form-fields";
@@ -15,6 +17,9 @@ export function InvoiceModal({
   onToast,
   onInvoiceSaved,
 }: InvoiceModalProps) {
+  const [showSendEmailConfirm, setShowSendEmailConfirm] = useState(false);
+  const [isResendAction, setIsResendAction] = useState(false);
+
   const {
     customerId,
     customerName,
@@ -47,6 +52,8 @@ export function InvoiceModal({
     isMarkingUnpaid,
     isDeleting,
     isDownloadingPdf,
+    isSendingWhatsApp,
+    isCopyingLink,
     copiedLink,
     handleCustomerChange,
     handleItemChange,
@@ -72,6 +79,20 @@ export function InvoiceModal({
 
   if (!isOpen) return null;
 
+  const requestSendInvoice = () => {
+    if (!customerName || !customerEmail) {
+      onToast("Please provide both customer name and email.");
+      return;
+    }
+    setIsResendAction(false);
+    setShowSendEmailConfirm(true);
+  };
+
+  const requestResendInvoice = () => {
+    setIsResendAction(true);
+    setShowSendEmailConfirm(true);
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
@@ -87,20 +108,39 @@ export function InvoiceModal({
           isSending={isSending}
           isResending={isResending}
           isDownloadingPdf={isDownloadingPdf}
+          isSendingWhatsApp={isSendingWhatsApp}
+          isCopyingLink={isCopyingLink}
           isMarkingPaid={isMarkingPaid}
           isMarkingUnpaid={isMarkingUnpaid}
           isDeleting={isDeleting}
           copiedLink={copiedLink}
           onClose={onClose}
           onSaveDraft={handleSaveDraft}
-          onSendInvoice={handleSendInvoice}
-          onResendInvoice={handleResendInvoice}
+          onSendInvoice={requestSendInvoice}
+          onResendInvoice={requestResendInvoice}
           onDownloadPdf={handleDownloadPdf}
           onSendWhatsApp={handleSendWhatsApp}
           onCopyLink={handleCopyLink}
           onMarkAsPaid={handleMarkAsPaid}
           onMarkAsUnpaid={handleMarkAsUnpaid}
           onDeleteInvoice={handleDeleteInvoice}
+        />
+
+        <ConfirmModal
+          isOpen={showSendEmailConfirm}
+          onClose={() => setShowSendEmailConfirm(false)}
+          onConfirm={async () => {
+            setShowSendEmailConfirm(false);
+            if (isResendAction) {
+              await handleResendInvoice();
+            } else {
+              await handleSendInvoice();
+            }
+          }}
+          title={isResendAction ? "Resend Invoice via Email" : "Send Invoice via Email"}
+          description={`Are you sure you want to send this invoice to ${customerEmail || customerName}? An email containing invoice details and the direct payment link will be sent.`}
+          confirmLabel={isResendAction ? "Resend Email" : "Send Email"}
+          isLoading={isSending || isResending}
         />
 
         <div className="flex-1 overflow-y-auto p-6 sm:p-8">

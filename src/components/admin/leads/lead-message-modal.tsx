@@ -1,8 +1,9 @@
 "use client";
 
-import { Mail, X } from "lucide-react";
+import { Loader2, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { WhatsAppIcon } from "@/components/shared";
+import { ConfirmModal, WhatsAppIcon } from "@/components/shared";
+import { getCurrentSession } from "@/services/api";
 import type { LeadMessageModalProps } from "@/types";
 
 export function LeadMessageModal({
@@ -13,16 +14,29 @@ export function LeadMessageModal({
   onSendEmail,
 }: LeadMessageModalProps) {
   const [messageText, setMessageText] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [showEmailConfirm, setShowEmailConfirm] = useState(false);
 
   useEffect(() => {
     if (lead) {
+      const studio = getCurrentSession()?.studioName || "our studio";
       setMessageText(
-        `Dear ${lead.name},\n\nThank you for reaching out to Élan Atelier regarding your upcoming ${lead.service || "event"}.\n\nWe would love to schedule a consultation to discuss your vision and curate a bespoke proposal.\n\nWarm regards,\nÉlan Atelier Team`
+        `Dear ${lead.name},\n\nThank you for reaching out to ${studio} regarding your upcoming ${lead.service || "inquiry"}.\n\nWe would love to schedule a consultation to discuss your vision and curate a bespoke proposal.\n\nWarm regards,\n${studio} Team`
       );
     }
   }, [lead]);
 
   if (!isOpen || !lead) return null;
+
+  const handleSendEmailClick = async () => {
+    if (!lead.email?.trim() || isSendingEmail) return;
+    setIsSendingEmail(true);
+    try {
+      await onSendEmail(lead, lead.email, lead.name, messageText);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
 
   return (
     <div
@@ -40,40 +54,61 @@ export function LeadMessageModal({
               Inquiry Follow-up
             </span>
             <h3 className="text-xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
-              Send Message
+              Message {lead.name}
             </h3>
-            <p className="text-xs text-[#5c5f60] mt-0.5">
-              Recipient: <b className="text-[#191c1d]">{lead.name}</b>
-            </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="p-1 rounded-full text-[#8e9192] hover:text-[#191c1d] hover:bg-[#f3f4f5] transition-colors cursor-pointer"
-            aria-label="Close message modal"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Channels Availability */}
-        <div className="flex items-center gap-2 text-xs flex-wrap">
+        {/* Lead Summary Card */}
+        <div className="p-4 bg-[#faf8f5] border border-[#ded7cb] rounded-2xl space-y-2 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-[#191c1d]">{lead.name}</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#eae3d7] text-[#5c5f60]">
+              {lead.service || "General Inquiry"}
+            </span>
+          </div>
+          {lead.budget && (
+            <p className="text-[#5c5f60]">
+              <strong className="text-[#191c1d]">Budget:</strong> ₦
+              {Number(lead.budget).toLocaleString()}
+            </p>
+          )}
+          {lead.eventDate && (
+            <p className="text-[#5c5f60]">
+              <strong className="text-[#191c1d]">Target Date:</strong> {lead.eventDate}
+            </p>
+          )}
+          {lead.message && (
+            <div className="p-2.5 bg-white border border-[#eae3d7] rounded-xl text-[#5c5f60] italic text-[11px]">
+              &ldquo;{lead.message}&rdquo;
+            </div>
+          )}
+        </div>
+
+        {/* Contact Info Pills */}
+        <div className="flex flex-wrap gap-2 text-xs">
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border ${
               lead.phone
-                ? "bg-[#ecfdf5] text-[#065f46] border border-[#a7f3d0]"
-                : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb]"
+                ? "bg-[#faf8f5] border-[#ded7cb] text-[#191c1d]"
+                : "bg-stone-50 border-stone-200 text-stone-400"
             }`}
           >
-            <WhatsAppIcon className="w-3.5 h-3.5" />
+            <WhatsAppIcon className="w-3.5 h-3.5 text-[#15803d]" />
             <span>{lead.phone ? lead.phone : "No Phone (WhatsApp unavailable)"}</span>
           </span>
-
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border ${
               lead.email
-                ? "bg-[#eff6ff] text-[#1e40af] border border-[#bfdbfe]"
-                : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb]"
+                ? "bg-[#faf8f5] border-[#ded7cb] text-[#191c1d]"
+                : "bg-stone-50 border-stone-200 text-stone-400"
             }`}
           >
             <Mail size={12} />
@@ -99,10 +134,10 @@ export function LeadMessageModal({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <button
             type="button"
-            disabled={!lead.phone?.trim()}
+            disabled={!lead.phone?.trim() || isSendingEmail}
             onClick={() => onSendWhatsApp(lead, lead.phone || "", messageText)}
             className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-              lead.phone?.trim()
+              lead.phone?.trim() && !isSendingEmail
                 ? "bg-[#15803d] hover:bg-[#166534] text-white shadow-xs hover:-translate-y-0.5 cursor-pointer"
                 : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
             }`}
@@ -118,19 +153,41 @@ export function LeadMessageModal({
 
           <button
             type="button"
-            disabled={!lead.email?.trim()}
-            onClick={() => onSendEmail(lead, lead.email, lead.name, messageText)}
+            disabled={!lead.email?.trim() || isSendingEmail || !messageText.trim()}
+            onClick={() => setShowEmailConfirm(true)}
             className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-              lead.email?.trim()
+              lead.email?.trim() && !isSendingEmail && messageText.trim()
                 ? "bg-[#1e40af] hover:bg-[#1e3a8a] text-white shadow-xs hover:-translate-y-0.5 cursor-pointer"
                 : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
             }`}
             title={lead.email?.trim() ? "Send via Email and mark as Contacted" : "Email required"}
           >
-            <Mail size={14} />
-            <span>Send Email</span>
+            {isSendingEmail ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                <span>Sending…</span>
+              </>
+            ) : (
+              <>
+                <Mail size={14} />
+                <span>Send Email</span>
+              </>
+            )}
           </button>
         </div>
+
+        <ConfirmModal
+          isOpen={showEmailConfirm}
+          onClose={() => setShowEmailConfirm(false)}
+          onConfirm={async () => {
+            setShowEmailConfirm(false);
+            await handleSendEmailClick();
+          }}
+          title="Send Email Message"
+          description={`Are you sure you want to send this message to ${lead.name} (${lead.email})?`}
+          confirmLabel="Send Email"
+          isLoading={isSendingEmail}
+        />
       </div>
     </div>
   );

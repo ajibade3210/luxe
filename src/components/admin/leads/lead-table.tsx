@@ -72,7 +72,14 @@ export function LeadTable({
             {paginatedItems.map(lead => (
               <tr key={lead.id} onClick={() => onSelectLead(lead.id)} className="cursor-pointer">
                 <td>
-                  <b>{lead.name}</b>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <b>{lead.name}</b>
+                    {lead.isExistingCustomer && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
+                        Existing Customer
+                      </span>
+                    )}
+                  </div>
                   <small>{lead.email}</small>
                 </td>
                 <td>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getBusinessProfile } from "@/lib/api";
 import type { BusinessProfile, InvoicePreviewProps } from "@/types";
@@ -21,8 +20,6 @@ export function InvoicePreview({
   taxAmount,
   total,
   notes,
-  copiedLink,
-  onCopyLink,
 }: InvoicePreviewProps) {
   const [businessProfile, setBusinessProfile] = useState<Partial<BusinessProfile> | null>(null);
 
@@ -45,23 +42,6 @@ export function InvoicePreview({
         <span className="text-[11px] font-bold text-[#6b7280] uppercase tracking-wider">
           Live Preview
         </span>
-        <button
-          type="button"
-          onClick={onCopyLink}
-          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#855e2e] hover:text-[#5c3e1a] cursor-pointer"
-        >
-          {copiedLink ? (
-            <>
-              <Check size={12} className="text-[#16a34a]" />
-              <span className="text-[#16a34a]">Link Copied</span>
-            </>
-          ) : (
-            <>
-              <Copy size={12} />
-              <span>Copy Invoice Link</span>
-            </>
-          )}
-        </button>
       </div>
 
       {/* Stationery Card */}

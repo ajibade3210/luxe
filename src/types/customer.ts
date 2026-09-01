@@ -35,6 +35,7 @@ export interface Customer {
   totalRevenue: number;
   notes?: string;
   isActive: boolean;
+  isExistingCustomer?: boolean;
   createdAt: string;
 }
 

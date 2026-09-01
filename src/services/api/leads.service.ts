@@ -98,6 +98,19 @@ export async function deleteLead(id: string): Promise<{ success: boolean; id: st
 }
 
 /**
+ * Sends a consultation/follow-up email message to a lead from backend with Business Email Header
+ */
+export async function sendLeadMessage(
+  id: string,
+  payload: { message: string; subject?: string }
+): Promise<{ success: boolean; lead: Lead }> {
+  return apiClient.post<{ success: boolean; lead: Lead }>(
+    `/leads/${encodeURIComponent(id)}/message`,
+    payload
+  );
+}
+
+/**
  * Generates pre-formatted WhatsApp brief for direct client-to-studio routing
  */
 export function createWhatsAppConsultationUrl(params: {

@@ -19,7 +19,7 @@ export const InvoiceInputSchema = z.object({
   id: z.string().optional(),
   businessId: z.string().optional(),
   invoiceNumber: z.string().optional(),
-  customerId: z.string().min(1, "Customer is required"),
+  customerId: z.string().optional().default(""),
   customerName: z.string().min(1, "Customer name is required").trim(),
   customerEmail: z.email("Invalid customer email").trim(),
   billingAddress: z.string().trim(),

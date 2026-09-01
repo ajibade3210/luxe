@@ -2,7 +2,7 @@ import { APP_CONFIG } from "@/constants";
 import { apiClient } from "@/lib/api-client";
 import { InvoiceInputSchema } from "@/lib/schemas";
 import type { Invoice, InvoiceInput, InvoiceStatus } from "@/types";
-import { CURRENCY_SYMBOLS } from "@/utils";
+import { CURRENCY_SYMBOLS, normalizePhoneNumber } from "@/utils";
 
 /**
  * 1. Get All Invoices (Searchable, Filterable by status & customerId)
@@ -79,11 +79,10 @@ export async function sendInvoice(input: InvoiceInput): Promise<Invoice> {
     });
     return apiClient.post<Invoice>(`/invoices/${encodeURIComponent(validated.id)}/send`);
   }
-  const created = await apiClient.post<Invoice>("/invoices", {
+  return apiClient.post<Invoice>("/invoices", {
     ...validated,
     status: "sent",
   });
-  return created;
 }
 
 /**
@@ -118,15 +117,26 @@ export async function markInvoiceAsUnpaid(id: string): Promise<Invoice> {
   });
 }
 
+export interface InvoicePdfResponse {
+  status?: string;
+  ready?: boolean;
+  downloadUrl?: string;
+  pdfUrl?: string;
+  filename?: string;
+  invoiceNumber?: string;
+  message?: string;
+}
+
 /**
- * 10. Generate Invoice PDF URL (Streamed directly from backend Puppeteer engine)
+ * 10. Get Invoice PDF Media URL from R2
  */
-export async function generateInvoicePdfUrl(id: string): Promise<string> {
-  const pdfBlob = await apiClient.get<Blob>(`/invoices/${encodeURIComponent(id)}/pdf`);
-  if (typeof window !== "undefined") {
-    return URL.createObjectURL(pdfBlob);
+export async function getInvoicePdfUrl(id: string): Promise<string> {
+  const data = await apiClient.get<InvoicePdfResponse>(`/invoices/${encodeURIComponent(id)}/pdf`);
+  const url = data?.downloadUrl || data?.pdfUrl;
+  if (!url) {
+    throw new Error(data?.message || "Invoice PDF is being prepared. Please try again shortly.");
   }
-  return `/api/v1/invoices/${id}/pdf`;
+  return url;
 }
 
 /**
@@ -135,39 +145,71 @@ export async function generateInvoicePdfUrl(id: string): Promise<string> {
 export async function downloadInvoicePdf(invoice: Invoice | string): Promise<void> {
   const id = typeof invoice === "string" ? invoice : invoice.id;
   const invoiceNumber = typeof invoice === "string" ? invoice : invoice.invoiceNumber;
-  const url = await generateInvoicePdfUrl(id);
+  const url = await getInvoicePdfUrl(id);
 
   if (typeof window !== "undefined") {
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${invoiceNumber}.pdf`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("download", `${invoiceNumber || "Invoice"}.pdf`);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    }, 100);
+    // Directly navigate if popup blocked
+    window.location.assign(url);
   }
 }
 
 /**
  * 12. Generates pre-formatted WhatsApp brief for billing notice
  */
-export function createWhatsAppInvoiceUrl(invoice: Invoice, studioPhone?: string): string {
-  const defaultPhone = APP_CONFIG.defaultStudioPhone.replace(/[^0-9]/g, "");
-  const rawPhone = (studioPhone || defaultPhone).replace(/[^0-9]/g, "");
-  const targetPhone = rawPhone.length >= 7 ? rawPhone : defaultPhone;
+export function createWhatsAppInvoiceUrl(
+  invoice: Invoice,
+  customerPhone?: string,
+  studioName?: string,
+  pdfUrl?: string
+): string {
+  const brandName = studioName || APP_CONFIG.name;
   const sym = CURRENCY_SYMBOLS[invoice.currency || "NGN"] || "₦";
 
-  const message = `📄 *Invoice ${invoice.invoiceNumber} — ${APP_CONFIG.name}*
+  let formattedDueDate = invoice.dueDate;
+  try {
+    const d = new Date(invoice.dueDate);
+    if (!Number.isNaN(d.getTime())) {
+      formattedDueDate = d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+  } catch {}
+
+  const directPdfLink = pdfUrl || invoice.pdfUrl || "";
+  const linkText = directPdfLink ? `\n📥 *Download PDF Invoice:* ${directPdfLink}\n` : "";
+
+  const message = `📄 *Invoice ${invoice.invoiceNumber} — ${brandName}*
 ━━━━━━━━━━━━━━━━━━━━━
 👤 *Billed To:* ${invoice.customerName}
-💰 *Total Due:* ${sym}${invoice.total.toLocaleString()}
-📅 *Due Date:* ${invoice.dueDate}
+💰 *Total Due:* ${sym}${Number(invoice.total).toLocaleString()}
+📅 *Due Date:* ${formattedDueDate}
 ⏳ *Payment Terms:* ${invoice.paymentTerms}
-
-Thank you for choosing ${APP_CONFIG.name}. Please confirm receipt of your invoice.
+${linkText}
+Thank you for choosing ${brandName}. Please confirm receipt of your invoice.
 ━━━━━━━━━━━━━━━━━━━━━`;
 
-  return `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
+  if (customerPhone?.trim()) {
+    const normalized = normalizePhoneNumber(customerPhone).replace(/[^0-9]/g, "");
+    if (normalized.length >= 7) {
+      return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`;
+    }
+  }
+
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
 /**

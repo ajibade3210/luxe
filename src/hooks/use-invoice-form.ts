@@ -7,6 +7,7 @@ import {
   downloadInvoicePdf,
   getBusinessProfile,
   getCurrentSession,
+  getInvoicePdfUrl,
   markInvoiceAsPaid,
   markInvoiceAsUnpaid,
   resendInvoice,
@@ -108,6 +109,8 @@ export function useInvoiceForm({
   const [isMarkingUnpaid, setIsMarkingUnpaid] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
+  const [isCopyingLink, setIsCopyingLink] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const handleCustomerChange = (cId: string) => {
@@ -167,25 +170,37 @@ export function useInvoiceForm({
     setItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const buildPayload = (): InvoiceInput => ({
-    id: existingInvoice?.id,
-    invoiceNumber: existingInvoice?.invoiceNumber,
-    customerId,
-    customerName,
-    customerEmail,
-    billingAddress,
-    issueDate,
-    dueDate,
-    paymentTerms,
-    currency,
-    items,
-    subtotal,
-    discount,
-    taxRate,
-    taxAmount,
-    total,
-    notes,
-  });
+  const buildPayload = (): InvoiceInput => {
+    const cleanedItems = items.map((item, idx) => ({
+      id: item.id || `item-${idx + 1}`,
+      description: item.description?.trim() || `Service Item #${idx + 1}`,
+      unit: item.unit?.trim() || "unit",
+      quantity: Number(item.quantity) || 1,
+      unitPrice: Number(item.unitPrice) || 0,
+      amount: (Number(item.quantity) || 1) * (Number(item.unitPrice) || 0),
+    }));
+
+    return {
+      id: existingInvoice?.id,
+      invoiceNumber: existingInvoice?.invoiceNumber,
+      customerId,
+      customerName: customerName.trim(),
+      customerEmail: customerEmail.trim().toLowerCase(),
+      billingAddress: billingAddress.trim() || "Plot 14, Victoria Island, Lagos",
+      issueDate: issueDate || new Date().toISOString().split("T")[0],
+      dueDate:
+        dueDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      paymentTerms,
+      currency,
+      items: cleanedItems,
+      subtotal,
+      discount,
+      taxRate,
+      taxAmount,
+      total,
+      notes,
+    };
+  };
 
   const handleSaveDraft = async () => {
     if (!customerName || !customerEmail) {
@@ -198,8 +213,9 @@ export function useInvoiceForm({
       onToast(`Invoice ${saved.invoiceNumber} saved as draft.`);
       if (onInvoiceSaved) onInvoiceSaved(saved);
       onClose();
-    } catch {
-      onToast("Failed to save invoice draft.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to save invoice draft.";
+      onToast(msg);
     } finally {
       setIsSavingDraft(false);
     }
@@ -211,6 +227,7 @@ export function useInvoiceForm({
       return;
     }
     setIsSending(true);
+    onToast("Sending invoice via email...");
     try {
       const sent = await sendInvoice(buildPayload());
       onToast(
@@ -218,8 +235,12 @@ export function useInvoiceForm({
       );
       if (onInvoiceSaved) onInvoiceSaved(sent);
       onClose();
-    } catch {
-      onToast("Failed to send invoice.");
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to send invoice. Please verify customer email.";
+      onToast(msg);
     } finally {
       setIsSending(false);
     }
@@ -230,22 +251,36 @@ export function useInvoiceForm({
       onToast("Please provide customer name.");
       return;
     }
+    setIsSendingWhatsApp(true);
+    onToast("Generating PDF link and preparing WhatsApp dispatch...");
     try {
       let activeInvoice: Invoice;
-      if (!existingInvoice || existingInvoice.status === "draft") {
-        activeInvoice = await sendInvoice(buildPayload());
+      if (!existingInvoice || isFormDirty) {
+        activeInvoice = await saveInvoiceDraft(buildPayload());
         if (onInvoiceSaved) onInvoiceSaved(activeInvoice);
       } else {
         activeInvoice = existingInvoice;
       }
-      const waUrl = createWhatsAppInvoiceUrl(activeInvoice);
+
+      const pdfUrl = await getInvoicePdfUrl(activeInvoice.id);
+
+      const customerPhone = allCustomers.find(c => c.id === customerId)?.phone;
+      const studioName = getCurrentSession()?.studioName;
+      const waUrl = createWhatsAppInvoiceUrl(activeInvoice, customerPhone, studioName, pdfUrl);
       if (typeof window !== "undefined") {
-        window.open(waUrl, "_blank");
+        const opened = window.open(waUrl, "_blank");
+        if (!opened) {
+          window.location.assign(waUrl);
+        }
       }
-      onToast(`WhatsApp dispatch ready for ${activeInvoice.customerName}.`);
+      onToast(`WhatsApp dispatch opened with PDF link for ${activeInvoice.customerName}.`);
       onClose();
-    } catch {
-      onToast("Failed to prepare WhatsApp invoice dispatch.");
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "Failed to prepare WhatsApp invoice dispatch.";
+      onToast(msg);
+    } finally {
+      setIsSendingWhatsApp(false);
     }
   };
 
@@ -283,32 +318,86 @@ export function useInvoiceForm({
     }
   };
 
+  const isFormDirty = useMemo(() => {
+    if (!existingInvoice) return true;
+    if (customerName.trim() !== existingInvoice.customerName) return true;
+    if (customerEmail.trim().toLowerCase() !== existingInvoice.customerEmail) return true;
+    if (billingAddress.trim() !== (existingInvoice.billingAddress || "")) return true;
+    if (notes.trim() !== (existingInvoice.notes || "")) return true;
+    if (paymentTerms !== existingInvoice.paymentTerms) return true;
+    if (currency !== (existingInvoice.currency || "NGN")) return true;
+    if (Number(discount) !== Number(existingInvoice.discount || 0)) return true;
+    if (Number(taxRate) !== Number(existingInvoice.taxRate || 0)) return true;
+    if (items.length !== (existingInvoice.items?.length || 0)) return true;
+    return false;
+  }, [
+    existingInvoice,
+    customerName,
+    customerEmail,
+    billingAddress,
+    notes,
+    paymentTerms,
+    currency,
+    discount,
+    taxRate,
+    items,
+  ]);
+
   const handleDownloadPdf = async () => {
+    if (!customerName) {
+      onToast("Please provide customer name before generating PDF.");
+      return;
+    }
     setIsDownloadingPdf(true);
     try {
       let targetId = existingInvoice?.id;
-      if (!targetId) {
-        const savedDraft = await saveInvoiceDraft(buildPayload());
-        targetId = savedDraft.id;
-        if (onInvoiceSaved) onInvoiceSaved(savedDraft);
+      let targetInvoiceNumber = existingInvoice?.invoiceNumber;
+
+      if (!existingInvoice || isFormDirty) {
+        onToast("Saving latest invoice details and preparing fresh PDF...");
+        const saved = await saveInvoiceDraft(buildPayload());
+        targetId = saved.id;
+        targetInvoiceNumber = saved.invoiceNumber;
+        if (onInvoiceSaved) onInvoiceSaved(saved);
+      } else {
+        onToast("Generating invoice PDF document...");
       }
-      await downloadInvoicePdf(targetId);
-      onToast("Invoice document generated for print/PDF download.");
-    } catch {
-      onToast("Failed to generate invoice PDF.");
+
+      await downloadInvoicePdf({
+        id: targetId!,
+        invoiceNumber: targetInvoiceNumber || "Invoice",
+      } as Invoice);
+      onToast("Invoice PDF ready & downloaded.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to generate invoice PDF.";
+      onToast(msg);
     } finally {
       setIsDownloadingPdf(false);
     }
   };
 
-  const handleCopyLink = () => {
-    const invNum = existingInvoice?.invoiceNumber || "INV-2026-DRAFT";
-    const publicUrl = `${typeof window !== "undefined" ? window.location.origin : "https://shopwus.com"}/invoices/${invNum}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(publicUrl);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-      onToast("Invoice public link copied to clipboard.");
+  const handleCopyLink = async () => {
+    setIsCopyingLink(true);
+    try {
+      let targetId = existingInvoice?.id;
+      if (!targetId) {
+        onToast("Saving draft to generate link...");
+        const saved = await saveInvoiceDraft(buildPayload());
+        targetId = saved.id;
+        if (onInvoiceSaved) onInvoiceSaved(saved);
+      }
+      onToast("Retrieving PDF invoice link...");
+      const pdfUrl = await getInvoicePdfUrl(targetId);
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(pdfUrl);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+        onToast("PDF Invoice link copied to clipboard.");
+      }
+    } catch {
+      onToast("Failed to copy PDF link.");
+    } finally {
+      setIsCopyingLink(false);
     }
   };
 
@@ -379,6 +468,8 @@ export function useInvoiceForm({
     isMarkingUnpaid,
     isDeleting,
     isDownloadingPdf,
+    isSendingWhatsApp,
+    isCopyingLink,
     copiedLink,
     handleCustomerChange,
     handleItemChange,

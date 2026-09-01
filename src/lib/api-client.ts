@@ -8,10 +8,7 @@
 import { STORAGE_KEYS } from "@/constants";
 import { logger } from "./logger";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:5555/api/v1";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export class ApiError extends Error {
   status: number;

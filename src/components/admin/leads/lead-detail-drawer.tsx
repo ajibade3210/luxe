@@ -25,8 +25,14 @@ export function LeadDetailDrawer({
         >
           <X />
         </button>
-        <span className="eyebrow">Inquiry details</span>
-        <h2>{lead.name}</h2>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h2>{lead.name}</h2>
+          {lead.isExistingCustomer && (
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
+              Existing Customer
+            </span>
+          )}
+        </div>
         <p className="drawer-email">
           {lead.email} · {lead.phone || "No phone provided"}
         </p>
@@ -84,7 +90,7 @@ export function LeadDetailDrawer({
         <blockquote>{lead.message}</blockquote>
 
         <div className="drawer-actions space-y-2">
-          {/* Convert to Customer */}
+          {/* Convert / Add to Customer */}
           <button
             type="button"
             disabled={isConverting}
@@ -92,7 +98,15 @@ export function LeadDetailDrawer({
             onClick={() => onConvertToCustomer(lead.id)}
           >
             <UserCheck size={14} />
-            <span>{isConverting ? "Converting..." : "Convert to Customer"}</span>
+            <span>
+              {isConverting
+                ? lead.isExistingCustomer
+                  ? "Adding Service..."
+                  : "Converting..."
+                : lead.isExistingCustomer
+                  ? "Add Service to Customer"
+                  : "Convert to Customer"}
+            </span>
           </button>
 
           {/* Issue Invoice */}

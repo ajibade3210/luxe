@@ -148,7 +148,7 @@ export function LoginPage() {
               href="/signup"
               className="text-[#2563eb] font-semibold underline underline-offset-2 hover:text-[#1d4ed8]"
             >
-              Get started.
+              Get started
             </Link>
           </div>
         </div>

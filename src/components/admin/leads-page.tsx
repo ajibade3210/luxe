@@ -5,7 +5,9 @@ import { useState } from "react";
 import { APP_CONFIG } from "@/constants";
 import { useLeads } from "@/hooks/use-leads";
 import { getInvoices } from "@/lib/api";
+import { getCurrentSession, sendLeadMessage } from "@/services/api";
 import type { Customer, Invoice, Lead, LeadsPageProps } from "@/types";
+import { normalizePhoneNumber } from "@/utils";
 import { Metric, PageTitle, useAdminToast } from "./admin-layout";
 import { InvoiceModal } from "./invoices/invoice-modal";
 import { LeadDetailDrawer } from "./leads/lead-detail-drawer";
@@ -81,8 +83,10 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
   };
 
   const handleSendWhatsAppMessage = async (lead: Lead, phone: string, text: string) => {
-    const cleanPhone = phone.replace(/[^0-9]/g, "");
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
+    const normalized = normalizePhoneNumber(phone).replace(/[^0-9]/g, "");
+    const waUrl = normalized
+      ? `https://wa.me/${normalized}?text=${encodeURIComponent(text)}`
+      : `https://wa.me/?text=${encodeURIComponent(text)}`;
     if (typeof window !== "undefined") {
       window.open(waUrl, "_blank");
     }
@@ -92,15 +96,16 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
   };
 
   const handleSendEmailMessage = async (lead: Lead, email: string, name: string, text: string) => {
-    const subject = encodeURIComponent(`Élan Atelier · Consultation for ${name}`);
-    const body = encodeURIComponent(text);
-    const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
-    if (typeof window !== "undefined") {
-      window.location.href = mailtoUrl;
+    try {
+      const studio = getCurrentSession()?.studioName || "Our Studio";
+      const subject = `${studio} · Consultation for ${name}`;
+      await sendLeadMessage(lead.id, { message: text, subject });
+      setShowSendMessageModal(false);
+      await handleUpdateStatus(lead.id, "contacted");
+      notify(`Consultation message sent to ${email} with your business header.`);
+    } catch {
+      notify("Failed to dispatch consultation email. Please try again.");
     }
-    setShowSendMessageModal(false);
-    await handleUpdateStatus(lead.id, "contacted");
-    notify("Consultation email prepared. Lead status updated to Contacted.");
   };
 
   return (

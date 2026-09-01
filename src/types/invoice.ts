@@ -34,6 +34,8 @@ export interface Invoice {
   total: number;
   notes: string;
   status: InvoiceStatus;
+  pdfUrl?: string;
+  pdfKey?: string;
   sentAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -76,6 +78,8 @@ export interface InvoiceModalHeaderProps {
   isSending: boolean;
   isResending: boolean;
   isDownloadingPdf: boolean;
+  isSendingWhatsApp?: boolean;
+  isCopyingLink?: boolean;
   isMarkingPaid: boolean;
   isMarkingUnpaid: boolean;
   isDeleting: boolean;
