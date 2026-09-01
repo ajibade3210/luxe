@@ -60,6 +60,8 @@ export function LoginPage() {
     triggerGoogle();
   };
 
+  console.log("🔍 ~ Login---- >>>>:", authError);
+
   return (
     <div className="min-h-screen bg-white text-[#191c1d] flex flex-col lg:flex-row font-sans selection:bg-[#2563eb] selection:text-white">
       {/* Left Panel: Google Sign-in */}
@@ -122,7 +124,7 @@ export function LoginPage() {
             {authError && (
               <div className="p-3.5 bg-red-50/90 border border-red-200/80 rounded-xl text-center space-y-2">
                 <p className="text-xs text-red-700 font-medium leading-relaxed">{authError}</p>
-                {authError.toLowerCase().includes("sign up") && (
+                {authError.toLowerCase().includes("no account found") && (
                   <div>
                     <Link
                       href={
@@ -130,7 +132,7 @@ export function LoginPage() {
                       }
                       className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] underline underline-offset-2"
                     >
-                      <span>Create your studio account</span>
+                      <span>Please sign up first to create your Storefront studio</span>
                       <ArrowRight size={12} />
                     </Link>
                   </div>
