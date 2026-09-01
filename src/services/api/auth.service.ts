@@ -171,6 +171,7 @@ export async function signInWithGoogle(options?: {
     idToken: options?.idToken,
     slug: studioSlug,
     studioName,
+    mode: "signin",
   });
 
   const fullName =
@@ -202,6 +203,7 @@ export async function signUpWithGoogle(data?: {
     idToken: data?.idToken,
     slug: effectiveSlug,
     studioName: effectiveName,
+    mode: "signup",
   });
 
   const fullName =

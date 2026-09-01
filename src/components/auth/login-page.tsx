@@ -121,7 +121,22 @@ export function LoginPage() {
 
             {/* Auth error */}
             {authError && (
-              <p className="text-[11px] text-[#ef4444] text-center pt-1">{authError}</p>
+              <div className="p-3.5 bg-red-50/90 border border-red-200/80 rounded-xl text-center space-y-2">
+                <p className="text-xs text-red-700 font-medium leading-relaxed">{authError}</p>
+                {authError.toLowerCase().includes("sign up") && (
+                  <div>
+                    <Link
+                      href={
+                        claimParam ? `/signup?claim=${encodeURIComponent(claimParam)}` : "/signup"
+                      }
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] underline underline-offset-2"
+                    >
+                      <span>Create your studio account</span>
+                      <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Security Badge */}
