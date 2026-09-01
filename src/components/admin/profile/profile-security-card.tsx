@@ -27,7 +27,6 @@ export function ProfileSecurityCard({ email }: ProfileSecurityCardProps) {
 
         <div className="flex items-center gap-2 text-xs text-[#5c5f60] bg-white px-3 py-1.5 rounded-lg border border-[#eae3d7]">
           <Shield size={13} className="text-[#10b981]" />
-          <span>Bank-grade 256-bit OAuth</span>
         </div>
       </div>
     </div>
