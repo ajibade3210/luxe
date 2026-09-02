@@ -92,7 +92,6 @@ export interface MetricProps {
 }
 
 export interface PageTitleProps {
-  eyebrow?: string;
   title: string;
   description?: string;
   action?: ReactNode;

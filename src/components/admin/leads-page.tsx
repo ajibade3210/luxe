@@ -132,9 +132,6 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
         <Metric label="Conversion rate" value={`${metrics.conversion}%`} detail="Last 30 days" />
       </div>
 
-      {/* Mobile/Tablet Action Bar directly above the register */}
-      <div className="flex items-center justify-end gap-2.5 mb-3.5 lg:hidden">{actions}</div>
-
       <LeadTable
         items={items}
         paginatedItems={paginatedItems}

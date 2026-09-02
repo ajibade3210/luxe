@@ -188,9 +188,6 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />
       </div>
 
-      {/* Mobile/Tablet Action Bar directly above the register */}
-      <div className="flex items-center justify-end gap-2.5 mb-3.5 lg:hidden">{actions}</div>
-
       <CustomerTable
         items={items}
         paginatedItems={paginatedItems}
