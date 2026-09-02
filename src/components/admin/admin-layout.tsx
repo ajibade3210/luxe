@@ -250,7 +250,12 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
       >
         <div className="sidebar-top">
           <Brand />
-          <button className="mobile-close" onClick={onClose} type="button" aria-label="Close sidebar">
+          <button
+            className="mobile-close"
+            onClick={onClose}
+            type="button"
+            aria-label="Close sidebar"
+          >
             <X />
           </button>
         </div>
@@ -531,11 +536,7 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
       <div className="admin">
         {/* Mobile backdrop overlay to dismiss sidebar */}
         {open && (
-          <div
-            className="sidebar-backdrop"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
+          <div className="sidebar-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />
         )}
         <Sidebar path={currentPath} open={open} onClose={() => setOpen(false)} />
         <div className="admin-main">

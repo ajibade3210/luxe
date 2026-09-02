@@ -36,7 +36,9 @@ export function ExpenseListTable({
               aria-label="Filter expenses by category"
               className="h-9 appearance-none pl-3 pr-7 bg-white border border-[#ded7cb] rounded-xl text-[11px] font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
-              <option value="all" className="text-[11px]">All</option>
+              <option value="all" className="text-[11px]">
+                All
+              </option>
               {categories && categories.length > 0
                 ? categories.map(cat => {
                     const cfg = EXPENSE_CATEGORY_CONFIG[cat.category as ExpenseCategory];
