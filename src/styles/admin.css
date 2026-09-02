@@ -1160,7 +1160,31 @@ blockquote {
   margin-top: 4px;
 }
 
+.sidebar-backdrop {
+  display: none;
+}
+
+@keyframes sidebarBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 750px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 45;
+    cursor: pointer;
+    animation: sidebarBackdropFadeIn 0.2s ease forwards;
+  }
   .settings-card {
     padding: 24px 18px;
   }
@@ -1213,7 +1237,7 @@ blockquote {
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
-    z-index: 20;
+    z-index: 50;
     width: 280px;
     transform: translateX(-100%);
     transition: transform 0.2s;

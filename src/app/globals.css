@@ -3,7 +3,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Domain Modular Stylesheets */
+/* Domain Modular Stylesheets - Loaded */
 @import "../styles/tokens.css";
 @import "../styles/base.css";
 @import "../styles/buttons.css";

@@ -34,15 +34,15 @@ export function ExpenseListTable({
               value={selectedCategory}
               onChange={e => onCategoryChange(e.target.value as ExpenseCategory | "all")}
               aria-label="Filter expenses by category"
-              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+              className="h-9 appearance-none pl-3 pr-7 bg-white border border-[#ded7cb] rounded-xl text-[11px] font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
-              <option value="all">All</option>
+              <option value="all" className="text-[11px]">All</option>
               {categories && categories.length > 0
                 ? categories.map(cat => {
                     const cfg = EXPENSE_CATEGORY_CONFIG[cat.category as ExpenseCategory];
                     const label = cat.label || cfg?.label || cat.category;
                     return (
-                      <option key={cat.category} value={cat.category}>
+                      <option key={cat.category} value={cat.category} className="text-[11px]">
                         {label}
                       </option>
                     );
@@ -50,15 +50,15 @@ export function ExpenseListTable({
                 : EXPENSE_CATEGORIES.map(cat => {
                     const cfg = EXPENSE_CATEGORY_CONFIG[cat];
                     return (
-                      <option key={cat} value={cat}>
+                      <option key={cat} value={cat} className="text-[11px]">
                         {cfg.label}
                       </option>
                     );
                   })}
             </select>
             <ChevronDown
-              size={13}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
+              size={12}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
             />
           </div>
 
@@ -195,7 +195,7 @@ export function ExpenseListTable({
               value={pageSize}
               onChange={e => onPageSizeChange(Number(e.target.value))}
               aria-label="Records per page"
-              className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-xs text-[#191c1d] focus:outline-none"
+              className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-[11px] text-[#191c1d] focus:outline-none"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { APP_CONFIG } from "@/constants";
 import {
@@ -173,6 +173,7 @@ export function PageTitle({ title, action, children }: PageTitleProps) {
 }
 
 export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
+  const sidebarRef = useRef<HTMLElement>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(
     () => path === "/vendor/settings"
@@ -189,6 +190,35 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
   useEffect(() => {
     setSession(getCurrentSession());
   }, []);
+
+  // Close sidebar on click outside or Escape key when open
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+        const target = e.target as HTMLElement | null;
+        if (target?.closest(".mobile-menu")) return;
+        onClose();
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onClose]);
 
   const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
   const userName = session?.name || profile?.businessName || "Vendor";
@@ -213,10 +243,14 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
 
   return (
     <>
-      <aside className={`sidebar ${open ? "is-open" : ""}`}>
+      <aside
+        ref={sidebarRef}
+        className={`sidebar ${open ? "is-open" : ""}`}
+        onClick={e => e.stopPropagation()}
+      >
         <div className="sidebar-top">
           <Brand />
-          <button className="mobile-close" onClick={onClose}>
+          <button className="mobile-close" onClick={onClose} type="button" aria-label="Close sidebar">
             <X />
           </button>
         </div>
@@ -495,10 +529,10 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
   return (
     <AdminToastContext.Provider value={{ showToast: handleToast }}>
       <div className="admin">
-        {/* Mobile/tablet backdrop overlay to dismiss sidebar */}
+        {/* Mobile backdrop overlay to dismiss sidebar */}
         {open && (
           <div
-            className="fixed inset-0 bg-black/30 z-10 backdrop-blur-xs transition-opacity [max-width:750px]:block hidden"
+            className="sidebar-backdrop"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />

@@ -30,18 +30,18 @@ export function LeadTable({
               value={statusFilter}
               onChange={e => onStatusFilterChange?.(e.target.value as LeadFilterStatus)}
               aria-label="Filter inquiries by status"
-              className="h-9 appearance-none pl-3.5 pr-8 bg-white border border-[#ded7cb] rounded-xl text-xs font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
+              className="h-9 appearance-none pl-3 pr-7 bg-white border border-[#ded7cb] rounded-xl text-[11px] font-medium text-[#191c1d] hover:bg-[#faf8f5] focus:outline-none transition-colors cursor-pointer shadow-2xs"
             >
-              <option value="all">All</option>
-              <option value="active">Active</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="qualified">Qualified</option>
-              <option value="converted">Converted</option>
+              <option value="all" className="text-[11px]">All</option>
+              <option value="active" className="text-[11px]">Active</option>
+              <option value="new" className="text-[11px]">New</option>
+              <option value="contacted" className="text-[11px]">Contacted</option>
+              <option value="qualified" className="text-[11px]">Qualified</option>
+              <option value="converted" className="text-[11px]">Converted</option>
             </select>
             <ChevronDown
-              size={13}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
+              size={12}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8c827a] pointer-events-none"
             />
           </div>
 
@@ -137,7 +137,7 @@ export function LeadTable({
             <select
               value={pageSize}
               onChange={e => onPageSizeChange(Number(e.target.value))}
-              className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-xs text-[#191c1d] focus:outline-none"
+              className="bg-white border border-[#ded7cb] rounded-lg px-2 py-0.5 text-[11px] text-[#191c1d] focus:outline-none"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
