@@ -1,5 +1,20 @@
 import type React from "react";
+import type { UserSession } from "./auth";
 import type { ButtonRadiusType, CurrencyCode } from "./common";
+
+export interface CurrentStudioResult {
+  studioId: string;
+  studioName: string;
+  slug: string;
+  userName: string;
+  userRole: string;
+  initials: string;
+  profile: BusinessProfile | undefined;
+  session: UserSession | null;
+  isLoading: boolean;
+  isError: boolean;
+  refetch: () => void;
+}
 
 /** Classifies the business model to drive dynamic CTA labels and studio behaviour. */
 export type BusinessType = "service" | "sales" | "retail" | "ecommerce";

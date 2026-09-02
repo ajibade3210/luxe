@@ -132,12 +132,12 @@ export function ProfileSettingsPage({ onToast }: ProfileSettingsPageProps) {
   };
 
   return (
-    <section className="content profile-content max-w-5xl mx-auto space-y-7 pb-16">
+    <section className="content profile-content max-w-5xl mx-auto space-y-6 sm:space-y-7 pb-16">
       {/* Page Title */}
-      <div className="page-title">
-        <div>
-          <h1>Admin Overview</h1>
-        </div>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#191c1d] tracking-tight">
+          Admin Overview
+        </h1>
       </div>
 
       {/* Studio Equity & Business Valuation Estimator */}

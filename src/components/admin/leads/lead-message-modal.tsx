@@ -3,7 +3,7 @@
 import { Loader2, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConfirmModal, WhatsAppIcon } from "@/components/shared";
-import { getCurrentSession } from "@/services/api";
+import { useCurrentStudio } from "@/hooks/use-current-studio";
 import type { LeadMessageModalProps } from "@/types";
 
 export function LeadMessageModal({
@@ -16,15 +16,26 @@ export function LeadMessageModal({
   const [messageText, setMessageText] = useState("");
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [showEmailConfirm, setShowEmailConfirm] = useState(false);
+  const { studioName } = useCurrentStudio();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isSendingEmail) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isSendingEmail, onClose]);
 
   useEffect(() => {
     if (lead) {
-      const studio = getCurrentSession()?.studioName || "our studio";
+      const studio = studioName || "our studio";
       setMessageText(
         `Dear ${lead.name},\n\nThank you for reaching out to ${studio} regarding your upcoming ${lead.service || "inquiry"}.\n\nWe would love to schedule a consultation to discuss your vision and curate a bespoke proposal.\n\nWarm regards,\n${studio} Team`
       );
     }
-  }, [lead]);
+  }, [lead, studioName]);
 
   if (!isOpen || !lead) return null;
 

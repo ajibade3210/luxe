@@ -36,9 +36,11 @@ export function InvoiceFormFields({
 }: InvoiceFormFieldsProps) {
   return (
     <div className="bg-white border border-[#e5e7eb] rounded-3xl p-6 sm:p-7 shadow-xs space-y-5">
-      <h2 className="text-sm font-serif font-bold text-[#111827] uppercase tracking-wider border-b border-[#f3f4f6] pb-3">
-        Invoice Details
-      </h2>
+      <div className="border-b border-[#f3f4f6] pb-4">
+        <h2 className="text-sm font-serif font-bold text-[#191c1d] uppercase tracking-wider">
+          Invoice Details
+        </h2>
+      </div>
 
       <div>
         <label className="block text-[11px] font-bold text-[#374151] uppercase tracking-wider mb-1.5">

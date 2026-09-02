@@ -13,6 +13,13 @@ This document serves as the absolute ground truth for all UI, visual design, typ
 
 ## 2. Color Palette & Semantic Tokens
 
+### Strict Tailwind CSS Utility Standard
+Shopwus strictly follows a **Tailwind CSS utility-first** architecture.
+- **NEVER** write new CSS classes in `admin.css` or arbitrary stylesheets.
+- All layouts, sidebars, headers, cards, grids, buttons, and tables must be composed directly in JSX using Tailwind classes.
+- Use design tokens defined in `@theme` in `src/app/globals.css` alongside standard Tailwind utilities.
+- Use standard Tailwind breakpoint modifiers (`sm:`, `md:`, `lg:`, `xl:`, `max-lg:`) instead of arbitrary media queries.
+
 ### Semantic Utility Classes (`@theme`)
 Instead of writing raw arbitrary hex values (`bg-[#faf8f5]`, `border-[#eee7dc]`), use these semantic utility classes:
 
@@ -29,14 +36,17 @@ Instead of writing raw arbitrary hex values (`bg-[#faf8f5]`, `border-[#eee7dc]`)
 | `atelier-accent` | `text-atelier-accent` | `#9e633d` | Brand accents, badges, and multipliers |
 | `atelier-accent-hover` | `border-atelier-accent-hover` | `#c59a78` | Interactive hover borders and outlines |
 
-### Semantic Status Indicators
-| Meaning | Text Color | Background Pill | Border |
+### Semantic Status Indicators (`<StatusBadge />`)
+Always use the standardized `<StatusBadge status={status} />` primitive (`src/components/admin/common/status-badge.tsx`):
+
+| Meaning / Status | Text Color | Background Pill | Border |
 | :--- | :--- | :--- | :--- |
-| **Positive / Margin / Active** | `#059669` / `#15803d` | `#ecfdf5` / `#dcfce7` | `#a7f3d0` |
-| **Outflow / Deficit / Danger** | `#dc2626` / `#b91c1c` | `#fef2f2` | `#fecaca` |
-| **Warning / Pending / Draft** | `#d97706` / `#854d0e` | `#fef3c7` / `#fefce8` | `#fde68a` |
-| **Info / Emerging Tier** | `#0284c7` | `#e0f2fe` | `#bae6fd` |
-| **Flagship / Enterprise Tier** | `#9333ea` | `#f3e8ff` | `#e9d5ff` |
+| **Active / Paid / Converted / Completed** | `#047857` | `#ecfdf5` | `#a7f3d0` |
+| **Closed / Lost / Overdue** | `#b91c1c` | `#fef2f2` | `#fecaca` |
+| **New / Pending / Sent** | `#b45309` | `#fef3c7` | `#fde68a` |
+| **Contacted** | `#6f4c22` | `#faf5ee` | `#f0e4d4` |
+| **Qualified** | `#115e59` | `#f0fdfa` | `#ccfbf1` |
+| **Draft** | `#334155` | `#f1f5f9` | `#e2e8f0` |
 
 ---
 
@@ -57,12 +67,11 @@ Instead of writing raw arbitrary hex values (`bg-[#faf8f5]`, `border-[#eee7dc]`)
 
 ## 4. Component Patterns & Layout System
 
-### A. KPI Metric Cards
-* **Grid:** 5 columns on desktop (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4`).
-* **Card Container:** `bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_2px_12px_rgba(70,50,30,0.02)] hover:border-[#c59a78]/60 hover:shadow-md transition-all flex flex-col justify-between`.
-* **Top Row:** Squircle icon badge on left (`w-9 h-9 rounded-xl`), trend badge on right (`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold`).
-* **Bottom Row:** Muted label (`text-xs font-medium text-[#8c827a]`) followed by crisp tabular number (`text-2xl font-bold font-sans tabular-nums`).
-* **Do NOT use ambiguous colored underline bars.**
+### A. KPI Metric Cards (`<Metric>`, `<MetricsGrid>`)
+* **Grid:** Standard 3-column responsive grid on admin overview (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5`).
+* **Card Container:** `bg-white border border-[#eee7dc] rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-[#ded7cb] transition-all flex flex-col justify-between`.
+* **Top Row:** Eyebrow uppercase text (`text-[10px] font-bold tracking-widest text-[#8c827a] uppercase`).
+* **Bottom Row:** Crisp tabular number (`text-2xl font-bold font-sans tabular-nums text-[#191c1d]`) and optional subtitle (`text-[11px] font-medium text-[#8c827a] mt-1.5`).
 
 ### B. Business Valuation & Appraisal Display
 * **Hero Range Box:** Gradient backdrop (`bg-gradient-to-br from-[#faf7f2] via-[#fcfbf9] to-[#f5efe6]/70 border border-[#e8dfd2] rounded-2xl p-6 sm:p-7 shadow-xs`).
@@ -76,10 +85,12 @@ Instead of writing raw arbitrary hex values (`bg-[#faf8f5]`, `border-[#eee7dc]`)
 * **Secondary Outline Button:** `bg-white hover:bg-[#f8f4ed] text-[#2a1d15] border border-[#ded5c8] hover:border-[#c59a78] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer`.
 * **Segmented Tabs / Switch:** `bg-[#f0ebe3] p-1 rounded-2xl flex items-center border border-[#e2dad0]`. Active tab has `bg-white text-[#2a1d15] shadow-xs rounded-xl`.
 
-### D. Tables & Data Lists
-* **Card Container:** `border border-[#eee7dc] bg-white rounded-2xl shadow-xs overflow-hidden`.
-* **Table Header:** Uppercase 9px bold tracking-widest text `#8c827a`, border-b `#eee7dc`.
-* **Table Row:** Hover effect `hover:bg-[#fafaf7] transition-colors`, cell padding `py-3.5 px-4`.
+### D. Tables & Data Lists (`<TableCard>`, `<TableHead>`, `<TableWrap>`)
+* **Card Container:** `border border-[#eee7dc] bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col min-h-[clamp(540px,65vh,850px)] overflow-hidden`.
+* **Table Header (`th`):** `px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]`.
+* **Table Cell (`td`):** `px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle`.
+* **Table Row Hover:** `hover:bg-[#faf8f5]/60 transition-colors cursor-pointer`.
+* **Dropdowns / Filters:** Select menus inside table controls must use `text-[11px]`.
 
 ### E. Interactive 3D Stationery Card
 * CSS 3D transforms (`perspective: 1000px`, `.card-flip-container`, `.card-flip-inner.is-flipped`, `.card-face.backface-hidden`).

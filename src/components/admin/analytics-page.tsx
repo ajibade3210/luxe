@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { APP_CONFIG } from "@/constants";
-import { getAnalytics, getBusinessProfile, getCurrentSession } from "@/lib/api";
+import { useCurrentStudio } from "@/hooks/use-current-studio";
+import { getAnalytics } from "@/lib/api";
 import type { AnalyticsOverview, AnalyticsPageProps, Timeframe } from "@/types";
 import { useAdminToast } from "./admin-layout";
 import { AnalyticsChart } from "./analytics/analytics-chart";
@@ -16,17 +16,7 @@ export function AnalyticsPage({ onToast }: AnalyticsPageProps) {
   const notify = onToast || showToast;
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
   const [data, setData] = useState<AnalyticsOverview | null>(null);
-  const [slug, setSlug] = useState(getCurrentSession()?.studioSlug || APP_CONFIG.defaultSlug);
-  const [studioName, setStudioName] = useState(getCurrentSession()?.studioName || "Élan Atelier");
-
-  useEffect(() => {
-    getBusinessProfile()
-      .then(profile => {
-        if (profile.slug) setSlug(profile.slug);
-        if (profile.businessName) setStudioName(profile.businessName);
-      })
-      .catch(() => {});
-  }, []);
+  const { slug, studioName } = useCurrentStudio();
 
   useEffect(() => {
     getAnalytics(timeframe)

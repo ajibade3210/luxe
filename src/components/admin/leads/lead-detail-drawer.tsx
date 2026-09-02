@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, MessageSquare, UserCheck, X } from "lucide-react";
+import { useEffect } from "react";
 import type { LeadDetailDrawerProps } from "@/types";
 import { formatDate, formatMoney, formatStatusLabel } from "@/utils";
 
@@ -12,6 +13,16 @@ export function LeadDetailDrawer({
   onConvertToCustomer,
   onIssueInvoice,
 }: LeadDetailDrawerProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (!lead) return null;
 
   return (

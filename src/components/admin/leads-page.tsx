@@ -3,9 +3,10 @@
 import { Download } from "lucide-react";
 import { useState } from "react";
 import { APP_CONFIG } from "@/constants";
+import { useCurrentStudio } from "@/hooks/use-current-studio";
 import { useLeads } from "@/hooks/use-leads";
 import { getInvoices } from "@/lib/api";
-import { getCurrentSession, sendLeadMessage } from "@/services/api";
+import { sendLeadMessage } from "@/services/api";
 import type { Customer, Invoice, Lead, LeadsPageProps } from "@/types";
 import { normalizePhoneNumber } from "@/utils";
 import { Metric, PageTitle, useAdminToast } from "./admin-layout";
@@ -17,6 +18,7 @@ import { LeadTable } from "./leads/lead-table";
 export function LeadsPage({ onToast }: LeadsPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
+  const { studioName } = useCurrentStudio();
 
   const {
     items,
@@ -97,7 +99,7 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
 
   const handleSendEmailMessage = async (lead: Lead, email: string, name: string, text: string) => {
     try {
-      const studio = getCurrentSession()?.studioName || "Our Studio";
+      const studio = studioName || "Our Studio";
       const subject = `${studio} · Consultation for ${name}`;
       await sendLeadMessage(lead.id, { message: text, subject });
       setShowSendMessageModal(false);
@@ -122,7 +124,7 @@ export function LeadsPage({ onToast }: LeadsPageProps) {
 
   return (
     <section className="content">
-      <PageTitle title="Leads & inquiries" action={actions} />
+      <PageTitle title="Leads & Inquiries" action={actions} />
 
       <div className="metrics">
         <Metric label="Total leads" value={String(metrics.total)} detail="All time" />

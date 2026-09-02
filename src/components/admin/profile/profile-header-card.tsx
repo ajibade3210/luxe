@@ -18,7 +18,7 @@ export function ProfileHeaderCard({ business, onUpdateHeader, onToast }: Profile
 
   return (
     <>
-      <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 shadow-xs space-y-6">
+      <div className="bg-white rounded-3xl border border-[#e5e7eb] p-4 sm:p-6 lg:p-8 shadow-xs space-y-6">
         {/* Header Title & Info */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">

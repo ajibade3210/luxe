@@ -75,7 +75,7 @@ export function ProfileIdentityCard({
     : "AB";
 
   return (
-    <div className="bg-white border border-[#eae3d7] rounded-3xl p-5 sm:p-6 lg:p-8 shadow-sm space-y-6">
+    <div className="bg-white border border-[#eae3d7] rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm space-y-6">
       <div className="flex items-center justify-between gap-3 sm:gap-4">
         {/* Avatar and Leadership Title */}
         <div className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-4 min-w-0">

@@ -28,6 +28,16 @@ export function ExpenseModal({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isSubmitting) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isSubmitting, onClose]);
+
+  useEffect(() => {
     if (existingExpense) {
       setTitle(existingExpense.title);
       setAmount(existingExpense.amount);

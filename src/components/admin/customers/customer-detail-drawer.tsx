@@ -1,6 +1,7 @@
 "use client";
 
-import { MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
+import { ChevronDown, MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
+import { useEffect } from "react";
 import type { CustomerDetailDrawerProps, ServiceStatus } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
 
@@ -17,6 +18,16 @@ export function CustomerDetailDrawer({
   onDeleteService,
   onUpdateServiceStatus,
 }: CustomerDetailDrawerProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (!customer) return null;
 
   const servicesList = customer.services || [];
@@ -200,10 +211,12 @@ export function CustomerDetailDrawer({
 
         {/* Services / Projects list */}
         <div className="drawer-block">
-          <div className="flex items-center justify-between pb-2">
+          <div className="flex items-center justify-between pb-2.5">
             <div className="flex items-center gap-2">
-              <span className="eyebrow">Services</span>
-              <span className="text-[10px] font-bold text-[#855e2e] bg-[#f4ece1] px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6b7280]">
+                Services
+              </span>
+              <span className="text-[11px] font-semibold text-[#855e2e] bg-[#fbf7f0] border border-[#eee7dc] px-2 py-0.5 rounded-md">
                 {servicesList.length}
               </span>
             </div>
@@ -214,14 +227,14 @@ export function CustomerDetailDrawer({
                 if (!customer.isActive) return;
                 onOpenAddServiceModal();
               }}
-              className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all ${
+              className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
                 customer.isActive
-                  ? "text-[#855e2e] hover:text-[#5c3e1a] bg-[#faf7f2] hover:bg-[#f5eee3] border-[#ded5c8] hover:shadow-2xs cursor-pointer"
+                  ? "text-[#191c1d] hover:text-[#855e2e] bg-white hover:bg-[#faf7f2] border-[#ded5c8] hover:border-[#855e2e] shadow-2xs cursor-pointer"
                   : "text-[#9ca3af] bg-[#f3f4f6] border-[#e5e7eb] cursor-not-allowed opacity-60"
               }`}
               title={customer.isActive ? "Add Service" : "Customer is inactive"}
             >
-              <Plus size={11} />
+              <Plus size={13} />
               <span>Add Service</span>
             </button>
           </div>
@@ -231,14 +244,14 @@ export function CustomerDetailDrawer({
               {servicesList.map(service => (
                 <div
                   key={service.id}
-                  className="group bg-[#faf8f5] hover:bg-[#f8f5ee] border border-[#eee7dc] hover:border-[#ded3c2] rounded-2xl p-3.5 transition-all space-y-2.5"
+                  className="group bg-white hover:bg-[#faf8f5] border border-[#e5e7eb] hover:border-[#d1d5db] rounded-xl p-3.5 transition-all shadow-xs space-y-2.5"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h4 className="text-xs font-bold text-[#191c1d] tracking-tight leading-snug truncate">
                         {service.name}
                       </h4>
-                      <span className="text-[11px] text-[#78716c] font-normal block mt-0.5 truncate">
+                      <span className="text-[11px] text-[#6b7280] block mt-0.5 truncate">
                         {service.service}
                       </span>
                     </div>
@@ -251,9 +264,9 @@ export function CustomerDetailDrawer({
                         onDeleteService(customer.id, service.id, service.name);
                       }}
                       title={customer.isActive ? "Delete service scope" : "Customer is inactive"}
-                      className={`p-1.5 rounded-lg transition-all shrink-0 ${
+                      className={`p-1.5 rounded-md transition-all shrink-0 ${
                         customer.isActive
-                          ? "opacity-50 group-hover:opacity-100 text-[#9ca3af] hover:text-[#dc2626] hover:bg-[#fee2e2] cursor-pointer"
+                          ? "text-[#9ca3af] hover:text-[#dc2626] hover:bg-[#fee2e2] cursor-pointer"
                           : "text-[#d1d5db] cursor-not-allowed opacity-40"
                       }`}
                     >
@@ -261,17 +274,17 @@ export function CustomerDetailDrawer({
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-[#f0e8dc]">
+                  <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-[#f3f4f6]">
                     <div className="flex items-baseline gap-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#8e9192]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6b7280]">
                         Value:
                       </span>
-                      <span className="font-mono text-xs font-bold text-[#191c1d]">
+                      <span className="text-xs font-bold text-[#191c1d] tabular-nums">
                         {formatMoney(service.amount)}
                       </span>
                     </div>
 
-                    <div className="relative shrink-0">
+                    <div className="relative inline-flex items-center shrink-0">
                       <select
                         disabled={!customer.isActive}
                         value={service.status}
@@ -286,7 +299,7 @@ export function CustomerDetailDrawer({
                             formatStatusLabel(nextStatus)
                           );
                         }}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border transition-all shadow-2xs ${
+                        className={`appearance-none pr-6 pl-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border transition-all focus:outline-none ${
                           !customer.isActive
                             ? "bg-[#f3f4f6] text-[#9ca3af] border-[#e5e7eb] cursor-not-allowed opacity-60"
                             : service.status === "active"
@@ -295,7 +308,7 @@ export function CustomerDetailDrawer({
                                 ? "bg-[#eff6ff] text-[#1e40af] border-[#bfdbfe] hover:bg-[#dbeafe] cursor-pointer"
                                 : service.status === "cancelled"
                                   ? "bg-[#fef2f2] text-[#991b1b] border-[#fecaca] hover:bg-[#fee2e2] cursor-pointer"
-                                  : "bg-[#fefce8] text-[#854d0e] border-[#fef08a] hover:bg-[#fef9c3] cursor-pointer"
+                                  : "bg-[#f3f4f6] text-[#374151] border-[#d1d5db] hover:bg-[#e5e7eb] cursor-pointer"
                         }`}
                         title={
                           customer.isActive
@@ -308,13 +321,17 @@ export function CustomerDetailDrawer({
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
                       </select>
+                      <ChevronDown
+                        size={11}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#6b7280]"
+                      />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-xs text-[#8c827a] py-3 italic bg-[#faf8f5] rounded-xl text-center border border-dashed border-[#ded5c8]">
+            <div className="text-xs text-[#8c827a] py-3 italic bg-[#faf8f5] rounded-lg text-center border border-dashed border-[#ded5c8]">
               No services recorded yet.
             </div>
           )}

@@ -78,19 +78,31 @@ export function ExpenseListTable({
       </div>
 
       {/* Table Wrap */}
-      <div className="table-wrap">
-        <table>
+      <div className="overflow-x-auto flex-1 min-h-0">
+        <table className="w-full border-collapse sm:min-w-[680px] text-left">
           <thead>
             <tr>
-              <th className="hidden sm:table-cell">Date</th>
-              <th>Expense & Notes</th>
-              <th className="hidden md:table-cell">Category</th>
-              <th className="hidden sm:table-cell">Payment Method</th>
-              <th>Amount</th>
-              <th className="text-right">Actions</th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Date
+              </th>
+              <th className="px-3 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Expense & Notes
+              </th>
+              <th className="hidden md:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Category
+              </th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Payment Method
+              </th>
+              <th className="px-2 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Amount
+              </th>
+              <th className="text-right px-2 sm:px-5 py-3 sm:py-3.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="align-middle">
             {paginatedItems.map(expense => {
               const categoryConfig = EXPENSE_CATEGORY_CONFIG[expense.category] || {
                 label: expense.category,
@@ -100,12 +112,14 @@ export function ExpenseListTable({
               };
 
               return (
-                <tr key={expense.id} className="transition-colors">
-                  <td className="hidden sm:table-cell whitespace-nowrap text-[#665e57] font-medium">
+                <tr key={expense.id} className="hover:bg-[#faf8f5]/60 transition-colors">
+                  <td className="hidden sm:table-cell whitespace-nowrap text-[#665e57] font-medium px-5 py-3.5 text-xs border-b border-[#eee7dc] align-middle">
                     {formatDate(expense.date)}
                   </td>
-                  <td>
-                    <b className="text-xs sm:text-sm">{expense.title}</b>
+                  <td className="px-3 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                    <b className="text-xs sm:text-sm font-semibold text-[#191c1d] block">
+                      {expense.title}
+                    </b>
                     {/* Mobile date and category subtitle */}
                     <div className="sm:hidden flex items-center gap-1.5 mt-0.5 flex-wrap">
                       <span className="text-[10px] text-[#8c827a]">{formatDate(expense.date)}</span>
@@ -121,12 +135,12 @@ export function ExpenseListTable({
                       </span>
                     </div>
                     {expense.notes && (
-                      <small className="truncate max-w-[140px] sm:max-w-md block text-[10px] sm:text-xs text-[#8c827a]">
+                      <small className="truncate max-w-[140px] sm:max-w-md block text-[10px] sm:text-xs text-[#8c827a] mt-0.5">
                         {expense.notes}
                       </small>
                     )}
                   </td>
-                  <td className="hidden md:table-cell">
+                  <td className="hidden md:table-cell px-5 py-3.5 text-xs border-b border-[#eee7dc] align-middle">
                     <span
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border"
                       style={{
@@ -138,15 +152,15 @@ export function ExpenseListTable({
                       {categoryConfig.label}
                     </span>
                   </td>
-                  <td className="hidden sm:table-cell text-[#665e57]">
+                  <td className="hidden sm:table-cell text-[#665e57] px-5 py-3.5 text-xs border-b border-[#eee7dc] align-middle">
                     {EXPENSE_PAYMENT_METHODS[expense.paymentMethod] || expense.paymentMethod}
                   </td>
-                  <td className="whitespace-nowrap">
+                  <td className="whitespace-nowrap px-2 sm:px-5 py-3 sm:py-3.5 text-xs border-b border-[#eee7dc] align-middle text-right sm:text-left">
                     <span className="font-sans tabular-nums font-bold text-xs sm:text-sm text-[#191c1d]">
                       -{formatMoney(expense.amount)}
                     </span>
                   </td>
-                  <td className="text-right">
+                  <td className="text-right px-2 sm:px-5 py-3 sm:py-3.5 border-b border-[#eee7dc] align-middle">
                     <div className="flex items-center justify-end gap-1">
                       <button
                         type="button"

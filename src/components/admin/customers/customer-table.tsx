@@ -70,11 +70,11 @@ export function CustomerTable({
         </div>
       </div>
 
-      <div className="table-wrap">
-        <table>
+      <div className="overflow-x-auto flex-1 min-h-0">
+        <table className="w-full border-collapse sm:min-w-[680px] text-left">
           <thead>
             <tr>
-              <th className="w-8 sm:w-10">
+              <th className="w-8 sm:w-10 px-3 sm:px-5 py-3 sm:py-3.5 bg-[#faf8f5] border-b border-[#eee7dc]">
                 <input
                   type="checkbox"
                   checked={isAllActiveSelected}
@@ -84,13 +84,19 @@ export function CustomerTable({
                   className="rounded border-[#ded7cb] text-[#855e2e] focus:ring-[#855e2e] cursor-pointer"
                 />
               </th>
-              <th>Customer</th>
-              <th className="hidden sm:table-cell">Service</th>
-              <th className="text-right sm:text-left">Status</th>
-              <th className="w-6 sm:w-10" />
+              <th className="px-2.5 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Customer
+              </th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Service
+              </th>
+              <th className="text-right sm:text-left px-2 sm:px-5 py-3 sm:py-3.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Status
+              </th>
+              <th className="w-5 sm:w-10 px-2 sm:px-5 py-3 sm:py-3.5 bg-[#faf8f5] border-b border-[#eee7dc]" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="align-middle">
             {paginatedItems.map(c => {
               const isSelected = selectedCustomerIds.includes(c.id);
               const servicesList = c.services || [];
@@ -101,11 +107,14 @@ export function CustomerTable({
                 <tr
                   key={c.id}
                   onClick={() => onSelectCustomer(c.id)}
-                  className={`cursor-pointer transition-colors ${
+                  className={`cursor-pointer hover:bg-[#faf8f5]/60 transition-colors ${
                     isSelected ? "bg-[#faf7f2]/60" : ""
                   }`}
                 >
-                  <td onClick={e => e.stopPropagation()} className="w-8 sm:w-10">
+                  <td
+                    onClick={e => e.stopPropagation()}
+                    className="w-8 sm:w-10 px-3 sm:px-5 py-3 sm:py-3.5 border-b border-[#eee7dc] align-middle"
+                  >
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -114,8 +123,10 @@ export function CustomerTable({
                       className="rounded border-[#ded7cb] text-[#855e2e] focus:ring-[#855e2e] cursor-pointer"
                     />
                   </td>
-                  <td>
-                    <b className="text-xs sm:text-sm">{c.name}</b>
+                  <td className="px-2.5 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                    <b className="text-xs sm:text-sm font-semibold text-[#191c1d] block">
+                      {c.name}
+                    </b>
                     {/* Mobile service subtitle */}
                     {s && (
                       <span className="sm:hidden text-[10px] text-[#855e2e] font-medium block truncate mt-0.5">
@@ -123,15 +134,17 @@ export function CustomerTable({
                         {servicesList.length > 1 && ` (+${servicesList.length - 1})`}
                       </span>
                     )}
-                    <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[160px] sm:max-w-none">
+                    <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[150px] sm:max-w-none mt-0.5">
                       {c.email}
                       {c.phone ? ` · ${c.phone}` : ""}
                     </small>
                   </td>
-                  <td className="hidden sm:table-cell">
+                  <td className="hidden sm:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
                     {s ? (
                       <div className="flex items-center">
-                        <b className="truncate max-w-[220px]">{s.name}</b>
+                        <b className="truncate max-w-[220px] font-semibold text-[#191c1d]">
+                          {s.name}
+                        </b>
                         {servicesList.length > 1 && (
                           <span
                             className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-[#f4ece1] text-[#855e2e] font-mono font-bold shrink-0"
@@ -149,23 +162,33 @@ export function CustomerTable({
                       </div>
                     )}
                   </td>
-                  <td className="text-right sm:text-left whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                        c.isActive
-                          ? "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]"
-                          : "bg-[#f4f4f5] text-[#71717a] border-[#e4e4e7]"
-                      }`}
-                    >
+                  <td className="text-right sm:text-left whitespace-nowrap px-2 sm:px-5 py-3 sm:py-3.5 text-xs border-b border-[#eee7dc] align-middle">
+                    <div className="flex items-center justify-end sm:justify-start">
+                      {/* Mobile: clean green/gray dot indicator */}
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          c.isActive ? "bg-[#059669]" : "bg-[#a1a1aa]"
+                        className={`sm:hidden inline-block w-2.5 h-2.5 rounded-full ${
+                          c.isActive ? "bg-[#10b981]" : "bg-[#9ca3af]"
                         }`}
+                        title={c.isActive ? "Active" : "Inactive"}
                       />
-                      {c.isActive ? "Active" : "Inactive"}
-                    </span>
+                      {/* Desktop: full pill badge */}
+                      <span
+                        className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold border ${
+                          c.isActive
+                            ? "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]"
+                            : "bg-[#f4f4f5] text-[#71717a] border-[#e4e4e7]"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            c.isActive ? "bg-[#059669]" : "bg-[#a1a1aa]"
+                          }`}
+                        />
+                        {c.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
                   </td>
-                  <td className="w-6 sm:w-10 text-right">
+                  <td className="w-5 sm:w-10 text-right px-2 sm:px-5 py-3 sm:py-3.5 border-b border-[#eee7dc] align-middle">
                     <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                   </td>
                 </tr>

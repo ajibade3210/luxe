@@ -27,7 +27,7 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
 
   if (!valuation) {
     return (
-      <div className="bg-white border border-[#eee7dc] rounded-2xl p-6 sm:p-7 relative overflow-hidden flex flex-col justify-between min-h-[170px] shadow-2xs animate-pulse">
+      <div className="bg-white border border-[#eee7dc] rounded-2xl p-4 sm:p-6 lg:p-7 relative overflow-hidden flex flex-col justify-between min-h-[170px] shadow-2xs animate-pulse">
         <div className="relative z-10 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
 
   return (
     <>
-      <div className="bg-white border border-[#eee7dc] rounded-2xl p-6 sm:p-7 relative flex flex-col justify-between min-h-[170px] shadow-2xs">
+      <div className="bg-white border border-[#eee7dc] rounded-2xl p-4 sm:p-6 lg:p-7 relative flex flex-col justify-between min-h-[170px] shadow-2xs">
         <div className="relative z-10 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-1.5">

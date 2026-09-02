@@ -14,6 +14,25 @@
 @import "../styles/admin.css";
 @import "../styles/footer.css";
 
+@theme {
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-low: var(--surface-container-low);
+  --color-surface-high: var(--surface-container-high);
+  --color-ink: var(--primary);
+  --color-border-subtle: var(--border-subtle);
+  --color-atelier-canvas: var(--atelier-canvas);
+  --color-atelier-warm: var(--atelier-warm);
+  --color-atelier-line: var(--atelier-line);
+  --color-atelier-subtle: var(--atelier-subtle);
+  --color-atelier-ink: var(--atelier-ink);
+  --color-atelier-body: var(--atelier-body);
+  --color-atelier-muted: var(--atelier-muted);
+  --color-atelier-accent: var(--atelier-accent);
+  --color-atelier-accent-hover: var(--atelier-accent-hover);
+  --font-serif: "Playfair Display", Georgia, serif;
+}
+
 /* ==========================================================================
    Interactive 3D Stationery Card Utilities
    ========================================================================== */

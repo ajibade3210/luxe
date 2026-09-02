@@ -32,6 +32,16 @@ export function CustomerBroadcastModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isSubmitting) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isSubmitting, onClose]);
+
   const totalCount = selectedCustomers.length;
   const withPhone = selectedCustomers.filter(c => c.phone && c.phone.trim().length > 0);
   const withEmail = selectedCustomers.filter(c => c.email && c.email.trim().length > 0);

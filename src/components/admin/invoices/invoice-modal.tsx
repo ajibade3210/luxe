@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConfirmModal } from "@/components/shared";
 import { useInvoiceForm } from "@/hooks/use-invoice-form";
 import type { InvoiceModalProps } from "@/types";
@@ -17,6 +17,16 @@ export function InvoiceModal({
   onToast,
   onInvoiceSaved,
 }: InvoiceModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   const [showSendEmailConfirm, setShowSendEmailConfirm] = useState(false);
   const [isResendAction, setIsResendAction] = useState(false);
 

@@ -110,3 +110,16 @@ export interface TableEmptyStateProps {
   colSpan?: number;
   className?: string;
 }
+
+export interface LogoutConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface SettingsSaveBarProps {
+  saving: boolean;
+  slug: string;
+  onSave: () => void;
+  bottomBarRef: import("react").RefObject<HTMLDivElement | null>;
+  isAtBottom: boolean;
+}

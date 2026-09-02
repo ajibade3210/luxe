@@ -4,8 +4,8 @@ import type { ProfileSecurityCardProps } from "@/types";
 
 export function ProfileSecurityCard({ email }: ProfileSecurityCardProps) {
   return (
-    <div className="bg-white border border-[#eae3d7] rounded-3xl p-6 sm:p-8 shadow-sm">
-      <div className="border border-[#ded7cb] bg-[#faf8f5] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="bg-white border border-[#eae3d7] rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm">
+      <div className="border border-[#ded7cb] bg-[#faf8f5] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-white border border-[#eae3d7] flex items-center justify-center shrink-0 shadow-2xs">
             <GoogleIcon className="w-5 h-5" />

@@ -2,7 +2,7 @@
 
 import { AlertCircle, Check, Loader2, X } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
 import type { CustomerAddModalProps, NewCustomerInput } from "@/types";
 
@@ -12,6 +12,16 @@ export function CustomerAddModal({
   onClose,
   onSubmit,
 }: CustomerAddModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isSubmitting) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isSubmitting, onClose]);
+
   const [formData, setFormData] = useState<NewCustomerInput>({
     name: "",
     email: "",

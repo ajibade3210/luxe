@@ -24,6 +24,11 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
   `shopwus-web` is a 100% standalone, independently deployed project. It MUST NOT depend on `shopwus-api` or any shared root monorepo packages. All types, DTOs, schemas, and API client interfaces must remain completely self-contained within this repository. No workspace symlinks, shared packages, or cross-project dependencies are permitted.
 
 - **DESIGN SYSTEM COMPLIANCE & CONSISTENCY (`DESIGN.md`):** Whatever we design must fit and strictly stick to our design system (tokens, components, typography, button variants, and spacing) documented in `DESIGN.md`. All visual and component decisions must treat `DESIGN.md` as the ground truth. If any requested change or new element deviates from our design system, you MUST warn the user before implementing.
+- **STRICT TAILWIND UTILITY FIRST (NO AD-HOC GLOBAL CSS):**
+  All UI styling across the application must strictly use **Tailwind CSS utility classes** and semantic design tokens defined in `@theme` in `src/app/globals.css`.
+  - **NEVER** write new global classes or arbitrary selectors in `admin.css` or separate stylesheets.
+  - All tables, sidebars, navigation headers, metric grids, modals, and buttons must use Tailwind utilities or standardized UI primitives (`<StatusBadge>`, `<TableCard>`, `<Metric>`, `<PageTitle>`).
+  - **NEVER** write non-standard arbitrary media query classes like `[max-width:750px]:*`. Always use official Tailwind breakpoint prefixes: `sm:` (640px), `md:` (768px), `lg:` (1024px), `xl:` (1280px), or `max-lg:` / `max-sm:`.
 - **COMPONENT INTERFACES IN TYPE SECTION:** Check for components with interface declarations and move the interface to the type section (`src/types/{domain}.ts`). No component prop interfaces or hook options should be declared inline in component files.
 - **STRICT ARCHITECTURAL PLACEMENT:** Moving forward, EVERYTHING in the codebase MUST be defined strictly in its appropriate designated section without exception:
   - Types & Models $\rightarrow$ `src/types/{domain}.ts` (exported via `src/types/index.ts`)
@@ -38,7 +43,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 - **DOMAIN-SEGMENTED TYPES (`src/types/`):** All domain entities, DTOs, request payloads, and shared models MUST be defined in their designated domain file under `src/types/` (e.g. `customer.ts`, `invoice.ts`, `lead.ts`, `analytics.ts`, `broadcast.ts`, `profile.ts`, `auth.ts`, `common.ts`, `landing.ts`) and exported via `src/types/index.ts`. Never dump arbitrary types into monolithic files or declare shared domain interfaces inline in UI components.
 - **ZERO `any` POLICY (Strict TypeScript):** `any` is strictly prohibited anywhere in the codebase. Always use explicit types from `@/types` or local component prop interfaces. For unknown payloads, use `unknown` with explicit narrowing. All function signatures, props, callbacks, and state must have complete, explicit types.
 - **SERVICE/REPOSITORY ABSTRACTION:** Architect all state and data flows behind an abstraction layer under `src/services/api/` (e.g. `invoice.service.ts`, `leads.service.ts`, `customer.service.ts`) so mock data can be swapped for real API calls later with zero UI refactoring.
-- **RESPONSIVE DESIGN:** Design layouts to be responsive across Mobile (320px+), Tablet (768px+), and Desktop (1024px+) breakpoints from the start.
+- **RESPONSIVE DESIGN:** Design layouts to be responsive across Mobile (320px+), Tablet (768px+), and Desktop (1024px+) breakpoints using Tailwind utilities (`sm:`, `md:`, `lg:`).
 - **KEEP DESIGNS SIMPLE:** Avoid over-engineering or adding unrequested features.
 - **NO ASSUMPTIONS:** Never assume or hallucinate requirements; ask clarifying questions when something isn't clear.
 - **NEVER SKIP CHECKS:** Do NOT wait to be asked. Do NOT skip because the change "looks small".

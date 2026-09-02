@@ -12,6 +12,7 @@ import {
 import { INVOICE_PAGE_CONFIG, INVOICE_STATUS_FILTERS } from "@/constants";
 import type { InvoiceStatusFilter, InvoiceTableProps } from "@/types";
 import { formatDate, formatMoney, formatStatusLabel } from "@/utils";
+import { StatusBadge } from "../common/status-badge";
 import { TableEmptyState } from "../common/table-empty-state";
 
 export function InvoiceTable({
@@ -68,56 +69,96 @@ export function InvoiceTable({
         </div>
       </div>
 
-      <div className="table-wrap">
-        <table>
+      <div className="overflow-x-auto flex-1 min-h-0">
+        <table className="w-full border-collapse sm:min-w-[680px] text-left">
           <thead>
             <tr>
-              <th className="hidden sm:table-cell">Invoice #</th>
-              <th>Customer</th>
-              <th className="hidden md:table-cell">Date Issued</th>
-              <th className="hidden sm:table-cell">Due Date</th>
-              <th>Amount</th>
-              <th className="text-right sm:text-left">Status</th>
-              <th className="hidden sm:table-cell text-right">Actions</th>
-              <th className="sm:hidden w-6" />
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Invoice #
+              </th>
+              <th className="px-3 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Customer
+              </th>
+              <th className="hidden md:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Date Issued
+              </th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Due Date
+              </th>
+              <th className="px-2 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Amount
+              </th>
+              <th className="text-right sm:text-left px-2 sm:px-5 py-3 sm:py-3.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Status
+              </th>
+              <th className="hidden sm:table-cell text-right px-5 py-3.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Actions
+              </th>
+              <th className="sm:hidden w-5 px-2 sm:px-5 py-3 sm:py-3.5 bg-[#faf8f5] border-b border-[#eee7dc]" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="align-middle">
             {paginatedItems.map(inv => (
               <tr
                 key={inv.id}
                 onClick={() => onSelectInvoice(inv)}
-                className="cursor-pointer transition-colors"
+                className="cursor-pointer hover:bg-[#faf8f5]/60 transition-colors"
               >
-                <td className="hidden sm:table-cell">
-                  <b className="font-mono text-xs text-[#191c1d] block">{inv.invoiceNumber}</b>
-                  <small className="text-[#8c827a]">
+                <td className="hidden sm:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  <b className="font-mono text-xs font-semibold text-[#191c1d] block">
+                    {inv.invoiceNumber}
+                  </b>
+                  <small className="text-[#8c827a] text-[11px] mt-0.5 block">
                     {inv.items.length} {inv.items.length === 1 ? "item" : "items"}
                   </small>
                 </td>
-                <td>
-                  <b className="text-xs sm:text-sm text-[#191c1d] block">{inv.customerName}</b>
+                <td className="px-3 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  <b className="text-xs sm:text-sm font-semibold text-[#191c1d] block">
+                    {inv.customerName}
+                  </b>
                   {/* Mobile Invoice # & item count */}
-                  <span className="sm:hidden font-mono text-[10px] text-[#855e2e] block">
+                  <span className="sm:hidden font-mono text-[10px] text-[#855e2e] block mt-0.5">
                     {inv.invoiceNumber} · {inv.items.length} item{inv.items.length === 1 ? "" : "s"}
                   </span>
-                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[140px] sm:max-w-none">
+                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[140px] sm:max-w-none mt-0.5">
                     {inv.customerEmail}
                   </small>
                 </td>
-                <td className="hidden md:table-cell">{formatDate(inv.issueDate)}</td>
-                <td className="hidden sm:table-cell">{formatDate(inv.dueDate)}</td>
-                <td className="whitespace-nowrap">
+                <td className="hidden md:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  {formatDate(inv.issueDate)}
+                </td>
+                <td className="hidden sm:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  {formatDate(inv.dueDate)}
+                </td>
+                <td className="whitespace-nowrap px-2 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
                   <span className="font-sans font-bold text-xs sm:text-sm text-[#191c1d] tabular-nums">
                     {formatMoney(inv.total, inv.currency || "NGN")}
                   </span>
                 </td>
-                <td className="text-right sm:text-left whitespace-nowrap">
-                  <span className={`status ${inv.status} text-[10px] px-2 py-0.5`}>
+                <td className="text-right sm:text-left whitespace-nowrap px-2 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  {/* Mobile: clean text label */}
+                  <span
+                    className={`sm:hidden text-[11px] font-semibold capitalize ${
+                      inv.status === "paid"
+                        ? "text-[#047857]"
+                        : inv.status === "sent"
+                        ? "text-[#b45309]"
+                        : inv.status === "cancelled"
+                        ? "text-[#b91c1c]"
+                        : "text-[#6b7280]"
+                    }`}
+                  >
                     {formatStatusLabel(inv.status)}
                   </span>
+                  {/* Desktop: standard StatusBadge pill */}
+                  <span className="hidden sm:inline-block">
+                    <StatusBadge status={inv.status} />
+                  </span>
                 </td>
-                <td className="hidden sm:table-cell text-right" onClick={e => e.stopPropagation()}>
+                <td
+                  className="hidden sm:table-cell text-right px-5 py-3.5 border-b border-[#eee7dc] align-middle"
+                  onClick={e => e.stopPropagation()}
+                >
                   <div className="inline-flex items-center gap-1.5 justify-end">
                     {inv.status === "sent" && (
                       <button
@@ -157,7 +198,7 @@ export function InvoiceTable({
                     </button>
                   </div>
                 </td>
-                <td className="sm:hidden w-6 text-right">
+                <td className="sm:hidden w-5 text-right px-2 py-3 border-b border-[#eee7dc] align-middle">
                   <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                 </td>
               </tr>

@@ -3,6 +3,7 @@
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import type { LeadFilterStatus, LeadTableProps } from "@/types";
 import { formatDate, formatStatusLabel } from "@/utils";
+import { StatusBadge } from "../common/status-badge";
 import { TableEmptyState } from "../common/table-empty-state";
 
 export function LeadTable({
@@ -69,23 +70,37 @@ export function LeadTable({
           </div>
         </div>
       </div>
-      <div className="table-wrap">
-        <table>
+      <div className="overflow-x-auto flex-1 min-h-0">
+        <table className="w-full border-collapse sm:min-w-[680px] text-left">
           <thead>
             <tr>
-              <th>Name</th>
-              <th className="hidden sm:table-cell">Service requested</th>
-              <th className="hidden sm:table-cell">Estimated date</th>
-              <th className="text-right sm:text-left">Status</th>
-              <th className="w-6 sm:w-10" />
+              <th className="px-3 sm:px-5 py-3 sm:py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Name
+              </th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Service requested
+              </th>
+              <th className="hidden sm:table-cell px-5 py-3.5 text-left text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Estimated date
+              </th>
+              <th className="text-right sm:text-left px-2 sm:px-5 py-3 sm:py-3.5 text-[10px] font-bold tracking-[0.08em] uppercase text-[#6b7280] bg-[#faf8f5] border-b border-[#eee7dc]">
+                Status
+              </th>
+              <th className="w-5 sm:w-10 px-2 sm:px-5 py-3 sm:py-3.5 bg-[#faf8f5] border-b border-[#eee7dc]" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="align-middle">
             {paginatedItems.map(lead => (
-              <tr key={lead.id} onClick={() => onSelectLead(lead.id)} className="cursor-pointer">
-                <td>
+              <tr
+                key={lead.id}
+                onClick={() => onSelectLead(lead.id)}
+                className="cursor-pointer hover:bg-[#faf8f5]/60 transition-colors"
+              >
+                <td className="px-3 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <b className="text-xs sm:text-sm">{lead.name}</b>
+                    <b className="text-xs sm:text-sm font-semibold text-[#191c1d] block">
+                      {lead.name}
+                    </b>
                     {lead.isExistingCustomer && (
                       <span className="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
                         Customer
@@ -97,11 +112,11 @@ export function LeadTable({
                     {lead.service}
                     {lead.services && lead.services.length > 1 && ` (+${lead.services.length - 1})`}
                   </div>
-                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[160px] sm:max-w-none">
+                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[150px] sm:max-w-none mt-0.5">
                     {lead.email}
                   </small>
                 </td>
-                <td className="hidden sm:table-cell">
+                <td className="hidden sm:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
                   <div className="flex items-center">
                     <span className="font-semibold text-[#191c1d]">{lead.service}</span>
                     {lead.services && lead.services.length > 1 && (
@@ -114,13 +129,32 @@ export function LeadTable({
                     )}
                   </div>
                 </td>
-                <td className="hidden sm:table-cell">{formatDate(lead.eventDate)}</td>
-                <td className="text-right sm:text-left whitespace-nowrap">
-                  <span className={`status ${lead.status} text-[10px] px-2 py-0.5`}>
+                <td className="hidden sm:table-cell px-5 py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  {formatDate(lead.eventDate)}
+                </td>
+                <td className="text-right sm:text-left whitespace-nowrap px-2 sm:px-5 py-3 sm:py-3.5 text-xs text-[#444748] border-b border-[#eee7dc] align-middle">
+                  {/* Mobile: clean text label */}
+                  <span
+                    className={`sm:hidden text-[11px] font-semibold capitalize ${
+                      lead.status === "new"
+                        ? "text-[#b45309]"
+                        : lead.status === "contacted"
+                        ? "text-[#855e2e]"
+                        : lead.status === "qualified"
+                        ? "text-[#0f766e]"
+                        : lead.status === "converted"
+                        ? "text-[#047857]"
+                        : "text-[#6b7280]"
+                    }`}
+                  >
                     {formatStatusLabel(lead.status)}
                   </span>
+                  {/* Desktop: standard StatusBadge pill */}
+                  <span className="hidden sm:inline-block">
+                    <StatusBadge status={lead.status} />
+                  </span>
                 </td>
-                <td className="w-6 sm:w-10 text-right">
+                <td className="w-5 sm:w-10 text-right px-2 sm:px-5 py-3 sm:py-3.5 border-b border-[#eee7dc] align-middle">
                   <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                 </td>
               </tr>

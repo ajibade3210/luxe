@@ -1,4 +1,5 @@
 export * from "./queries";
+export { useCurrentStudio } from "./use-current-studio";
 export { useCustomers } from "./use-customers";
 export { useDebounce } from "./use-debounce";
 export { useExpenses } from "./use-expenses";
