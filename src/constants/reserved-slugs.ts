@@ -20,6 +20,7 @@ export const RESERVED_SLUGS = [
   "analytics",
   "valuation",
   "valuation-calculator",
+  "invoice-generator",
   "broadcasts",
   "feedback",
   "pricing",

@@ -5,6 +5,7 @@ export * from "./broadcast.service";
 export * from "./customer.service";
 export * from "./expense.service";
 export * from "./feedback.service";
+export * from "./guest-invoice.service";
 export * from "./invoice.service";
 export * from "./leads.service";
 export * from "./media.service";

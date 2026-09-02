@@ -39,6 +39,11 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
     title: "Resources",
     links: [
       {
+        label: "Free Invoice Generator",
+        href: "/invoice-generator",
+        badge: "Free",
+      },
+      {
         label: "Business Valuation Calculator",
         href: "/valuation-calculator",
         badge: "Free",

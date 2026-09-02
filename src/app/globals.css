@@ -69,3 +69,29 @@
   -webkit-transform: rotateY(180deg);
   z-index: 1;
 }
+
+/* ==========================================================================
+   Print Invoice Stylesheet
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #invoice-printable-card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}

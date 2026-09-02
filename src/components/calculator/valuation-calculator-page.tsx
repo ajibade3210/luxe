@@ -29,9 +29,9 @@ export function ValuationCalculatorPage() {
   }, [inputs]);
 
   return (
-    <div className="min-h-screen bg-white text-[#1f1d1a]">
+    <div className="min-h-screen bg-[var(--background)] text-[#1f1d1a]">
       {/* Top Header Navigation */}
-      <header className="border-b border-[#eee7dc] bg-white/90 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-[#eee7dc] bg-[var(--background)]/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <a

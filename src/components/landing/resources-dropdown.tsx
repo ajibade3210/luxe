@@ -80,6 +80,17 @@ export function ResourcesDropdown() {
 
           <div className="relative rounded-xl bg-white text-[#1f1d1a] border border-[#eee7dc] shadow-xl p-1.5 space-y-0.5">
             <a
+              href="/invoice-generator"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between gap-4 px-3 py-2 rounded-lg hover:bg-[#faf7f2] text-xs font-medium text-[#1f1d1a] transition-colors whitespace-nowrap"
+            >
+              <span>Free invoice generator</span>
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] whitespace-nowrap shrink-0">
+                Free Tool
+              </span>
+            </a>
+
+            <a
               href="/valuation-calculator"
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-between gap-4 px-3 py-2 rounded-lg hover:bg-[#faf7f2] text-xs font-medium text-[#1f1d1a] transition-colors whitespace-nowrap"

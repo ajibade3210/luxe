@@ -6,6 +6,7 @@ export * from "./common";
 export * from "./customer";
 export * from "./expense";
 export * from "./feedback";
+export * from "./guest-invoice";
 export * from "./invoice";
 export * from "./landing";
 export * from "./lead";

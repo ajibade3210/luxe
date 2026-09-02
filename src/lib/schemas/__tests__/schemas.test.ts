@@ -135,6 +135,7 @@ describe("Runtime Schema Validation (Zod)", () => {
       expect(isReservedSlug("leads")).toBe(true);
       expect(isReservedSlug("login")).toBe(true);
       expect(isReservedSlug("signup")).toBe(true);
+      expect(isReservedSlug("invoice-generator")).toBe(true);
       expect(isReservedSlug("custom-atelier-2026")).toBe(false);
     });
   });
