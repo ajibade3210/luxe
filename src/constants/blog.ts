@@ -137,7 +137,7 @@ export const BLOG_POSTS: BlogPost[] = [
       title: "Create Your Digital Shop in 60 Seconds",
       description:
         "Build your interactive 3D stationery card, showcase signature work, and receive qualified leads on autopilot.",
-      buttonLabel: "Start 14-Day Free Trial",
+      buttonLabel: "Start My Free Trial Now",
       buttonHref: "/signup",
     },
   },

@@ -48,7 +48,7 @@ export function ValuationShopwusHelp() {
             href="/signup"
             className="bg-[#191c1d] hover:bg-black !text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer flex items-center gap-2"
           >
-            <span>Start 14-Day Free Trial</span>
+            <span>Start My Free Trial Now</span>
             <ArrowRight size={14} />
           </a>
           <a

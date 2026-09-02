@@ -132,7 +132,7 @@ export const LANDING_PRICING_PLANS: readonly PricingPlan[] = [
       "WhatsApp orders & CRM lead intake",
       "Cancel anytime",
     ],
-    ctaLabel: "Start 14-Day Free Trial",
+    ctaLabel: "Start My Free Trial Now",
     termsNote: "Free for 14 days, then ₦1,600/month. Cancel anytime. Terms apply.",
   },
   {

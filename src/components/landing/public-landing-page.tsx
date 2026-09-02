@@ -50,7 +50,7 @@ export function PublicLandingPage() {
           </p>
           <div className="hero-ctas">
             <a className="dark-button bg-[#000000] border-[#000000]" href="/signup">
-              Start 14-day free trial <ArrowRight size={15} />
+              Start my free trial now <ArrowRight size={15} />
             </a>
           </div>
         </div>
