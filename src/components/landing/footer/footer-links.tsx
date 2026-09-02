@@ -11,13 +11,13 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
       { label: "Contracts & Milestones", href: "/vendor/customers" },
       { label: "Live Run of Show", href: "/vendor/settings" },
       { label: "Multi-Channel Sync", href: "/vendor/settings" },
-      { label: "Client VIP Portals", href: "/elan-events" },
+      { label: "Client VIP Portals", href: "/elan-stores" },
     ],
   },
   {
     title: "Solutions",
     links: [
-      { label: "Luxury Wedding Ateliers", href: "/elan-events" },
+      { label: "Luxury Wedding Ateliers", href: "/elan-stores" },
       { label: "Experiential Agencies", href: "#features" },
       { label: "Private Concierge & VIP", href: "#workflow" },
       { label: "Floral & Spatial Designers", href: "#features" },

@@ -246,8 +246,8 @@ export const FEATURED_ORGANIZATIONS: readonly {
 }[] = [
   {
     id: "org-1",
-    name: "Élan Events",
-    slug: "elan-events",
+    name: "Élan Stores",
+    slug: "elan-stores",
     eyebrow: "Luxury Event Studio · Lagos",
     tagline: "We design unforgettable weddings, corporate events, and private celebrations.",
     logoUrl:

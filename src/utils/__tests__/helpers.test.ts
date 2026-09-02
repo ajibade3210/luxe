@@ -17,7 +17,7 @@ describe("helper utilities", () => {
   });
 
   it("slugifies text into url-friendly strings", () => {
-    expect(slugify("Elan Events & Co.")).toBe("elan-events-co-");
+    expect(slugify("Elan Stores & Co.")).toBe("elan-stores-co-");
     expect(slugify("Shopwus Studio")).toBe("shopwus-studio");
   });
 
@@ -32,10 +32,10 @@ describe("helper utilities", () => {
       );
       expect(sanitizeHandle("instagram.com/elan_events", "instagram.com/")).toBe("elan_events");
       expect(sanitizeHandle("https://facebook.com/elevents", "facebook.com/")).toBe("elevents");
-      expect(sanitizeHandle("https://linkedin.com/in/elan-events", "linkedin.com/in/")).toBe(
-        "elan-events"
+      expect(sanitizeHandle("https://linkedin.com/in/elan-stores", "linkedin.com/in/")).toBe(
+        "elan-stores"
       );
-      expect(sanitizeHandle("company/elan-events", "linkedin.com/in/")).toBe("elan-events");
+      expect(sanitizeHandle("company/elan-stores", "linkedin.com/in/")).toBe("elan-stores");
       expect(sanitizeHandle("https://www.youtube.com/@JourneyWithIniski", "youtube.com/@")).toBe(
         "JourneyWithIniski"
       );
@@ -78,7 +78,7 @@ describe("helper utilities", () => {
       expect(isValidUrl("elanevents.com")).toBe(true);
       expect(isValidUrl("www.elanevents.com")).toBe(true);
       expect(isValidUrl("https://elanevents.com")).toBe(true);
-      expect(isValidUrl("http://shop.elan-events.ng/catalog")).toBe(true);
+      expect(isValidUrl("http://shop.elan-stores.ng/catalog")).toBe(true);
       expect(isValidUrl("studio.design")).toBe(true);
       expect(isValidUrl("http://localhost:3000/settingszx")).toBe(true);
       expect(isValidUrl("localhost:3000")).toBe(true);

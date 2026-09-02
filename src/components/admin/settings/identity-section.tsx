@@ -204,7 +204,7 @@ export function IdentitySection({
               <input
                 value={slug}
                 onChange={e => setSlug(slugify(e.target.value))}
-                placeholder="e.g. elan-events"
+                placeholder="e.g. elan-stores"
                 className="w-full rounded-lg border border-[#d1d5db] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs pr-24"
               />
               {slugStatus === "checking" && (

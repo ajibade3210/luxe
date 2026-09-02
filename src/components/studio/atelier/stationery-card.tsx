@@ -196,7 +196,7 @@ export function StationeryCard({
                 isDark ? "text-white/70" : "text-[#78716c]"
               }`}
             >
-              ID: {profile.slug?.toUpperCase() || "ELAN-EVENTS"}
+              ID: {profile.slug?.toUpperCase() || "elan-stores"}
             </span>
           </div>
         </div>

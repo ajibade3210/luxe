@@ -197,7 +197,7 @@ export function SignupPage() {
                   type="text"
                   value={studioName}
                   onChange={e => setStudioName(e.target.value)}
-                  placeholder="e.g. Élan Events Atelier"
+                  placeholder="e.g. Élan Store"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#94a3b8] outline-none"
                 />
               </div>
@@ -319,7 +319,7 @@ export function SignupPage() {
             <div className="bg-white rounded-2xl p-5 border border-[#e2e8f0] shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <strong className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
-                  Élan Events
+                  Élan Stores
                 </strong>
                 <span className="text-[10px] bg-[#ecfdf5] text-[#059669] px-2 py-0.5 rounded-full font-medium">
                   Verified shop

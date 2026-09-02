@@ -31,6 +31,45 @@ interface AuthResponseDto {
   user: UserDto;
   business?: BusinessDto | null;
   studio?: BusinessDto | null;
+  accessToken?: string;
+  refreshToken?: string;
+  token?: string;
+}
+
+export function saveAuthTokens(accessToken?: string, refreshToken?: string): void {
+  if (typeof window === "undefined") return;
+  if (accessToken) {
+    localStorage.setItem(STORAGE_KEYS.accessToken, accessToken);
+    const isSecure = window.location.protocol === "https:";
+    // Sync cookie on frontend domain for Next.js Edge Middleware (proxy.ts)
+    // biome-ignore lint/suspicious/noDocumentCookie: client auth cookie for Next.js Edge proxy
+    document.cookie = `${STORAGE_KEYS.accessToken}=${encodeURIComponent(accessToken)}; path=/; max-age=86400; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+  }
+  if (refreshToken) {
+    localStorage.setItem(STORAGE_KEYS.refreshToken, refreshToken);
+  }
+}
+
+export function getAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  const stored = localStorage.getItem(STORAGE_KEYS.accessToken);
+  if (stored) return stored;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${STORAGE_KEYS.accessToken}=([^;]+)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+export function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(STORAGE_KEYS.refreshToken);
+}
+
+export function clearAuthTokens(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEYS.accessToken);
+  localStorage.removeItem(STORAGE_KEYS.refreshToken);
+  const isSecure = window.location.protocol === "https:";
+  // biome-ignore lint/suspicious/noDocumentCookie: clear client auth cookie
+  document.cookie = `${STORAGE_KEYS.accessToken}=; path=/; max-age=0; SameSite=Lax${isSecure ? "; Secure" : ""}`;
 }
 
 interface MeResponseDto {
@@ -138,8 +177,11 @@ export async function updateUserProfile(data: {
 }
 
 export async function signIn(email: string, password: string): Promise<UserSession> {
-  // Tokens are delivered as HttpOnly cookies by the API — no token in the response body
   const authData = await apiClient.post<AuthResponseDto>("/auth/login", { email, password });
+
+  if (authData.accessToken) {
+    saveAuthTokens(authData.accessToken, authData.refreshToken);
+  }
 
   const fullName =
     [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
@@ -174,6 +216,10 @@ export async function signInWithGoogle(options?: {
     mode: "signin",
   });
 
+  if (authData.accessToken) {
+    saveAuthTokens(authData.accessToken, authData.refreshToken);
+  }
+
   const fullName =
     [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
     authData.user.email;
@@ -206,6 +252,10 @@ export async function signUpWithGoogle(data?: {
     mode: "signup",
   });
 
+  if (authData.accessToken) {
+    saveAuthTokens(authData.accessToken, authData.refreshToken);
+  }
+
   const fullName =
     [authData.user.firstName, authData.user.lastName].filter(Boolean).join(" ") ||
     authData.user.email;
@@ -223,11 +273,13 @@ export async function signUpWithGoogle(data?: {
 
 export async function clearSession(): Promise<void> {
   try {
-    // Server will expire the HttpOnly auth cookies via Set-Cookie headers
-    await apiClient.post("/auth/logout", {});
+    const refreshToken = getRefreshToken();
+    await apiClient.post("/auth/logout", { refreshToken });
   } catch {
     // Purge local session state even if server is unreachable
   }
+
+  clearAuthTokens();
 
   if (typeof window !== "undefined") {
     localStorage.removeItem(STORAGE_KEYS.session);

@@ -19,6 +19,8 @@ export const STORAGE_KEYS = {
   profile: "shopwus_business_profile",
   leads: "shopwus_leads_data",
   session: "shopwus_auth_session",
+  accessToken: "shopwus_access_token",
+  refreshToken: "shopwus_refresh_token",
   autoQuoteModalSeen: "shopwus_auto_quote_modal_seen",
 } as const;
 

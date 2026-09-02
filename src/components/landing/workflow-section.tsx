@@ -141,13 +141,13 @@ function CreatePreviewCard() {
           <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#191c1d] flex items-center justify-center shadow-xs shrink-0">
             <img
               src="https://cdn.accessa.ng/test/accessa/louis-dike-ayskyj/images/c95e52aa48bf676ed0d53f36bb957b81.png"
-              alt="Élan Events logo"
+              alt="Store logo"
               className="w-full h-full object-cover"
             />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h4 className="text-sm font-semibold text-[#191c1d]">Élan Events</h4>
+              <h4 className="text-sm font-semibold text-[#191c1d]">Élan Stores</h4>
               <Shield size={12} className="text-[#855e2e]" />
             </div>
             <p className="text-[11px] text-[#5c5f60]">Luxury Wedding & Gala Atelier</p>

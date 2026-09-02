@@ -61,8 +61,13 @@ function addRefreshSubscriber(resolve: () => void, reject: (err: ApiError) => vo
 function handleSessionExpired() {
   if (typeof window !== "undefined") {
     localStorage.removeItem(STORAGE_KEYS.session);
+    localStorage.removeItem(STORAGE_KEYS.accessToken);
+    localStorage.removeItem(STORAGE_KEYS.refreshToken);
+    const isSecure = window.location.protocol === "https:";
     // biome-ignore lint/suspicious/noDocumentCookie: clear session cookie on expiry
-    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax`;
+    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+    // biome-ignore lint/suspicious/noDocumentCookie: clear access token cookie on expiry
+    document.cookie = `${STORAGE_KEYS.accessToken}=; path=/; max-age=0; SameSite=Lax${isSecure ? "; Secure" : ""}`;
     if (
       !isRedirectingToLogin &&
       !window.location.pathname.startsWith("/login") &&
@@ -106,13 +111,23 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   const hasBody = customConfig.body !== undefined && customConfig.body !== null;
   const isFormData = customConfig.body instanceof FormData;
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     ...(hasBody && !isFormData ? { "Content-Type": "application/json" } : {}),
-    ...customConfig.headers,
+    ...(customConfig.headers as Record<string, string>),
   };
 
-  // credentials: "include" ensures the browser automatically sends the HttpOnly
-  // shopwus_access_token cookie on every cross-origin request to the API.
+  // Automatically inject Bearer access token if present
+  if (typeof window !== "undefined" && !headers.Authorization && !headers.authorization) {
+    const token =
+      localStorage.getItem(STORAGE_KEYS.accessToken) ||
+      document.cookie.match(new RegExp(`(?:^|;\\s*)${STORAGE_KEYS.accessToken}=([^;]+)`))?.[1];
+    if (token) {
+      headers.Authorization = `Bearer ${decodeURIComponent(token)}`;
+    }
+  }
+
+  // credentials: "include" ensures the browser also sends HttpOnly cookies
+  // when available, providing seamless dual header/cookie support.
   const config: RequestInit = {
     ...customConfig,
     headers,
@@ -123,33 +138,50 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     const response = await fetch(url, config);
 
     // Handle 401 Unauthorized with automatic token refresh attempt.
-    // The refresh request sends the HttpOnly shopwus_refresh_token cookie automatically.
     if (response.status === 401 && !endpoint.includes("/auth/")) {
       if (!isRefreshing) {
         isRefreshing = true;
 
         try {
+          const storedRefreshToken =
+            typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEYS.refreshToken) : null;
+
           const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}), // body token omitted; API reads HttpOnly cookie
+            body: JSON.stringify({ refreshToken: storedRefreshToken || undefined }),
             credentials: "include",
           });
 
           if (refreshRes.ok) {
+            const refreshPayload = (await refreshRes.json()) as {
+              data?: { accessToken?: string; refreshToken?: string };
+            };
+            const newTokens = refreshPayload?.data;
+            if (newTokens?.accessToken && typeof window !== "undefined") {
+              localStorage.setItem(STORAGE_KEYS.accessToken, newTokens.accessToken);
+              if (newTokens.refreshToken) {
+                localStorage.setItem(STORAGE_KEYS.refreshToken, newTokens.refreshToken);
+              }
+              const isSecure = window.location.protocol === "https:";
+              // biome-ignore lint/suspicious/noDocumentCookie: update access token cookie
+              document.cookie = `${STORAGE_KEYS.accessToken}=${encodeURIComponent(newTokens.accessToken)}; path=/; max-age=86400; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+              headers.Authorization = `Bearer ${newTokens.accessToken}`;
+            }
+
             onRefreshed();
             isRefreshing = false;
-            // Retry original request — new access cookie already set by the refresh response
-            const retryRes = await fetch(url, config);
+            // Retry original request with updated token
+            const retryRes = await fetch(url, { ...config, headers });
             return handleResponse<T>(retryRes);
           }
 
-          // Refresh failed — clear cookies server-side by calling logout, then redirect
+          // Refresh failed — clear cookies & tokens server-side by calling logout, then redirect
           const sessionErr = new ApiError("Session expired. Please sign in again.", 401);
           await fetch(`${API_BASE_URL}/auth/logout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
+            body: JSON.stringify({ refreshToken: storedRefreshToken || undefined }),
             credentials: "include",
           }).catch(() => {});
           onRefreshFailed(sessionErr);
@@ -170,7 +202,13 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
         return new Promise<T>((resolve, reject) => {
           addRefreshSubscriber(async () => {
             try {
-              const retryRes = await fetch(url, config);
+              if (typeof window !== "undefined") {
+                const refreshedToken = localStorage.getItem(STORAGE_KEYS.accessToken);
+                if (refreshedToken) {
+                  headers.Authorization = `Bearer ${refreshedToken}`;
+                }
+              }
+              const retryRes = await fetch(url, { ...config, headers });
               resolve(await handleResponse<T>(retryRes));
             } catch (err) {
               reject(err);

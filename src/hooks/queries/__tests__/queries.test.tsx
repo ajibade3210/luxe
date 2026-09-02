@@ -69,7 +69,7 @@ describe("React Query Domain Hooks & Cache Invalidation", () => {
   it("deduplicates concurrent queries for the same resource", async () => {
     const mockStudio = {
       id: "studio-1",
-      slug: "elan-events",
+      slug: "elan-stores",
       name: "Elan Events",
       services: [],
     };
@@ -78,14 +78,18 @@ describe("React Query Domain Hooks & Cache Invalidation", () => {
 
     const wrapper = createWrapper(queryClient);
 
-    const { result: hook1 } = renderHook(() => useStudioProfileQuery(), { wrapper });
-    const { result: hook2 } = renderHook(() => useStudioProfileQuery(), { wrapper });
+    const { result: hook1 } = renderHook(() => useStudioProfileQuery(), {
+      wrapper,
+    });
+    const { result: hook2 } = renderHook(() => useStudioProfileQuery(), {
+      wrapper,
+    });
 
     await waitFor(() => expect(hook1.current.isSuccess).toBe(true));
     await waitFor(() => expect(hook2.current.isSuccess).toBe(true));
 
-    expect(hook1.current.data?.slug).toBe("elan-events");
-    expect(hook2.current.data?.slug).toBe("elan-events");
+    expect(hook1.current.data?.slug).toBe("elan-stores");
+    expect(hook2.current.data?.slug).toBe("elan-stores");
     expect(getSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -131,7 +135,14 @@ describe("React Query Domain Hooks & Cache Invalidation", () => {
       dueDate: "2026-09-06",
       status: "draft",
       currency: "NGN",
-      items: [{ description: "Consultation", quantity: 1, unitPrice: 50000, total: 50000 }],
+      items: [
+        {
+          description: "Consultation",
+          quantity: 1,
+          unitPrice: 50000,
+          total: 50000,
+        },
+      ],
       subtotal: 50000,
       taxRate: 0,
       taxAmount: 0,

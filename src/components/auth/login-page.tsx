@@ -191,7 +191,7 @@ export function LoginPage() {
                 <div className="w-6 h-6 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-[10px] font-bold">
                   É
                 </div>
-                <strong className="text-xs font-bold text-[#191c1d]">Élan Events Atelier</strong>
+                <strong className="text-xs font-bold text-[#191c1d]">Élan Stores</strong>
               </div>
               <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                 <CheckCircle2 size={11} /> Invoice Paid

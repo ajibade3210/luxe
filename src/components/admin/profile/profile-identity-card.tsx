@@ -93,9 +93,7 @@ export function ProfileIdentityCard({
           </div>
           <div>
             <b className="text-base text-[#191c1d] font-bold block">{name || "Studio Director"}</b>
-            <span className="text-xs text-[#5c5f60] mt-0.5 block">
-              {studioName || "Élan Events"}
-            </span>
+            <span className="text-xs text-[#5c5f60] mt-0.5 block">{studioName}</span>
           </div>
         </div>
 
