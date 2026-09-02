@@ -66,17 +66,17 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
   }, [path]);
 
   const navLinkClass = (isActive: boolean) =>
-    `flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded transition-all w-full cursor-pointer text-decoration-none ${
+    `flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer text-decoration-none ${
       isActive
-        ? "bg-white text-[#1f2937] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
-        : "text-[#6b7280] hover:text-[#1f2937] hover:bg-[#edeeef]"
+        ? "bg-white text-[#191c1d] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+        : "text-[#6b7280] hover:text-[#191c1d] hover:bg-[#edeeef]"
     }`;
 
   return (
     <>
       <aside
         ref={sidebarRef}
-        className={`fixed top-0 left-0 bottom-0 h-screen max-h-screen w-[240px] flex flex-col bg-[#f3f4f5] border-r border-[#e5e7eb] p-[28px_18px_22px] z-40 transition-transform duration-200 max-[750px]:w-[280px] max-[750px]:z-50 max-[750px]:-translate-x-full ${
+        className={`fixed top-0 left-0 bottom-0 h-screen max-h-screen w-[240px] flex flex-col bg-[#f3f4f5] border-r border-[#e5e7eb] p-[28px_18px_22px] z-40 transition-transform duration-200 font-sans max-[750px]:w-[280px] max-[750px]:z-50 max-[750px]:-translate-x-full ${
           open ? "max-[750px]:!translate-x-0 max-[750px]:shadow-[10px_0_30px_rgba(0,0,0,0.12)]" : ""
         }`}
         onClick={e => e.stopPropagation()}
@@ -84,7 +84,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
         <div className="flex justify-between items-center">
           <BrandLogo className="brand" href="/" />
           <button
-            className="hidden max-[750px]:grid place-items-center bg-transparent border-0 text-[#6b7280] hover:text-[#191c1d] cursor-pointer p-1 rounded-md"
+            className="hidden max-[750px]:grid place-items-center bg-transparent border-0 text-[#6b7280] hover:text-[#191c1d] cursor-pointer p-1 rounded-md font-sans"
             onClick={onClose}
             type="button"
             aria-label="Close sidebar"
@@ -93,7 +93,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-1 mt-14">
+        <nav className="flex flex-col gap-1 mt-14 font-sans">
           <Link
             className={navLinkClass(
               path === "/vendor/analytics" || path === "/vendor/overview" || path === "/vendor"
@@ -156,7 +156,11 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
           <div className="flex flex-col">
             <button
               type="button"
-              className={`${navLinkClass(path === "/vendor/settings")} justify-between`}
+              className={`flex items-center justify-between gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer ${
+                onlineStoreExpanded
+                  ? "text-[#191c1d] hover:bg-[#edeeef]"
+                  : "text-[#6b7280] hover:text-[#191c1d] hover:bg-[#edeeef]"
+              }`}
               onClick={() => setOnlineStoreExpanded(prev => !prev)}
             >
               <div className="flex items-center gap-3 min-w-0">
@@ -172,7 +176,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
                   e.stopPropagation();
                   onClose();
                 }}
-                className="p-1 text-[#6b7280] hover:text-[#191c1d] transition-colors shrink-0 ml-auto flex items-center justify-center"
+                className="p-1 text-[#6b7280] hover:text-[#191c1d] transition-colors shrink-0 ml-auto flex items-center justify-center rounded"
                 title="View Online Store"
                 aria-label="View Online Store"
               >
@@ -181,7 +185,12 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
             </button>
 
             {onlineStoreExpanded && (
-              <div className="flex flex-col mt-1 pl-7">
+              <div className="relative flex flex-col mt-1 pl-8">
+                {/* Curved branch line connecting parent to child */}
+                <div
+                  aria-hidden="true"
+                  className="absolute left-[20px] -top-2.5 h-[27px] w-3.5 border-l-2 border-b-2 border-[#cbd5e1] rounded-bl-lg pointer-events-none"
+                />
                 <Link
                   href="/vendor/settings"
                   className={navLinkClass(path === "/vendor/settings")}
