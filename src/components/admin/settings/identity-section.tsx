@@ -38,7 +38,7 @@ export function IdentitySection({
 }: IdentitySectionProps) {
   return (
     <Card
-      title="Business profile"
+      title="Business Profile"
       description="The foundation of your public customer-facing presence."
     >
       <div className="space-y-7">

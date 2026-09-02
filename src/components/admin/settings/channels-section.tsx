@@ -57,9 +57,9 @@ export function ChannelsSection({
             </div>
           )}
           <div className="border border-[#e5e7eb] rounded-xl p-4 sm:p-5 bg-white space-y-4 shadow-2xs">
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-[#e5e7eb]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0 shadow-2xs">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#e5e7eb]">
+              <div className="flex items-start gap-3.5 min-w-0">
+                <div className="w-10 h-10 rounded-lg bg-[#f8f9fa] border border-[#e5e7eb] flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
@@ -79,23 +79,29 @@ export function ChannelsSection({
                     />
                   </svg>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-bold text-[#191c1d]">Google Business Profile</h4>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
-                      Live Sync Active
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-[#6b7280] mt-0.5">
-                    <div className="flex text-[#eab308]">
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <h4 className="text-sm font-bold text-[#191c1d] leading-snug">
+                    Google Business Profile
+                  </h4>
+
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[#6b7280]">
+                    <div className="flex text-[#eab308] shrink-0">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={11} fill="currentColor" />
                       ))}
                     </div>
                     <span className="font-bold text-[#191c1d]">5.0</span>
-                    <span>·</span>
-                    <span>48 Verified 5-Star Reviews</span>
+                    <span className="text-[#9ca3af]">·</span>
+                    <span className="whitespace-nowrap">
+                      48 <span className="hidden xs:inline sm:inline">Verified 5-Star </span>Reviews
+                    </span>
+                  </div>
+
+                  <div className="pt-0.5">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] shrink-0 whitespace-nowrap">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] shrink-0" />
+                      Live Sync Active
+                    </span>
                   </div>
                 </div>
               </div>
@@ -104,7 +110,7 @@ export function ChannelsSection({
                 type="button"
                 onClick={handleSyncReviews}
                 disabled={isSyncingReviews}
-                className="outline-button text-xs py-1.5 px-3 rounded-lg font-medium"
+                className="h-8 px-3 inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] hover:border-[#191c1d] bg-white text-[#191c1d] text-xs font-semibold transition-all shrink-0 whitespace-nowrap shadow-2xs hover:bg-neutral-50 self-start sm:self-center disabled:opacity-60 cursor-pointer mt-1 sm:mt-0"
               >
                 <RefreshCw
                   size={12}
@@ -114,7 +120,7 @@ export function ChannelsSection({
               </button>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="pt-0.5 space-y-1.5">
               <label className="block text-[#374151] font-semibold text-xs tracking-wide">
                 Google Business Profile URL
               </label>
@@ -124,12 +130,12 @@ export function ChannelsSection({
                   value={googleReviewsLink}
                   onChange={e => setGoogleReviewsLink(e.target.value)}
                   placeholder="https://business.google.com/..."
-                  className="flex-1 bg-white border border-[#d1d5db] rounded-lg px-3 py-2 text-xs text-[#191c1d] focus:outline-none shadow-2xs"
+                  className="flex-1 h-9 bg-white border border-[#d1d5db] focus:border-[#191c1d] rounded-lg px-3 text-xs text-[#191c1d] focus:outline-none shadow-2xs"
                 />
                 <button
                   type="button"
                   onClick={() => onToast("Google business link saved")}
-                  className="dark-button text-xs px-4 py-2 rounded-lg font-semibold shrink-0"
+                  className="h-9 px-4 inline-flex items-center justify-center rounded-lg bg-[#191c1d] hover:bg-black text-white text-xs font-semibold shrink-0 transition-colors cursor-pointer shadow-2xs"
                 >
                   Save Link
                 </button>

@@ -53,7 +53,6 @@ export const VALUATION_GROWTH_LEVERS = [
 ] as const;
 
 export const VALUATION_HEALTH_MODAL_CONFIG = {
-  eyebrow: "Valuation Audit",
   title: "How Your Store Value is Calculated",
   subtitle:
     "Your valuation updates automatically based on 4 verified operational records. Keep these records updated for an accurate, audit-ready appraisal.",

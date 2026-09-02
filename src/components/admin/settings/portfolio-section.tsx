@@ -67,7 +67,7 @@ export function PortfolioSection({
   return (
     <>
       <Card
-        title="Portfolio showcase"
+        title="Projects"
         description="High-resolution visuals that highlight your aesthetic standard, case studies, and client transformations."
         action={
           <div className="flex items-center gap-2">

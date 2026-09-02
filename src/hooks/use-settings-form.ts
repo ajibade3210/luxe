@@ -1,9 +1,11 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
 import { logger } from "@/lib/logger";
+import { queryKeys } from "@/lib/query-keys";
 import type { PortfolioProject, ServiceItem, UseSettingsFormOptions } from "@/types";
 import {
   isValidPhone,
@@ -24,6 +26,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
   const services = useServicesSettings({ notify, categories: portfolio.categories });
   const appearance = useAppearanceSettings();
   const contact = useContactSettings({ notify });
+  const queryClient = useQueryClient();
 
   const [saving, setSaving] = useState(false);
 
@@ -423,6 +426,72 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     await handleSave();
   };
 
+  const handleSetShowServices = async (val: boolean) => {
+    contact.setShowServices(val);
+    try {
+      await updateBusinessProfile({ showServices: val });
+      queryClient.invalidateQueries({ queryKey: queryKeys.studios.me() });
+      notify(
+        val
+          ? "Services section is now visible on your page"
+          : "Services section hidden from your page"
+      );
+    } catch (err) {
+      logger.error("Failed to update services visibility", err);
+      contact.setShowServices(!val);
+      notify("Failed to update services visibility");
+    }
+  };
+
+  const handleSetShowPortfolio = async (val: boolean) => {
+    contact.setShowPortfolio(val);
+    try {
+      await updateBusinessProfile({ showPortfolio: val });
+      queryClient.invalidateQueries({ queryKey: queryKeys.studios.me() });
+      notify(
+        val
+          ? "Portfolio section is now visible on your page"
+          : "Portfolio section hidden from your page"
+      );
+    } catch (err) {
+      logger.error("Failed to update portfolio visibility", err);
+      contact.setShowPortfolio(!val);
+      notify("Failed to update portfolio visibility");
+    }
+  };
+
+  const handleSetShowReviews = async (val: boolean) => {
+    contact.setShowReviews(val);
+    try {
+      await updateBusinessProfile({ showReviews: val });
+      queryClient.invalidateQueries({ queryKey: queryKeys.studios.me() });
+      notify(
+        val
+          ? "Reviews section is now visible on your page"
+          : "Reviews section hidden from your page"
+      );
+    } catch (err) {
+      logger.error("Failed to update reviews visibility", err);
+      contact.setShowReviews(!val);
+      notify("Failed to update reviews visibility");
+    }
+  };
+
+  const handleSetShowFooterCta = async (val: boolean) => {
+    contact.setShowFooterCta(val);
+    try {
+      await updateBusinessProfile({ showFooterCta: val });
+      queryClient.invalidateQueries({ queryKey: queryKeys.studios.me() });
+      notify(
+        val ? "Closing banner is now visible on your page" : "Closing banner hidden from your page"
+      );
+    } catch (err) {
+      logger.error("Failed to update closing banner visibility", err);
+      contact.setShowFooterCta(!val);
+      notify("Failed to update closing banner visibility");
+    }
+  };
+
   return {
     // Branding
     name: branding.name,
@@ -524,11 +593,11 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     setGoogleReviewsLink: contact.setGoogleReviewsLink,
     isSyncingReviews: contact.isSyncingReviews,
     showServices: contact.showServices,
-    setShowServices: contact.setShowServices,
+    setShowServices: handleSetShowServices,
     showPortfolio: contact.showPortfolio,
-    setShowPortfolio: contact.setShowPortfolio,
+    setShowPortfolio: handleSetShowPortfolio,
     showReviews: contact.showReviews,
-    setShowReviews: contact.setShowReviews,
+    setShowReviews: handleSetShowReviews,
     footerEyebrow: contact.footerEyebrow,
     setFooterEyebrow: contact.setFooterEyebrow,
     footerTitle: contact.footerTitle,
@@ -536,7 +605,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     footerDescription: contact.footerDescription,
     setFooterDescription: contact.setFooterDescription,
     showFooterCta: contact.showFooterCta,
-    setShowFooterCta: contact.setShowFooterCta,
+    setShowFooterCta: handleSetShowFooterCta,
     toggleChannel: handleToggleChannel,
     updateChannelHandle: handleUpdateChannelHandle,
     handleSyncReviews: contact.handleSyncReviews,

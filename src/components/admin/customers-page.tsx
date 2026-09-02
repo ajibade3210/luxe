@@ -102,82 +102,81 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
     setShowInvoiceModal(true);
   };
 
-  return (
-    <section className="content">
-      <PageTitle
-        title="Customers"
-        action={
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white h-10 px-4 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
-            >
-              <Plus size={14} />
-              <span>Add Customer</span>
-            </button>
+  const actions = (
+    <div className="flex items-center gap-2 sm:gap-2.5">
+      <button
+        type="button"
+        onClick={() => setShowAddModal(true)}
+        className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#191c1d] hover:bg-black text-white h-8 sm:h-10 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
+      >
+        <Plus size={13} />
+        <span>Add Customer</span>
+      </button>
 
-            {/* More Actions Menu Button & Dropdown */}
-            <div className="relative flex items-center">
+      {/* More Actions Menu Button & Dropdown */}
+      <div className="relative flex items-center">
+        <button
+          type="button"
+          onClick={() => setShowMoreMenu(prev => !prev)}
+          className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs"
+          title="More actions"
+        >
+          <MoreHorizontal size={14} />
+        </button>
+
+        {showMoreMenu && (
+          <>
+            <div className="fixed inset-0 z-20" onClick={() => setShowMoreMenu(false)} />
+            <div className="absolute right-0 top-full mt-1.5 w-44 bg-white border border-[#ded7cb] rounded-2xl shadow-xl z-30 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
               <button
                 type="button"
-                onClick={() => setShowMoreMenu(prev => !prev)}
-                className="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs"
-                title="More actions"
+                onClick={() => {
+                  setShowMoreMenu(false);
+                  handleOpenBroadcastModal();
+                }}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
               >
-                <MoreHorizontal size={15} />
+                <MessageSquare size={14} className="text-[#855e2e]" />
+                <span>Broadcast</span>
               </button>
 
-              {showMoreMenu && (
-                <>
-                  <div className="fixed inset-0 z-20" onClick={() => setShowMoreMenu(false)} />
-                  <div className="absolute right-0 top-full mt-1.5 w-44 bg-white border border-[#ded7cb] rounded-2xl shadow-xl z-30 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        handleOpenBroadcastModal();
-                      }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-[#191c1d] hover:bg-[#faf8f5] hover:text-[#855e2e] transition-colors cursor-pointer text-left"
-                    >
-                      <MessageSquare size={14} className="text-[#855e2e]" />
-                      <span>Broadcast</span>
-                    </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMoreMenu(false);
+                  setShowImportModal(true);
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer"
+              >
+                <Upload size={14} className="text-[#855e2e]" />
+                <span>Import CSV</span>
+              </button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        setShowImportModal(true);
-                      }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer"
-                    >
-                      <Upload size={14} className="text-[#855e2e]" />
-                      <span>Import CSV</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMoreMenu(false);
-                        handleExport();
-                      }}
-                      disabled={isExporting}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer disabled:opacity-50"
-                    >
-                      <Download
-                        size={14}
-                        className={`text-[#855e2e] ${isExporting ? "animate-bounce" : ""}`}
-                      />
-                      <span>{isExporting ? "Exporting..." : "Export"}</span>
-                    </button>
-                  </div>
-                </>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMoreMenu(false);
+                  handleExport();
+                }}
+                disabled={isExporting}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer disabled:opacity-50"
+              >
+                <Download
+                  size={14}
+                  className={`text-[#855e2e] ${isExporting ? "animate-bounce" : ""}`}
+                />
+                <span>{isExporting ? "Exporting..." : "Export"}</span>
+              </button>
             </div>
-          </div>
-        }
-      />
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <section className="content">
+      <PageTitle title="Customers" action={actions} />
 
       <div className="metrics">
         <Metric
@@ -188,6 +187,9 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         <Metric label="Active services" value={String(activeServicesCount)} detail="In progress" />
         <Metric label="Revenue" value={formatMoney(totalRevenue)} detail="Across all services" />
       </div>
+
+      {/* Mobile/Tablet Action Bar directly above the register */}
+      <div className="flex items-center justify-end gap-2.5 mb-3.5 lg:hidden">{actions}</div>
 
       <CustomerTable
         items={items}

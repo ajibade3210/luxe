@@ -80,12 +80,12 @@ export function ExpenseListTable({
         <table>
           <thead>
             <tr>
-              <th>Date</th>
+              <th className="hidden sm:table-cell">Date</th>
               <th>Expense & Notes</th>
-              <th>Category</th>
-              <th>Payment Method</th>
+              <th className="hidden md:table-cell">Category</th>
+              <th className="hidden sm:table-cell">Payment Method</th>
               <th>Amount</th>
-              <th>Actions</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -99,14 +99,32 @@ export function ExpenseListTable({
 
               return (
                 <tr key={expense.id} className="transition-colors">
-                  <td className="whitespace-nowrap text-[#665e57] font-medium">
+                  <td className="hidden sm:table-cell whitespace-nowrap text-[#665e57] font-medium">
                     {formatDate(expense.date)}
                   </td>
                   <td>
-                    <b>{expense.title}</b>
-                    {expense.notes && <small className="truncate max-w-md">{expense.notes}</small>}
+                    <b className="text-xs sm:text-sm">{expense.title}</b>
+                    {/* Mobile date and category subtitle */}
+                    <div className="sm:hidden flex items-center gap-1.5 mt-0.5 flex-wrap">
+                      <span className="text-[10px] text-[#8c827a]">{formatDate(expense.date)}</span>
+                      <span
+                        className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-semibold border"
+                        style={{
+                          backgroundColor: categoryConfig.bg,
+                          color: categoryConfig.text || categoryConfig.color,
+                          borderColor: categoryConfig.border,
+                        }}
+                      >
+                        {categoryConfig.label}
+                      </span>
+                    </div>
+                    {expense.notes && (
+                      <small className="truncate max-w-[140px] sm:max-w-md block text-[10px] sm:text-xs text-[#8c827a]">
+                        {expense.notes}
+                      </small>
+                    )}
                   </td>
-                  <td>
+                  <td className="hidden md:table-cell">
                     <span
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border"
                       style={{
@@ -118,20 +136,20 @@ export function ExpenseListTable({
                       {categoryConfig.label}
                     </span>
                   </td>
-                  <td className="text-[#665e57]">
+                  <td className="hidden sm:table-cell text-[#665e57]">
                     {EXPENSE_PAYMENT_METHODS[expense.paymentMethod] || expense.paymentMethod}
                   </td>
-                  <td>
-                    <span className="font-sans tabular-nums font-bold text-[#191c1d]">
+                  <td className="whitespace-nowrap">
+                    <span className="font-sans tabular-nums font-bold text-xs sm:text-sm text-[#191c1d]">
                       -{formatMoney(expense.amount)}
                     </span>
                   </td>
-                  <td>
-                    <div className="flex items-center gap-1">
+                  <td className="text-right">
+                    <div className="flex items-center justify-end gap-1">
                       <button
                         type="button"
                         onClick={() => onEdit(expense)}
-                        className="p-1.5 rounded-lg text-[#665e57] hover:text-[#191c1d] hover:bg-[#faf7f2] transition-colors cursor-pointer"
+                        className="p-1 sm:p-1.5 rounded-lg text-[#665e57] hover:text-[#191c1d] hover:bg-[#faf7f2] transition-colors cursor-pointer"
                         title="Edit expense"
                         aria-label={`Edit ${expense.title}`}
                       >
@@ -140,7 +158,7 @@ export function ExpenseListTable({
                       <button
                         type="button"
                         onClick={() => onDelete(expense.id, expense.title)}
-                        className="p-1.5 rounded-lg text-[#dc2626] hover:text-[#b91c1c] hover:bg-[#fef2f2] transition-colors cursor-pointer"
+                        className="p-1 sm:p-1.5 rounded-lg text-[#dc2626] hover:text-[#b91c1c] hover:bg-[#fef2f2] transition-colors cursor-pointer"
                         title="Delete expense"
                         aria-label={`Delete ${expense.title}`}
                       >

@@ -38,36 +38,35 @@ export function InvoicesPage({ onToast }: InvoicesPageProps) {
     reloadInvoices,
   } = useInvoices(notify);
 
+  const actions = (
+    <div className="flex items-center gap-2 sm:gap-2.5">
+      <button
+        type="button"
+        onClick={handleExportCSV}
+        disabled={isExporting}
+        className="inline-flex items-center gap-1.5 sm:gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
+      >
+        <Download size={13} className={isExporting ? "animate-bounce" : ""} />
+        <span>
+          {isExporting
+            ? INVOICE_PAGE_CONFIG.exportingLabel
+            : INVOICE_PAGE_CONFIG.exportCsvButtonLabel}
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={handleOpenCreate}
+        className="dark-button bg-[#000000] border-[#000000] inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold !text-white hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all duration-200 cursor-pointer"
+      >
+        <Plus size={13} />
+        <span>{INVOICE_PAGE_CONFIG.createInvoiceButtonLabel}</span>
+      </button>
+    </div>
+  );
+
   return (
     <section className="content">
-      <PageTitle
-        title={INVOICE_PAGE_CONFIG.title}
-        action={
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={handleExportCSV}
-              disabled={isExporting}
-              className="inline-flex items-center gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
-            >
-              <Download size={14} className={isExporting ? "animate-bounce" : ""} />
-              <span>
-                {isExporting
-                  ? INVOICE_PAGE_CONFIG.exportingLabel
-                  : INVOICE_PAGE_CONFIG.exportCsvButtonLabel}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="dark-button bg-[#000000] border-[#000000] inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold !text-white hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all duration-200 cursor-pointer"
-            >
-              <Plus size={15} />
-              <span>{INVOICE_PAGE_CONFIG.createInvoiceButtonLabel}</span>
-            </button>
-          </div>
-        }
-      />
+      <PageTitle title={INVOICE_PAGE_CONFIG.title} action={actions} />
 
       {/* Top Metrics Strip */}
       <div className="metrics">
@@ -91,6 +90,9 @@ export function InvoicesPage({ onToast }: InvoicesPageProps) {
           }
         />
       </div>
+
+      {/* Mobile/Tablet Action Bar directly above the register */}
+      <div className="flex items-center justify-end gap-2.5 mb-3.5 lg:hidden">{actions}</div>
 
       {/* Unified Invoices Table matching Leads, Customers, and Expenses */}
       <InvoiceTable

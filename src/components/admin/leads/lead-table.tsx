@@ -62,10 +62,10 @@ export function LeadTable({
           <thead>
             <tr>
               <th>Name</th>
-              <th>Service requested</th>
-              <th>Estimated date</th>
-              <th>Status</th>
-              <th />
+              <th className="hidden sm:table-cell">Service requested</th>
+              <th className="hidden sm:table-cell">Estimated date</th>
+              <th className="text-right sm:text-left">Status</th>
+              <th className="w-6 sm:w-10" />
             </tr>
           </thead>
           <tbody>
@@ -73,16 +73,23 @@ export function LeadTable({
               <tr key={lead.id} onClick={() => onSelectLead(lead.id)} className="cursor-pointer">
                 <td>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <b>{lead.name}</b>
+                    <b className="text-xs sm:text-sm">{lead.name}</b>
                     {lead.isExistingCustomer && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
-                        Existing Customer
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
+                        Customer
                       </span>
                     )}
                   </div>
-                  <small>{lead.email}</small>
+                  {/* Mobile service requested subtitle */}
+                  <div className="sm:hidden text-[10px] text-[#855e2e] font-medium mt-0.5 truncate">
+                    {lead.service}
+                    {lead.services && lead.services.length > 1 && ` (+${lead.services.length - 1})`}
+                  </div>
+                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[160px] sm:max-w-none">
+                    {lead.email}
+                  </small>
                 </td>
-                <td>
+                <td className="hidden sm:table-cell">
                   <div className="flex items-center">
                     <span className="font-semibold text-[#191c1d]">{lead.service}</span>
                     {lead.services && lead.services.length > 1 && (
@@ -95,12 +102,14 @@ export function LeadTable({
                     )}
                   </div>
                 </td>
-                <td>{formatDate(lead.eventDate)}</td>
-                <td>
-                  <span className={`status ${lead.status}`}>{formatStatusLabel(lead.status)}</span>
+                <td className="hidden sm:table-cell">{formatDate(lead.eventDate)}</td>
+                <td className="text-right sm:text-left whitespace-nowrap">
+                  <span className={`status ${lead.status} text-[10px] px-2 py-0.5`}>
+                    {formatStatusLabel(lead.status)}
+                  </span>
                 </td>
-                <td>
-                  <ChevronRight size={16} />
+                <td className="w-6 sm:w-10 text-right">
+                  <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                 </td>
               </tr>
             ))}

@@ -58,7 +58,7 @@ export function ServicesSection({
   return (
     <>
       <Card
-        title={`Services & offerings (${services.length}/${MAX_SERVICES})`}
+        title={`Services (${services.length}/${MAX_SERVICES})`}
         description="Make your expertise easy to understand for prospective clients."
         action={
           <div className="flex items-center gap-2">

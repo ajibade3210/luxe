@@ -74,7 +74,7 @@ export function CustomerTable({
         <table>
           <thead>
             <tr>
-              <th className="w-10">
+              <th className="w-8 sm:w-10">
                 <input
                   type="checkbox"
                   checked={isAllActiveSelected}
@@ -85,9 +85,9 @@ export function CustomerTable({
                 />
               </th>
               <th>Customer</th>
-              <th>Service</th>
-              <th>Status</th>
-              <th />
+              <th className="hidden sm:table-cell">Service</th>
+              <th className="text-right sm:text-left">Status</th>
+              <th className="w-6 sm:w-10" />
             </tr>
           </thead>
           <tbody>
@@ -105,7 +105,7 @@ export function CustomerTable({
                     isSelected ? "bg-[#faf7f2]/60" : ""
                   }`}
                 >
-                  <td onClick={e => e.stopPropagation()} className="w-10">
+                  <td onClick={e => e.stopPropagation()} className="w-8 sm:w-10">
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -115,13 +115,20 @@ export function CustomerTable({
                     />
                   </td>
                   <td>
-                    <b>{c.name}</b>
-                    <small>
+                    <b className="text-xs sm:text-sm">{c.name}</b>
+                    {/* Mobile service subtitle */}
+                    {s && (
+                      <span className="sm:hidden text-[10px] text-[#855e2e] font-medium block truncate mt-0.5">
+                        {s.name}
+                        {servicesList.length > 1 && ` (+${servicesList.length - 1})`}
+                      </span>
+                    )}
+                    <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[160px] sm:max-w-none">
                       {c.email}
                       {c.phone ? ` · ${c.phone}` : ""}
                     </small>
                   </td>
-                  <td>
+                  <td className="hidden sm:table-cell">
                     {s ? (
                       <div className="flex items-center">
                         <b className="truncate max-w-[220px]">{s.name}</b>
@@ -142,26 +149,24 @@ export function CustomerTable({
                       </div>
                     )}
                   </td>
-                  <td>
-                    <div className="flex items-center min-h-[38px]">
+                  <td className="text-right sm:text-left whitespace-nowrap">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        c.isActive
+                          ? "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]"
+                          : "bg-[#f4f4f5] text-[#71717a] border-[#e4e4e7]"
+                      }`}
+                    >
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
-                          c.isActive
-                            ? "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]"
-                            : "bg-[#f4f4f5] text-[#71717a] border-[#e4e4e7]"
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          c.isActive ? "bg-[#059669]" : "bg-[#a1a1aa]"
                         }`}
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            c.isActive ? "bg-[#059669]" : "bg-[#a1a1aa]"
-                          }`}
-                        />
-                        {c.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </div>
+                      />
+                      {c.isActive ? "Active" : "Inactive"}
+                    </span>
                   </td>
-                  <td>
-                    <ChevronRight size={16} />
+                  <td className="w-6 sm:w-10 text-right">
+                    <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                   </td>
                 </tr>
               );

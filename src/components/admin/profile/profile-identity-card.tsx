@@ -75,11 +75,11 @@ export function ProfileIdentityCard({
     : "AB";
 
   return (
-    <div className="bg-white border border-[#eae3d7] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-      <div className="flex items-center justify-between gap-4">
+    <div className="bg-white border border-[#eae3d7] rounded-3xl p-5 sm:p-6 lg:p-8 shadow-sm space-y-6">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
         {/* Avatar and Leadership Title */}
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#191c1d] text-white flex items-center justify-center font-serif text-xl italic font-bold shadow-xs shrink-0 overflow-hidden border border-[#eae3d7]">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-4 min-w-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-2xl bg-[#191c1d] text-white flex items-center justify-center font-serif text-base sm:text-lg lg:text-xl italic font-bold shadow-xs shrink-0 overflow-hidden border border-[#eae3d7]">
             {isImageUrl && !imageFailed ? (
               <img
                 src={avatar}
@@ -91,9 +91,13 @@ export function ProfileIdentityCard({
               <span>{initials}</span>
             )}
           </div>
-          <div>
-            <b className="text-base text-[#191c1d] font-bold block">{name || "Studio Director"}</b>
-            <span className="text-xs text-[#5c5f60] mt-0.5 block">{studioName}</span>
+          <div className="min-w-0">
+            <b className="text-[13px] sm:text-sm lg:text-base text-[#191c1d] font-bold block leading-snug whitespace-nowrap">
+              {name || "Studio Director"}
+            </b>
+            <span className="text-[11px] sm:text-xs text-[#5c5f60] mt-0.5 block leading-tight whitespace-nowrap">
+              {studioName}
+            </span>
           </div>
         </div>
 
@@ -101,7 +105,7 @@ export function ProfileIdentityCard({
           <button
             type="button"
             onClick={handleStartEdit}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl bg-[#faf7f2] hover:bg-[#f0ebe3] text-[#191c1d] border border-[#ded7cb] hover:border-[#c59a78] transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#faf7f2] hover:bg-[#f0ebe3] text-[#191c1d] border border-[#ded7cb] hover:border-[#c59a78] transition-all cursor-pointer shrink-0 shadow-2xs"
           >
             <Pencil size={12} className="text-[#855e2e]" />
             <span>Edit profile</span>

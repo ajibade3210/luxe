@@ -72,13 +72,14 @@ export function InvoiceTable({
         <table>
           <thead>
             <tr>
-              <th>Invoice #</th>
+              <th className="hidden sm:table-cell">Invoice #</th>
               <th>Customer</th>
-              <th>Date Issued</th>
-              <th>Due Date</th>
+              <th className="hidden md:table-cell">Date Issued</th>
+              <th className="hidden sm:table-cell">Due Date</th>
               <th>Amount</th>
-              <th>Status</th>
-              <th className="text-right">Actions</th>
+              <th className="text-right sm:text-left">Status</th>
+              <th className="hidden sm:table-cell text-right">Actions</th>
+              <th className="sm:hidden w-6" />
             </tr>
           </thead>
           <tbody>
@@ -88,29 +89,35 @@ export function InvoiceTable({
                 onClick={() => onSelectInvoice(inv)}
                 className="cursor-pointer transition-colors"
               >
-                <td>
+                <td className="hidden sm:table-cell">
                   <b className="font-mono text-xs text-[#191c1d] block">{inv.invoiceNumber}</b>
                   <small className="text-[#8c827a]">
                     {inv.items.length} {inv.items.length === 1 ? "item" : "items"}
                   </small>
                 </td>
                 <td>
-                  <b className="text-[#191c1d] block">{inv.customerName}</b>
-                  <small className="text-[#8c827a] truncate max-w-[180px] block">
+                  <b className="text-xs sm:text-sm text-[#191c1d] block">{inv.customerName}</b>
+                  {/* Mobile Invoice # & item count */}
+                  <span className="sm:hidden font-mono text-[10px] text-[#855e2e] block">
+                    {inv.invoiceNumber} · {inv.items.length} item{inv.items.length === 1 ? "" : "s"}
+                  </span>
+                  <small className="text-[10px] sm:text-xs text-[#8c827a] truncate block max-w-[140px] sm:max-w-none">
                     {inv.customerEmail}
                   </small>
                 </td>
-                <td>{formatDate(inv.issueDate)}</td>
-                <td>{formatDate(inv.dueDate)}</td>
-                <td>
-                  <span className="font-sans font-bold text-[#191c1d] tabular-nums">
+                <td className="hidden md:table-cell">{formatDate(inv.issueDate)}</td>
+                <td className="hidden sm:table-cell">{formatDate(inv.dueDate)}</td>
+                <td className="whitespace-nowrap">
+                  <span className="font-sans font-bold text-xs sm:text-sm text-[#191c1d] tabular-nums">
                     {formatMoney(inv.total, inv.currency || "NGN")}
                   </span>
                 </td>
-                <td>
-                  <span className={`status ${inv.status}`}>{formatStatusLabel(inv.status)}</span>
+                <td className="text-right sm:text-left whitespace-nowrap">
+                  <span className={`status ${inv.status} text-[10px] px-2 py-0.5`}>
+                    {formatStatusLabel(inv.status)}
+                  </span>
                 </td>
-                <td className="text-right" onClick={e => e.stopPropagation()}>
+                <td className="hidden sm:table-cell text-right" onClick={e => e.stopPropagation()}>
                   <div className="inline-flex items-center gap-1.5 justify-end">
                     {inv.status === "sent" && (
                       <button
@@ -149,6 +156,9 @@ export function InvoiceTable({
                       <span>View</span>
                     </button>
                   </div>
+                </td>
+                <td className="sm:hidden w-6 text-right">
+                  <ChevronRight size={14} className="text-[#8c827a] ml-auto" />
                 </td>
               </tr>
             ))}

@@ -5,10 +5,10 @@ export function Card({ title, description, action, children }: CardProps) {
   return (
     <section className="settings-card">
       <div className="settings-card-heading flex items-center justify-between gap-3">
-        <div className="flex items-center">
+        <div className="flex items-center min-w-0">
           <h2>{title}</h2>
           {description && (
-            <div className="relative group/info inline-flex items-center ml-1.5 self-center">
+            <div className="relative group/info hidden lg:inline-flex items-center ml-1.5 self-center shrink-0">
               <button
                 type="button"
                 aria-label={description}
@@ -26,7 +26,7 @@ export function Card({ title, description, action, children }: CardProps) {
             </div>
           )}
         </div>
-        {action && <div className="shrink-0">{action}</div>}
+        {action && <div className="shrink-0 whitespace-nowrap">{action}</div>}
       </div>
       {children}
     </section>

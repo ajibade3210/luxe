@@ -21,13 +21,13 @@ export function ProfileHeaderCard({ business, onUpdateHeader, onToast }: Profile
       <div className="bg-white rounded-3xl border border-[#e5e7eb] p-6 sm:p-8 shadow-xs space-y-6">
         {/* Header Title & Info */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-base sm:text-lg font-bold text-[#191c1d]">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-2.5">
+              <h2 className="text-sm sm:text-base font-bold text-[#191c1d] leading-tight">
                 Email & Document Header
               </h2>
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 whitespace-nowrap ${
                   headerType === "CUSTOM"
                     ? "bg-purple-100 text-purple-700"
                     : "bg-blue-100 text-[#0058be]"
@@ -36,7 +36,7 @@ export function ProfileHeaderCard({ business, onUpdateHeader, onToast }: Profile
                 {headerType === "CUSTOM" ? "Custom Upload" : "Auto-Generated"}
               </span>
             </div>
-            <p className="text-xs text-[#6b7280] mt-1 max-w-xl leading-relaxed">
+            <p className="text-xs text-[#6b7280] max-w-xl leading-relaxed">
               This branded header appears at the top of your transactional client emails, dispatched
               invoices, and PDF receipts.
             </p>

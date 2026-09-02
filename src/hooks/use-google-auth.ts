@@ -49,50 +49,12 @@ export function useGoogleAuth(
   const onAuthSuccessRef = useRef(onAuthSuccess);
   const onErrorRef = useRef(onError);
   onAuthSuccessRef.current = onAuthSuccess;
-  onErrorRef.current = onError;
+  const codeClientRef = useRef<{ requestCode(): void } | null>(null);
 
-  // 1. Load the GSI script once
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    if (window.google?.accounts?.oauth2) {
-      setLoaded(true);
-      return;
-    }
-
-    const existing = document.getElementById(GSI_SCRIPT_ID) as HTMLScriptElement | null;
-    if (existing) {
-      existing.addEventListener("load", () => setLoaded(true));
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = GSI_SCRIPT_ID;
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => setLoaded(true);
-    script.onerror = () =>
-      onErrorRef.current?.("Failed to load Google Sign-In. Check your network connection.");
-    document.head.appendChild(script);
-  }, []);
-
-  // 2. Trigger the Google OAuth popup on user interaction
-  const trigger = useCallback(() => {
-    if (!CLIENT_ID) {
-      onErrorRef.current?.(
-        "Google Sign-In is not configured. Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID."
-      );
-      return;
-    }
-
-    if (!window.google?.accounts?.oauth2) {
-      onErrorRef.current?.("Google Sign-In is still loading. Please try again.");
-      return;
-    }
-
+  const initClient = useCallback(() => {
+    if (!CLIENT_ID || !window.google?.accounts?.oauth2) return;
     try {
-      const client = window.google.accounts.oauth2.initCodeClient({
+      codeClientRef.current = window.google.accounts.oauth2.initCodeClient({
         client_id: CLIENT_ID,
         scope: "openid email profile",
         ux_mode: "popup",
@@ -106,19 +68,88 @@ export function useGoogleAuth(
           }
         },
         error_callback: err => {
+          if (err.type === "popup_failed_to_open") {
+            onErrorRef.current?.(
+              "Pop-up blocked by your browser. Please allow pop-ups for this site (click the pop-up icon in your address bar) and try again."
+            );
+            return;
+          }
+          if (err.type === "popup_closed") {
+            return;
+          }
           onErrorRef.current?.(
             err.message || "Google popup encountered an error. Please try again."
           );
         },
       });
-
-      client.requestCode();
     } catch (err) {
       onErrorRef.current?.(
-        err instanceof Error ? err.message : "Failed to open Google sign-in window."
+        err instanceof Error ? err.message : "Failed to initialize Google sign-in."
       );
     }
   }, []);
+
+  // 1. Load the GSI script once
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (window.google?.accounts?.oauth2) {
+      setLoaded(true);
+      initClient();
+      return;
+    }
+
+    const existing = document.getElementById(GSI_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", () => {
+        setLoaded(true);
+        initClient();
+      });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = GSI_SCRIPT_ID;
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      setLoaded(true);
+      initClient();
+    };
+    script.onerror = () =>
+      onErrorRef.current?.("Failed to load Google Sign-In. Check your network connection.");
+    document.head.appendChild(script);
+  }, [initClient]);
+
+  // 2. Trigger the pre-initialized Google OAuth popup synchronously on user interaction
+  const trigger = useCallback(() => {
+    if (!CLIENT_ID) {
+      onErrorRef.current?.(
+        "Google Sign-In is not configured. Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID."
+      );
+      return;
+    }
+
+    if (!window.google?.accounts?.oauth2) {
+      onErrorRef.current?.("Google Sign-In is still loading. Please try again.");
+      return;
+    }
+
+    if (!codeClientRef.current) {
+      initClient();
+    }
+
+    try {
+      codeClientRef.current?.requestCode();
+    } catch (err) {
+      onErrorRef.current?.(
+        err instanceof Error
+          ? err.message
+          : "Failed to open Google sign-in window. Check if pop-ups are blocked."
+      );
+    }
+  }, [initClient]);
 
   return { trigger, loaded };
 }

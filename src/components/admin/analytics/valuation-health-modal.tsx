@@ -59,9 +59,6 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
         {/* Header */}
         <div className="flex items-start justify-between pb-3.5 border-b border-[#eee7dc]">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9e633d] block">
-              {VALUATION_HEALTH_MODAL_CONFIG.eyebrow}
-            </span>
             <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#191c1d] tracking-tight mt-0.5">
               {VALUATION_HEALTH_MODAL_CONFIG.title}
             </h3>
@@ -91,11 +88,11 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
             </div>
           </div>
 
-          <div className="flex sm:flex-col items-start sm:items-end justify-between border-t sm:border-t-0 pt-2 sm:pt-0 border-[#eee7dc] text-xs">
+          <div className="flex flex-col sm:items-end justify-start border-t sm:border-t-0 pt-2.5 sm:pt-0 border-[#eee7dc] text-xs gap-0.5">
             <span className="text-[#8c827a] text-[10px] font-bold uppercase tracking-wider">
               {VALUATION_HEALTH_MODAL_CONFIG.heroMultipleLabel}
             </span>
-            <span className="font-sans font-bold text-[#191c1d] text-sm tabular-nums mt-0.5">
+            <span className="font-sans font-bold text-[#191c1d] text-sm tabular-nums">
               {valuation.multiple}x SDE / {valuation.profitMargin}% Margin
             </span>
           </div>
@@ -103,12 +100,12 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
 
         {/* 4 Pillars Checklist Grid */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#191c1d]">
               {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionTitle}
             </h4>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ecfdf5] text-[#047857] border border-[#a7f3d0]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#ecfdf5] text-[#047857] border border-[#a7f3d0] shrink-0 whitespace-nowrap">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#059669] shrink-0" />
               {VALUATION_HEALTH_MODAL_CONFIG.pillarsSectionSubtitle}
             </span>
           </div>

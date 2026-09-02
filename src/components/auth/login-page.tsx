@@ -60,8 +60,6 @@ export function LoginPage() {
     triggerGoogle();
   };
 
-  console.log("🔍 ~ Login---- >>>>:", authError);
-
   return (
     <div className="min-h-screen bg-white text-[#191c1d] flex flex-col lg:flex-row font-sans selection:bg-[#2563eb] selection:text-white">
       {/* Left Panel: Google Sign-in */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Info, Landmark, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VALUATION_DISCLAIMER_NOTE, VALUATION_HEALTH_MODAL_CONFIG } from "@/constants";
 import type { ValuationCardProps } from "@/types";
 import { formatCompactMoney } from "@/utils";
@@ -10,6 +10,14 @@ import { ValuationHealthModal } from "./valuation-health-modal";
 export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showHealthModal, setShowHealthModal] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    if (!showTooltip) return;
+    const handleClickOutside = () => setShowTooltip(false);
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, [showTooltip]);
 
   const asOfDate = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -53,7 +61,7 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
 
   return (
     <>
-      <div className="bg-white border border-[#eee7dc] rounded-2xl p-6 sm:p-7 relative overflow-hidden flex flex-col justify-between min-h-[170px] shadow-2xs">
+      <div className="bg-white border border-[#eee7dc] rounded-2xl p-6 sm:p-7 relative flex flex-col justify-between min-h-[170px] shadow-2xs">
         <div className="relative z-10 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-1.5">
@@ -63,19 +71,26 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
               <span className="relative inline-flex items-center group">
                 <button
                   type="button"
-                  onClick={() => setShowHealthModal(true)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setShowTooltip(prev => !prev);
+                  }}
                   className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#fef2f2] text-[#ef4444] border border-[#fca5a5] hover:bg-[#fee2e2] hover:scale-110 transition-all cursor-pointer shadow-xs"
                   aria-label={VALUATION_HEALTH_MODAL_CONFIG.auditChecklistTooltip}
                 >
                   <Info size={16} className="stroke-[2.5]" />
                 </button>
-                {/* Instant Hover Tooltip Popover */}
+                {/* Instant Tooltip Popover */}
                 <span
                   role="tooltip"
-                  className="absolute left-0 sm:left-1/2 sm:-translate-x-1/2 top-full mt-2 w-72 sm:w-80 p-3 bg-[#191c1d] text-white text-[11px] leading-relaxed rounded-xl shadow-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-150 pointer-events-none z-50 text-left font-normal"
+                  className={`absolute right-0 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-full mt-2 w-72 sm:w-80 max-w-[calc(100vw-3rem)] p-3.5 bg-[#191c1d] text-white text-[11px] leading-relaxed rounded-xl shadow-2xl border border-white/10 transition-all duration-150 z-50 text-left font-normal ${
+                    showTooltip
+                      ? "opacity-100 visible pointer-events-auto"
+                      : "opacity-0 invisible group-hover:opacity-100 group-hover:visible pointer-events-none"
+                  }`}
                 >
                   {VALUATION_DISCLAIMER_NOTE}
-                  <span className="absolute left-4 sm:left-1/2 sm:-translate-x-1/2 -top-1 border-4 border-transparent border-b-[#191c1d]" />
+                  <span className="absolute right-2 sm:left-1/2 sm:-translate-x-1/2 sm:right-auto -top-1 border-4 border-transparent border-b-[#191c1d]" />
                 </span>
               </span>
             </div>
@@ -132,11 +147,13 @@ export function ValuationCard({ valuation, onRefresh, onToast }: ValuationCardPr
         </div>
 
         {/* Architectural Landmark Pantheon Watermark */}
-        <Landmark
-          size={120}
-          strokeWidth={1}
-          className="absolute right-6 top-1/2 -translate-y-1/2 text-[#191c1d]/[0.04] pointer-events-none select-none"
-        />
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none select-none">
+          <Landmark
+            size={120}
+            strokeWidth={1}
+            className="absolute right-6 top-1/2 -translate-y-1/2 text-[#191c1d]/[0.04]"
+          />
+        </div>
       </div>
 
       {/* Valuation Health & Accuracy Checklist Modal */}

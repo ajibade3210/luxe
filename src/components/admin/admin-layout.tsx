@@ -163,7 +163,11 @@ export function PageTitle({ title, action, children }: PageTitleProps) {
       <div>
         <h1>{title}</h1>
       </div>
-      {(action || children) && <div className="page-title-actions">{action || children}</div>}
+      {(action || children) && (
+        <div className="page-title-actions hidden lg:flex items-center gap-2.5">
+          {action || children}
+        </div>
+      )}
     </div>
   );
 }
@@ -224,22 +228,39 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
                 : ""
             }
             href="/vendor/analytics"
+            onClick={onClose}
           >
             <TrendingUp size={16} /> Analytics
           </Link>
-          <Link className={path === "/vendor/leads" ? "active" : ""} href="/vendor/leads">
+          <Link
+            className={path === "/vendor/leads" ? "active" : ""}
+            href="/vendor/leads"
+            onClick={onClose}
+          >
             <Users size={16} /> Leads{" "}
             {leadCount !== null && <span className="nav-count">{leadCount}</span>}
           </Link>
-          <Link className={path === "/vendor/customers" ? "active" : ""} href="/vendor/customers">
+          <Link
+            className={path === "/vendor/customers" ? "active" : ""}
+            href="/vendor/customers"
+            onClick={onClose}
+          >
             <Users size={16} /> Customers{" "}
             {customerCount !== null && <span className="nav-count">{customerCount}</span>}
           </Link>
-          <Link className={path === "/vendor/invoices" ? "active" : ""} href="/vendor/invoices">
+          <Link
+            className={path === "/vendor/invoices" ? "active" : ""}
+            href="/vendor/invoices"
+            onClick={onClose}
+          >
             <FileText size={16} /> Invoices{" "}
             {invoiceCount !== null && <span className="nav-count">{invoiceCount}</span>}
           </Link>
-          <Link className={path === "/vendor/expenses" ? "active" : ""} href="/vendor/expenses">
+          <Link
+            className={path === "/vendor/expenses" ? "active" : ""}
+            href="/vendor/expenses"
+            onClick={onClose}
+          >
             <Receipt size={16} /> Expenses{" "}
             {expenseCount !== null && <span className="nav-count">{expenseCount}</span>}
           </Link>
@@ -261,7 +282,10 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
                 href={`/${slug}?from=settings`}
                 target="_blank"
                 rel="noreferrer"
-                onClick={e => e.stopPropagation()}
+                onClick={e => {
+                  e.stopPropagation();
+                  onClose();
+                }}
                 className="!p-1 !h-auto !w-auto !gap-0 rounded text-[#9ca3af] hover:text-[#191c1d] transition-colors shrink-0 ml-auto"
                 title="View Online Store"
                 aria-label="View Online Store"
@@ -275,6 +299,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
                 <Link
                   href="/vendor/settings"
                   className={path === "/vendor/settings" ? "active" : ""}
+                  onClick={onClose}
                 >
                   Preferences
                 </Link>
@@ -296,6 +321,7 @@ export function Sidebar({ path, open, onClose }: AdminSidebarProps) {
               href="/vendor/profile"
               aria-label="Open director profile and studio equity"
               title="Director Profile & Studio Equity"
+              onClick={onClose}
             >
               <div className="relative shrink-0">
                 <div className="w-8 h-8 rounded-lg bg-[#191c1d] text-white flex items-center justify-center font-serif text-xs italic font-bold shadow-2xs">
@@ -363,13 +389,15 @@ export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
               href={`/${slug}?from=settings`}
               target="_blank"
               rel="noreferrer"
-              className="outline-button hidden sm:inline-flex border-[#e5e7eb] hover:border-[#191c1d] text-[#191c1d]"
-              style={{ fontSize: "11px", padding: "9px 14px" }}
+              className="h-9 px-2.5 sm:px-3.5 inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] hover:border-[#191c1d] bg-white text-[#191c1d] text-xs font-semibold transition-all shrink-0 whitespace-nowrap shadow-2xs hover:bg-neutral-50"
+              title="View Public Profile"
             >
-              <Eye size={14} className="text-[#191c1d]" /> Profile View
+              <Eye size={14} className="text-[#191c1d] shrink-0" />
+              <span className="hidden sm:inline">Profile </span>
+              <span>View</span>
             </a>
             <button
-              className="publish bg-[#000000] hover:bg-[#262626]"
+              className="h-9 px-3 sm:px-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#000000] hover:bg-[#262626] text-white text-xs font-semibold transition-all shrink-0 whitespace-nowrap shadow-2xs cursor-pointer disabled:opacity-60"
               disabled={busy}
               onClick={async () => {
                 setBusy(true);
@@ -378,8 +406,16 @@ export function Header({ onMenu, onToast, path }: AdminHeaderProps) {
                 onToast("Changes published successfully");
               }}
             >
-              {busy ? "Publishing…" : "Publish changes"}
-              <ArrowRight size={15} />
+              {busy ? (
+                <span>Publishing…</span>
+              ) : (
+                <>
+                  <span>
+                    Publish<span className="hidden sm:inline"> changes</span>
+                  </span>
+                  <ArrowRight size={13} className="shrink-0" />
+                </>
+              )}
             </button>
           </>
         )}
@@ -397,6 +433,60 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
   const pathname = usePathname();
   const currentPath = path || pathname || "/";
 
+  // Automatically close sidebar whenever user switches between sections/routes
+  useEffect(() => {
+    if (currentPath) {
+      setOpen(false);
+    }
+  }, [currentPath]);
+
+  // Swipe right to open sidebar, swipe left to close on mobile and tablet
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTracking = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1 || window.innerWidth > 1024) return;
+      const targetEl = e.target as HTMLElement | null;
+      if (targetEl?.closest("input, textarea, select, [role='slider'], .no-swipe")) {
+        return;
+      }
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isTracking = true;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isTracking || e.changedTouches.length !== 1) return;
+      isTracking = false;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = Math.abs(touchEndY - touchStartY);
+
+      // Must be predominantly horizontal gesture
+      if (diffY > 80 || Math.abs(diffX) < diffY * 1.4) return;
+
+      // Swipe right to open: moved right by >= 50px, starting from the left half of the screen
+      if (diffX > 50 && touchStartX < window.innerWidth * 0.5) {
+        setOpen(true);
+      } else if (diffX < -50 && open) {
+        // Swipe left to close when open
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [open]);
+
   const handleToast = (msg: string) => {
     setToastMessage(msg);
     if (onToast) onToast(msg);
@@ -405,6 +495,14 @@ export function AdminLayout({ children, path, onToast }: AdminLayoutProps) {
   return (
     <AdminToastContext.Provider value={{ showToast: handleToast }}>
       <div className="admin">
+        {/* Mobile/tablet backdrop overlay to dismiss sidebar */}
+        {open && (
+          <div
+            className="fixed inset-0 bg-black/30 z-10 backdrop-blur-xs transition-opacity [max-width:750px]:block hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+        )}
         <Sidebar path={currentPath} open={open} onClose={() => setOpen(false)} />
         <div className="admin-main">
           <Header onMenu={() => setOpen(true)} onToast={handleToast} path={currentPath} />

@@ -19,7 +19,7 @@ export function FooterSection({
 }: FooterSectionProps) {
   return (
     <Card
-      title="Closing call to action"
+      title="Closing Call To Action"
       description="Customize the headline, narrative, and visibility of your public studio's final closing inquiry banner."
       action={
         <div className="flex items-center gap-2">
