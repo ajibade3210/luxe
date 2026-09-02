@@ -142,10 +142,10 @@ export function InvoiceTable({
                       inv.status === "paid"
                         ? "text-[#047857]"
                         : inv.status === "sent"
-                        ? "text-[#b45309]"
-                        : inv.status === "cancelled"
-                        ? "text-[#b91c1c]"
-                        : "text-[#6b7280]"
+                          ? "text-[#b45309]"
+                          : inv.status === "cancelled"
+                            ? "text-[#b91c1c]"
+                            : "text-[#6b7280]"
                     }`}
                   >
                     {formatStatusLabel(inv.status)}

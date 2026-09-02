@@ -139,12 +139,12 @@ export function LeadTable({
                       lead.status === "new"
                         ? "text-[#b45309]"
                         : lead.status === "contacted"
-                        ? "text-[#855e2e]"
-                        : lead.status === "qualified"
-                        ? "text-[#0f766e]"
-                        : lead.status === "converted"
-                        ? "text-[#047857]"
-                        : "text-[#6b7280]"
+                          ? "text-[#855e2e]"
+                          : lead.status === "qualified"
+                            ? "text-[#0f766e]"
+                            : lead.status === "converted"
+                              ? "text-[#047857]"
+                              : "text-[#6b7280]"
                     }`}
                   >
                     {formatStatusLabel(lead.status)}
