@@ -247,18 +247,24 @@ export function CustomerAddModal({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div className="text-[#111827]">
-                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Email</span>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">
+                      Email
+                    </span>
                     <span className="truncate block">{formData.email || "No email on file"}</span>
                   </div>
 
                   <div className="text-[#111827]">
-                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Phone</span>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">
+                      Phone
+                    </span>
                     <span className="truncate block">{formData.phone || "No phone on file"}</span>
                   </div>
 
                   {formData.company && (
                     <div className="text-[#111827] sm:col-span-2">
-                      <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Company</span>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">
+                        Company
+                      </span>
                       <span className="truncate block">{formData.company}</span>
                     </div>
                   )}

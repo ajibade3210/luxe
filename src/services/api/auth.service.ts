@@ -8,12 +8,7 @@
  */
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { apiClient } from "@/lib/api-client";
-import type {
-  AuthResponseDto,
-  MeResponseDto,
-  User,
-  UserSession,
-} from "@/types";
+import type { AuthResponseDto, MeResponseDto, User, UserSession } from "@/types";
 
 export function saveAuthTokens(accessToken?: string, refreshToken?: string): void {
   if (typeof window === "undefined") return;
