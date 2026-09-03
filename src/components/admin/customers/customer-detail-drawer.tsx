@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
+import { ChevronDown, FileText, MessageSquare, Plus, RefreshCw, Trash2, X } from "lucide-react";
 import { useEffect } from "react";
 import type { CustomerDetailDrawerProps, ServiceStatus } from "@/types";
 import { formatMoney, formatStatusLabel } from "@/utils";
@@ -9,6 +9,7 @@ export function CustomerDetailDrawer({
   customer,
   customerInvoices,
   onClose,
+  onEditCustomer,
   onToggleStatus,
   onOpenMessageModal,
   onOpenInvoiceModal,
@@ -70,15 +71,13 @@ export function CustomerDetailDrawer({
         </p>
         {customer.company && <p className="drawer-company">{customer.company}</p>}
 
-        {/* Top Send Message Action */}
-        <div className="pt-3 pb-1">
+        {/* Top Actions: Send Message & Customer Profile */}
+        <div className="pt-3 pb-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
             type="button"
             disabled={!customer.isActive}
-            className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold w-full transition-all shadow-xs ${
-              customer.isActive
-                ? "bg-[#111827] hover:bg-black text-white cursor-pointer"
-                : "bg-[#f3f4f6] text-[#9ca3af] border border-[#e5e7eb] cursor-not-allowed opacity-60"
+            className={`inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50 w-full ${
+              !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
             }`}
             onClick={() => {
               if (!customer.isActive) return;
@@ -89,13 +88,44 @@ export function CustomerDetailDrawer({
             <MessageSquare size={14} />
             <span>Send Message</span>
           </button>
+
+          {onEditCustomer && (
+            <button
+              type="button"
+              onClick={() => onEditCustomer(customer)}
+              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs w-full"
+              title="View customer profile, notes, and attributes"
+            >
+              <FileText size={14} />
+              <span>Customer Profile</span>
+            </button>
+          )}
         </div>
 
-        {/* Client notes */}
-        {customer.notes && (
+        {/* Customer Attributes */}
+        {customer.attributes && customer.attributes.length > 0 && (
           <div className="drawer-block">
-            <span className="eyebrow">Client notes</span>
-            <p>{customer.notes}</p>
+            <div className="flex items-center justify-between pb-1">
+              <span className="eyebrow">Customer Attributes</span>
+              <span className="text-[10px] font-bold text-[#855e2e] bg-[#fbf7f0] border border-[#eee7dc] px-2 py-0.5 rounded-md">
+                {customer.attributes.length}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1.5">
+              {customer.attributes.map((attr, idx) => (
+                <div
+                  key={`${attr.key}-${idx}`}
+                  className="bg-[#faf8f5] border border-[#eee7dc] rounded-xl p-2.5 flex flex-col gap-0.5 break-words"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#855e2e] break-words">
+                    {attr.key}
+                  </span>
+                  <span className="text-xs font-semibold text-[#191c1d] break-words">
+                    {attr.value}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -110,14 +140,12 @@ export function CustomerDetailDrawer({
                 if (!customer.isActive) return;
                 onOpenInvoiceModal(customer);
               }}
-              className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-colors ${
-                customer.isActive
-                  ? "text-[#855e2e] hover:text-[#5c3e1a] bg-[#faf7f2] hover:bg-[#f5eee3] border-[#ded5c8] cursor-pointer"
-                  : "text-[#9ca3af] bg-[#f3f4f6] border-[#e5e7eb] cursor-not-allowed opacity-60"
+              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
+                !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
               }`}
               title={customer.isActive ? "New Invoice" : "Customer is inactive"}
             >
-              <Plus size={11} />
+              <Plus size={12} />
               <span>New Invoice</span>
             </button>
           </div>
@@ -154,7 +182,7 @@ export function CustomerDetailDrawer({
                     <button
                       type="button"
                       onClick={() => onOpenInvoiceModal(customer, inv)}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-[#d1d5db] hover:bg-[#f3f4f6] text-[11px] font-semibold text-[#374151] cursor-pointer"
+                      className="inline-flex items-center justify-center px-3 py-1 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
                     >
                       {inv.status === "draft" ? "Edit" : "View"}
                     </button>
@@ -171,9 +199,9 @@ export function CustomerDetailDrawer({
                         title={
                           customer.isActive ? "Resend invoice to customer" : "Customer is inactive"
                         }
-                        className={`p-1.5 rounded-lg border transition-colors ${
+                        className={`p-1.5 rounded-xl border transition-all ${
                           customer.isActive
-                            ? "bg-white border-[#d1d5db] hover:bg-[#eff6ff] text-[#1e40af] hover:border-[#bfdbfe] cursor-pointer"
+                            ? "bg-white hover:bg-[#fafaf9] text-[#1f2937] border-[#d1d5db] hover:border-[#9ca3af] hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 cursor-pointer shadow-2xs"
                             : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
                         }`}
                       >
@@ -191,9 +219,9 @@ export function CustomerDetailDrawer({
                           onDeleteDraftInvoice(inv.id);
                         }}
                         title={customer.isActive ? "Delete unsent draft" : "Customer is inactive"}
-                        className={`p-1.5 rounded-lg border ${
+                        className={`p-1.5 rounded-xl border transition-all ${
                           customer.isActive
-                            ? "bg-white border-[#fecaca] hover:bg-[#fee2e2] text-[#dc2626] cursor-pointer"
+                            ? "bg-white hover:bg-[#fef2f2] text-[#dc2626] border-[#fecaca] hover:border-[#f87171] hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 cursor-pointer shadow-2xs"
                             : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
                         }`}
                       >
@@ -227,14 +255,12 @@ export function CustomerDetailDrawer({
                 if (!customer.isActive) return;
                 onOpenAddServiceModal();
               }}
-              className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
-                customer.isActive
-                  ? "text-[#191c1d] hover:text-[#855e2e] bg-white hover:bg-[#faf7f2] border-[#ded5c8] hover:border-[#855e2e] shadow-2xs cursor-pointer"
-                  : "text-[#9ca3af] bg-[#f3f4f6] border-[#e5e7eb] cursor-not-allowed opacity-60"
+              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
+                !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
               }`}
               title={customer.isActive ? "Add Service" : "Customer is inactive"}
             >
-              <Plus size={13} />
+              <Plus size={12} />
               <span>Add Service</span>
             </button>
           </div>

@@ -77,6 +77,44 @@ describe("Runtime Schema Validation (Zod)", () => {
       };
       expect(() => AddServiceInputSchema.parse(invalidService)).toThrow();
     });
+
+    it("validates customer with custom attributes and prunes completely blank rows", () => {
+      const customerWithAttributes = {
+        name: "Crown & Laurel Co.",
+        email: "events@crownlaurel.com",
+        attributes: [
+          { key: "Waist", value: "32" },
+          { key: "", value: "" },
+          { key: "Preferred Delivery Time", value: "10:30 AM" },
+        ],
+      };
+      const parsed = NewCustomerInputSchema.parse(customerWithAttributes);
+      expect(parsed.attributes).toEqual([
+        { key: "Waist", value: "32" },
+        { key: "Preferred Delivery Time", value: "10:30 AM" },
+      ]);
+    });
+
+    it("rejects attributes containing pipe (|) character in frontend schema", () => {
+      const invalidAttrCustomer = {
+        name: "Crown & Laurel Co.",
+        email: "events@crownlaurel.com",
+        attributes: [{ key: "Waist | Size", value: "32" }],
+      };
+      expect(() => NewCustomerInputSchema.parse(invalidAttrCustomer)).toThrow();
+    });
+
+    it("rejects duplicate attribute keys in frontend schema", () => {
+      const duplicateAttrCustomer = {
+        name: "Crown & Laurel Co.",
+        email: "events@crownlaurel.com",
+        attributes: [
+          { key: "Waist", value: "32" },
+          { key: "waist", value: "34" },
+        ],
+      };
+      expect(() => NewCustomerInputSchema.parse(duplicateAttrCustomer)).toThrow();
+    });
   });
 
   describe("InvoiceInputSchema", () => {

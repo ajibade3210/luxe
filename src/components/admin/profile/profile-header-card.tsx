@@ -45,9 +45,9 @@ export function ProfileHeaderCard({ business, onUpdateHeader, onToast }: Profile
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl bg-[#faf7f2] hover:bg-[#f0ebe3] text-[#191c1d] border border-[#ded7cb] hover:border-[#c59a78] transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs shrink-0"
           >
-            <Pencil size={12} className="text-[#855e2e]" />
+            <Pencil size={13} />
             <span>Customize Header</span>
           </button>
         </div>

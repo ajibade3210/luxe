@@ -16,6 +16,10 @@ export function CustomerImportModal({
   const [isParsing, setIsParsing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<{
+    imported: number;
+    skipped?: Array<{ line: number; error: string }>;
+  } | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,6 +53,9 @@ export function CustomerImportModal({
     const notesIdx = headers.findIndex(
       h => h.includes("note") || h.includes("desc") || h.includes("detail") || h.includes("comment")
     );
+    const attrIdx = headers.findIndex(
+      h => h.includes("attribute") || h.includes("measurement") || h.includes("custom")
+    );
 
     const records: ImportCustomerRecord[] = [];
 
@@ -71,13 +78,15 @@ export function CustomerImportModal({
       const phone = phoneIdx >= 0 ? cols[phoneIdx] || "" : cols[1] || "";
       const email = emailIdx >= 0 ? cols[emailIdx] || "" : cols[2] || "";
       const notes = notesIdx >= 0 ? cols[notesIdx] || "" : cols[3] || "";
+      const attributes = attrIdx >= 0 ? cols[attrIdx] || "" : undefined;
 
-      if (name || email) {
+      if (name || email || phone) {
         records.push({
           name: name || "Unnamed Client",
-          phone,
-          email: email || "no-email@client.local",
-          notes,
+          phone: phone || undefined,
+          email: email || "",
+          notes: notes || undefined,
+          attributes: attributes || undefined,
         });
       }
     }
@@ -91,6 +100,7 @@ export function CustomerImportModal({
 
     setIsParsing(true);
     setParseError(null);
+    setImportResult(null);
     setFileName(file.name);
 
     const reader = new FileReader();
@@ -127,13 +137,27 @@ export function CustomerImportModal({
     }
 
     setIsSubmitting(true);
+    setImportResult(null);
     try {
       const res = await importCustomers(parsedRecords);
-      onToast(
-        `Successfully imported ${res.imported} customer${res.imported === 1 ? "" : "s"} into register.`
-      );
-      if (onImportSuccess) onImportSuccess();
-      onClose();
+      if (res.skipped && res.skipped.length > 0) {
+        setImportResult({ imported: res.imported, skipped: res.skipped });
+        const errorSummary = res.skipped
+          .slice(0, 2)
+          .map(s => `Line ${s.line}: ${s.error}`)
+          .join("; ");
+        const moreCount = res.skipped.length > 2 ? ` (+${res.skipped.length - 2} more)` : "";
+        onToast(
+          `Imported ${res.imported} customer(s). Skipped ${res.skipped.length} invalid row(s): ${errorSummary}${moreCount}`
+        );
+        if (onImportSuccess) onImportSuccess();
+      } else {
+        onToast(
+          `Successfully imported ${res.imported} customer${res.imported === 1 ? "" : "s"} into register.`
+        );
+        if (onImportSuccess) onImportSuccess();
+        onClose();
+      }
     } catch {
       onToast("Failed to import customer records.");
     } finally {
@@ -145,6 +169,7 @@ export function CustomerImportModal({
     setParsedRecords([]);
     setFileName("");
     setParseError(null);
+    setImportResult(null);
   };
 
   return (
@@ -179,17 +204,39 @@ export function CustomerImportModal({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#faf8f5] border border-[#eee7dc]">
             <div>
               <b className="text-xs text-[#191c1d] block">CSV Columns Accepted:</b>
-              <span className="text-[11px] text-[#6b7280]">Name, Phone, Email, Notes</span>
+              <span className="text-[11px] text-[#6b7280]">
+                Name, Phone, Email, Notes, Customer Attributes
+              </span>
             </div>
             <button
               type="button"
               onClick={downloadCustomerCSVTemplate}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#855e2e] hover:text-[#5c3e1a] bg-white border border-[#ded7cb] hover:border-[#855e2e] px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-2xs shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs shrink-0"
             >
               <Download size={13} />
               <span>Download Template</span>
             </button>
           </div>
+
+          {/* Skipped Rows Feedback Banner */}
+          {importResult?.skipped && importResult.skipped.length > 0 && (
+            <div className="p-4 rounded-2xl bg-[#fef2f2] border border-[#fecaca] text-[#991b1b] space-y-2">
+              <div className="flex items-center gap-2 font-bold text-xs text-[#b91c1c]">
+                <AlertCircle size={15} className="shrink-0" />
+                <span>
+                  {importResult.imported} imported, {importResult.skipped.length} row(s) skipped due
+                  to validation:
+                </span>
+              </div>
+              <ul className="space-y-1 text-[11px] max-h-32 overflow-y-auto pl-5 list-disc">
+                {importResult.skipped.map((s, idx) => (
+                  <li key={`skipped-${s.line}-${idx}`}>
+                    <b>Line {s.line}:</b> {s.error}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Upload Area */}
           {parsedRecords.length === 0 ? (
@@ -277,7 +324,7 @@ export function CustomerImportModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl border border-[#ded7cb] bg-white hover:bg-[#faf8f5] text-xs font-semibold text-[#191c1d] transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
           >
             Cancel
           </button>
@@ -285,7 +332,7 @@ export function CustomerImportModal({
             type="button"
             disabled={parsedRecords.length === 0 || isSubmitting}
             onClick={handleImport}
-            className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
+            className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:transform-none"
           >
             {isSubmitting ? (
               <>

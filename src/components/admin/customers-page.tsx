@@ -41,6 +41,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
     reloadCustomers,
     handleExport,
     handleCreateCustomer,
+    handleUpdateCustomer,
     handleAddService,
     handleDeleteService,
     handleUpdateServiceStatus,
@@ -52,6 +53,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<string[]>([]);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
@@ -106,10 +108,13 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
     <div className="flex items-center gap-2 sm:gap-2.5">
       <button
         type="button"
-        onClick={() => setShowAddModal(true)}
-        className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#191c1d] hover:bg-black text-white px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
+        onClick={() => {
+          setCustomerToEdit(null);
+          setShowAddModal(true);
+        }}
+        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#111827] hover:bg-black text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs"
       >
-        <Plus size={13} />
+        <Plus size={14} />
         <span>Add</span>
       </button>
 
@@ -118,7 +123,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         <button
           type="button"
           onClick={() => setShowMoreMenu(prev => !prev)}
-          className="inline-flex items-center justify-center p-1.5 sm:p-2.5 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs hover:-translate-y-0.5 active:translate-y-0 duration-200"
+          className="inline-flex items-center justify-center p-2 sm:p-2.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
           title="More actions"
           aria-label="More actions"
         >
@@ -212,6 +217,10 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         customer={selectedCustomer}
         customerInvoices={customerInvoices}
         onClose={() => setSelectedCustomerId(null)}
+        onEditCustomer={cust => {
+          setCustomerToEdit(cust);
+          setShowAddModal(true);
+        }}
         onToggleStatus={handleToggleCustomerStatus}
         onOpenMessageModal={() => setShowSendMessageModal(true)}
         onOpenInvoiceModal={handleOpenInvoiceModalForCustomer}
@@ -223,10 +232,19 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
       />
 
       <CustomerAddModal
+        key={customerToEdit?.id ?? "new"}
         isOpen={showAddModal}
         isSubmitting={isSubmitting}
-        onClose={() => setShowAddModal(false)}
-        onSubmit={handleCreateCustomer}
+        initialCustomer={customerToEdit}
+        onClose={() => {
+          setShowAddModal(false);
+          setCustomerToEdit(null);
+        }}
+        onSubmit={
+          customerToEdit
+            ? data => handleUpdateCustomer(customerToEdit.id, data)
+            : handleCreateCustomer
+        }
       />
 
       <CustomerBroadcastModal

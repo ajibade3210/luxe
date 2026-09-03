@@ -18,6 +18,7 @@ export function ProfileIdentityCard({
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(name);
   const [editPhone, setEditPhone] = useState(phone);
+  const [editStudioName, setEditStudioName] = useState(studioName || "");
   const [editBankName, setEditBankName] = useState(bankName || "");
   const [editAccountName, setEditAccountName] = useState(accountName || "");
   const [editAccountNumber, setEditAccountNumber] = useState(accountNumber || "");
@@ -29,15 +30,17 @@ export function ProfileIdentityCard({
     if (!isEditing) {
       setEditName(name);
       setEditPhone(phone);
+      setEditStudioName(studioName || "");
       setEditBankName(bankName || "");
       setEditAccountName(accountName || "");
       setEditAccountNumber(accountNumber || "");
     }
-  }, [name, phone, bankName, accountName, accountNumber, isEditing]);
+  }, [name, phone, studioName, bankName, accountName, accountNumber, isEditing]);
 
   const handleStartEdit = () => {
     setEditName(name);
     setEditPhone(phone);
+    setEditStudioName(studioName || "");
     setEditBankName(bankName || "");
     setEditAccountName(accountName || "");
     setEditAccountNumber(accountNumber || "");
@@ -105,9 +108,9 @@ export function ProfileIdentityCard({
           <button
             type="button"
             onClick={handleStartEdit}
-            className="inline-flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#faf7f2] hover:bg-[#f0ebe3] text-[#191c1d] border border-[#ded7cb] hover:border-[#c59a78] transition-all cursor-pointer shrink-0 shadow-2xs"
+            className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs shrink-0"
           >
-            <Pencil size={12} className="text-[#855e2e]" />
+            <Pencil size={13} />
             <span>Edit profile</span>
           </button>
         )}
@@ -133,80 +136,98 @@ export function ProfileIdentityCard({
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
-                Email
+                Email Address
               </label>
-              <div className="signup-field flex items-center bg-[#f3efe8] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs opacity-80 cursor-not-allowed">
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs transition-all opacity-80 cursor-not-allowed">
                 <input
-                  type="email"
-                  value={email}
                   disabled
-                  readOnly
-                  className="w-full text-xs text-[#5c5f60] bg-transparent cursor-not-allowed outline-none border-none select-none focus:outline-none focus:ring-0"
+                  value={email}
+                  placeholder="elena@atelierforma.design"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0 cursor-not-allowed"
                 />
               </div>
             </div>
 
-            <div className="md:col-span-2">
+            <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
-                Phone number
+                Phone Number
               </label>
               <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs transition-all">
                 <input
-                  type="tel"
                   value={editPhone}
                   onChange={event => setEditPhone(event.target.value)}
-                  placeholder="+234 800 FORMA VIP"
+                  placeholder="+234 800 ELAN VIP"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
                 />
               </div>
             </div>
 
-            {/* Banking Remittance Details */}
-            <div className="md:col-span-2 pt-2 border-t border-[#f0e8dc]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#855e2e] block mb-3">
-                Remittance Banking Details (For Invoices)
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
-                    Bank Name
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
-                    <input
-                      value={editBankName}
-                      onChange={event => setEditBankName(event.target.value)}
-                      placeholder="e.g. Standard Chartered"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
-                    />
-                  </div>
-                </div>
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-2">
+                Studio Name
+              </label>
+              <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-4 py-3 text-xs transition-all">
+                <input
+                  value={editStudioName}
+                  onChange={event => setEditStudioName(event.target.value)}
+                  placeholder="Atelier Forma Couture"
+                  className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                />
+              </div>
+            </div>
+          </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
-                    Account Name
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
-                    <input
-                      value={editAccountName}
-                      onChange={event => setEditAccountName(event.target.value)}
-                      placeholder="e.g. Élan Atelier Ltd"
-                      className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
-                    />
-                  </div>
-                </div>
+          {/* Bank details accordion / expandable sub-group */}
+          <div className="pt-2 border-t border-[#f0e8dc] space-y-4">
+            <div>
+              <h4 className="text-xs font-bold text-[#191c1d] uppercase tracking-wider">
+                Payout & Remittance Bank Details
+              </h4>
+              <p className="text-xs text-[#6b7280] mt-0.5">
+                Bank account for automated settlements and disbursements.
+              </p>
+            </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5c5f60] mb-1.5">
-                    Account Number
-                  </label>
-                  <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
-                    <input
-                      value={editAccountNumber}
-                      onChange={event => setEditAccountNumber(event.target.value)}
-                      placeholder="e.g. 0039281745"
-                      className="w-full text-xs text-[#191c1d] font-mono placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
-                    />
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                  Bank Name
+                </label>
+                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                  <input
+                    value={editBankName}
+                    onChange={event => setEditBankName(event.target.value)}
+                    placeholder="e.g. Providus Bank"
+                    className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                  Account Name
+                </label>
+                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                  <input
+                    value={editAccountName}
+                    onChange={event => setEditAccountName(event.target.value)}
+                    placeholder="e.g. Atelier Forma Ent"
+                    className="w-full text-xs text-[#191c1d] placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#191c1d] mb-1.5">
+                  Account Number
+                </label>
+                <div className="signup-field flex items-center bg-[#faf8f5] border border-[#ded7cb] rounded-xl px-3.5 py-2.5 text-xs transition-all">
+                  <input
+                    value={editAccountNumber}
+                    onChange={event => setEditAccountNumber(event.target.value)}
+                    placeholder="e.g. 0039281745"
+                    className="w-full text-xs text-[#191c1d] font-mono placeholder:text-[#9ea1a2] bg-transparent outline-none border-none focus:outline-none focus:ring-0"
+                  />
                 </div>
               </div>
             </div>
@@ -216,7 +237,7 @@ export function ProfileIdentityCard({
           <div className="flex items-center gap-3 pt-2 border-t border-[#f0e8dc]">
             <button
               type="button"
-              className="dark-button bg-[#191c1d] hover:bg-black !text-white px-6 py-3 rounded-xl text-xs font-semibold shadow-xs flex items-center gap-2 cursor-pointer transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
               disabled={saving}
               onClick={handleSave}
             >
@@ -224,7 +245,7 @@ export function ProfileIdentityCard({
             </button>
             <button
               type="button"
-              className="px-4 py-3 rounded-xl text-xs font-semibold text-[#665e57] hover:text-[#191c1d] hover:bg-[#faf7f2] transition-all cursor-pointer flex items-center gap-1.5"
+              className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
               onClick={() => setIsEditing(false)}
             >
               <span>Cancel</span>

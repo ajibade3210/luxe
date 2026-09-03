@@ -15,6 +15,7 @@ import {
   useInvoicesQuery,
   useResendInvoiceMutation,
   useToggleCustomerStatusMutation,
+  useUpdateCustomerMutation,
   useUpdateCustomerServiceStatusMutation,
 } from "./queries";
 
@@ -41,6 +42,7 @@ export function useCustomers(onToast?: (message: string) => void) {
   const { data: invoicesData = [], isLoading: isLoadingInvoices } = useInvoicesQuery();
 
   const createCustomerMutation = useCreateCustomerMutation();
+  const updateCustomerMutation = useUpdateCustomerMutation();
   const addServiceMutation = useAddCustomerServiceMutation();
   const deleteServiceMutation = useDeleteCustomerServiceMutation();
   const updateServiceStatusMutation = useUpdateCustomerServiceStatusMutation();
@@ -90,6 +92,27 @@ export function useCustomers(onToast?: (message: string) => void) {
       return true;
     } catch {
       onToast?.("Failed to create customer.");
+      return false;
+    }
+  };
+
+  const handleUpdateCustomer = async (id: string, formData: Partial<NewCustomerInput>) => {
+    if (!formData.name?.trim()) {
+      onToast?.("Please enter customer name.");
+      return false;
+    }
+
+    if (!formData.email?.trim() && !formData.phone?.trim()) {
+      onToast?.("Please provide at least one contact method (Email or Phone/WhatsApp number).");
+      return false;
+    }
+
+    try {
+      const updated = await updateCustomerMutation.mutateAsync({ id, input: formData });
+      onToast?.(`Customer "${updated.name}" updated successfully.`);
+      return true;
+    } catch {
+      onToast?.("Failed to update customer.");
       return false;
     }
   };
@@ -219,12 +242,13 @@ export function useCustomers(onToast?: (message: string) => void) {
     totalRevenue,
     activeServicesCount,
     isExporting,
-    isSubmitting: createCustomerMutation.isPending,
+    isSubmitting: createCustomerMutation.isPending || updateCustomerMutation.isPending,
     isLoading: isLoadingCustomers || isLoadingInvoices,
     handleSearch,
     reloadCustomers,
     handleExport,
     handleCreateCustomer,
+    handleUpdateCustomer,
     handleAddService,
     handleDeleteService,
     handleUpdateServiceStatus,

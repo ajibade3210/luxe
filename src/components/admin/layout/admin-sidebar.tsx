@@ -68,7 +68,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
   const navLinkClass = (isActive: boolean) =>
     `flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer text-decoration-none ${
       isActive
-        ? "bg-white text-[#191c1d] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+        ? "bg-white text-[#191c1d] shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
         : "text-[#6b7280] hover:text-[#191c1d] hover:bg-[#edeeef]"
     }`;
 
@@ -156,7 +156,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
           <div className="flex flex-col">
             <button
               type="button"
-              className={`flex items-center justify-between gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer ${
+              className={`flex items-center justify-between gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer text-left ${
                 onlineStoreExpanded
                   ? "text-[#191c1d] hover:bg-[#edeeef]"
                   : "text-[#6b7280] hover:text-[#191c1d] hover:bg-[#edeeef]"
@@ -165,7 +165,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <Store size={16} className="shrink-0" />
-                <span className="truncate">Online Store</span>
+                <span className="truncate text-[13px] font-medium font-sans">Online Store</span>
               </div>
 
               <a

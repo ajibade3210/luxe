@@ -3,6 +3,7 @@ import { AddServiceInputSchema, NewCustomerInputSchema } from "@/lib/schemas";
 import type {
   AddServiceInput,
   Customer,
+  CustomerImportResult,
   ImportCustomerRecord,
   NewCustomerInput,
   ServiceStatus,
@@ -160,8 +161,8 @@ export async function sendCustomerInvoice(
  */
 export async function importCustomers(
   records: ImportCustomerRecord[]
-): Promise<{ imported: number; customers: Customer[] }> {
-  return apiClient.post<{ imported: number; customers: Customer[] }>("/customers/import", {
+): Promise<CustomerImportResult> {
+  return apiClient.post<CustomerImportResult>("/customers/import", {
     records,
   });
 }
@@ -194,15 +195,22 @@ export async function exportCustomersCSV(): Promise<{ count: number; filename: s
  */
 export function downloadCustomerCSVTemplate(): void {
   if (typeof window === "undefined") return;
-  const headers = ["Name", "Phone", "Email", "Notes"];
+  const headers = ["Name", "Phone", "Email", "Notes", "Customer Attributes"];
   const sampleRows = [
     [
       "Adeola Adeleke",
       "+234 803 123 4567",
       "adeola@example.com",
       "VIP anniversary celebration client",
+      "Waist: 32 | Bust: 36 | Delivery: Morning",
     ],
-    ["Chinedu Obi", "+234 802 987 6543", "chinedu@example.com", "Executive corporate gala inquiry"],
+    [
+      "Chinedu Obi",
+      "+234 802 987 6543",
+      "chinedu@example.com",
+      "Executive corporate gala inquiry",
+      "Shoe Size: 44 | Preferred Contact: WhatsApp",
+    ],
   ];
   const csvContent = [
     headers.join(","),

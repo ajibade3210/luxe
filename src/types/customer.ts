@@ -24,6 +24,11 @@ export interface Activity {
   timestamp: string;
 }
 
+export interface CustomerAttribute {
+  key: string;
+  value: string;
+}
+
 export interface Customer {
   id: string;
   businessId?: string;
@@ -34,6 +39,7 @@ export interface Customer {
   services: CustomerService[];
   totalRevenue: number;
   notes?: string;
+  attributes?: CustomerAttribute[] | null;
   isActive: boolean;
   isExistingCustomer?: boolean;
   createdAt: string;
@@ -45,6 +51,8 @@ export interface NewCustomerInput {
   email?: string;
   phone?: string;
   company?: string;
+  notes?: string;
+  attributes?: CustomerAttribute[] | null;
   serviceName?: string;
   service?: string;
   amount?: number;
@@ -65,6 +73,15 @@ export interface ImportCustomerRecord {
   phone?: string;
   email: string;
   notes?: string;
+  attributes?: CustomerAttribute[] | string | null;
+}
+
+export interface CustomerImportResult {
+  imported: number;
+  importedCount?: number;
+  totalRows?: number;
+  skipped?: Array<{ line: number; error: string }>;
+  customers?: Customer[];
 }
 
 export interface CustomerTableProps {
@@ -89,6 +106,8 @@ export interface CustomerTableProps {
 export interface CustomerAddModalProps {
   isOpen: boolean;
   isSubmitting: boolean;
+  initialCustomer?: Customer | null;
+  initialMode?: "view" | "edit";
   onClose: () => void;
   onSubmit: (data: NewCustomerInput) => Promise<boolean>;
 }
@@ -115,6 +134,7 @@ export interface CustomerDetailDrawerProps {
   customer: Customer | null;
   customerInvoices: Invoice[];
   onClose: () => void;
+  onEditCustomer?: (customer: Customer) => void;
   onToggleStatus: (customerId: string, isActive: boolean) => void;
   onOpenMessageModal: (customer: Customer) => void;
   onOpenInvoiceModal: (customer: Customer, invoice?: Invoice) => void;
