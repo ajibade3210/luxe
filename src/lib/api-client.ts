@@ -6,9 +6,10 @@
  */
 
 import { STORAGE_KEYS } from "@/constants";
+import { env } from "./env";
 import { logger } from "./logger";
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+export const API_BASE_URL = env.API_BASE_URL;
 
 export class ApiError extends Error {
   status: number;
@@ -149,7 +150,9 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
           const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken: storedRefreshToken || undefined }),
+            body: JSON.stringify({
+              refreshToken: storedRefreshToken || undefined,
+            }),
             credentials: "include",
           });
 
@@ -181,7 +184,9 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
           await fetch(`${API_BASE_URL}/auth/logout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken: storedRefreshToken || undefined }),
+            body: JSON.stringify({
+              refreshToken: storedRefreshToken || undefined,
+            }),
             credentials: "include",
           }).catch(() => {});
           onRefreshFailed(sessionErr);

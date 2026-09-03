@@ -3,16 +3,17 @@
  * Single Source of Truth for storage keys, default configs, and routing rules.
  */
 
+import { env } from "@/lib/env";
 import type { BusinessType, PortfolioProject } from "@/types";
 
 export const APP_CONFIG = {
-  name: process.env.NEXT_PUBLIC_APP_NAME || "Shopwus",
-  defaultStudioPhone: process.env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE || "+2348055966944",
+  name: env.NEXT_PUBLIC_APP_NAME,
+  defaultStudioPhone: env.NEXT_PUBLIC_DEFAULT_STUDIO_PHONE,
   defaultSlug: "atelier-forma",
   defaultLeadBudget: 25_000,
   defaultServiceAmount: 35_000,
-  siteDomain: process.env.NEXT_PUBLIC_SITE_DOMAIN || "shopwus.com",
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  siteDomain: env.NEXT_PUBLIC_SITE_DOMAIN,
+  baseUrl: env.APP_URL,
 } as const;
 
 export const STORAGE_KEYS = {
