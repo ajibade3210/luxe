@@ -12,7 +12,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTimeMinutes: 5,
     author: {
       name: "Victoria Élan",
-      role: "Studio Principal & Valuation Strategist",
+      role: "Commerce Lead & Valuation Strategist",
       avatarText: "VE",
     },
     coverGraphic: "retention_flywheel",
@@ -40,7 +40,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         heading: "The Top-of-Funnel Illusion",
         body: [
-          "Most online vendors and studio owners believe the only way to increase business value is driving more social media traffic and viral posts.",
+          "Most online vendors and business owners believe the only way to increase business value is driving more social media traffic and viral posts.",
           "However, when an appraiser, bank, or acquirer evaluates your business, they do not care about vanity follower counts. They look at customer lifetime value (LTV), repeat purchase rates, and how easily past clients can be reached without paying for expensive ads.",
         ],
         tipBox:
@@ -65,7 +65,7 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
     callToAction: {
-      title: "Calculate Your Studio's Valuation Today",
+      title: "Calculate Your Business Valuation Today",
       description:
         "Input your annual cashflow and customer retention rate to see your real-time valuation multiple and growth levers.",
       buttonLabel: "Launch Valuation Calculator",
@@ -89,7 +89,7 @@ export const BLOG_POSTS: BlogPost[] = [
     coverGraphic: "whatsapp_vs_atelier",
     excerpt:
       "If your sales live in messy WhatsApp chats with pricing screenshots, your business has zero transferability. Here is how a bespoke digital storefront elevates your pricing power and buyer trust.",
-    keyBenefit: "Digital Atelier & Interactive 3D Cards",
+    keyBenefit: "Digital Storefront & Interactive 3D Cards",
     takeaways: [
       {
         title: "Perception Drives Pricing Power",
@@ -112,24 +112,24 @@ export const BLOG_POSTS: BlogPost[] = [
         heading: "The Late-Night DM Dilemma",
         body: [
           "Picture this: It is midnight, and a prospective client sends a DM: 'Price for event decor?' You reply with a pricing screenshot, but they never respond.",
-          "Informal chat selling creates severe friction. Clients cannot easily inspect your verified portfolio, cannot gauge your legitimacy, and perceive your business as a casual gig rather than an established studio.",
+          "Informal chat selling creates severe friction. Clients cannot easily inspect your verified portfolio, cannot gauge your legitimacy, and perceive your business as a casual gig rather than an established business.",
         ],
       },
       {
         heading: "The 3D Tactile Card Experience",
         body: [
-          "Shopwus gives every director an interactive 3D stationery card. On the front, clients see your centered logo and physical studio location. With one click, the card flips in 3D space to reveal verified social channels and consultation inquiry triggers.",
+          "Shopwus gives every business owner an interactive 3D stationery card. On the front, clients see your centered logo and physical business location. With one click, the card flips in 3D space to reveal verified social channels and consultation inquiry triggers.",
           "This memorable interaction creates immediate authority and separates your brand from millions of generic Linktree pages.",
         ],
         graphic: "whatsapp_vs_atelier",
         tipBox:
-          "Studios using Shopwus interactive 3D stationery cards report a 42% increase in consultation inquiries converting into signed contracts.",
+          "Businesses using Shopwus interactive 3D stationery cards report a 42% increase in consultation inquiries converting into signed contracts.",
       },
       {
         heading: "Building Equity That Outlives the Founder",
         body: [
           "When an acquirer looks to buy an online business, their biggest fear is 'founder dependency.' If the business only functions through your personal phone, it is difficult to sell.",
-          "By directing all traffic to your dedicated studio storefront with structured inquiry capture, you create an autonomous, transferable brand that commands a premium valuation.",
+          "By directing all traffic to your dedicated business storefront with structured inquiry capture, you create an autonomous, transferable brand that commands a premium valuation.",
         ],
       },
     ],
@@ -204,9 +204,9 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
     callToAction: {
-      title: "See What Your Studio is Worth Right Now",
+      title: "See What Your Business is Worth Right Now",
       description:
-        "Try our free Business Valuation Calculator and discover the strategic levers to maximize your studio's market equity.",
+        "Try our free Business Valuation Calculator and discover the strategic levers to maximize your company's market equity.",
       buttonLabel: "Launch Valuation Calculator",
       buttonHref: "/valuation-calculator",
     },

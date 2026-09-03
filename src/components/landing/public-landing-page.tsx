@@ -40,9 +40,9 @@ export function PublicLandingPage() {
       <section className="hero">
         <div className="hero-copy">
           <h1>
-            The operating system for
+            The storefront platform for
             <br />
-            <em>online vendors & studios.</em>
+            <em>online vendors & businesses.</em>
           </h1>
           <p>
             Create your bespoke 3D digital storefront, broadcast WhatsApp updates, issue itemized

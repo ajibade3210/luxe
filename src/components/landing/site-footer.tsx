@@ -46,8 +46,8 @@ export function SiteFooter() {
             <BrandLogo size="md" />
 
             <p className="footer-mission-text">
-              The premier studio operating system engineered for luxury event architects, bespoke
-              wedding ateliers, and experiential production houses worldwide.
+              The digital storefront and commerce platform engineered for online vendors, growing
+              merchants, and independent businesses.
             </p>
 
             {/* Companion App Card */}
@@ -62,11 +62,11 @@ export function SiteFooter() {
               <div className="footer-app-info">
                 <div className="footer-app-badge">
                   <Smartphone size={12} />
-                  <span>iOS & iPadOS Companion</span>
+                  <span>iOS & Mobile Companion</span>
                 </div>
-                <strong className="footer-app-title">Download Shopwus Studio</strong>
+                <strong className="footer-app-title">Download Shopwus Mobile</strong>
                 <span className="footer-app-desc">
-                  Live show-calls, team cueing & instant approvals
+                  Instant notifications, customer orders & lead management
                 </span>
               </div>
             </div>

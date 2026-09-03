@@ -40,7 +40,7 @@ export function TermsOfServicePage() {
           <p className="text-xs text-[#747878]">Effective Date: February 15, 2026</p>
           <p className="text-sm text-[#444748] leading-relaxed pt-2">
             Welcome to Shopwus (https://shopwus.com). By creating an account, accessing our digital
-            studio tools, or using our services, you agree to comply with and be bound by these
+            storefront tools, or using our services, you agree to comply with and be bound by these
             Terms and Conditions.
           </p>
         </div>
@@ -49,9 +49,10 @@ export function TermsOfServicePage() {
         <section className="space-y-3">
           <h2 className="text-lg font-serif font-bold text-[#191c1d]">1. Overview</h2>
           <p className="text-xs sm:text-sm text-[#444748] leading-relaxed">
-            Shopwus is the studio operating system for boutique vendors, event planners, and
-            creative directors, offering digital storefronts, interactive 3D stationery cards, CRM
-            leads, multi-currency invoicing, expense bookkeeping, and business valuation modeling.
+            Shopwus is the digital storefront and business management platform for online vendors,
+            merchants, and independent businesses, offering mini-sites, interactive 3D stationery
+            cards, CRM leads, multi-currency invoicing, expense bookkeeping, and business valuation
+            modeling.
           </p>
         </section>
 
@@ -71,8 +72,8 @@ export function TermsOfServicePage() {
           </h2>
           <ul className="space-y-2 text-xs sm:text-sm text-[#444748] pl-5 list-disc leading-relaxed">
             <li>
-              <strong>14-Day Free Trial:</strong> Full access to all studio tools with zero upfront
-              payment required.
+              <strong>14-Day Free Trial:</strong> Full access to all storefront tools with zero
+              upfront payment required.
             </li>
             <li>
               <strong>Subscription:</strong> Following the trial, an active subscription is required

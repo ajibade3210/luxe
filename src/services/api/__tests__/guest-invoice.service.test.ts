@@ -114,14 +114,14 @@ describe("guest-invoice.service", () => {
     it("saves and loads draft invoices safely", () => {
       const customInvoice: GuestInvoiceData = {
         ...DEFAULT_GUEST_INVOICE,
-        senderName: "Boutique Creative Lab",
+        senderName: "Nova Commerce Lab",
         invoiceNumber: "INV-999",
       };
 
       saveDraftInvoice(customInvoice);
       const loaded = loadDraftInvoice();
 
-      expect(loaded.senderName).toBe("Boutique Creative Lab");
+      expect(loaded.senderName).toBe("Nova Commerce Lab");
       expect(loaded.invoiceNumber).toBe("INV-999");
 
       clearDraftInvoice();

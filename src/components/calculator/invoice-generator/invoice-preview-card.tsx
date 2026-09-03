@@ -180,8 +180,8 @@ export function InvoicePreviewCard({ invoice, totals, cardRef }: InvoicePreviewC
       {/* Footer Branding (Viral PLG loop) */}
       <div className="border-t border-[#f3eee6] pt-4 text-center">
         <p className="text-[10px] text-[#998e82]">
-          Created with <span className="font-semibold text-[#665e57]">Shopwus</span> — The operating
-          platform for boutique studios & commerce (shopwus.com)
+          Created with <span className="font-semibold text-[#665e57]">Shopwus</span> — The
+          storefront and commerce platform for businesses & online vendors (shopwus.com)
         </p>
       </div>
     </div>

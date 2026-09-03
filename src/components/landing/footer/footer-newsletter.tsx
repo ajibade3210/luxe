@@ -21,23 +21,23 @@ export function FooterNewsletter() {
       <div className="footer-hero-copy">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f4ece1] border border-[#e5d8c5] text-xs font-semibold tracking-wide text-[#785933] mb-3">
           <Sparkles size={13} className="text-[#a87d46]" />
-          <span>The Atelier Dispatch</span>
+          <span>The Merchant Dispatch</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#191c1d]">
-          Curated intelligence for luxury event leaders.
+          Curated intelligence for modern vendors and merchants.
         </h2>
         <p className="text-sm sm:text-base text-[#5c5f60] max-w-xl mt-2 leading-relaxed">
-          Join over 4,200+ studio directors receiving our weekly dispatch on high-ticket client
-          acquisition, production masterclasses, and modern event architecture.
+          Join over 4,200+ online vendors and founders receiving our weekly dispatch on customer
+          acquisition, storefront growth, and financial operations.
         </p>
       </div>
 
       <form className="footer-newsletter-form" onSubmit={handleSubscribe}>
         <div className="footer-input-wrapper">
           <input
-            aria-label="Studio email address"
+            aria-label="Business email address"
             type="email"
-            placeholder="director@yourstudio.com"
+            placeholder="founder@yourbrand.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -58,7 +58,7 @@ export function FooterNewsletter() {
         </div>
         {submitted && (
           <p className="text-xs text-[#2e7d32] mt-2 font-medium animate-fadeIn">
-            ✓ Welcome to The Atelier Dispatch. Your first edition arrives this Monday.
+            ✓ Welcome to The Merchant Dispatch. Your first edition arrives this Monday.
           </p>
         )}
       </form>

@@ -4,7 +4,7 @@ import { InvoiceGeneratorPage } from "@/components/calculator/invoice-generator-
 export const metadata: Metadata = {
   title: "Free Invoice Generator | Shopwus",
   description:
-    "Free online invoice generator for boutique studios, creative agencies, and independent vendors. Create, customize, print, and download professional client-ready PDF invoices in 60 seconds.",
+    "Free online invoice generator for online vendors, merchants, independent businesses, and freelancers. Create, customize, print, and download professional client-ready PDF invoices in 60 seconds.",
   openGraph: {
     title: "Free Invoice Generator | Shopwus",
     description:
@@ -18,7 +18,7 @@ export default function InvoiceGeneratorRoute() {
     "@type": "WebApplication",
     name: "Shopwus Free Invoice Generator",
     description:
-      "Free interactive invoice maker for independent vendors, creative studios, and boutique businesses.",
+      "Free interactive invoice maker for independent vendors, online businesses, and freelancers.",
     applicationCategory: "BusinessApplication",
     operatingSystem: "All",
     offers: {

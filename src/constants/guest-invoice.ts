@@ -26,25 +26,25 @@ export const DEFAULT_GUEST_INVOICE: GuestInvoiceData = {
   issueDate: new Date().toISOString().split("T")[0],
   dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   currency: "USD",
-  senderName: "Atelier Forma Studio",
-  senderEmail: "billing@atelierforma.co",
+  senderName: "Apex Retail & Commerce",
+  senderEmail: "billing@apexcommerce.co",
   senderAddress: "42 Bond Street, Suite 4B\nNew York, NY 10012",
   senderTaxId: "US-9284729-EIN",
   senderLogo: null,
   clientName: "Eleanor Vance",
-  clientEmail: "eleanor@vancestudio.com",
+  clientEmail: "eleanor@vancebrand.com",
   clientAddress: "128 Mercer Street\nNew York, NY 10012",
   items: [
     {
       id: "item-1",
-      description: "Brand Identity Design & Spatial Direction",
+      description: "Brand Identity Design & Creative Direction",
       quantity: 1,
       unitPrice: 2400,
       total: 2400,
     },
     {
       id: "item-2",
-      description: "Curated Stationery Production & Client Assets",
+      description: "Custom Merchandise Production & Assets",
       quantity: 1,
       unitPrice: 850,
       total: 850,
@@ -78,7 +78,7 @@ export const INVOICE_FAQS: InvoiceFaqItem[] = [
   {
     question: "How do I accept card or bank payments directly on my invoices?",
     answer:
-      "With a free Shopwus studio account, every invoice includes an interactive payment link allowing your clients to settle balances instantly via card, bank transfer, or Apple Pay with automated receipt reconciliation.",
+      "With a free Shopwus account, every invoice includes an interactive payment link allowing your clients to settle balances instantly via card, bank transfer, or Apple Pay with automated receipt reconciliation.",
   },
   {
     question: "What happens when I need to send invoices frequently?",
@@ -91,7 +91,7 @@ export const INVOICE_CHECKLIST_STEPS = [
   {
     title: "1. Distinct Business Identity",
     description:
-      "Include your registered studio name, trading address, tax or VAT identification number, and official billing contact email.",
+      "Include your registered business name, trading address, tax or VAT identification number, and official billing contact email.",
   },
   {
     title: "2. Unique Invoice Identifier",

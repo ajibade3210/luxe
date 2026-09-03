@@ -59,7 +59,7 @@ export function TrustedBusinesses({ organizations: initialOrgs }: TrustedBusines
     <section className="trusted-businesses" aria-labelledby="trusted-businesses-title">
       <div className="trusted-heading">
         <h2 id="trusted-businesses-title">
-          Built for high-touch luxury vendors & modern creative studios.
+          Built for ambitious online vendors & modern businesses.
         </h2>
       </div>
       <div className="marquee-viewport flex flex-col gap-3">

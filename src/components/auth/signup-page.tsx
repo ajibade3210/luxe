@@ -74,8 +74,8 @@ export function SignupPage() {
     if (!agreedToTerms) return;
     setIsSubmitting(true);
     setAuthError("");
-    const effectiveSlug = slug || claimSlug || "my-atelier";
-    const effectiveName = studioName || "My Luxury Studio";
+    const effectiveSlug = slug || claimSlug || "my-storefront";
+    const effectiveName = studioName || "My Storefront";
 
     try {
       const isJwt = codeOrToken.split(".").length === 3;
@@ -182,7 +182,7 @@ export function SignupPage() {
                   type="text"
                   value={slug}
                   onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                  placeholder="your-studio"
+                  placeholder="your-brand"
                   className="w-full text-xs text-[#191c1d] placeholder:text-[#94a3b8] outline-none"
                 />
               </div>
@@ -190,7 +190,7 @@ export function SignupPage() {
 
             <div>
               <label className="block text-xs font-semibold text-[#191c1d] mb-1.5">
-                Studio / Brand Name <span className="text-[#94a3b8] font-normal">(optional)</span>
+                Business / Brand Name <span className="text-[#94a3b8] font-normal">(optional)</span>
               </label>
               <div className="signup-field flex items-center bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2.5 text-xs transition-all">
                 <input
@@ -289,7 +289,7 @@ export function SignupPage() {
           <div className="pt-6 mt-6 border-t border-[#f1f5f9] flex items-center justify-between text-xs text-[#64748b]">
             <span>Already have an account?</span>
             <Link href="/login" className="text-[#2563eb] font-semibold hover:underline">
-              Sign in to Studio
+              Sign in to Dashboard
             </Link>
           </div>
         </div>
@@ -308,8 +308,8 @@ export function SignupPage() {
               Ready to join Shopwus?
             </h2>
             <p className="text-xs sm:text-sm text-[#64748b] leading-relaxed">
-              Over 2000+ online vendors, boutique brands, event planners, and creative businesses
-              use Shopwus to turn visitors into paying clients.
+              Over 2000+ online vendors, merchants, event planners, and creative businesses use
+              Shopwus to turn visitors into paying clients.
             </p>
           </div>
 
@@ -336,7 +336,7 @@ export function SignupPage() {
                 <div>
                   <strong className="text-xs font-bold text-[#191c1d] block">Elena Vance</strong>
                   <span className="text-[11px] text-[#64748b] block">
-                    Creative Director · Atelier Forma
+                    Creative Director · Vance Retail
                   </span>
                 </div>
               </div>
@@ -353,8 +353,8 @@ export function SignupPage() {
                 </span>
               </div>
               <p className="text-xs text-[#475569] leading-relaxed">
-                &ldquo;A super toolset dedicated to luxury client service that connects our
-                inquiries, multi-currency invoicing, and real-time business valuation.&rdquo;
+                &ldquo;A reliable platform built for modern commerce that connects our inquiries,
+                multi-currency invoicing, and real-time business valuation.&rdquo;
               </p>
               <div className="flex items-center gap-3 pt-1">
                 <div className="w-8 h-8 rounded-full bg-[#3b82f6] text-white flex items-center justify-center text-xs font-bold">

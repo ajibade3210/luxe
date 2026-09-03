@@ -17,11 +17,11 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
   {
     title: "Solutions",
     links: [
-      { label: "Luxury Wedding Ateliers", href: "/elan-stores" },
-      { label: "Experiential Agencies", href: "#features" },
-      { label: "Private Concierge & VIP", href: "#workflow" },
-      { label: "Floral & Spatial Designers", href: "#features" },
-      { label: "Destination Planners", href: "#workflow" },
+      { label: "Events & Experience Brands", href: "/elan-stores" },
+      { label: "Online Retail & Merchants", href: "#features" },
+      { label: "Service Providers & Agencies", href: "#workflow" },
+      { label: "Creative Studios & Designers", href: "#features" },
+      { label: "Independent Vendors", href: "#workflow" },
     ],
     subsections: [
       {
@@ -48,9 +48,9 @@ export const NAVIGATION_SECTIONS: FooterNavSection[] = [
         href: "/valuation-calculator",
         badge: "Free",
       },
-      { label: "Blog (Blog)", href: "/blog" },
-      { label: "Studio Operating Guide", href: "#workflow" },
-      { label: "Luxury Wedding Index 2026", href: "#features" },
+      { label: "Blog & Guides", href: "/blog" },
+      { label: "Storefront Operating Guide", href: "#workflow" },
+      { label: "Vendor Commerce Index", href: "#features" },
       { label: "Contract Legal Frameworks", href: "/terms" },
       { label: "Changelog & Releases", href: "#workflow" },
     ],

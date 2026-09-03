@@ -421,7 +421,7 @@ export function downloadVectorPdfInvoice(
   // Footer Watermark (Shopwus PLG loop)
   addLine(margin, margin + 25, pageWidth - margin, margin + 25, 0.9, 0.75);
   addText(
-    "Created with Shopwus — The operating platform for boutique studios & independent commerce (shopwus.com)",
+    "Created with Shopwus — The storefront and commerce platform for businesses & online vendors (shopwus.com)",
     margin + 15,
     margin + 14,
     7.5,

@@ -91,7 +91,7 @@ export function LoginPage() {
           <div className="mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#191c1d] tracking-tight">Login</h1>
             <p className="text-xs sm:text-sm text-[#64748b] mt-1">
-              Sign in with your verified Google account to access your studio director dashboard.
+              Sign in with your verified Google account to access your business dashboard.
             </p>
           </div>
 
@@ -130,7 +130,7 @@ export function LoginPage() {
                       }
                       className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563eb] hover:text-[#1d4ed8] underline underline-offset-2"
                     >
-                      <span>Please sign up first to create your Storefront studio</span>
+                      <span>Please sign up first to create your storefront</span>
                       <ArrowRight size={12} />
                     </Link>
                   </div>
@@ -165,11 +165,11 @@ export function LoginPage() {
         <div className="max-w-md mx-auto space-y-8 relative z-10">
           <div className="space-y-3">
             <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
-              Manage your entire studio right from your Shopwus Dashboard
+              Manage your entire storefront right from your Shopwus Dashboard
             </h2>
             <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
-              Supercharge your client intake, live show-calls, multi-currency invoicing, and
-              real-time business valuation in one cohesive workspace.
+              Supercharge your lead intake, customer CRM, multi-currency invoicing, and real-time
+              business valuation in one cohesive workspace.
             </p>
             <div>
               <Link

@@ -4,7 +4,7 @@ import { ValuationCalculatorPage } from "@/components/calculator/valuation-calcu
 export const metadata: Metadata = {
   title: "Business Valuation Calculator | Shopwus",
   description:
-    "Free interactive Business Valuation Calculator for online vendors, boutique studios, and creative agencies. Calculate your company worth, SDE multiple, and net asset value.",
+    "Free interactive Business Valuation Calculator for online vendors, merchants, and independent businesses. Calculate your company worth, SDE multiple, and net asset value.",
   openGraph: {
     title: "Business Valuation Calculator | Shopwus",
     description:

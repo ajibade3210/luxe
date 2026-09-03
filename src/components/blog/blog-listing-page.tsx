@@ -63,7 +63,7 @@ export function BlogListingPage() {
             <span>Illustrated Series</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-serif font-bold text-[#1f1d1a] tracking-tight leading-tight">
-            Visual Insights for High-Growth Vendors & Ateliers
+            Visual Insights for High-Growth Vendors & Businesses
           </h1>
           <p className="text-sm sm:text-base text-[#665e57] leading-relaxed">
             Graphic breakdowns on customer retention, digital brand equity, and audit-ready

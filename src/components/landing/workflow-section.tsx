@@ -150,7 +150,7 @@ function CreatePreviewCard() {
               <h4 className="text-sm font-semibold text-[#191c1d]">Élan Stores</h4>
               <Shield size={12} className="text-[#855e2e]" />
             </div>
-            <p className="text-[11px] text-[#5c5f60]">Luxury Wedding & Gala Atelier</p>
+            <p className="text-[11px] text-[#5c5f60]">Events & Decor Vendor</p>
           </div>
         </div>
 

@@ -4,32 +4,32 @@ import type { AiPrompt } from "@/types";
 
 const AI_PROMPTS: AiPrompt[] = [
   {
-    label: "Proposal Engine",
+    label: "Storefront Setup",
     icon: "✦",
-    question: "How does Shopwus calculate multi-day production margins?",
+    question: "How fast can I launch my 3D digital storefront?",
     answer:
-      "Shopwus auto-calculates vendor cost baselines, staffing tiers, contingency buffers, and custom markup formulas in real-time. Proposals dynamic-link to live budgets so your studio never absorbs unexpected vendor price surges.",
+      "You can launch your digital storefront in under 2 minutes. Add your brand logo, bio, service offerings, and social channels to instantly generate a sharable public link with an interactive 3D stationery card.",
   },
   {
-    label: "VIP Client Portal",
+    label: "Lead CRM & Intake",
     icon: "✧",
-    question: "What does the client VIP onboarding experience look like?",
+    question: "How does customer inquiry and lead capture work?",
     answer:
-      "Clients receive an encrypted, white-labeled portal showcasing curated moodboards, interactive design decisions, digital signature milestones, and direct messaging—eliminating 50+ messy email threads.",
+      "When customers visit your public storefront or scan your QR code, they can submit inquiries directly. Leads flow into your centralized CRM with budget, timeline, and contact details for instant follow-up.",
   },
   {
-    label: "Multi-Channel Sync",
+    label: "Invoicing & Receipts",
     icon: "◇",
-    question: "Can I sync 10+ social accounts and live event galleries?",
+    question: "Can I generate itemized invoices and digital receipts?",
     answer:
-      "Yes. Shopwus connects directly to Instagram, TikTok, Pinterest, YouTube, and Vimeo. Published events automatically update your public portfolio with high-resolution imagery and vendor credits.",
+      "Yes. Create professional multi-currency invoices with customizable line items, tax/discounts, and instant downloadable PDFs. Track payment statuses and reconcile deposits automatically.",
   },
   {
-    label: "Live Run of Show",
+    label: "Business Valuation",
     icon: "✺",
-    question: "How does real-time team cueing work during gala events?",
+    question: "How does the valuation estimator benchmark my business?",
     answer:
-      "Your on-site production team and AV vendors receive live synchronized timelines on iOS & iPadOS. Broadcast instant cue adjustments, vendor call times, and VIP arrival alerts with zero latency.",
+      "The valuation tool applies industry-standard SDE multiples against your annual revenue run-rate, net margins, and repeat client retention to provide a realistic equity valuation range.",
   },
 ];
 
@@ -47,7 +47,7 @@ export function FooterAiConcierge() {
     setTimeout(() => {
       setIsAiThinking(false);
       setCustomAnswer(
-        `Shopwus seamlessly coordinates ${customQuestion.toLowerCase().includes("budget") ? "production budgets, currency conversions, and automated vendor milestone payouts" : customQuestion.toLowerCase().includes("client") ? "private client confidentiality, bespoke deck styling, and encrypted proposal approvals" : "luxury event workflows, multi-channel portfolio distribution, and high-touch VIP client experiences"} with dedicated atelier-grade tooling.`
+        `Shopwus seamlessly handles ${customQuestion.toLowerCase().includes("budget") || customQuestion.toLowerCase().includes("invoice") ? "itemized multi-currency invoicing, payment tracking, and automated receipts" : customQuestion.toLowerCase().includes("customer") || customQuestion.toLowerCase().includes("lead") ? "inbound lead capture, client CRM pipelines, and 1-click WhatsApp/email broadcasting" : "digital 3D storefronts, customer CRM, invoicing, expense bookkeeping, and business valuation"} in one unified platform for modern vendors.`
       );
     }, 600);
   };

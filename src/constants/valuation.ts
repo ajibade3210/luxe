@@ -102,7 +102,7 @@ export const VALUATION_HEALTH_PILLARS = [
     id: "leads",
     eyebrow: "Pipeline",
     title: "Inbound Inquiries",
-    description: "Quotes and consultation requests. Proves ongoing buyer demand for your studio.",
+    description: "Quotes and inquiry requests. Proves ongoing customer demand for your business.",
     actionLabel: "Manage Leads",
     actionHref: "/vendor/leads",
     iconName: "TrendingUp",
@@ -132,22 +132,22 @@ export const INDUSTRY_SECTORS = {
   luxury_services: {
     label: "Services & Consulting",
     baseMultiple: 2.8,
-    description: "Bespoke services, event planning, consulting, and client work.",
+    description: "Specialized services, event planning, consulting, and client work.",
   },
   agency_consulting: {
     label: "Creative & Marketing Agency",
     baseMultiple: 2.6,
-    description: "Design studios, marketing firms, retainers, and professional services.",
+    description: "Design firms, marketing agencies, retainers, and professional services.",
   },
   events_hospitality: {
     label: "Events & Hospitality",
     baseMultiple: 2.2,
-    description: "Experiential production, catering, decor, and event planning.",
+    description: "Event production, catering, decor, and event planning.",
   },
   digital_tech: {
     label: "Software & Digital Products",
     baseMultiple: 4.2,
-    description: "Digital downloads, SaaS platforms, memberships, and content.",
+    description: "Digital downloads, software platforms, memberships, and content.",
   },
   general_business: {
     label: "General Business & Trade",
@@ -169,13 +169,13 @@ export const VALUATION_HOW_CALCULATED_SECTIONS = [
   {
     title: "1. Annual Cashflow × Multiple",
     description:
-      "Buyers pay for predictable future earnings. Your annual profit after operating expenses is multiplied by an industry benchmark (typically 2.0x to 4.5x for service studios and retail).",
+      "Buyers pay for predictable future earnings. Your annual profit after operating expenses is multiplied by an industry benchmark (typically 2.0x to 4.5x for service businesses and retail).",
     badge: "Core Driver",
   },
   {
     title: "2. Net Assets & Inventory",
     description:
-      "Physical and liquid assets—cash in bank, production tools, studio stock, and pending invoices minus debts—are added directly to your cashflow value.",
+      "Physical and liquid assets—cash in bank, tools, business inventory, and pending invoices minus debts—are added directly to your cashflow value.",
     badge: "Balance Sheet",
   },
   {
@@ -192,7 +192,7 @@ export const VALUATION_PURPOSE_GUIDES = [
     title: "Command Top Value at Exit",
     eyebrow: "Selling Your Business",
     summary:
-      "Prove your studio is profitable, transferable, and runs on established systems rather than messy phone chats.",
+      "Prove your business is profitable, transferable, and runs on established systems rather than messy phone chats.",
     points: [
       "Prove predictable profit margins with clean, itemized invoice histories.",
       "Package an organized CRM customer database that transfers seamlessly on Day 1.",
@@ -202,11 +202,11 @@ export const VALUATION_PURPOSE_GUIDES = [
   {
     id: "buying",
     title: "Verify True Worth Before You Buy",
-    eyebrow: "Buying an Existing Studio",
+    eyebrow: "Buying an Existing Business",
     summary:
       "Uncover hidden liabilities, verify true take-home earnings, and assess fair asking price before making an offer.",
     points: [
-      "Audit physical studio assets against unrecorded supplier debts.",
+      "Audit physical business assets against unrecorded supplier debts.",
       "Verify historical customer retention to ensure sales won't drop after founder departure.",
       "Analyze cashflow consistency across low and high seasons over a 12-month lookback.",
     ],
@@ -216,7 +216,7 @@ export const VALUATION_PURPOSE_GUIDES = [
     title: "Unlock Bank Loans & Capital",
     eyebrow: "Growth & Funding",
     summary:
-      "Present clean, audit-ready financial ledgers that prove your studio's creditworthiness to lenders and investors.",
+      "Present clean, audit-ready financial ledgers that prove your business creditworthiness to lenders and investors.",
     points: [
       "Demonstrate healthy profit margins and clear operating expense control.",
       "Show measurable growth levers (like increasing retention) to expand enterprise value.",
@@ -248,6 +248,6 @@ export const VALUATION_SHOPWUS_BENEFITS = [
     iconName: "Sparkles",
     title: "4. Command Premium Brand Positioning",
     description:
-      "High-trust digital storefronts protect your margins. Your interactive 3D stationery card and verified social links establish immediate luxury authority with every client.",
+      "High-trust digital storefronts protect your margins. Your interactive 3D stationery card and verified social links establish immediate credibility and professional trust with every customer.",
   },
 ] as const;
