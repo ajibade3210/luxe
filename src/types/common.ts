@@ -119,6 +119,7 @@ export interface LogoutConfirmModalProps {
 export interface SettingsSaveBarProps {
   saving: boolean;
   slug: string;
+  slugStatus?: "checking" | "available" | "taken" | "idle";
   onSave: () => void;
   bottomBarRef: import("react").RefObject<HTMLDivElement | null>;
   isAtBottom: boolean;

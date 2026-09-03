@@ -199,7 +199,14 @@ export function IdentitySection({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-[#374151] tracking-wide block">Slug</label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-[#374151] tracking-wide block">
+                Storefront slug
+              </label>
+              <span className="text-[11px] text-[#6b7280] font-mono truncate max-w-[180px]">
+                shopwus.com/{slug || "slug"}
+              </span>
+            </div>
             <div className="relative">
               <input
                 value={slug}
@@ -219,7 +226,7 @@ export function IdentitySection({
               )}
               {slugStatus === "taken" && (
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#ba1a1a] font-medium bg-[#fef2f2] px-2 py-0.5 rounded">
-                  reserved / unavailable
+                  unavailable
                 </span>
               )}
             </div>

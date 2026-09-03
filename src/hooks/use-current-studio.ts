@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { APP_CONFIG } from "@/constants";
+import { APP_CONFIG, CUSTOM_EVENTS } from "@/constants";
 import { useStudioProfileQuery } from "@/hooks/queries";
 import { getCurrentSession } from "@/lib/api";
 import type { CurrentStudioResult, UserSession } from "@/types";
@@ -12,13 +12,23 @@ export function useCurrentStudio(): CurrentStudioResult {
 
   useEffect(() => {
     setSession(getCurrentSession());
+
+    const handleAuthChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<UserSession | null>;
+      setSession(customEvent.detail ?? getCurrentSession());
+    };
+
+    window.addEventListener(CUSTOM_EVENTS.authChanged, handleAuthChanged);
+    return () => {
+      window.removeEventListener(CUSTOM_EVENTS.authChanged, handleAuthChanged);
+    };
   }, []);
 
-  const slug = profile?.slug || session?.studioSlug || APP_CONFIG.defaultSlug;
-  const studioName = profile?.businessName || session?.studioName || "Élan Atelier";
+  const slug = session?.studioSlug || profile?.slug || APP_CONFIG.defaultSlug;
+  const studioName = session?.studioName || profile?.businessName || "Élan Atelier";
   const userName = session?.name || profile?.businessName || "Vendor";
-  const userRole = profile?.businessName || session?.studioName || "Store Owner";
-  const studioId = profile?.id || session?.id || "";
+  const userRole = session?.studioName || profile?.businessName || "Store Owner";
+  const studioId = session?.id || profile?.id || "";
 
   const initials =
     (userName || studioName)

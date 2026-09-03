@@ -17,8 +17,9 @@ import { LogoutConfirmModal } from "./logout-modal";
 export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
   const sidebarRef = useRef<HTMLElement>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const isPreferencesActive = path === "/vendor/settings" || path === "/vendor/preferences";
   const [onlineStoreExpanded, setOnlineStoreExpanded] = useState<boolean>(
-    () => path === "/vendor/settings"
+    () => isPreferencesActive
   );
 
   const { slug, userName, userRole, initials } = useCurrentStudio();
@@ -62,8 +63,8 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
   }, [open, onClose]);
 
   useEffect(() => {
-    setOnlineStoreExpanded(path === "/vendor/settings");
-  }, [path]);
+    setOnlineStoreExpanded(isPreferencesActive);
+  }, [isPreferencesActive]);
 
   const navLinkClass = (isActive: boolean) =>
     `flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer text-decoration-none ${
@@ -152,11 +153,11 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
             )}
           </Link>
 
-          {/* Online Store Section */}
-          <div className="flex flex-col">
+          {/* Collapsible Online Store Section */}
+          <div className="pt-2">
             <button
               type="button"
-              className={`flex items-center justify-between gap-3 px-3 py-2.5 text-[13px] font-medium font-sans rounded-lg transition-all w-full cursor-pointer text-left ${
+              className={`w-full flex items-center justify-between px-3 py-2 text-[13px] font-medium font-sans rounded-lg transition-all cursor-pointer ${
                 onlineStoreExpanded
                   ? "text-[#191c1d] hover:bg-[#edeeef]"
                   : "text-[#6b7280] hover:text-[#191c1d] hover:bg-[#edeeef]"
@@ -193,7 +194,7 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
                 />
                 <Link
                   href="/vendor/settings"
-                  className={navLinkClass(path === "/vendor/settings")}
+                  className={navLinkClass(isPreferencesActive)}
                   onClick={onClose}
                 >
                   Preferences

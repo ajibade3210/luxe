@@ -165,7 +165,7 @@ export function CustomerServiceModal({
                   onClick={onClose}
                   className="font-semibold underline hover:text-[#713f12] shrink-0 text-xs"
                 >
-                  Go to Preference &rarr;
+                  Go to Preferences &rarr;
                 </Link>
               </div>
             )}
@@ -212,7 +212,7 @@ export function CustomerServiceModal({
                   onClick={onClose}
                   className="font-semibold underline hover:text-[#713f12] shrink-0 text-xs"
                 >
-                  Go to Preference &rarr;
+                  Go to Preferences &rarr;
                 </Link>
               </div>
             )}

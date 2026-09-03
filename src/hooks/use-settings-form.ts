@@ -3,7 +3,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { getBusinessProfile, publishChanges, updateBusinessProfile } from "@/lib/api";
+import {
+  createSession,
+  getBusinessProfile,
+  getCurrentSession,
+  publishChanges,
+  updateBusinessProfile,
+} from "@/lib/api";
 import { logger } from "@/lib/logger";
 import { queryKeys } from "@/lib/query-keys";
 import type { PortfolioProject, ServiceItem, UseSettingsFormOptions } from "@/types";
@@ -100,6 +106,7 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
           if (!profile) return;
           branding.setName(profile.businessName || "");
           branding.setSlug(profile.slug || "");
+          branding.setInitialSlug(profile.slug || "");
           branding.setTagline(profile.tagline || "");
           branding.setLocation(profile.location || "");
           const rawWebsite = profile.website || "";
@@ -243,6 +250,19 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
     overrideLogoUrl?: string;
     overrideBannerUrl?: string;
   }): Promise<boolean> => {
+    if (branding.slugStatus === "checking") {
+      notify("Please wait while we check slug availability");
+      return false;
+    }
+    if (branding.slugStatus === "taken") {
+      notify("Studio slug is unavailable or already taken");
+      return false;
+    }
+    if (branding.slug && branding.slug.trim().length < 3) {
+      notify("Studio slug must be at least 3 characters");
+      return false;
+    }
+
     if (branding.website.trim() && !isValidUrl(branding.website)) {
       notify("Invalid website URL");
       return false;
@@ -375,6 +395,10 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
       });
 
       if (updated) {
+        if (updated.slug) {
+          branding.setInitialSlug(updated.slug);
+          branding.setSlug(updated.slug);
+        }
         if (Array.isArray(updated.services)) {
           services.setServices(updated.services);
         }
@@ -384,6 +408,18 @@ export function useSettingsForm({ notify }: UseSettingsFormOptions) {
         if (Array.isArray(updated.portfolioCategories)) {
           portfolio.setCategories(updated.portfolioCategories);
         }
+
+        // Sync local & cookie session for Edge Middleware and client components
+        const currentSession = getCurrentSession();
+        if (currentSession) {
+          createSession({
+            ...currentSession,
+            studioSlug: updated.slug || currentSession.studioSlug,
+            studioName: updated.businessName || currentSession.studioName,
+          });
+        }
+        queryClient.setQueryData(queryKeys.studios.me(), updated);
+        queryClient.invalidateQueries({ queryKey: queryKeys.studios.all });
       }
 
       if (!options?.silent) {

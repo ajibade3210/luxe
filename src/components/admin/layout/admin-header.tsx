@@ -44,11 +44,10 @@ export function AdminHeader({ onMenu, onToast, path }: AdminHeaderProps) {
               target="_blank"
               rel="noreferrer"
               className="h-9 px-2.5 sm:px-3.5 inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] hover:border-[#191c1d] bg-white text-[#191c1d] text-xs font-semibold transition-all shrink-0 whitespace-nowrap shadow-2xs hover:bg-neutral-50"
-              title="View Public Profile"
+              title="View Online Store"
             >
               <Eye size={14} className="text-[#191c1d] shrink-0" />
-              <span className="hidden sm:inline">Profile </span>
-              <span>View</span>
+              <span>View Store</span>
             </a>
             <button
               type="button"
