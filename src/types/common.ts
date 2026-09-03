@@ -89,6 +89,7 @@ export interface MetricProps {
   label: string;
   value: string;
   detail?: string;
+  isLoading?: boolean;
 }
 
 export interface PageTitleProps {
