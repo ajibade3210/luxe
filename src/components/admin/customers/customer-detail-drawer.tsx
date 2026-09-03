@@ -76,7 +76,7 @@ export function CustomerDetailDrawer({
           <button
             type="button"
             disabled={!customer.isActive}
-            className={`inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50 w-full ${
+            className={`inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50 w-full ${
               !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
             }`}
             onClick={() => {
@@ -93,7 +93,7 @@ export function CustomerDetailDrawer({
             <button
               type="button"
               onClick={() => onEditCustomer(customer)}
-              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs w-full"
+              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3.5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs w-full"
               title="View customer profile, notes, and attributes"
             >
               <FileText size={14} />
@@ -140,7 +140,7 @@ export function CustomerDetailDrawer({
                 if (!customer.isActive) return;
                 onOpenInvoiceModal(customer);
               }}
-              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
+              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
                 !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
               }`}
               title={customer.isActive ? "New Invoice" : "Customer is inactive"}
@@ -182,7 +182,7 @@ export function CustomerDetailDrawer({
                     <button
                       type="button"
                       onClick={() => onOpenInvoiceModal(customer, inv)}
-                      className="inline-flex items-center justify-center px-3 py-1 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center justify-center px-3 py-1 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
                     >
                       {inv.status === "draft" ? "Edit" : "View"}
                     </button>
@@ -201,7 +201,7 @@ export function CustomerDetailDrawer({
                         }
                         className={`p-1.5 rounded-xl border transition-all ${
                           customer.isActive
-                            ? "bg-white hover:bg-[#fafaf9] text-[#1f2937] border-[#d1d5db] hover:border-[#9ca3af] hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 cursor-pointer shadow-2xs"
+                            ? "bg-white hover:bg-[#fafaf9] text-[#1f2937] border-[#d1d5db] hover:border-[#9ca3af] hover:shadow-xs cursor-pointer shadow-2xs"
                             : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
                         }`}
                       >
@@ -221,7 +221,7 @@ export function CustomerDetailDrawer({
                         title={customer.isActive ? "Delete unsent draft" : "Customer is inactive"}
                         className={`p-1.5 rounded-xl border transition-all ${
                           customer.isActive
-                            ? "bg-white hover:bg-[#fef2f2] text-[#dc2626] border-[#fecaca] hover:border-[#f87171] hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 cursor-pointer shadow-2xs"
+                            ? "bg-white hover:bg-[#fef2f2] text-[#dc2626] border-[#fecaca] hover:border-[#f87171] hover:shadow-xs cursor-pointer shadow-2xs"
                             : "bg-[#f3f4f6] border-[#e5e7eb] text-[#9ca3af] cursor-not-allowed opacity-60"
                         }`}
                       >
@@ -255,7 +255,7 @@ export function CustomerDetailDrawer({
                 if (!customer.isActive) return;
                 onOpenAddServiceModal();
               }}
-              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
+              className={`inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50 ${
                 !customer.isActive ? "cursor-not-allowed opacity-50 pointer-events-none" : ""
               }`}
               title={customer.isActive ? "Add Service" : "Customer is inactive"}

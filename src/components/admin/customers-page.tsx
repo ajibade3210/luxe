@@ -112,7 +112,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
           setCustomerToEdit(null);
           setShowAddModal(true);
         }}
-        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#111827] hover:bg-black text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs"
+        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#111827] hover:bg-black text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs"
       >
         <Plus size={14} />
         <span>Add</span>
@@ -123,7 +123,7 @@ export function CustomersPage({ onToast }: CustomersPageProps) {
         <button
           type="button"
           onClick={() => setShowMoreMenu(prev => !prev)}
-          className="inline-flex items-center justify-center p-2 sm:p-2.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
+          className="inline-flex items-center justify-center p-2 sm:p-2.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
           title="More actions"
           aria-label="More actions"
         >

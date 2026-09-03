@@ -108,7 +108,7 @@ export function ProfileIdentityCard({
           <button
             type="button"
             onClick={handleStartEdit}
-            className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs shrink-0"
+            className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs shrink-0"
           >
             <Pencil size={13} />
             <span>Edit profile</span>
@@ -237,7 +237,7 @@ export function ProfileIdentityCard({
           <div className="flex items-center gap-3 pt-2 border-t border-[#f0e8dc]">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
               disabled={saving}
               onClick={handleSave}
             >
@@ -245,7 +245,7 @@ export function ProfileIdentityCard({
             </button>
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
               onClick={() => setIsEditing(false)}
             >
               <span>Cancel</span>

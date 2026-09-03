@@ -82,40 +82,40 @@ Always use the standardized `<StatusBadge status={status} />` primitive (`src/co
 
 ### C. Buttons & Interactive Controls (Ground Truth Standard)
 
-> ⚠️ **STRICT GLOBAL RULE:** Except where explicitly stated otherwise, **ALL buttons across the entire application MUST default to the button designs below.** Do not invent ad-hoc button colors, borders, or hover styles. Reference the **Preference / Settings Section** (`src/components/admin/settings/settings-save-bar.tsx`) for the canonical behavior and interaction details.
+> ⚠️ **STRICT GLOBAL RULE:** Except where explicitly stated otherwise, **ALL buttons across the entire application MUST default to the button designs below.** Do not invent ad-hoc button colors, borders, or hover styles. Buttons use calm, stable hover transitions without vertical bouncing or jumping effects (`hover:-translate-y-0.5` / `active:translate-y-0` removed).
 
 #### 1. Primary Button (Black — "Save" Style)
 Used for main commitments, primary actions, and destructive confirmations:
 * **Standard Size:**
   ```tsx
-  className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+  className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 h-10 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
   ```
 * **Compact / Responsive Size (Modals, Tables, Forms):**
   ```tsx
-  className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+  className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
   ```
 * **Behavior Details:**
-  * Background: `#111827` transitioning to pure `#000000` on hover.
-  * Elevation: Subtle hover lift (`hover:-translate-y-0.5`), elevated shadow (`hover:shadow-md`), and tactile press reset (`active:translate-y-0`).
+  * Background: `#111827` transitioning smoothly to pure `#000000` on hover.
+  * Stability: Static placement without vertical jumping or bouncing.
   * Text: White (`text-white`), font size `text-xs`, font weight `font-semibold`.
-  * Disabled state: `disabled:opacity-50 disabled:pointer-events-none disabled:transform-none`.
+  * Disabled state: `disabled:opacity-50 disabled:pointer-events-none`.
 
 #### 2. Secondary / Outline Button (White — "Live Studio" Style)
 Used for secondary actions, navigation, utilities, cancel triggers, and external links:
 * **Standard Size:**
   ```tsx
-  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-5 h-10 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-5 h-10 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50"
   ```
 * **Compact Size (Card / Drawer Headers, Inline Actions):**
   ```tsx
-  className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+  className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50"
   ```
 * **Behavior Details:**
   * Background: Pure white (`bg-white`) transitioning to subtle warm off-white (`hover:bg-[#fafaf9]`).
   * Border: Crisp `#d1d5db` border deepening to `#9ca3af` on hover (`border border-[#d1d5db] hover:border-[#9ca3af]`).
+  * Stability: Static placement without vertical jumping or bouncing.
   * Typography: High-contrast ink text (`text-[#1f2937]`), font size `text-xs`, font weight `font-semibold`.
-  * Elevation: Subtle micro-lift (`hover:-translate-y-0.5`), crisp subtle shadow (`shadow-2xs` -> `hover:shadow-xs`), tactile press reset (`active:translate-y-0`).
-  * Disabled state: `disabled:opacity-50 disabled:pointer-events-none disabled:transform-none`.
+  * Disabled state: `disabled:opacity-50 disabled:pointer-events-none`.
 
 #### 3. Segmented Tabs / Switches
 * `bg-[#f0ebe3] p-1 rounded-2xl flex items-center border border-[#e2dad0]`. Active tab has `bg-white text-[#2a1d15] shadow-xs rounded-xl`.
