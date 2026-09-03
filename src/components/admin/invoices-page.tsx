@@ -1,6 +1,7 @@
 "use client";
 
-import { Download, Plus } from "lucide-react";
+import { Download, MoreHorizontal, Plus } from "lucide-react";
+import { useState } from "react";
 import { INVOICE_PAGE_CONFIG } from "@/constants";
 import { useInvoices } from "@/hooks";
 import type { InvoicesPageProps } from "@/types";
@@ -11,6 +12,7 @@ import { InvoiceTable } from "./invoices/invoice-table";
 export function InvoicesPage({ onToast }: InvoicesPageProps) {
   const { showToast } = useAdminToast();
   const notify = onToast || showToast;
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const {
     invoices,
@@ -42,25 +44,48 @@ export function InvoicesPage({ onToast }: InvoicesPageProps) {
     <div className="flex items-center gap-2 sm:gap-2.5">
       <button
         type="button"
-        onClick={handleExportCSV}
-        disabled={isExporting}
-        className="inline-flex items-center gap-1.5 sm:gap-2 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50"
-      >
-        <Download size={13} className={isExporting ? "animate-bounce" : ""} />
-        <span>
-          {isExporting
-            ? INVOICE_PAGE_CONFIG.exportingLabel
-            : INVOICE_PAGE_CONFIG.exportCsvButtonLabel}
-        </span>
-      </button>
-      <button
-        type="button"
         onClick={handleOpenCreate}
-        className="dark-button bg-[#000000] border-[#000000] inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold !text-white hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all duration-200 cursor-pointer"
+        className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#191c1d] hover:bg-black text-white px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer"
       >
         <Plus size={13} />
-        <span>{INVOICE_PAGE_CONFIG.createInvoiceButtonLabel}</span>
+        <span>Add</span>
       </button>
+
+      {/* More Actions Menu Button & Dropdown */}
+      <div className="relative flex items-center">
+        <button
+          type="button"
+          onClick={() => setShowMoreMenu(prev => !prev)}
+          className="inline-flex items-center justify-center p-1.5 sm:p-2.5 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#ded5c8] hover:border-[#855e2e] rounded-xl transition-all cursor-pointer shadow-2xs hover:-translate-y-0.5 active:translate-y-0 duration-200"
+          title="More actions"
+          aria-label="More actions"
+        >
+          <MoreHorizontal size={14} />
+        </button>
+
+        {showMoreMenu && (
+          <>
+            <div className="fixed inset-0 z-20" onClick={() => setShowMoreMenu(false)} />
+            <div className="absolute right-0 top-full mt-1.5 w-44 bg-white border border-[#ded7cb] rounded-2xl shadow-xl z-30 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMoreMenu(false);
+                  handleExportCSV();
+                }}
+                disabled={isExporting}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#2a1d15] hover:bg-[#faf7f2] transition-colors text-left font-medium cursor-pointer disabled:opacity-50"
+              >
+                <Download
+                  size={14}
+                  className={`text-[#855e2e] ${isExporting ? "animate-bounce" : ""}`}
+                />
+                <span>{isExporting ? "Exporting..." : "Export"}</span>
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 

@@ -11,8 +11,8 @@ export const INVOICE_STATUS_FILTERS: { key: InvoiceStatusFilter; label: string }
 export const INVOICE_PAGE_CONFIG = {
   title: "Invoices",
   subtitle: "Track client billing, payment receipts, and collection velocity.",
-  createInvoiceButtonLabel: "Create Invoice",
-  exportCsvButtonLabel: "Export CSV",
+  createInvoiceButtonLabel: "Add",
+  exportCsvButtonLabel: "Export",
   exportingLabel: "Exporting...",
   tableTitle: "Invoices",
   searchPlaceholder: "Search invoices...",
