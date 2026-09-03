@@ -4,8 +4,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
-import { apiClient } from "@/lib/api-client";
 import { createSession } from "@/lib/api";
+import { apiClient } from "@/lib/api-client";
 import { useBrandingSettings } from "../settings/use-branding-settings";
 import { useCurrentStudio } from "../use-current-studio";
 

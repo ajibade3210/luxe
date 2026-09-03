@@ -157,8 +157,8 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           Store Preferences
         </h1>
         <p className="text-xs sm:text-sm text-[#6b7280] mt-3 sm:mt-2.5 leading-relaxed max-w-2xl">
-          Configure your brand identity, storefront slug, services, portfolio, verified social badges, and visual
-          aesthetic.
+          Configure your brand identity, storefront slug, services, portfolio, verified social
+          badges, and visual aesthetic.
         </p>
       </div>
 
