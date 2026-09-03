@@ -140,7 +140,7 @@ export function FloatingChatWidget() {
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="Describe your idea or feature request..."
-                    className="w-full text-xs p-3 rounded-xl border border-[#ded7cb] outline-none focus:border-[#191c1d] resize-none"
+                    className="w-full text-xs p-3 rounded-xl border border-[#ded7cb] outline-none resize-none"
                   />
 
                   <input
@@ -149,7 +149,7 @@ export function FloatingChatWidget() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Your email address"
-                    className="w-full text-xs px-3 py-2 rounded-xl border border-[#ded7cb] outline-none focus:border-[#191c1d]"
+                    className="w-full text-xs px-3 py-2 rounded-xl border border-[#ded7cb] outline-none"
                   />
 
                   <div className="flex items-center justify-between pt-1">

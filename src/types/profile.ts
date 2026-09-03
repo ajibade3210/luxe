@@ -531,3 +531,16 @@ export interface EditHeaderModalProps {
   ) => Promise<void>;
   onToast: (msg: string) => void;
 }
+
+export interface UseServicesSettingsOptions {
+  notify: (message: string) => void;
+  categories?: string[];
+}
+
+export interface UseContactSettingsOptions {
+  notify: (message: string) => void;
+}
+
+export interface UsePortfolioSettingsOptions {
+  notify: (message: string) => void;
+}

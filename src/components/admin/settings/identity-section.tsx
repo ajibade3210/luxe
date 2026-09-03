@@ -303,7 +303,7 @@ export function IdentitySection({
               placeholder="e.g. sitename.com or https://sitename.com"
               className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#111827] focus:outline-none shadow-2xs transition-colors ${
                 website && !isValidUrl(website)
-                  ? "border-amber-400 focus:border-amber-500 bg-amber-50/20"
+                  ? "border-amber-400 bg-amber-50/20"
                   : "border-[#d1d5db]"
               }`}
             />

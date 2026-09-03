@@ -319,7 +319,7 @@ export function CustomerBroadcastModal({
             value={message}
             onChange={e => setMessage(e.target.value)}
             className={`w-full p-3.5 bg-white border rounded-xl text-xs text-[#191c1d] focus:outline-none transition-colors leading-relaxed ${
-              isOverLimit ? "border-red-500 focus:border-red-500" : "border-[#ded7cb]"
+              isOverLimit ? "border-red-500" : "border-[#ded7cb]"
             }`}
             placeholder="Type your bespoke broadcast message here..."
           />
@@ -390,7 +390,7 @@ export function CustomerBroadcastModal({
             type="button"
             onClick={handleExecuteBroadcast}
             disabled={isSubmitting || isOverLimit || totalCount === 0 || !message.trim()}
-            className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={13} className={isSubmitting ? "animate-spin" : ""} />
             <span>

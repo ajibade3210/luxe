@@ -75,7 +75,7 @@ export function CustomerResendInvoiceModal({
                 onClose();
               }
             }}
-            className="inline-flex items-center gap-1.5 bg-[#111827] hover:bg-black text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
             <RefreshCw size={13} />
             <span>Confirm Resend</span>

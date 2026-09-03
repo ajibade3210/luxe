@@ -3,6 +3,10 @@
 import { ArrowRight, Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/shared";
+import { CartProvider } from "@/components/storefront/cart-context";
+import { CartDrawer } from "@/components/storefront/cart-drawer";
+import { CartFloatingButton } from "@/components/storefront/cart-floating-button";
+import { StudioProductsSection } from "@/components/storefront/products-section";
 import {
   APP_CONFIG,
   AUTO_QUOTE_MODAL_DELAY_MS,
@@ -334,252 +338,267 @@ export function ElanEventsPage({
   const whatsAppLink = `https://wa.me/${cleanPhone || defaultStudioPhoneClean}`;
 
   return (
-    <div
-      className="min-h-screen font-sans antialiased selection:bg-[#ecdac9] selection:text-[#191c1d] flex flex-col justify-between"
-      style={{ backgroundColor: pageBgColor, color: textColor }}
-    >
-      {/* Floating Studio Navbar */}
-      <StudioNavbar
-        profile={profile}
-        slug={slug}
-        isFromSettings={isFromSettings}
-        isScrolled={isScrolled}
-        activeSection={activeSection}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-        setQuoteModalOpen={setQuoteModalOpen}
-        handleCopyLink={handleCopyLink}
-        primaryColor={primaryColor}
-        secondaryColor={secondaryColor}
-        buttonColor={buttonColor}
-        textColor={textColor}
-        pageBgColor={pageBgColor}
-        monogram={monogram}
-        radiusClass={radiusClass}
-      />
+    <CartProvider slug={profile.slug || slug}>
+      <div
+        className="min-h-screen font-sans antialiased selection:bg-[#ecdac9] selection:text-[#191c1d] flex flex-col justify-between"
+        style={{ backgroundColor: pageBgColor, color: textColor }}
+      >
+        {/* Floating Studio Navbar */}
+        <StudioNavbar
+          profile={profile}
+          slug={slug}
+          isFromSettings={isFromSettings}
+          isScrolled={isScrolled}
+          activeSection={activeSection}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+          setQuoteModalOpen={setQuoteModalOpen}
+          handleCopyLink={handleCopyLink}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          buttonColor={buttonColor}
+          textColor={textColor}
+          pageBgColor={pageBgColor}
+          monogram={monogram}
+          radiusClass={radiusClass}
+        />
 
-      {/* Main Studio Body */}
-      <main className="max-w-6xl mx-auto px-6 sm:px-8 pt-10 pb-20 space-y-24">
-        {/* HERO SECTION: Interactive 3D Stationery Card & Editorial Narrative */}
-        <section id="home" className="pt-4 sm:pt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
-            {/* LEFT: Flip Stationery Card */}
-            <div className="lg:col-span-6 flex items-center justify-center">
-              <div className="w-full max-w-[480px] h-[580px]">
-                <StationeryCard
+        {/* Main Studio Body */}
+        <main className="max-w-6xl mx-auto px-6 sm:px-8 pt-10 pb-20 space-y-24">
+          {/* HERO SECTION: Interactive 3D Stationery Card & Editorial Narrative */}
+          <section id="home" className="pt-4 sm:pt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+              {/* LEFT: Flip Stationery Card */}
+              <div className="lg:col-span-6 flex items-center justify-center">
+                <div className="w-full max-w-[480px] h-[580px]">
+                  <StationeryCard
+                    profile={profile}
+                    slug={slug}
+                    isFlipped={isFlipped}
+                    setIsFlipped={setIsFlipped}
+                    setQuoteModalOpen={setQuoteModalOpen}
+                    handleCopyLink={handleCopyLink}
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
+                    buttonColor={buttonColor}
+                    textColor={textColor}
+                    cardBgColor={cardBgColor}
+                    monogram={monogram}
+                    averageRating={averageRating}
+                    totalReviews={totalReviews}
+                    whatsAppLink={whatsAppLink}
+                    radiusClass={radiusClass}
+                  />
+                </div>
+              </div>
+
+              {/* RIGHT: Studio Operational Status & Presence Card */}
+              <div className="lg:col-span-6 flex items-center justify-center">
+                <StudioHighlightsCard
                   profile={profile}
-                  slug={slug}
-                  isFlipped={isFlipped}
-                  setIsFlipped={setIsFlipped}
+                  totalCustomers={customerCount}
                   setQuoteModalOpen={setQuoteModalOpen}
                   handleCopyLink={handleCopyLink}
+                  whatsAppLink={whatsAppLink}
                   primaryColor={primaryColor}
                   secondaryColor={secondaryColor}
                   buttonColor={buttonColor}
-                  textColor={textColor}
                   cardBgColor={cardBgColor}
-                  monogram={monogram}
-                  averageRating={averageRating}
-                  totalReviews={totalReviews}
-                  whatsAppLink={whatsAppLink}
                   radiusClass={radiusClass}
                 />
               </div>
             </div>
-
-            {/* RIGHT: Studio Operational Status & Presence Card */}
-            <div className="lg:col-span-6 flex items-center justify-center">
-              <StudioHighlightsCard
-                profile={profile}
-                totalCustomers={customerCount}
-                setQuoteModalOpen={setQuoteModalOpen}
-                handleCopyLink={handleCopyLink}
-                whatsAppLink={whatsAppLink}
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-                buttonColor={buttonColor}
-                cardBgColor={cardBgColor}
-                radiusClass={radiusClass}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION: Connected Social Networks & Verified Channels */}
-        {profile.socialChannels?.some(c => c.connected) && (
-          <StudioSocialSection
-            profile={profile}
-            primaryColor={primaryColor}
-            textColor={textColor}
-            radiusClass={radiusClass}
-          />
-        )}
-
-        {/* SECTION: Portfolio Gallery */}
-        {profile.showPortfolio !== false && profile.portfolio && profile.portfolio.length > 0 && (
-          <StudioPortfolioSection
-            portfolio={profile.portfolio}
-            setSelectedProject={setSelectedProject}
-            setQuoteModalOpen={setQuoteModalOpen}
-            businessType={profile.businessType}
-            primaryColor={primaryColor}
-            buttonColor={buttonColor}
-            textColor={textColor}
-            radiusClass={radiusClass}
-          />
-        )}
-
-        {/* SECTION: Curated Services */}
-        {profile.showServices !== false && profile.services && profile.services.length > 0 && (
-          <StudioServicesSection
-            profile={profile}
-            setQuoteModalOpen={setQuoteModalOpen}
-            setQuoteForm={setQuoteForm}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            buttonColor={buttonColor}
-            textColor={textColor}
-            radiusClass={radiusClass}
-          />
-        )}
-
-        {/* SECTION: Authenticated Client Reviews */}
-        {profile.showReviews !== false && profile.reviews && profile.reviews.length > 0 && (
-          <StudioReviewsSection
-            reviews={profile.reviews}
-            averageRating={averageRating}
-            totalReviews={totalReviews}
-            setReviewModalOpen={setReviewModalOpen}
-            googleReviewsLink={profile.googleReviewsLink}
-            primaryColor={primaryColor}
-            buttonColor={buttonColor}
-            textColor={textColor}
-            radiusClass={radiusClass}
-          />
-        )}
-
-        {/* CTA BANNER */}
-        {profile.showFooterCta !== false && (
-          <section
-            style={{ backgroundColor: cardBgColor }}
-            className={`rounded-3xl p-8 sm:p-14 text-center space-y-6 border transition-colors ${
-              isCardDark
-                ? "border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
-                : "border-[#ebd8ca] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
-            }`}
-          >
-            <div className="max-w-2xl mx-auto space-y-3">
-              <span
-                style={{ color: primaryColor }}
-                className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
-              >
-                {profile.footerEyebrow || DEFAULT_FOOTER_EYEBROW}
-              </span>
-              <h2
-                style={{ color: textColor }}
-                className="font-serif text-3xl sm:text-4xl font-normal"
-              >
-                {profile.footerTitle || DEFAULT_FOOTER_TITLE}
-              </h2>
-              <p
-                className={`text-xs sm:text-sm leading-relaxed ${
-                  isCardDark ? "text-white/70" : "text-[#78716c]"
-                }`}
-              >
-                {profile.footerDescription || DEFAULT_FOOTER_DESCRIPTION}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <button
-                type="button"
-                onClick={() => setQuoteModalOpen(true)}
-                style={{ backgroundColor: buttonColor }}
-                className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
-              >
-                <span>{BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}</span>
-                <ArrowRight size={15} />
-              </button>
-
-              {isWhatsAppEnabled && (
-                <a
-                  href={whatsAppLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: "#1c1917" }}
-                  className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
-                >
-                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
-                  <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
-                </a>
-              )}
-            </div>
           </section>
-        )}
-      </main>
 
-      {/* Studio Bottom Footer */}
-      <StudioFooter
-        profile={profile}
-        primaryColor={primaryColor}
-        secondaryColor={secondaryColor}
-        monogram={monogram}
-      />
+          {/* SECTION: Connected Social Networks & Verified Channels */}
+          {profile.socialChannels?.some(c => c.connected) && (
+            <StudioSocialSection
+              profile={profile}
+              primaryColor={primaryColor}
+              textColor={textColor}
+              radiusClass={radiusClass}
+            />
+          )}
 
-      {/* Modals & Popups */}
-      <ConsultationModal
-        isOpen={quoteModalOpen}
-        onClose={() => setQuoteModalOpen(false)}
-        profile={profile}
-        quoteForm={quoteForm}
-        setQuoteForm={setQuoteForm}
-        quoteSubmitting={quoteSubmitting}
-        onSubmit={handleQuoteSubmit}
-        primaryColor={primaryColor}
-        buttonColor={buttonColor}
-        radiusClass={radiusClass}
-      />
+          {/* SECTION: Portfolio Gallery */}
+          {profile.showPortfolio !== false && profile.portfolio && profile.portfolio.length > 0 && (
+            <StudioPortfolioSection
+              portfolio={profile.portfolio}
+              setSelectedProject={setSelectedProject}
+              setQuoteModalOpen={setQuoteModalOpen}
+              businessType={profile.businessType}
+              primaryColor={primaryColor}
+              buttonColor={buttonColor}
+              textColor={textColor}
+              radiusClass={radiusClass}
+            />
+          )}
 
-      <ReviewModal
-        isOpen={reviewModalOpen}
-        onClose={() => setReviewModalOpen(false)}
-        reviewForm={reviewForm}
-        setReviewForm={setReviewForm}
-        reviewSubmitting={reviewSubmitting}
-        onSubmit={handleReviewSubmit}
-        primaryColor={primaryColor}
-        buttonColor={buttonColor}
-        radiusClass={radiusClass}
-      />
+          {/* SECTION: Products & E-Commerce Catalog */}
+          <StudioProductsSection
+            slug={profile.slug || slug}
+            themeColor={primaryColor}
+            buttonRadius={radiusClass}
+          />
 
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-        onInquire={() => {
-          setSelectedProject(null);
-          setQuoteModalOpen(true);
-        }}
-        primaryColor={primaryColor}
-      />
+          {/* SECTION: Curated Services */}
+          {profile.showServices !== false && profile.services && profile.services.length > 0 && (
+            <StudioServicesSection
+              profile={profile}
+              setQuoteModalOpen={setQuoteModalOpen}
+              setQuoteForm={setQuoteForm}
+              primaryColor={primaryColor}
+              secondaryColor={secondaryColor}
+              buttonColor={buttonColor}
+              textColor={textColor}
+              radiusClass={radiusClass}
+            />
+          )}
 
-      {/* Global Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1c1917] text-white text-xs px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-[#38332e] animate-fade-in">
-          <div
-            style={{ backgroundColor: primaryColor }}
-            className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
-          >
-            <Check size={12} />
+          {/* SECTION: Authenticated Client Reviews */}
+          {profile.showReviews !== false && profile.reviews && profile.reviews.length > 0 && (
+            <StudioReviewsSection
+              reviews={profile.reviews}
+              averageRating={averageRating}
+              totalReviews={totalReviews}
+              setReviewModalOpen={setReviewModalOpen}
+              googleReviewsLink={profile.googleReviewsLink}
+              primaryColor={primaryColor}
+              buttonColor={buttonColor}
+              textColor={textColor}
+              radiusClass={radiusClass}
+            />
+          )}
+
+          {/* CTA BANNER */}
+          {profile.showFooterCta !== false && (
+            <section
+              style={{ backgroundColor: cardBgColor }}
+              className={`rounded-3xl p-8 sm:p-14 text-center space-y-6 border transition-colors ${
+                isCardDark
+                  ? "border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.35)]"
+                  : "border-[#ebd8ca] shadow-[0_12px_36px_rgba(40,30,20,0.06)]"
+              }`}
+            >
+              <div className="max-w-2xl mx-auto space-y-3">
+                <span
+                  style={{ color: primaryColor }}
+                  className="text-[10px] uppercase tracking-[0.2em] font-semibold block"
+                >
+                  {profile.footerEyebrow || DEFAULT_FOOTER_EYEBROW}
+                </span>
+                <h2
+                  style={{ color: textColor }}
+                  className="font-serif text-3xl sm:text-4xl font-normal"
+                >
+                  {profile.footerTitle || DEFAULT_FOOTER_TITLE}
+                </h2>
+                <p
+                  className={`text-xs sm:text-sm leading-relaxed ${
+                    isCardDark ? "text-white/70" : "text-[#78716c]"
+                  }`}
+                >
+                  {profile.footerDescription || DEFAULT_FOOTER_DESCRIPTION}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setQuoteModalOpen(true)}
+                  style={{ backgroundColor: buttonColor }}
+                  className={`text-white text-sm font-medium px-8 py-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2 ${radiusClass}`}
+                >
+                  <span>
+                    {BUSINESS_TYPE_CTA_MAP[profile.businessType ?? DEFAULT_BUSINESS_TYPE]}
+                  </span>
+                  <ArrowRight size={15} />
+                </button>
+
+                {isWhatsAppEnabled && (
+                  <a
+                    href={whatsAppLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: "#1c1917" }}
+                    className={`bg-white hover:bg-[#fcfaf7] text-[#1c1917] border border-[#dec9ba] text-sm font-medium px-8 py-3.5 transition-all cursor-pointer flex items-center gap-2 shadow-2xs ${radiusClass}`}
+                  >
+                    <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" />
+                    <span style={{ color: "#1c1917" }}>WhatsApp Us</span>
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
+        </main>
+
+        {/* Studio Bottom Footer */}
+        <StudioFooter
+          profile={profile}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          monogram={monogram}
+        />
+
+        {/* Modals & Popups */}
+        <ConsultationModal
+          isOpen={quoteModalOpen}
+          onClose={() => setQuoteModalOpen(false)}
+          profile={profile}
+          quoteForm={quoteForm}
+          setQuoteForm={setQuoteForm}
+          quoteSubmitting={quoteSubmitting}
+          onSubmit={handleQuoteSubmit}
+          primaryColor={primaryColor}
+          buttonColor={buttonColor}
+          radiusClass={radiusClass}
+        />
+
+        <ReviewModal
+          isOpen={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          reviewForm={reviewForm}
+          setReviewForm={setReviewForm}
+          reviewSubmitting={reviewSubmitting}
+          onSubmit={handleReviewSubmit}
+          primaryColor={primaryColor}
+          buttonColor={buttonColor}
+          radiusClass={radiusClass}
+        />
+
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+          onInquire={() => {
+            setSelectedProject(null);
+            setQuoteModalOpen(true);
+          }}
+          primaryColor={primaryColor}
+        />
+
+        {/* Global Toast Notification */}
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 bg-[#1c1917] text-white text-xs px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-[#38332e] animate-fade-in">
+            <div
+              style={{ backgroundColor: primaryColor }}
+              className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
+            >
+              <Check size={12} />
+            </div>
+            <span>{toastMessage}</span>
+            <button
+              onClick={() => setToastMessage(null)}
+              className="text-[#a89e92] hover:text-white ml-2 cursor-pointer"
+            >
+              <X size={14} />
+            </button>
           </div>
-          <span>{toastMessage}</span>
-          <button
-            onClick={() => setToastMessage(null)}
-            className="text-[#a89e92] hover:text-white ml-2 cursor-pointer"
-          >
-            <X size={14} />
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* E-Commerce Cart Drawer & Floating Bag Trigger */}
+        <CartDrawer slug={profile.slug || slug} studioName={profile.businessName} />
+        <CartFloatingButton buttonColor={buttonColor} radiusClass={radiusClass} />
+      </div>
+    </CartProvider>
   );
 }

@@ -47,7 +47,7 @@ export function ValuationInputForm({ values, onChange }: ValuationInputFormProps
             value={values.industry}
             onChange={e => onChange("industry", e.target.value as IndustrySector)}
             aria-label="Select industry sector"
-            className="w-full appearance-none bg-[#faf7f2] hover:bg-[#f6f2ea] focus:bg-white border border-[#e8dfd2] focus:border-[#9e633d] rounded-xl px-4 py-3 pr-10 text-xs sm:text-sm font-medium text-[#1f1d1a] transition-all outline-hidden cursor-pointer"
+            className="w-full appearance-none bg-[#faf7f2] hover:bg-[#f6f2ea] border border-[#e8dfd2] rounded-xl px-4 py-3 pr-10 text-xs sm:text-sm font-medium text-[#1f1d1a] transition-all outline-hidden cursor-pointer"
           >
             {Object.entries(INDUSTRY_SECTORS).map(([key, item]) => (
               <option key={key} value={key}>

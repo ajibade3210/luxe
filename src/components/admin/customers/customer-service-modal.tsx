@@ -274,7 +274,7 @@ export function CustomerServiceModal({
             <button
               type="submit"
               disabled={isAdding || !formData.name || dbServices.length === 0}
-              className="inline-flex items-center gap-2 bg-[#191c1d] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 bg-[#111827] hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
             >
               {isAdding ? (
                 <>

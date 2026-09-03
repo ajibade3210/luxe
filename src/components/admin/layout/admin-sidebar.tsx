@@ -1,6 +1,17 @@
 "use client";
 
-import { Eye, FileText, LogOut, Receipt, Store, TrendingUp, Users, X } from "lucide-react";
+import {
+  Eye,
+  FileText,
+  LogOut,
+  Package,
+  Receipt,
+  ShoppingBag,
+  Store,
+  TrendingUp,
+  Users,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -9,6 +20,8 @@ import {
   useExpensesQuery,
   useInvoicesQuery,
   useLeadsQuery,
+  useOrderSummaryQuery,
+  useProductsQuery,
 } from "@/hooks/queries";
 import { useCurrentStudio } from "@/hooks/use-current-studio";
 import type { AdminSidebarProps } from "@/types";
@@ -27,11 +40,16 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
   const { data: customers } = useCustomersQuery();
   const { data: invoices } = useInvoicesQuery();
   const { data: expenses } = useExpensesQuery();
+  const { data: productsData } = useProductsQuery({ limit: 1 });
+  const { data: orderSummary } = useOrderSummaryQuery();
 
   const leadCount = leads?.length ?? null;
   const customerCount = customers?.length ?? null;
   const invoiceCount = invoices?.length ?? null;
   const expenseCount = expenses?.length ?? null;
+  const productCount = productsData?.meta?.total ?? null;
+  const unfulfilledOrderCount =
+    orderSummary?.unfulfilled ?? (orderSummary?.totalOrders ? orderSummary.totalOrders : null);
 
   // Close sidebar on click outside or Escape key when open
   useEffect(() => {
@@ -103,6 +121,30 @@ export function AdminSidebar({ path, open, onClose }: AdminSidebarProps) {
             onClick={onClose}
           >
             <TrendingUp size={16} /> Analytics
+          </Link>
+          <Link
+            className={navLinkClass(path?.startsWith("/vendor/orders"))}
+            href="/vendor/orders"
+            onClick={onClose}
+          >
+            <ShoppingBag size={16} /> Orders{" "}
+            {unfulfilledOrderCount !== null && (
+              <span className="ml-auto text-[11px] font-mono bg-[#e7e8e9] text-[#191c1d] px-1.5 py-0.5 rounded">
+                {unfulfilledOrderCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            className={navLinkClass(path?.startsWith("/vendor/products"))}
+            href="/vendor/products"
+            onClick={onClose}
+          >
+            <Package size={16} /> Products{" "}
+            {productCount !== null && (
+              <span className="ml-auto text-[11px] font-mono bg-[#e7e8e9] text-[#191c1d] px-1.5 py-0.5 rounded">
+                {productCount}
+              </span>
+            )}
           </Link>
           <Link
             className={navLinkClass(path === "/vendor/leads")}

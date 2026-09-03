@@ -46,14 +46,14 @@ export function ValuationShopwusHelp() {
         <div className="flex items-center gap-3 shrink-0">
           <a
             href="/signup"
-            className="bg-[#191c1d] hover:bg-black !text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer flex items-center gap-2"
+            className="bg-[#111827] hover:bg-black text-white px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:shadow-xs transition-all cursor-pointer flex items-center gap-2 shadow-xs"
           >
             <span>Start My Free Trial Now</span>
             <ArrowRight size={14} />
           </a>
           <a
             href="/login"
-            className="bg-white hover:bg-[#faf7f2] text-[#1f1d1a] border border-[#ded5c8] px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 transition-all cursor-pointer"
+            className="bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
           >
             Enter Studio
           </a>

@@ -36,7 +36,7 @@ export function InvoiceActionBar({
           type="button"
           onClick={onDownloadPdf}
           disabled={isDownloading}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[#191c1d] hover:bg-black text-white transition-all shadow-xs hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[#111827] hover:bg-black text-white transition-all shadow-xs hover:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <Download size={14} />
           <span>{isDownloading ? "Generating PDF..." : "Download PDF"}</span>

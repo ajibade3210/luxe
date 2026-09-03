@@ -196,7 +196,7 @@ export function InvoiceGeneratorPage() {
             </a>
             <a
               href="/signup"
-              className="bg-[#191c1d] hover:bg-black !text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-[#111827] hover:bg-black text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
             >
               <span>Start Free Trial</span>
               <ArrowRight size={13} />

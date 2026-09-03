@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  AlertCircle,
-  Building,
-  Check,
-  Edit3,
-  Loader2,
-  Mail,
-  Phone,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+import { AlertCircle, Check, Edit3, Loader2, X } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { AVAILABLE_SERVICES } from "@/hooks/use-customers";
 import type { CustomerAddModalProps, CustomerAttribute, NewCustomerInput } from "@/types";
+import { CustomerAttributesEditor } from "./customer-attributes-editor";
 
 export function CustomerAddModal({
   isOpen,
@@ -179,8 +169,6 @@ export function CustomerAddModal({
     }
   };
 
-  const populatedAttributes = attributes.filter(a => a.key.trim() && a.value.trim());
-
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
@@ -258,20 +246,20 @@ export function CustomerAddModal({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="flex items-center gap-2.5 text-[#111827]">
-                    <Mail size={14} className="text-[#9ca3af] shrink-0" />
-                    <span className="truncate">{formData.email || "No email on file"}</span>
+                  <div className="text-[#111827]">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Email</span>
+                    <span className="truncate block">{formData.email || "No email on file"}</span>
                   </div>
 
-                  <div className="flex items-center gap-2.5 text-[#111827]">
-                    <Phone size={14} className="text-[#9ca3af] shrink-0" />
-                    <span className="truncate">{formData.phone || "No phone on file"}</span>
+                  <div className="text-[#111827]">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Phone</span>
+                    <span className="truncate block">{formData.phone || "No phone on file"}</span>
                   </div>
 
                   {formData.company && (
-                    <div className="flex items-center gap-2.5 text-[#111827] sm:col-span-2">
-                      <Building size={14} className="text-[#9ca3af] shrink-0" />
-                      <span className="truncate">{formData.company}</span>
+                    <div className="text-[#111827] sm:col-span-2">
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6b7280] mb-0.5">Company</span>
+                      <span className="truncate block">{formData.company}</span>
                     </div>
                   )}
                 </div>
@@ -294,38 +282,15 @@ export function CustomerAddModal({
               </div>
 
               {/* Customer Attributes Section */}
-              <div className="space-y-2.5 pt-2 border-t border-[#f3f4f6]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#111827]">
-                    Customer Attributes
-                  </span>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#f3f4f6] border border-[#e5e7eb] text-[#374151]">
-                    {populatedAttributes.length} items
-                  </span>
-                </div>
-
-                {populatedAttributes.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1">
-                    {populatedAttributes.map((attr, idx) => (
-                      <div
-                        key={`view-attr-${attr.key}-${idx}`}
-                        className="bg-white border border-[#e5e7eb] shadow-2xs rounded-xl p-2.5 flex flex-col gap-0.5 break-words"
-                      >
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#6b7280] break-words">
-                          {attr.key}
-                        </span>
-                        <span className="text-xs font-semibold text-[#111827] break-words">
-                          {attr.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-[#9ca3af] italic bg-white p-3.5 rounded-2xl border border-[#e5e7eb] shadow-2xs">
-                    No custom attributes recorded for this customer.
-                  </p>
-                )}
-              </div>
+              <CustomerAttributesEditor
+                attributes={attributes}
+                isViewMode={true}
+                attributeError=""
+                keyInputRefs={keyInputRefs}
+                onAddAttributeRow={handleAddAttributeRow}
+                onRemoveAttributeRow={handleRemoveAttributeRow}
+                onAttributeChange={handleAttributeChange}
+              />
             </div>
 
             {/* Modal Footer (Pinned) */}
@@ -362,7 +327,7 @@ export function CustomerAddModal({
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                     Name *
                   </label>
-                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                     <input
                       required
                       value={formData.name}
@@ -377,7 +342,7 @@ export function CustomerAddModal({
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                     Email
                   </label>
-                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                     <input
                       type="email"
                       value={formData.email || ""}
@@ -398,7 +363,7 @@ export function CustomerAddModal({
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                     WhatsApp Number
                   </label>
-                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                     <input
                       value={formData.phone || ""}
                       onChange={e => {
@@ -415,7 +380,7 @@ export function CustomerAddModal({
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                     Customer Status
                   </label>
-                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                  <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                     <select
                       value={formData.isActive ? "active" : "inactive"}
                       onChange={e =>
@@ -435,7 +400,7 @@ export function CustomerAddModal({
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                   Company / Brand (Optional)
                 </label>
-                <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                   <input
                     value={formData.company || ""}
                     onChange={e => setFormData({ ...formData, company: e.target.value })}
@@ -452,7 +417,7 @@ export function CustomerAddModal({
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                       Initial Service Needed
                     </label>
-                    <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                    <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                       <select
                         value={formData.service}
                         onChange={e => setFormData({ ...formData, service: e.target.value })}
@@ -471,7 +436,7 @@ export function CustomerAddModal({
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111827] mb-1">
                       Amount Budget (₦)
                     </label>
-                    <div className="signup-field flex items-center bg-white border border-[#d1d5db] focus-within:border-[#111827] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
+                    <div className="signup-field flex items-center bg-white border border-[#d1d5db] shadow-2xs rounded-xl px-3.5 py-2 text-xs transition-all">
                       <input
                         type="number"
                         step="1000"
@@ -498,87 +463,20 @@ export function CustomerAddModal({
                   value={formData.notes || ""}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Specific preferences, styling requests, delivery instructions..."
-                  className="w-full text-xs text-[#111827] placeholder:text-[#9ca3af] bg-white border border-[#d1d5db] focus:border-[#111827] shadow-2xs rounded-xl p-3 focus:outline-none transition-all resize-none"
+                  className="w-full text-xs text-[#111827] placeholder:text-[#9ca3af] bg-white border border-[#d1d5db] shadow-2xs rounded-xl p-3 focus:outline-none transition-all resize-none"
                 />
               </div>
 
               {/* Row 6: Customer Attributes (Controlled Two-Input UI) */}
-              <div className="pt-3 border-t border-[#f3f4f6] space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#111827]">
-                        Customer Attributes
-                      </span>
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#f3f4f6] border border-[#e5e7eb] text-[#374151]">
-                        {attributes.filter(a => a.key.trim() || a.value.trim()).length}/25
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#6b7280]">
-                      Dedicated key & value pairs (e.g. Waist, Bust, Preferred Window).
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={attributes.length >= 25}
-                    onClick={handleAddAttributeRow}
-                    className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-3 py-1.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50"
-                  >
-                    <Plus size={12} />
-                    <span>Add Attribute</span>
-                  </button>
-                </div>
-
-                {/* Attributes Scrollable Container */}
-                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                  {attributes.map((attr, idx) => (
-                    <div
-                      key={`attr-row-${idx}`}
-                      className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-center bg-white p-2.5 rounded-2xl border border-[#e5e7eb] shadow-2xs"
-                    >
-                      {/* Key input */}
-                      <div>
-                        <input
-                          ref={el => {
-                            keyInputRefs.current[idx] = el;
-                          }}
-                          type="text"
-                          maxLength={50}
-                          value={attr.key}
-                          onChange={e => handleAttributeChange(idx, "key", e.target.value)}
-                          placeholder="Attribute name (e.g. Waist)"
-                          className="w-full text-xs text-[#111827] placeholder:text-[#9ca3af] bg-white border border-[#d1d5db] focus:border-[#111827] rounded-xl px-3 py-1.5 focus:outline-none transition-all"
-                        />
-                      </div>
-
-                      {/* Value input */}
-                      <div>
-                        <input
-                          type="text"
-                          maxLength={100}
-                          value={attr.value}
-                          onChange={e => handleAttributeChange(idx, "value", e.target.value)}
-                          placeholder="Value (e.g. 32 inches)"
-                          className="w-full text-xs text-[#111827] placeholder:text-[#9ca3af] bg-white border border-[#d1d5db] focus:border-[#111827] rounded-xl px-3 py-1.5 focus:outline-none transition-all"
-                        />
-                      </div>
-
-                      {/* Delete button */}
-                      <div className="flex justify-end sm:justify-center">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveAttributeRow(idx)}
-                          className="p-1.5 text-[#9ca3af] hover:text-[#ef4444] hover:bg-[#f3f4f6] rounded-lg transition-colors cursor-pointer"
-                          title="Remove attribute"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <CustomerAttributesEditor
+                attributes={attributes}
+                isViewMode={false}
+                attributeError={attributeError}
+                keyInputRefs={keyInputRefs}
+                onAddAttributeRow={handleAddAttributeRow}
+                onRemoveAttributeRow={handleRemoveAttributeRow}
+                onAttributeChange={handleAttributeChange}
+              />
 
               {/* Error Banners */}
               {contactError && (
