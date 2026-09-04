@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/lib/api-client";
+import { logger } from "@/lib/logger";
 import {
   MAX_FILE_SIZE,
   uploadBusinessLogo,
@@ -42,6 +43,7 @@ describe("Media Service", () => {
   });
 
   it("transparently falls back to /media/upload if direct PUT fails (e.g. CORS preflight error)", async () => {
+    vi.spyOn(logger, "warn").mockImplementation(() => {});
     // 1. Presigned URL call succeeds
     vi.spyOn(apiClient, "post")
       .mockResolvedValueOnce({
@@ -99,6 +101,7 @@ describe("Media Service", () => {
   });
 
   it("falls back to /media/upload-multi if direct batch upload fails", async () => {
+    vi.spyOn(logger, "warn").mockImplementation(() => {});
     vi.spyOn(apiClient, "post")
       .mockResolvedValueOnce([
         { uploadUrl: "https://r2.upload.com/1", publicUrl: "https://r2.shopwus.com/1" },

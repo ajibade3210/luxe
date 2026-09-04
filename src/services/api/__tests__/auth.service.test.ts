@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { apiClient } from "@/lib/api-client";
+import { logger } from "@/lib/logger";
 import {
   clearAuthTokens,
   clearSession,
@@ -79,6 +80,7 @@ describe("auth service - session termination & token lifecycle", () => {
 
   it("purges local credentials even when server logout fails or times out", async () => {
     vi.spyOn(apiClient, "post").mockRejectedValueOnce(new Error("Network timeout"));
+    const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
 
     saveAuthTokens("access-fail", "refresh-fail");
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({ id: "user-1" }));
@@ -89,5 +91,9 @@ describe("auth service - session termination & token lifecycle", () => {
     expect(localStorage.getItem(STORAGE_KEYS.accessToken)).toBeNull();
     expect(localStorage.getItem(STORAGE_KEYS.refreshToken)).toBeNull();
     expect(localStorage.getItem(STORAGE_KEYS.session)).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Server logout notification failed or timed out",
+      expect.any(Error)
+    );
   });
 });
