@@ -1,8 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 
-export async function uploadMediaFile(
-  file: File
-): Promise<{ url: string; success: boolean }> {
+export async function uploadMediaFile(file: File): Promise<{ url: string; success: boolean }> {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -28,26 +26,18 @@ export async function uploadMultipleMediaFiles(
     formData.append("files", file);
   }
 
-  const results = await apiClient.post<Array<{ url: string }>>(
-    "/media/upload-multi",
-    formData
-  );
+  const results = await apiClient.post<Array<{ url: string }>>("/media/upload-multi", formData);
 
-  return results.map((r) => ({
+  return results.map(r => ({
     url: r.url,
     success: true,
   }));
 }
 
-export async function uploadBusinessLogo(
-  file: File
-): Promise<{ url: string; success: boolean }> {
+export async function uploadBusinessLogo(file: File): Promise<{ url: string; success: boolean }> {
   return uploadMediaFile(file);
 }
 
-export async function uploadPortfolioImage(
-  file: File
-): Promise<{ url: string; success: boolean }> {
+export async function uploadPortfolioImage(file: File): Promise<{ url: string; success: boolean }> {
   return uploadMediaFile(file);
 }
-

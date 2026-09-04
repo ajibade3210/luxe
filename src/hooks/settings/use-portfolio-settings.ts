@@ -10,11 +10,7 @@ import {
   MAX_PORTFOLIO_CATEGORIES,
   MAX_PORTFOLIO_PROJECTS,
 } from "@/constants";
-import {
-  uploadBusinessLogo,
-  uploadMultipleMediaFiles,
-  uploadPortfolioImage,
-} from "@/lib/api";
+import { uploadBusinessLogo, uploadMultipleMediaFiles, uploadPortfolioImage } from "@/lib/api";
 import type { PortfolioProject } from "@/types";
 
 interface UsePortfolioSettingsOptions {
@@ -210,11 +206,7 @@ export function usePortfolioSettings({ notify }: UsePortfolioSettingsOptions) {
             gallery: [...currentGallery, ...toAdd],
           };
         });
-        notify(
-          `Uploaded ${newUrls.length} ${
-            newUrls.length === 1 ? "image" : "images"
-          }`
-        );
+        notify(`Uploaded ${newUrls.length} ${newUrls.length === 1 ? "image" : "images"}`);
       }
     } catch {
       notify("Failed to upload gallery images");
