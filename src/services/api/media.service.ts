@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 
 export async function uploadMediaFile(
-  file: File | Blob
+  file: File
 ): Promise<{ url: string; success: boolean }> {
   const formData = new FormData();
   formData.append("file", file);
@@ -18,26 +18,36 @@ export async function uploadMediaFile(
   };
 }
 
-export async function uploadBusinessLogo(
-  file?: File | Blob | string
-): Promise<{ url: string; success: boolean }> {
-  if (file && typeof file !== "string") {
-    return uploadMediaFile(file);
+export async function uploadMultipleMediaFiles(
+  files: File[]
+): Promise<Array<{ url: string; success: boolean }>> {
+  if (!files || files.length === 0) return [];
+
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("files", file);
   }
-  return {
-    url: typeof file === "string" ? file : "",
-    success: typeof file === "string" && file.length > 0,
-  };
+
+  const results = await apiClient.post<Array<{ url: string }>>(
+    "/media/upload-multi",
+    formData
+  );
+
+  return results.map((r) => ({
+    url: r.url,
+    success: true,
+  }));
+}
+
+export async function uploadBusinessLogo(
+  file: File
+): Promise<{ url: string; success: boolean }> {
+  return uploadMediaFile(file);
 }
 
 export async function uploadPortfolioImage(
-  file?: File | Blob | string
+  file: File
 ): Promise<{ url: string; success: boolean }> {
-  if (file && typeof file !== "string") {
-    return uploadMediaFile(file);
-  }
-  return {
-    url: typeof file === "string" ? file : "",
-    success: typeof file === "string" && file.length > 0,
-  };
+  return uploadMediaFile(file);
 }
+

@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { apiClient } from "@/lib/api-client";
-import { uploadBusinessLogo, uploadMediaFile, uploadPortfolioImage } from "../media.service";
+import {
+  uploadBusinessLogo,
+  uploadMediaFile,
+  uploadMultipleMediaFiles,
+  uploadPortfolioImage,
+} from "../media.service";
 
 describe("Media Service", () => {
   it("uploads a media file successfully via API", async () => {
@@ -32,19 +37,7 @@ describe("Media Service", () => {
     await expect(uploadMediaFile(file)).rejects.toThrow("Network Error");
   });
 
-  it("handles string URLs and File uploads in uploadBusinessLogo", async () => {
-    const stringResult = await uploadBusinessLogo("https://cdn.example.com/logo.png");
-    expect(stringResult).toEqual({
-      url: "https://cdn.example.com/logo.png",
-      success: true,
-    });
-
-    const emptyResult = await uploadBusinessLogo("");
-    expect(emptyResult).toEqual({
-      url: "",
-      success: false,
-    });
-
+  it("uploads business logo directly via API", async () => {
     vi.spyOn(apiClient, "post").mockResolvedValueOnce({
       url: "https://r2.shopwus.com/images/logo.png",
     });
@@ -56,19 +49,7 @@ describe("Media Service", () => {
     });
   });
 
-  it("handles string URLs and File uploads in uploadPortfolioImage", async () => {
-    const stringResult = await uploadPortfolioImage("https://cdn.example.com/portfolio.png");
-    expect(stringResult).toEqual({
-      url: "https://cdn.example.com/portfolio.png",
-      success: true,
-    });
-
-    const emptyResult = await uploadPortfolioImage("");
-    expect(emptyResult).toEqual({
-      url: "",
-      success: false,
-    });
-
+  it("uploads portfolio image directly via API", async () => {
     vi.spyOn(apiClient, "post").mockResolvedValueOnce({
       url: "https://r2.shopwus.com/images/portfolio.png",
     });
@@ -78,5 +59,19 @@ describe("Media Service", () => {
       url: "https://r2.shopwus.com/images/portfolio.png",
       success: true,
     });
+  });
+
+  it("uploads multiple files via /media/upload-multi", async () => {
+    vi.spyOn(apiClient, "post").mockResolvedValueOnce([
+      { url: "https://r2.shopwus.com/images/img1.png" },
+      { url: "https://r2.shopwus.com/images/img2.png" },
+    ]);
+    const f1 = new File(["1"], "1.png", { type: "image/png" });
+    const f2 = new File(["2"], "2.png", { type: "image/png" });
+    const results = await uploadMultipleMediaFiles([f1, f2]);
+    expect(results).toEqual([
+      { url: "https://r2.shopwus.com/images/img1.png", success: true },
+      { url: "https://r2.shopwus.com/images/img2.png", success: true },
+    ]);
   });
 });
