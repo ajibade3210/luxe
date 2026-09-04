@@ -8,6 +8,7 @@
  */
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { apiClient } from "@/lib/api-client";
+import { logger } from "@/lib/logger";
 import type { User, UserSession } from "@/types";
 
 interface UserDto {
@@ -272,19 +273,36 @@ export async function signUpWithGoogle(data?: {
 }
 
 export async function clearSession(): Promise<void> {
-  try {
-    const refreshToken = getRefreshToken();
-    await apiClient.post("/auth/logout", { refreshToken });
-  } catch {
-    // Purge local session state even if server is unreachable
-  }
+  // 1. Read refresh token before clearing local storage
+  const refreshToken = getRefreshToken();
 
+  // 2. Immediately purge local credentials & session so the client is unauthenticated without waiting
   clearAuthTokens();
 
   if (typeof window !== "undefined") {
     localStorage.removeItem(STORAGE_KEYS.session);
+    const isSecure = window.location.protocol === "https:";
     // biome-ignore lint/suspicious/noDocumentCookie: clear non-sensitive session metadata cookie
-    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax`;
+    document.cookie = `${STORAGE_KEYS.session}=; path=/; max-age=0; SameSite=Lax${isSecure ? "; Secure" : ""}`;
     window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.authChanged, { detail: null }));
+  }
+
+  // 3. Notify server to revoke refresh token with short timeout & keepalive so request finishes even as page navigates
+  try {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 1500) : null;
+
+    await apiClient.post(
+      "/auth/logout",
+      { refreshToken: refreshToken || undefined },
+      {
+        signal: controller?.signal,
+        keepalive: true,
+      }
+    );
+
+    if (timeoutId) clearTimeout(timeoutId);
+  } catch (error) {
+    logger.warn("Server logout notification failed or timed out", error);
   }
 }
