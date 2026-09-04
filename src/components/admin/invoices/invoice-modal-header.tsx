@@ -129,7 +129,7 @@ export function InvoiceModalHeader({
             type="button"
             onClick={onResendInvoice}
             disabled={isBusy}
-            className="inline-flex items-center gap-1.5 bg-white hover:bg-[#faf7f2] text-[#191c1d] border border-[#d1d5db] hover:border-[#855e2e] px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-4 py-2 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs disabled:opacity-50"
           >
             {isResending ? (
               <>
@@ -148,7 +148,7 @@ export function InvoiceModalHeader({
             type="button"
             onClick={onSendInvoice}
             disabled={isBusy}
-            className="inline-flex items-center gap-1.5 bg-[#191c1d] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#111827] hover:bg-black text-white px-4 py-2 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50"
           >
             {isSending ? (
               <>

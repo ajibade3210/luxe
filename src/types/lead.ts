@@ -47,6 +47,12 @@ export interface PublicInquiryResponse {
   createdAt: string;
 }
 
+export interface LeadsSummary {
+  total: number;
+  newToday: number;
+  conversion: number;
+}
+
 export type LeadFilterStatus = "all" | "active" | "new" | "contacted" | "qualified" | "converted";
 
 export interface LeadTableProps {

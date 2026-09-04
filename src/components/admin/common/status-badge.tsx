@@ -21,21 +21,27 @@ export function getStatusBadgeClass(status: StatusVariant): string {
     case "new":
     case "pending":
     case "sent":
+    case "processing":
       return "bg-[#fef3c7] text-[#b45309] border-[#fde68a]";
     case "contacted":
       return "bg-[#faf5ee] text-[#6f4c22] border-[#f0e4d4]";
     case "qualified":
+    case "dispatched":
       return "bg-[#f0fdfa] text-[#115e59] border-[#ccfbf1]";
     case "converted":
     case "completed":
     case "active":
     case "paid":
+    case "delivered":
       return "bg-[#ecfdf5] text-[#047857] border-[#a7f3d0]";
     case "closed":
     case "lost":
     case "overdue":
+    case "cancelled":
+    case "unpaid":
       return "bg-[#fef2f2] text-[#b91c1c] border-[#fecaca]";
     case "draft":
+    case "archived":
       return "bg-[#f1f5f9] text-[#334155] border-[#e2e8f0]";
     default:
       return "bg-[#f3f4f6] text-[#4b5563] border-[#e5e7eb]";

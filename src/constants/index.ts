@@ -227,6 +227,7 @@ export const BUSINESS_TYPE_PORTFOLIO_SECTION_TITLE = {
 } as const;
 
 export * from "./blog";
+export * from "./delivery";
 export * from "./expense";
 export * from "./guest-invoice";
 export * from "./invoice";

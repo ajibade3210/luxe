@@ -1,0 +1,61 @@
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/query-keys";
+import {
+  getOrderById,
+  getOrderSummary,
+  getOrders,
+  placeStorefrontOrder,
+  updateOrderStatus,
+} from "@/services/api/order.service";
+import type { CreateOrderInput, GetOrdersParams, UpdateOrderStatusInput } from "@/types";
+
+export function useOrdersQuery(params?: GetOrdersParams) {
+  return useQuery({
+    queryKey: queryKeys.orders.list(params),
+    queryFn: () => getOrders(params),
+  });
+}
+
+export function useOrderSummaryQuery() {
+  return useQuery({
+    queryKey: queryKeys.orders.summary(),
+    queryFn: () => getOrderSummary(),
+  });
+}
+
+export function useOrderQuery(id: string | null | undefined) {
+  return useQuery({
+    queryKey: id ? queryKeys.orders.detail(id) : ["orders", "detail", "empty"],
+    queryFn: () => {
+      if (!id) throw new Error("Order ID required");
+      return getOrderById(id);
+    },
+    enabled: Boolean(id),
+  });
+}
+
+export function useUpdateOrderStatusMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: UpdateOrderStatusInput }) =>
+      updateOrderStatus(id, input),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.id) });
+    },
+  });
+}
+
+export function usePlaceOrderMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, input }: { slug: string; input: CreateOrderInput }) =>
+      placeStorefrontOrder(slug, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
+    },
+  });
+}

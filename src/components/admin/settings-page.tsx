@@ -5,8 +5,10 @@ import { useSettingsForm } from "@/hooks/use-settings-form";
 import type { EnhancedSettingsPageProps } from "@/types";
 import { useAdminToast } from "./admin-layout";
 import { AppearanceSection } from "./settings/appearance-section";
+import { BillingSection } from "./settings/billing-section";
 import { ChannelsSection } from "./settings/channels-section";
 import { ContactSection } from "./settings/contact-section";
+import { DeliverySection } from "./settings/delivery-section";
 import { FooterSection } from "./settings/footer-section";
 import { IdentitySection } from "./settings/identity-section";
 import { PortfolioSection } from "./settings/portfolio-section";
@@ -280,6 +282,10 @@ export function EnhancedSettingsPage({ onToast }: EnhancedSettingsPageProps) {
           byAppointmentOnly={byAppointmentOnly}
           setByAppointmentOnly={setByAppointmentOnly}
         />
+
+        <DeliverySection />
+
+        <BillingSection />
 
         <AppearanceSection
           colors={colors}

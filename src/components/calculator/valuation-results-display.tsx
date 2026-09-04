@@ -116,7 +116,7 @@ export function ValuationResultsDisplay({ result }: ValuationResultsDisplayProps
       <div className="space-y-3 pt-1 border-t border-[#f4eee6]">
         <a
           href="/signup"
-          className="w-full bg-[#191c1d] hover:bg-black !text-white px-4 py-3.5 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer flex items-center justify-center gap-2"
+          className="w-full bg-[#111827] hover:bg-black text-white px-4 py-3.5 rounded-xl text-xs sm:text-sm font-semibold hover:shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
         >
           <span>Start Free Trial to Track Valuation</span>
           <ArrowRight size={15} />

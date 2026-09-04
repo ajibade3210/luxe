@@ -43,7 +43,7 @@ export function CustomerTable({
               <button
                 type="button"
                 onClick={onOpenBroadcast}
-                className="px-3.5 py-2 rounded-xl bg-[#191c1d] hover:bg-black text-white !text-white text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer shadow-xs"
+                className="px-3.5 py-2 rounded-xl bg-[#111827] hover:bg-black text-white text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs"
               >
                 Broadcast ({selectedCustomerIds.length})
               </button>
@@ -51,7 +51,7 @@ export function CustomerTable({
               <button
                 type="button"
                 onClick={onClearSelection}
-                className="px-3 py-2 rounded-xl border border-[#ded7cb] hover:border-[#c59a78] bg-white hover:bg-[#faf7f2] text-[#5c5f60] hover:text-[#191c1d] text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all duration-200 cursor-pointer shadow-2xs"
+                className="px-3 py-2 rounded-xl border border-[#d1d5db] hover:border-[#9ca3af] bg-white hover:bg-[#fafaf9] text-[#1f2937] text-xs font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
               >
                 Clear
               </button>

@@ -47,7 +47,7 @@ export function BlogListingPage() {
             </a>
             <a
               href="/signup"
-              className="bg-[#191c1d] hover:bg-black !text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-[#111827] hover:bg-black text-white px-3.5 py-2 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
             >
               <span>Start Free Trial</span>
               <ArrowRight size={13} />
@@ -160,7 +160,7 @@ export function BlogListingPage() {
           </div>
           <a
             href="/valuation-calculator"
-            className="bg-[#191c1d] hover:bg-black !text-white px-6 py-3.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-md transition-all flex items-center gap-2 shrink-0"
+            className="bg-[#111827] hover:bg-black text-white px-6 py-3.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all flex items-center gap-2 shrink-0 shadow-xs cursor-pointer"
           >
             <span>Launch Free Valuation Calculator</span>
             <ArrowRight size={14} />

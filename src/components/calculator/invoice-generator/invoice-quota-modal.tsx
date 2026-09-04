@@ -65,7 +65,7 @@ export function InvoiceQuotaModal({
         <div className="space-y-2.5 pt-1">
           <a
             href="/signup?intent=invoice_quota"
-            className="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-[#191c1d] hover:bg-black !text-white text-xs sm:text-sm font-semibold transition-all shadow-xs hover:-translate-y-0.5"
+            className="w-full inline-flex items-center justify-center px-4 py-3 rounded-xl bg-[#111827] hover:bg-black text-white text-xs sm:text-sm font-semibold transition-all shadow-xs hover:shadow-xs cursor-pointer"
           >
             <span>Start My Free Trial Now</span>
           </a>

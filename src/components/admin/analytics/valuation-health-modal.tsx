@@ -197,7 +197,7 @@ export function ValuationHealthModal({ isOpen, onClose, valuation }: ValuationHe
             <button
               type="button"
               onClick={onClose}
-              className="w-full sm:w-auto bg-[#191c1d] hover:bg-black !text-white px-6 py-2.5 rounded-xl text-xs font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer text-center"
+              className="w-full sm:w-auto bg-[#111827] hover:bg-black text-white px-6 py-2.5 rounded-xl text-xs font-semibold hover:shadow-xs transition-all cursor-pointer text-center shadow-xs"
             >
               {VALUATION_HEALTH_MODAL_CONFIG.closeButtonLabel}
             </button>

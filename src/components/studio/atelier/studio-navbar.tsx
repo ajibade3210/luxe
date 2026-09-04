@@ -164,6 +164,16 @@ export function StudioNavbar({
                 }
               </a>
             )}
+            <a
+              href="#products"
+              style={{
+                color:
+                  activeSection === "products" ? primaryColor : isDarkPage ? "#F8FAFC" : undefined,
+              }}
+              className={`transition-colors ${isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}`}
+            >
+              Shop
+            </a>
             {hasServices && (
               <a
                 href="#services"
@@ -259,6 +269,13 @@ export function StudioNavbar({
                   }
                 </a>
               )}
+              <a
+                href="#products"
+                onClick={() => setMobileMenuOpen(false)}
+                className={isDarkPage ? "hover:text-white" : "hover:text-[#1c1917]"}
+              >
+                Shop
+              </a>
               {hasServices && (
                 <a
                   href="#services"

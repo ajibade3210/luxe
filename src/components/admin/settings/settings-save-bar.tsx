@@ -29,7 +29,7 @@ export function SettingsSaveBar({
             type="button"
             onClick={onSave}
             disabled={isSaveDisabled}
-            className="inline-flex items-center justify-center gap-2.5 bg-[#111827] hover:bg-black text-white px-6 h-11 rounded-xl text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            className="inline-flex items-center justify-center gap-2.5 bg-[#111827] hover:bg-black text-white px-6 h-11 rounded-xl text-sm font-semibold hover:shadow-xs transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <Loader2 size={16} className="animate-spin text-white" />
@@ -43,7 +43,7 @@ export function SettingsSaveBar({
             href={`/${slug || APP_CONFIG.defaultSlug}?from=settings`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] px-5 h-11 rounded-xl text-xs sm:text-sm font-semibold hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#fafaf9] text-[#1f2937] border border-[#d1d5db] hover:border-[#9ca3af] px-5 h-11 rounded-xl text-xs sm:text-sm font-semibold hover:shadow-xs transition-all cursor-pointer shadow-2xs"
           >
             <ExternalLink size={15} />
             <span>Live Store</span>

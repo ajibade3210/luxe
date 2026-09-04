@@ -8,33 +8,7 @@
  */
 import { CUSTOM_EVENTS, STORAGE_KEYS } from "@/constants";
 import { apiClient } from "@/lib/api-client";
-import type { User, UserSession } from "@/types";
-
-interface UserDto {
-  id: string;
-  email: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  phone?: string | null;
-  role: string;
-  avatarUrl?: string | null;
-}
-
-interface BusinessDto {
-  id: string;
-  slug: string;
-  name: string;
-  logoUrl?: string | null;
-}
-
-interface AuthResponseDto {
-  user: UserDto;
-  business?: BusinessDto | null;
-  studio?: BusinessDto | null;
-  accessToken?: string;
-  refreshToken?: string;
-  token?: string;
-}
+import type { AuthResponseDto, MeResponseDto, User, UserSession } from "@/types";
 
 export function saveAuthTokens(accessToken?: string, refreshToken?: string): void {
   if (typeof window === "undefined") return;
@@ -70,13 +44,6 @@ export function clearAuthTokens(): void {
   const isSecure = window.location.protocol === "https:";
   // biome-ignore lint/suspicious/noDocumentCookie: clear client auth cookie
   document.cookie = `${STORAGE_KEYS.accessToken}=; path=/; max-age=0; SameSite=Lax${isSecure ? "; Secure" : ""}`;
-}
-
-interface MeResponseDto {
-  user: UserDto;
-  business?: BusinessDto | null;
-  isStudioOwner?: boolean;
-  permissions?: string[];
 }
 
 export function getCurrentSession(): UserSession | null {
