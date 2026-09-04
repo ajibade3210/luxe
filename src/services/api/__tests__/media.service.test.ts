@@ -20,9 +20,9 @@ describe("Media Service", () => {
       signedContentType: "image/png",
     });
 
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      new Response(null, { status: 200 })
-    );
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 200 }));
 
     const file = new File(["dummy content"], "sample.png", { type: "image/png" });
     const result = await uploadMediaFile(file);
@@ -152,7 +152,12 @@ describe("Media Service", () => {
   });
 
   it("rejects multi-upload if files count exceeds MAX_BATCH_FILES", async () => {
-    const files = Array.from({ length: 21 }, (_, i) => new File(["data"], `f${i}.png`, { type: "image/png" }));
-    await expect(uploadMultipleMediaFiles(files)).rejects.toThrow("Maximum 20 files allowed per upload batch");
+    const files = Array.from(
+      { length: 21 },
+      (_, i) => new File(["data"], `f${i}.png`, { type: "image/png" })
+    );
+    await expect(uploadMultipleMediaFiles(files)).rejects.toThrow(
+      "Maximum 20 files allowed per upload batch"
+    );
   });
 });

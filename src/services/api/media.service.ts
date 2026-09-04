@@ -42,7 +42,7 @@ async function uploadMultipleMediaFilesFallback(
 
   const results = await apiClient.post<Array<{ url: string }>>("/media/upload-multi", formData);
 
-  return results.map((r) => ({
+  return results.map(r => ({
     url: r.url,
     success: true,
   }));
@@ -115,7 +115,7 @@ export async function uploadMultipleMediaFiles(
 
   try {
     const items = await apiClient.post<PresignedUrlResponse[]>("/media/presigned-urls", {
-      files: files.map((f) => ({
+      files: files.map(f => ({
         filename: f.name,
         mimetype: f.type || "application/octet-stream",
         size: f.size,
@@ -144,7 +144,7 @@ export async function uploadMultipleMediaFiles(
       })
     );
 
-    return items.map((item) => ({
+    return items.map(item => ({
       url: item.publicUrl,
       success: true,
     }));
